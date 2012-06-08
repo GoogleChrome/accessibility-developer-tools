@@ -16,7 +16,7 @@ AuditRules.imagesWithoutAltText = new AuditRule(
     'imagesWithoutAltText',
      Severity.Warning,
      function() {
-       return document.querySelectorAll('img');
+       return this.auditscope_.querySelectorAll('img');
      },
      function(image) {
        return (!image.hasAttribute('alt') && image.getAttribute('role') != 'presentation');

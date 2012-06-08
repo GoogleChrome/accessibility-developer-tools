@@ -16,7 +16,7 @@ AuditRules.videoWithoutCaptions =
     new AuditRule('videoWithoutCaptions',
                   Severity.Warning,
                   function() {
-                    return document.querySelectorAll('video');
+                    return this.auditscope_.querySelectorAll('video');
                   },
                   function(video) {
                     var captions = video.querySelectorAll('track[kind=captions]');

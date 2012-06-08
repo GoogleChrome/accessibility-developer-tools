@@ -16,7 +16,7 @@ AuditRules.focusableElementNotVisibleAndNotAriaHidden = new AuditRule(
     'focusableElementNotVisibleAndNotAriaHidden',
     Severity.Warning,
     function() {
-        var focusableElements = document.querySelectorAll(AccessibilityUtils.focusableElementsSelector);
+        var focusableElements = this.auditscope_.querySelectorAll(AccessibilityUtils.focusableElementsSelector);
         if (!focusableElements.length)
           return focusableElements;
 

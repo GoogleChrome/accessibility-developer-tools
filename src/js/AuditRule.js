@@ -22,9 +22,13 @@ function AuditRule(name, severity, relevantNodesSelector, test) {
 AuditRule.NOT_APPLICABLE = { result: AuditResult.NA };
 
 /**
+ * @param {?Element} scope The scope in which the node selector should run.
+ *     Defaults to `document`.
  * @return {Object.<AuditResult, ?Array.<node>>}
  */
-AuditRule.prototype.run = function() {
+AuditRule.prototype.run = function(scope) {
+  this.auditscope_ = scope || document;
+
   var relevantNodes = this.relevantNodesSelector_();
 
   var failingNodes = [];

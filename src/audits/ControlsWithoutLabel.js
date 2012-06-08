@@ -20,7 +20,7 @@ AuditRules.controlsWithoutLabel = new AuditRule(
                               'select:not([disabled])',
                               'textarea:not([disabled])',
                               'button:not([disabled])'].join(', ');
-      return document.querySelectorAll(controlsSelector);
+      return this.auditscope_.querySelectorAll(controlsSelector);
     },
     function(control) {
       if (AccessibilityUtils.isElementOrAncestorHidden(control))

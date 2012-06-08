@@ -16,7 +16,7 @@ AuditRules.nonExistentAriaLabelledbyElement =
     new AuditRule('nonExistentAriaLabelledbyElement',
                   Severity.Warning,
                   function() {
-                      return document.querySelectorAll('[aria-labelledby]');
+                      return this.auditscope_.querySelectorAll('[aria-labelledby]');
                   },
                   function(element) {
                       var labelledBy = element.getAttribute('aria-labelledby');

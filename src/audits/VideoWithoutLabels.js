@@ -16,7 +16,7 @@ AuditRules.videoWithoutLabels =
     new AuditRule('videoWithoutLabels',
                   Severity.Warning,
                   function() {
-                    return document.querySelectorAll('video');
+                    return this.auditscope_.querySelectorAll('video');
                   },
                   function(video) {
                     return !AccessibilityUtils.hasLabel(video);

@@ -16,7 +16,7 @@ AuditRules.badAriaRole = new AuditRule(
     'badAriaRole',
     Severity.Severe,
     function() {
-      return document.querySelectorAll("[role]");
+      return this.auditscope_.querySelectorAll("[role]");
     },
     function(element) {
       return !ARIA_ROLES[element.getAttribute('role')];

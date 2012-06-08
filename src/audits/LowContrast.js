@@ -18,7 +18,7 @@ AuditRules.lowContrastElements = new AuditRule(
     function() {
       return document.evaluate(
           '/html/body//text()[normalize-space(.)!=""]/parent::*[name()!="script"]',
-          window.document,
+          this.auditscope_,
           null,
           XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
           null);

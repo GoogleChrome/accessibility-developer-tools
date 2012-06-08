@@ -16,7 +16,7 @@ AuditRules.videoWithoutFallbackContent =
     new AuditRule('videoWithoutFallbackContent',
                   Severity.Warning,
                   function() {
-                    return document.querySelectorAll('video');
+                    return this.auditscope_.querySelectorAll('video');
                   },
                   function(video) {
                     if (AccessibilityUtils.isElementOrAncestorHidden(video))
