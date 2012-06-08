@@ -1,0 +1,29 @@
+{
+  "name": "Accessibility Developer Tools",
+  "version": "0.6.6",
+  "description": "Accessibility audit and element properties.",
+  "icons": {
+      "128": "images/icon128.png"
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "devtools_page": "devtools.html",
+  "permissions": [
+    "experimental",
+    "tabs",
+    "<all_urls>"
+  ],
+  "web_accessible_resources": [
+    "accessibility.js",
+    "devtools.js",
+    "devtools.html",
+    "sidebar.html",
+    "sidebar.js",
+    "sidebar.css"
+  ],
+  "manifest_version": 2,
+  "minimum_chrome_version": "21.0.1137.1"
+}
