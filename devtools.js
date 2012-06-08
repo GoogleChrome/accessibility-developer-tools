@@ -24,10 +24,10 @@ function init(result) {
                 console.log('running', auditRuleName);
                 var resultsCallback = handleResults.bind(null, auditResults, auditRuleName, ruleSeverity);
                 if (auditRule.runInDevtools) {
-                    auditRule.rule(resultsCallback);
+                    auditRule.run(resultsCallback);
                 } else {
                     chrome.devtools.inspectedWindow.eval(
-                        'AuditRules["' + auditRuleName + '"].rule()',
+                        'AuditRules["' + auditRuleName + '"].run()',
                         { useContentScriptContext: true },
                         resultsCallback);
                 }

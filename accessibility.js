@@ -64,7 +64,6 @@ var AccessibilityUtils = {
 
         if (element_at_point != null && element_at_point != element &&
             !isAncestor(element, element_at_point)) {
-            console.log(element, 'is overlapped by', element_at_point);
             return element_at_point;
         }
 
@@ -118,9 +117,16 @@ var AccessibilityUtils = {
         }
     },
 
-    getBgColor: function(style, element) {
+    getElementBgColor: function(style, element) {
         var bgColorString = style.backgroundColor;
         var bgColor = this.parseColor(bgColorString);
+        if (!bgColor)
+            return false;
+        return bgColor;
+    },
+
+    getBgColor: function(style, element) {
+        var bgColor = this.getElementBgColor(style, element);
         if (!bgColor)
             return false;
 
@@ -154,7 +160,6 @@ var AccessibilityUtils = {
             if (!foundSolidColor) {
                 bgStack.push({"red": 255, "green": 255, "blue": 255, "alpha": 1});
             }
-
             bg = bgStack.pop();
             while (bgStack.length) {
                 var fg = bgStack.pop();
@@ -194,10 +199,11 @@ var AccessibilityUtils = {
             return color;
         }
 
-        var rgbaRegex = /^rgba\((\d+), (\d+), (\d+), (\d+)\)/;
+        var rgbaRegex = /^rgba\((\d+), (\d+), (\d+), (\d+(\.\d+)?)\)/;
         match = colorString.match(rgbaRegex);
         if (match) {
-            var alpha = parseInt(match[4]);
+            var alpha = parseFloat(match[4]);
+            color["alpha"] = alpha;
             color["red"] = parseInt(match[1]);
             color["green"] = parseInt(match[2]);
             color["blue"] = parseInt(match[3]);
@@ -215,7 +221,7 @@ var AccessibilityUtils = {
         color["red"] = ((1 - alpha) * bgColor.red) + (alpha * fgColor.red);
         color["green"] = ((1 - alpha) * bgColor.green) + (alpha * fgColor.green);
         color["blue"] = ((1 - alpha) * bgColor.blue) + (alpha * fgColor.blue);
-        color["alpha"] = 1;
+        color["alpha"] =  alpha + (bgColor.alpha * (1 - alpha));
 
         return color;
     },
@@ -441,161 +447,158 @@ var AuditResult = {
     NA: "NA"
 };
 
+/**
+ * @constructor
+ * @param {string} name
+ * @param {Severity} severity
+ * @param {function(): Array.<node>|NodeList|XPathResult} relevantNodesSelector
+ * @param {function(node): boolean} test A function which returns True if the given node fails the audit,
+ *                                       and False otherwise.
+ */
+function AuditRule(name, severity, relevantNodesSelector, test) {
+    this.name = name;
+    this.severity = severity;
+    this.relevantNodesSelector_ = relevantNodesSelector;
+    this.test_ = test;
+};
+
+/**
+ * @return {Object.<AuditResult, ?Array.<node>>}
+ */
+AuditRule.prototype.run = function() {
+    var relevantNodes = this.relevantNodesSelector_();
+
+    var failingNodes = [];
+    if (relevantNodes instanceof XPathResult) {
+        if (relevantNodes.resultType == XPathResult.ORDERED_NODE_SNAPSHOT_TYPE) {
+            if (!relevantNodes.snapshotLength)
+                return { result: AuditResult.NA };
+            for (var i = 0; i < relevantNodes.snapshotLength; i++) {
+                var node = relevantNodes.snapshotItem(i);
+                if (this.test_(node))
+                    failingNodes.push(convertElementToResult(node));
+            }
+        } else {
+            console.warn('Unknown XPath result type', relevantNodes);
+            return;
+        }
+    } else {
+        if (!relevantNodes.length)
+            return { result: AuditResult.NA };
+        for (var i = 0; i < relevantNodes.length; i++) {
+            var node = relevantNodes[i];
+            if (this.test_(node))
+                failingNodes.push(convertElementToResult(node));
+        }
+    }
+    var result = failingNodes.length ? AuditResult.FAIL : AuditResult.PASS;
+    return { result: result, elements: failingNodes };
+
+}
+
 var AuditRules = {
-    badAriaRole: {
-        severity: Severity.Severe,
-        rule: function() {
-            var elementsWithAriaRole = document.querySelectorAll("[role]");
-            if (!elementsWithAriaRole.length)
-                return { result: AuditResult.NA };
+    badAriaRole:
+        new AuditRule('badAriaRole',
+                      Severity.Severe,
+                      function() {
+                          return document.querySelectorAll("[role]");
+                      },
+                      function(element) {
+                          return !ARIA_ROLES[element.getAttribute('role')];
+                      }),
 
-            var elementsWithBadAriaRole = [];
-            for (var i = 0; i < elementsWithAriaRole.length; i++) {
-                var element = elementsWithAriaRole[i];
-                if (!ARIA_ROLES[element.getAttribute('role')])
-                    elementsWithBadAriaRole.push(convertElementToResult(element));
-            }
-            var result = elementsWithBadAriaRole.length ? AuditResult.FAIL : AuditResult.PASS;
-            return { result: result, elements: elementsWithBadAriaRole };
-        }
-    },
+    controlsWithNoLabel:
+        new AuditRule('controlsWithNoLabel',
+                      Severity.Severe,
+                      function() {
+                          var controlsSelector = ["input:not([type='hidden']):not([disabled])",
+                                                  "select:not([disabled])",
+                                                  "textarea:not([disabled])",
+                                                  "button:not([disabled])"].join(", ");
+                          return document.querySelectorAll(controlsSelector);
+                      },
+                      function(control) {
+                          if (AccessibilityUtils.isElementOrAncestorHidden(control))
+                              return false;
 
-    controlsWithNoLabel: {
-        severity: Severity.Severe,
-        rule: function() {
-            var controlsSelector = ["input:not([type='hidden']):not([disabled])",
-                                    "select:not([disabled])",
-                                    "textarea:not([disabled])",
-                                    "button:not([disabled])"].join(", ");
-            var controls = document.querySelectorAll(controlsSelector);
-            if (!controls.length)
-                return { result: AuditResult.NA };
+                          if (!AccessibilityUtils.hasLabel(control))
+                              return true;
+                      }),
 
-            var controlsWithoutLabels = [];
-            for (var i = 0; i < controls.length; i++) {
-                var control = controls[i];
-                if (AccessibilityUtils.isElementOrAncestorHidden(control))
-                    continue;
+    focusableElementNotVisibleNotAriaHidden:
+        new AuditRule('focusableElementNotVisibleNotAriaHidden',
+                      Severity.Warning,
+                      function() {
+                          var focusableElements = document.querySelectorAll(AccessibilityUtils.focusableElementsSelector);
+                          if (!focusableElements.length)
+                              return focusableElements;
 
-                if (!AccessibilityUtils.hasLabel(control))
-                    controlsWithoutLabels.push(convertElementToResult(control));
-            }
-            var result = controlsWithoutLabels.length ? AuditResult.FAIL : AuditResult.PASS;
-            return { result: result, elements: controlsWithoutLabels };
-        }
-    },
+                          var nonvisibleFocusableElements = [];
+                          for (var i = 0; i < focusableElements.length; i++) {
+                              var element = focusableElements[i];
+                              if (AccessibilityUtils.isElementOrAncestorHidden(element))
+                                  continue;
+                              var overlapping = AccessibilityUtils.overlappingElement(element);
+                              if (overlapping) {
+                                  var style = window.getComputedStyle(overlapping);
+                                  var overlappingElementBg = AccessibilityUtils.getElementBgColor(style, overlapping);
+                                  if (overlappingElementBg && overlappingElementBg.alpha > 0) {
+                                      nonvisibleFocusableElements.push(element);
+                                      continue;
+                                  }
+                              }
+                              if (AccessibilityUtils.elementHasZeroArea(element))
+                                  nonvisibleFocusableElements.push(element);
+                          }
+                          return nonvisibleFocusableElements;
+                      },
+                      function(element) {
+                          return !element.hasAttribute('aria-hidden') && !element.getAttribute('aria-hidden')
+                      }),
 
-    focusableElementNotVisibleNotAriaHidden: {
-        severity: Severity.Warning,
-        rule: function() {
-            var focusableElements = document.querySelectorAll(AccessibilityUtils.focusableElementsSelector);
-            if (!focusableElements.length)
-                return { result: AuditResult.NA };
+    imagesWithNoAltText:
+        new AuditRule('imagesWithNoAltText',
+                     Severity.Warning,
+                     function() {
+                         return document.querySelectorAll('img');
+                     },
+                     function(image) {
+                         return (!image.hasAttribute('alt') && image.getAttribute('role') != 'presentation');
+                     }),
 
-            var nonvisibleFocusableElements = [];
-            for (var i = 0; i < focusableElements.length; i++) {
-                var element = focusableElements[i];
-                if (AccessibilityUtils.isElementOrAncestorHidden(element))
-                    continue;
-                var overlapping = AccessibilityUtils.overlappingElement(element);
-                if (overlapping) {
-                    var style = window.getComputedStyle(overlapping);
-                    var overlappingElementBg = AccessibilityUtils.getBgColor(style, overlapping);
-                    if (overlappingElementBg && overlappingElementBg.alpha > 0) {
-                        nonvisibleFocusableElements.push(element);
-                        continue;
-                    }
-                }
-                if (AccessibilityUtils.elementHasZeroArea(element))
-                    nonvisibleFocusableElements.push(element);
-            }
-            if (!nonvisibleFocusableElements.length)
-                return { result: AuditResult.NA };
+    lowContrastElements:
+        new AuditRule('lowContrastElements',
+                      Severity.Warning,
+                      function() {
+                          return document.evaluate('/html/body//text()[normalize-space(.)!=""]/parent::*[name()!="script"]',
+                                                   window.document,
+                                                   null,
+                                                   XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+                                                   null);
+                      },
+                      function(element) {
+                          var style = window.getComputedStyle(element);
+                          var contrastRatio =
+                              AccessibilityUtils.getContrastRatioForElementWithComputedStyle(style, element);
+                          return (contrastRatio && AccessibilityUtils.isLowContrast(contrastRatio, style));
+                      }),
 
-            var nonvisibleFocusableElementsWithoutAriaHidden = [];
-            for (var j = 0; j < nonvisibleFocusableElements.length; j++) {
-                var element = nonvisibleFocusableElements[j];
-                if (!element.hasAttribute('aria-hidden') && !element.getAttribute('aria-hidden'))
-                    nonvisibleFocusableElementsWithoutAriaHidden.push(convertElementToResult(element));
-            }
-            var result = nonvisibleFocusableElementsWithoutAriaHidden.length
-                         ? AuditResult.FAIL
-                         : AuditResult.PASS;
-            return { result: result, elements: nonvisibleFocusableElementsWithoutAriaHidden };
-        }
-    },
-
-    imagesWithNoAltText: {
-        severity: Severity.Warning,
-        rule: function() {
-            var images = document.querySelectorAll('img');
-            if (!images.length)
-                return { result: AuditResult.NA };
-
-            var imagesWithNoAltText = [];
-            for (var i = 0; i < images.length; i++) {
-                var image = images[i];
-                if (!image.hasAttribute('alt') && image.getAttribute('role') != 'presentation')
-                    imagesWithNoAltText.push(convertElementToResult(image));
-            }
-            var result = imagesWithNoAltText.length ? AuditResult.FAIL : AuditResult.PASS;
-            return { result: result, elements: imagesWithNoAltText };
-        }
-    },
-
-    lowContrastElements: {
-        severity: Severity.Warning,
-        rule: function() {
-            var elementsWithTextContent =
-                document.evaluate('/html/body//text()[normalize-space(.)!=""]/parent::*[name()!="script"]',
-                                  window.document,
-                                  null,
-                                  XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-                                  null);
-            if (!elementsWithTextContent.snapshotLength)
-                return { result: AuditResult.NA }
-
-            var lowContrastElements = [];
-            for (var i = 0; i < elementsWithTextContent.snapshotLength; i++) {
-                var element = elementsWithTextContent.snapshotItem(i);
-                var style = window.getComputedStyle(element);
-                var contrastRatio =
-                    AccessibilityUtils.getContrastRatioForElementWithComputedStyle(style, element);
-                if (contrastRatio && AccessibilityUtils.isLowContrast(contrastRatio, style)) {
-                    lowContrastElements.push(convertElementToResult(element));
-                }
-            }
-            var result = lowContrastElements.length ? AuditResult.FAIL : AuditResult.PASS;
-            return { result: result, elements: lowContrastElements }
-        }
-    },
-
-    nonExistentAriaLabelledbyElement: {
-        severity: Severity.Warning,
-        rule: function() {
-            console.log('nonExistentAriaLabelledbyElement');
-            var ariaLabelledbyElements = document.querySelectorAll('[aria-labelledby]');
-            console.log('ariaLabelledbyElements', ariaLabelledbyElements);
-            if (!ariaLabelledbyElements.length)
-                return { result: AuditResult.NA };
-
-            var elementsWithNonExistentAriaLabelledby = []
-            for (var i = 0; i < ariaLabelledbyElements.length; i++) {
-                var element = ariaLabelledbyElements[i];
-                var labelledBy = element.getAttribute('aria-labelledby');
-                var labelElement = document.getElementById(labelledBy);
-                if (!labelElement)
-                    elementsWithNonExistentAriaLabelledby.push(convertElementToResult(element));
-            }
-            var result = elementsWithNonExistentAriaLabelledby.length ? AuditResult.FAIL : AuditResult.PASS;
-            return { result: result, elements: elementsWithNonExistentAriaLabelledby }
-        }
-    },
+    nonExistentAriaLabelledbyElement:
+        new AuditRule('nonExistentAriaLabelledbyElement',
+                      Severity.Warning,
+                      function() {
+                          return document.querySelectorAll('[aria-labelledby]');
+                      },
+                      function(element) {
+                          var labelledBy = element.getAttribute('aria-labelledby');
+                          var labelElement = document.getElementById(labelledBy);
+                          return !labelElement;
+                      }),
 
     unfocusableElementsWithOnClick: {
         severity: Severity.Warning,
         runInDevtools: true,
-        rule: function(resultsCallback) {
+        run: function(resultsCallback) {
             var extensionId = chrome.i18n.getMessage("@@extension_id"); // yes, really.
 
             function addEventListener(extensionId) {
@@ -645,63 +648,38 @@ var AuditRules = {
         }
     },
 
-    videoWithNoCaptions: {
-        severity: Severity.Warning,
-        rule: function() {
-            var videos = document.querySelectorAll('video');
-            if (!videos.length)
-                return { result: AuditResult.NA };
+    videoWithNoCaptions:
+        new AuditRule('videoWithNoCaptions',
+                      Severity.Warning,
+                      function() {
+                          return document.querySelectorAll('video');
+                      },
+                      function(video) {
+                          var captions = video.querySelectorAll('track[kind=captions]');
+                          return !captions.length;
+                      }),
 
-            var videosWithNoCaptions = [];
-            // ([aria-label] || [aria-labelledby]) &&(<track[kind=captions]>) && ([aria-describedby])
-            for (var i = 0; i < videos.length; i++) {
-                var video = videos[i];
-                var captions = video.querySelectorAll('track[kind=captions]');
-                if (!captions.length)
-                    videosWithNoCaptions.push(convertElementToResult(video));
-            }
-            var result = videosWithNoCaptions.length ? AuditResult.FAIL : AuditResult.PASS;
-            return { result: result, elements: videosWithNoCaptions };
-        }
-    },
+    videoWithNoFallbackContent:
+        new AuditRule('videoWithNoFallbackContent',
+                      Severity.Warning,
+                      function() {
+                          return document.querySelectorAll('video');
+                      },
+                      function(video) {
+                          if (AccessibilityUtils.isElementOrAncestorHidden(video))
+                              return false;
 
-    videoWithNoFallbackContent: {
-        severity: Severity.Warning,
-        rule: function() {
-            var videos = document.querySelectorAll('video');
-            if (!videos.length)
-                return { result: AuditResult.NA };
-
-            var videosWithNoFallback = [];
-            for (var i = 0; i < videos.length; i++) {
-                if (AccessibilityUtils.isElementOrAncestorHidden(videos[i]))
-                    continue;
-
-                // Note: The textContent property may not work on other browsers.
-                if (videos[i].textContent.trim() == '')
-                    videosWithNoFallback.push(convertElementToResult(videos[i]));
-            }
-            var result = videosWithNoFallback.length ? AuditResult.FAIL : AuditResult.PASS;
-            return { result: result, elements: videosWithNoFallback };
-        }
-    },
-
-    videoWithNoLabels: {
-        severity: Severity.Warning,
-        rule: function() {
-            var videos = document.querySelectorAll('video:not([aria-label]):not([aria-labelledby])');
-            if (!videos.length)
-                return { result: AuditResult.NA };
-
-            var videosWithNoLabels = [];
-            for (var i = 0; i < videos.length; i++) {
-                if (!AccessibilityUtils.hasLabel(videos[i]))
-                    videosWithNoLabels.push(convertElementToResult(videos[i]));
-            }
-            var result = videosWithNoLabels.length ? AuditResult.FAIL : AuditResult.PASS;
-            return { result: result, elements: videosWithNoLabels };
-        }
-    }
+                          return video.textContent.trim() == '';
+                      }),
+    videoWithNoLabels:
+        new AuditRule('videoWithNoLabels',
+                      Severity.Warning,
+                      function() {
+                          return document.querySelectorAll('video');
+                      },
+                      function(video) {
+                          return !AccessibilityUtils.hasLabel(video);
+                      })
 };
 
 var Properties = {
