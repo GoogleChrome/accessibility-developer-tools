@@ -59,20 +59,20 @@ var auditMsgs = {
             ' screen readers. '
     },
 
-    controlsWithNoLabel: {
+    controlsWithoutLabel: {
         ruleName: 'Controls should have labels',
         resultsDetails: 'Unlabelled controls may not be useable for users of assistive technology. ',
 /*            '<a href="http://www.w3.org/TR/WCAG20-TECHS/H44.html">WCAG Technique H44</a> gives ' +
             'more information.', */
     },
 
-    focusableElementNotVisibleNotAriaHidden: {
+    focusableElementNotVisibleAndNotAriaHidden: {
         ruleName: 'Focusable elements which are hidden from view should use aria-hidden',
         resultsDetails: 'The aria-hidden ARIA attribute hides elements from assistive technology ' +
             ' like screen readers.'
     },
 
-    imagesWithNoAltText: {
+    imagesWithoutAltText: {
         ruleName: 'Images should have an alt attribute',
         resultsDetails: 'Images should have an alt attribute, unless they have an ARIA role of "presentation". '
 /*            '<a href="http://www.w3.org./TR/WCAG20-TECHS/H37.html">WCAG technique H37</a> ' +
@@ -100,17 +100,17 @@ var auditMsgs = {
             ' attribute.'
     },
 
-    videoWithNoCaptions: {
+    videoWithoutCaptions: {
         ruleName: 'Video elements should use <track> elements to provide captions',
         resultsDetails: 'TODO'
     },
 
-    videoWithNoLabels: {
+    videoWithoutLabels: {
         ruleName: 'Video elements should be labeled',
         resultsDetails: 'TODO'
     },
 
-    videoWithNoFallbackContent: {
+    videoWithoutFallbackContent: {
         ruleName: 'Video elements should use fallback content',
         resultsDetails: 'TODO'
     },

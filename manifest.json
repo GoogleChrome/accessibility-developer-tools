@@ -17,7 +17,7 @@
     "<all_urls>"
   ],
   "web_accessible_resources": [
-    "accessibility.js",
+    "_generated_accessibility.js",
     "devtools.js",
     "devtools.html",
     "sidebar.html",
