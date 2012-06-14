@@ -1,5 +1,4 @@
 AUDIT_RULES = $(shell find ./src/audits -name "*.js")
-#AUDIT_RULES = $(shell find ./src/audits -name "ControlsWithoutLabel.js")
 JS_FILES = $(shell find ./src/js -name "*.js")
 
 BIG_FAT_JS_FILE = ./extension/generated_accessibility.js
