@@ -266,6 +266,9 @@ var AccessibilityUtils = {
             return true;
         if (element.hasAttribute("alt"))
             return true;
+        if ((element.tagName.toLowerCase() == "input" || element.tagName.toLowerCase() == "button") &&
+            (element.type.toLowerCase() == "submit" || element.type.toLowerCase() == "reset"))
+            return true;
 
         var labels = document.querySelectorAll("label");
         var foundLabel;
