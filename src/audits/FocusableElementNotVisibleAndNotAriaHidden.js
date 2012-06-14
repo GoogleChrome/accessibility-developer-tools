@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-AuditRules.focusableElementNotVisibleAndNotAriaHidden = new AuditRule(
-    'focusableElementNotVisibleAndNotAriaHidden',
-    Severity.Warning,
-    function() {
+AuditRules.addRule({
+    name: 'focusableElementNotVisibleAndNotAriaHidden',
+    severity: Severity.Warning,
+    relevantNodesSelector: function() {
         var focusableElements = this.auditscope_.querySelectorAll(AccessibilityUtils.focusableElementsSelector);
         if (!focusableElements.length)
           return focusableElements;
@@ -39,7 +39,8 @@ AuditRules.focusableElementNotVisibleAndNotAriaHidden = new AuditRule(
         }
         return nonvisibleFocusableElements;
     },
-    function(element) {
+    test: function(element) {
         return !element.hasAttribute('aria-hidden') ||
                !element.getAttribute('aria-hidden');
-    });
+    }
+});

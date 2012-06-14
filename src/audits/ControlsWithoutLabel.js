@@ -12,20 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-AuditRules.controlsWithoutLabel = new AuditRule(
-    'controlsWithoutLabel',
-    Severity.Severe,
-    function() {
-      var controlsSelector = ['input:not([type="hidden"]):not([disabled])',
-                              'select:not([disabled])',
-                              'textarea:not([disabled])',
-                              'button:not([disabled])'].join(', ');
-      return this.auditscope_.querySelectorAll(controlsSelector);
+AuditRules.addRule({
+    name: 'controlsWithoutLabel',
+    severity: Severity.Severe,
+    relevantNodesSelector: function() {
+        var controlsSelector = ['input:not([type="hidden"]):not([disabled])',
+                                'select:not([disabled])',
+                                'textarea:not([disabled])',
+                                'button:not([disabled])'].join(', ');
+        return this.auditscope_.querySelectorAll(controlsSelector);
     },
-    function(control) {
-      if (AccessibilityUtils.isElementOrAncestorHidden(control))
-        return false;
+    test: function(control) {
+        if (AccessibilityUtils.isElementOrAncestorHidden(control))
+            return false;
 
-      if (!AccessibilityUtils.hasLabel(control))
-        return true;
-    });
+        if (!AccessibilityUtils.hasLabel(control))
+            return true;
+
+        return false;
+    }
+});

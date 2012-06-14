@@ -5,7 +5,7 @@ function init(result) {
         return;
     }
 
-    var numAuditRules = Object.keys(AuditRules).length;
+    var numAuditRules = Object.keys(AuditRules.rules).length;
     var category = chrome.experimental.devtools.audits.addCategory('Accessibility', numAuditRules + 1);
 
     category.onAuditStarted.addListener(function callback(auditResults) {
@@ -16,18 +16,18 @@ function init(result) {
         auditResults.passedRules = [];
         auditResults.notApplicableRules = [];
 
-        for (auditRuleName in AuditRules) {
-            var auditRule = AuditRules[auditRuleName];
+        for (auditRuleName in AuditRules.rules) {
+            var auditRule = AuditRules.rules[auditRuleName];
             var ruleSeverity = auditResults.Severity[auditRule.severity];
             // TODO batch up results
             if (!auditRule.disabled) {
                 console.log('running', auditRuleName);
                 var resultsCallback = handleResults.bind(null, auditResults, auditRuleName, ruleSeverity);
-                if (auditRule.runInDevtools) {
-                    auditRule.run(resultsCallback);
+                if (auditRule.shouldRunInDevtools) {
+                    auditRule.runInDevtools(resultsCallback);
                 } else {
                     chrome.devtools.inspectedWindow.eval(
-                        'AuditRules["' + auditRuleName + '"].run()',
+                        'AuditRules.rules["' + auditRuleName + '"].run()',
                         { useContentScriptContext: true },
                         resultsCallback);
                 }

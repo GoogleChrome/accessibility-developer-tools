@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-AuditRules.imagesWithoutAltText = new AuditRule(
-    'imagesWithoutAltText',
-     Severity.Warning,
-     function() {
-       return this.auditscope_.querySelectorAll('img');
-     },
-     function(image) {
-       return (!image.hasAttribute('alt') && image.getAttribute('role') != 'presentation');
-     });
+AuditRules.addRule({
+    name: 'imagesWithoutAltText',
+    severity: Severity.Warning,
+    relevantNodesSelector: function() {
+        return this.auditscope_.querySelectorAll('img');
+    },
+    test: function(image) {
+        return (!image.hasAttribute('alt') && image.getAttribute('role') != 'presentation');
+    }
+});
 

@@ -12,14 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-AuditRules.nonExistentAriaLabelledbyElement =
-    new AuditRule('nonExistentAriaLabelledbyElement',
-                  Severity.Warning,
-                  function() {
-                      return this.auditscope_.querySelectorAll('[aria-labelledby]');
-                  },
-                  function(element) {
-                      var labelledBy = element.getAttribute('aria-labelledby');
-                      var labelElement = document.getElementById(labelledBy);
-                      return !labelElement;
-                  });
+AuditRules.addRule({
+    name: 'nonExistentAriaLabelledbyElement',
+    severity: Severity.Warning,
+    relevantNodesSelector: function() {
+        return this.auditscope_.querySelectorAll('[aria-labelledby]');
+    },
+    test: function(element) {
+        var labelledBy = element.getAttribute('aria-labelledby');
+        var labelElement = document.getElementById(labelledBy);
+        return !labelElement;
+    }
+});

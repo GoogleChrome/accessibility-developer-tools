@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-AuditRules.lowContrastElements = new AuditRule(
-    'lowContrastElements',
-    Severity.Warning,
-    function() {
+AuditRules.addRule({
+    name: 'lowContrastElements',
+    severity: Severity.Warning,
+    relevantNodesSelector: function() {
       return document.evaluate(
           '/html/body//text()[normalize-space(.)!=""]/parent::*[name()!="script"]',
           this.auditscope_,
@@ -23,9 +23,10 @@ AuditRules.lowContrastElements = new AuditRule(
           XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
           null);
     },
-    function(element) {
+    test: function(element) {
       var style = window.getComputedStyle(element);
       var contrastRatio =
           AccessibilityUtils.getContrastRatioForElementWithComputedStyle(style, element);
       return (contrastRatio && AccessibilityUtils.isLowContrast(contrastRatio, style));
-    });
+    }
+});

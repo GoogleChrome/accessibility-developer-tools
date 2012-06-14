@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-AuditRules.videoWithoutLabels =
-    new AuditRule('videoWithoutLabels',
-                  Severity.Warning,
-                  function() {
-                    return this.auditscope_.querySelectorAll('video');
-                  },
-                  function(video) {
-                    return !AccessibilityUtils.hasLabel(video);
-                  });
+AuditRules.addRule({
+    name: 'videoWithoutLabels',
+    severity: Severity.Warning,
+    relevantNodesSelector: function() {
+        return this.auditscope_.querySelectorAll('video');
+    },
+    test: function(video) {
+        return !AccessibilityUtils.hasLabel(video);
+    }
+});

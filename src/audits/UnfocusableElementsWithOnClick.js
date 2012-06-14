@@ -12,56 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-AuditRules.unfocusableElementsWithOnClick = {
-  ruleName: 'unfocusableElementsWithOnClick',
-  severity: Severity.Warning,
-  runInDevtools: true,
-  run: function(resultsCallback) {
-      var extensionId = chrome.i18n.getMessage("@@extension_id"); // yes, really.
 
-      function addEventListener(extensionId) {
-          function handleEventListenersEvent(event) {
-              var element = event.target;
-              clickableElements.push(element);
-              if (element.getAttribute('tabindex') == null)
-                  unfocusableClickableElements.push(convertElementToResult(event.target));
-          }
-          clickableElements = [];
-          unfocusableClickableElements = [];
-          document.addEventListener(extensionId, handleEventListenersEvent);
-      }
-      chrome.devtools.inspectedWindow.eval('(' + addEventListener + ')("'+ extensionId + '")',
-                                          { useContentScriptContext: true });
+AuditRules.addRule({
+    name: 'unfocusableElementsWithOnClick',
+    severity: Severity.Warning,
+    opt_shouldRunInDevtools: true,
+    relevantNodesSelector: function() {
+        var potentialOnclickElements = document.querySelectorAll('span, div, img');
 
-      function getEventListenersForUnfocusableElements(eventName) {
-          var potentialOnclickElements = document.querySelectorAll('span, div, img');
+        var unfocusableClickableElements = [];
+        for (var i = 0; i < potentialOnclickElements.length; i++) {
+            var element = potentialOnclickElements[i];
 
-          var unfocusableClickableElements = [];
-          for (var i = 0; i < potentialOnclickElements.length; i++) {
-              var element = potentialOnclickElements[i];
-
-              // TODO: check for element is visible/hidden
-              var eventListeners = getEventListeners(element);
-              if ('click' in eventListeners) {
-                  var event = document.createEvent('Event');
-                  event.initEvent(eventName, true, false);
-                  element.dispatchEvent(event);
-              }
-          }
-          return spansAndDivs.length;
-      }
-      chrome.devtools.inspectedWindow.eval(
-          '(' + getEventListenersForUnfocusableElements + ')("' + extensionId + '")');
-
-      function retrieveResults() {
-          var result = AuditResult.NA;
-          if (clickableElements.length)
-              var result = unfocusableClickableElements.length ? AuditResult.FAIL : AuditResult.PASS;
-
-          return { result: result, elements: unfocusableClickableElements };
-      }
-      chrome.devtools.inspectedWindow.eval('(' + retrieveResults + ')()',
-                                           { useContentScriptContext: true },
-                                           resultsCallback)
-  }
-};
+            // TODO: check for element is visible/hidden
+            var eventListeners = getEventListeners(element);
+            if ('click' in eventListeners) {
+                unfocusableClickableElements.push(element);
+            }
+        }
+        return unfocusableClickableElements;
+    },
+    test: function(element) {
+        return element.tabindex == null;
+    }
+});

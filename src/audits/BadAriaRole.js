@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-AuditRules.badAriaRole = new AuditRule(
-    'badAriaRole',
-    Severity.Severe,
-    function() {
+AuditRules.addRule({
+    name: 'badAriaRole',
+    severity: Severity.Severe,
+    relevantNodesSelector: function() {
       return this.auditscope_.querySelectorAll("[role]");
     },
-    function(element) {
+    test: function(element) {
       return !ARIA_ROLES[element.getAttribute('role')];
-    });
+    }
+});

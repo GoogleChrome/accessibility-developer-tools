@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-AuditRules.videoWithoutFallbackContent =
-    new AuditRule('videoWithoutFallbackContent',
-                  Severity.Warning,
-                  function() {
-                    return this.auditscope_.querySelectorAll('video');
-                  },
-                  function(video) {
-                    if (AccessibilityUtils.isElementOrAncestorHidden(video))
-                      return false;
+AuditRules.addRule({
+    name: 'videoWithoutFallbackContent',
+    severity: Severity.Warning,
+    relevantNodesSelector: function() {
+        return this.auditscope_.querySelectorAll('video');
+    },
+    test: function(video) {
+        if (AccessibilityUtils.isElementOrAncestorHidden(video))
+            return false;
 
-                    return video.textContent.trim() == '';
-                  });
+        return video.textContent.trim() == '';
+    }
+});

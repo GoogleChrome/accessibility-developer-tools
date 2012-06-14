@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-AuditRules.videoWithoutCaptions =
-    new AuditRule('videoWithoutCaptions',
-                  Severity.Warning,
-                  function() {
-                    return this.auditscope_.querySelectorAll('video');
-                  },
-                  function(video) {
-                    var captions = video.querySelectorAll('track[kind=captions]');
-                    return !captions.length;
-                  });
+AuditRules.addRule({
+    name: 'videoWithoutCaptions',
+    severity: Severity.Warning,
+    relevantNodesSelector: function() {
+        return this.auditscope_.querySelectorAll('video');
+    },
+    test: function(video) {
+        var captions = video.querySelectorAll('track[kind=captions]');
+        return !captions.length;
+    }
+});
