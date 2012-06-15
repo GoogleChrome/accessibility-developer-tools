@@ -1,5 +1,5 @@
 AUDIT_RULES = $(shell find ./src/audits -name "*.js")
-JS_FILES = $(shell find ./src/js -name "*.js")
+JS_FILES = ./src/js/{_Constants.js,AccessibilityUtils.js,AuditRule.js,AuditRules.js,ContentScriptFramework.js,Properties.js}
 
 BIG_FAT_JS_FILE = ./extension/generated_accessibility.js
 TEST_DEPENDENCIES_FILE = ./test/generated_dependencies.js
