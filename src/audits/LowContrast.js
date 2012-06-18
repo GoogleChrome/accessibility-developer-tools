@@ -24,9 +24,9 @@ AuditRules.addRule({
           null);
     },
     test: function(element) {
-      var style = window.getComputedStyle(element);
-      var contrastRatio =
-          AccessibilityUtils.getContrastRatioForElementWithComputedStyle(style, element);
-      return (contrastRatio && AccessibilityUtils.isLowContrast(contrastRatio, style));
+        var style = window.getComputedStyle(element);
+        var contrastRatio =
+            AccessibilityUtils.getContrastRatioForElementWithComputedStyle(style, element);
+        return (contrastRatio && AccessibilityUtils.isLowContrast(contrastRatio, style));
     }
 });

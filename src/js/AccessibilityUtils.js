@@ -64,11 +64,10 @@ var AccessibilityUtils = {
 
         if (element_at_point != null && element_at_point != element &&
             !isAncestor(element, element_at_point)) {
-            console.log(element, 'is overlapped by', element_at_point);
             return element_at_point;
         }
 
-        return null
+        return null;
     },
 
     elementIsVisible: function(element)
@@ -79,8 +78,15 @@ var AccessibilityUtils = {
             return false;
         if (this.elementIsOutsideScrollArea(element))
             return false;
-        if (this.overlappingElement(element))
-            return false;
+        var overlappingElement = this.overlappingElement(element);
+        if (overlappingElement) {
+            var overlappingElementStyle = window.getComputedStyle(overlappingElement);
+            if (overlappingElementStyle) {
+                var overlappingElementBg = this.getBgColor(overlappingElementStyle, overlappingElement);
+                if (overlappingElementBg && overlappingElementBg.opacity > 0)
+                    return false;
+            }
+        }
 
         return true;
     },
@@ -123,6 +129,9 @@ var AccessibilityUtils = {
         var bgColor = this.parseColor(bgColorString);
         if (!bgColor)
             return false;
+
+        if (style.backgroundImage && style.backgroundImage != "none")
+            return false; // too hard
 
         if (bgColor.alpha < 1) {
             var parent = element;
@@ -250,7 +259,6 @@ var AccessibilityUtils = {
             return false;
 
         return this.calculateContrastRatio(fgColor, bgColor).toFixed(2);
-
     },
 
     isLowContrast: function(contrastRatio, style) {
