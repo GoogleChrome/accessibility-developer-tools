@@ -5,6 +5,9 @@ var AccessibilityUtils = {
         if (!fgColor || !bgColor)
             return false;
 
+        if (fgColor.alpha < 1)
+            fgColor = this.flattenColors(fgColor, bgColor);
+
         var fgLuminance = this.calculateLuminance(fgColor);
         var bgLuminance = this.calculateLuminance(bgColor);
         var contrastRatio = (Math.max(fgLuminance, bgLuminance) + 0.05) /

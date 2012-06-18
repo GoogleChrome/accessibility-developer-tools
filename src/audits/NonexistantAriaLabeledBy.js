@@ -20,7 +20,12 @@ AuditRules.addRule({
     },
     test: function(element) {
         var labelledBy = element.getAttribute('aria-labelledby');
-        var labelElement = document.getElementById(labelledBy);
-        return !labelElement;
+        var labelledByValues = labelledBy.split(/\s+/);
+        for (var i = 0; i < labelledByValues.length; i++) {
+            var labelElement = document.getElementById(labelledByValues[i]);
+            if (!labelElement)
+                return true;
+        }
+        return false;
     }
 });
