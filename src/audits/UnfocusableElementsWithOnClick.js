@@ -24,7 +24,9 @@ AuditRules.addRule({
         for (var i = 0; i < potentialOnclickElements.length; i++) {
             var element = potentialOnclickElements[i];
 
-            // TODO: check for element is visible/hidden
+            if (AccessibilityUtils.isElementOrAncestorHidden)
+                continue;
+
             var eventListeners = getEventListeners(element);
             if ('click' in eventListeners) {
                 unfocusableClickableElements.push(element);
@@ -33,6 +35,6 @@ AuditRules.addRule({
         return unfocusableClickableElements;
     },
     test: function(element) {
-        return element.tabindex == null;
+        return element.tabIndex == null;
     }
 });
