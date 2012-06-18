@@ -1,5 +1,11 @@
 var AccessibilityUtils = {
-    focusableElementsSelector: 'input:not([type=hidden]),select,textarea,button,a[href],iframe,[tabindex]',
+    focusableElementsSelector: 'input:not([type=hidden]):not([disabled]),' +
+                               'select:not([disabled]),' +
+                               'textarea:not([disabled]),' +
+                               'button:not([disabled]),' +
+                               'a[href],' +
+                               'iframe,' +
+                               '[tabindex]',
 
     calculateContrastRatio: function (fgColor, bgColor) {
         if (!fgColor || !bgColor)

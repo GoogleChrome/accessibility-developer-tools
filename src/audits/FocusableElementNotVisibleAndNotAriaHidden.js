@@ -18,29 +18,37 @@ AuditRules.addRule({
     relevantNodesSelector: function() {
         var focusableElements = this.auditscope_.querySelectorAll(AccessibilityUtils.focusableElementsSelector);
         if (!focusableElements.length)
-          return focusableElements;
+            return focusableElements;
 
         var nonvisibleFocusableElements = [];
         for (var i = 0; i < focusableElements.length; i++) {
-          var element = focusableElements[i];
-          if (AccessibilityUtils.isElementOrAncestorHidden(element))
-            continue;
-          var overlapping = AccessibilityUtils.overlappingElement(element);
-          if (overlapping) {
-            var style = window.getComputedStyle(overlapping);
-            var overlappingElementBg = AccessibilityUtils.getElementBgColor(style, overlapping);
-            if (overlappingElementBg && overlappingElementBg.alpha > 0) {
-              nonvisibleFocusableElements.push(element);
-              continue;
+            var element = focusableElements[i];
+            if (AccessibilityUtils.isElementOrAncestorHidden(element))
+                continue;
+            var overlapping = AccessibilityUtils.overlappingElement(element);
+            if (overlapping) {
+                var style = window.getComputedStyle(overlapping);
+                var overlappingElementBg = AccessibilityUtils.getElementBgColor(style, overlapping);
+                if (overlappingElementBg && overlappingElementBg.alpha > 0) {
+                    nonvisibleFocusableElements.push(element);
+                    continue;
+                }
             }
-          }
-          if (AccessibilityUtils.elementHasZeroArea(element))
-            nonvisibleFocusableElements.push(element);
+            if (AccessibilityUtils.elementHasZeroArea(element))
+                nonvisibleFocusableElements.push(element);
+            var style = window.getComputedStyle(element);
+            if (style.opacity == 0)
+                nonvisibleFocusableElements.push(element);
         }
         return nonvisibleFocusableElements;
     },
     test: function(element) {
-        return !element.hasAttribute('aria-hidden') ||
-               !element.getAttribute('aria-hidden');
+        var e = element;
+        while (e) {
+            if (element.getAttribute('aria-hidden').toLowerCase() == 'true')
+                return true;
+            e = e.parentElement;
+        }
+        return false;
     }
 });
