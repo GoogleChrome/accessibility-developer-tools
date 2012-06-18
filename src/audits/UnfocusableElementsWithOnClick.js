@@ -18,7 +18,7 @@ AuditRules.addRule({
     severity: Severity.Warning,
     opt_shouldRunInDevtools: true,
     relevantNodesSelector: function() {
-        var potentialOnclickElements = document.querySelectorAll('span, div, img');
+        var potentialOnclickElements = document.querySelectorAll('*');
 
         var unfocusableClickableElements = [];
         for (var i = 0; i < potentialOnclickElements.length; i++) {
