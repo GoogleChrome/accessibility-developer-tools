@@ -67,7 +67,7 @@ var auditMsgs = {
     },
 
     focusableElementNotVisibleAndNotAriaHidden: {
-        ruleName: 'Focusable elements which are hidden from view should use aria-hidden',
+        ruleName: 'These elements are focusable but either invisible or obscured by another element.',
         resultsDetails: 'The aria-hidden ARIA attribute hides elements from assistive technology ' +
             ' like screen readers.'
     },

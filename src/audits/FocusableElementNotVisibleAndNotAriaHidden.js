@@ -16,39 +16,22 @@ AuditRules.addRule({
     name: 'focusableElementNotVisibleAndNotAriaHidden',
     severity: Severity.Warning,
     relevantNodesSelector: function() {
-        var focusableElements = this.auditscope_.querySelectorAll(AccessibilityUtils.focusableElementsSelector);
-        if (!focusableElements.length)
-            return focusableElements;
-
-        var nonvisibleFocusableElements = [];
-        for (var i = 0; i < focusableElements.length; i++) {
-            var element = focusableElements[i];
-            if (AccessibilityUtils.isElementOrAncestorHidden(element))
-                continue;
-            var overlapping = AccessibilityUtils.overlappingElement(element);
-            if (overlapping) {
-                var style = window.getComputedStyle(overlapping);
-                var overlappingElementBg = AccessibilityUtils.getElementBgColor(style, overlapping);
-                if (overlappingElementBg && overlappingElementBg.alpha > 0) {
-                    nonvisibleFocusableElements.push(element);
-                    continue;
-                }
-            }
-            if (AccessibilityUtils.elementHasZeroArea(element))
-                nonvisibleFocusableElements.push(element);
-            var style = window.getComputedStyle(element);
-            if (style.opacity == 0)
-                nonvisibleFocusableElements.push(element);
-        }
-        return nonvisibleFocusableElements;
+        return this.auditscope_.querySelectorAll(AccessibilityUtils.focusableElementsSelector);
     },
     test: function(element) {
-        var e = element;
-        while (e) {
-            if (element.getAttribute('aria-hidden').toLowerCase() == 'true')
+        if (AccessibilityUtils.isElementOrAncestorHidden(element))
+            return false;
+        var overlapping = AccessibilityUtils.overlappingElement(element);
+        if (overlapping) {
+            var style = window.getComputedStyle(overlapping);
+            var overlappingElementBg = AccessibilityUtils.getElementBgColor(style, overlapping);
+            if (overlappingElementBg && overlappingElementBg.alpha > 0)
                 return true;
-            e = e.parentElement;
         }
-        return false;
+        if (AccessibilityUtils.elementHasZeroArea(element))
+            return true;
+        var style = window.getComputedStyle(element);
+        if (style.opacity == 0)
+            return true;
     }
 });

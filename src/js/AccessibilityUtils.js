@@ -346,8 +346,10 @@ var AccessibilityUtils = {
         if (style.display == 'none' || style.visibility == 'hidden')
             return true;
 
-        if (element.getAttribute('aria-hidden') == 'true')
+        if (element.hasAttribute('aria-hidden') &&
+            element.getAttribute('aria-hidden').toLowerCase() == 'true') {
             return true;
+        }
 
         return false;
     },
