@@ -63,3 +63,33 @@ test("Non-transparent elements are non-transparent.", function () {
     equal(AccessibilityUtils.elementIsTransparent(this.fixture_), false);
   }
 });
+
+module("Control labels", {
+  setup: function () {
+  }
+});
+test("Input type=submit has a label.", function() {
+  var element = document.createElement("input");
+  element.type = "submit";
+  equal(AccessibilityUtils.hasLabel(element), true);
+});
+test("A placeholder counts a label.", function() {
+  var element0 = document.createElement("textarea");
+  element0.placeholder = "Your life story";
+  equal(AccessibilityUtils.hasLabel(element0), true);
+
+  var element1 = document.createElement("input");
+  element1.placeholder = "First name";
+  equal(AccessibilityUtils.hasLabel(element1), true);
+
+  var element2 = document.createElement("input");
+  element2.type = "url";
+  element2.placeholder = "Homepage";
+  equal(AccessibilityUtils.hasLabel(element2), true);
+
+  // This one fails, a checkbox can't have a placeholder.
+  var element3 = document.createElement("input");
+  element3.type = "checkbox";
+  element3.placeholder = "Add me to your mailing list";
+  equal(AccessibilityUtils.hasLabel(element3), false);
+});

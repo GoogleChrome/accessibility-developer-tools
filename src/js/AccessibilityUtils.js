@@ -261,25 +261,60 @@ var AccessibilityUtils = {
         return this.calculateContrastRatio(fgColor, bgColor).toFixed(2);
     },
 
+    isNativeTextElement: function(element) {
+        var tagName = element.tagName.toLowerCase();
+        var type = element.type ? element.type.toLowerCase() : "";
+        if (tagName == "textarea")
+            return true;
+        if (tagName != "input")
+            return false;
+
+        switch (type) {
+            case "email":
+            case "number":
+            case "password":
+            case "search":
+            case "text":
+            case "tel":
+            case "url":
+            case "":
+                return true;
+            default:
+                return false;
+        }
+    },
+
     isLowContrast: function(contrastRatio, style) {
         return contrastRatio < 3.0 || (!this.isLargeFont(style) && contrastRatio < 4.5);
     },
 
     hasLabel: function(element) {
+        var tagName = element.tagName.toLowerCase();
+        var type = element.type ? element.type.toLowerCase() : "";
+
         if (element.hasAttribute("aria-label"))
-            return true;
-        if (element.hasAttribute("aria-labelledby"))
             return true;
         if (element.hasAttribute("title"))
             return true;
-        if (element.hasAttribute("alt"))
+        if (tagName == "img" && element.hasAttribute("alt"))
             return true;
-        if ((element.tagName.toLowerCase() == "input" || element.tagName.toLowerCase() == "button") &&
-            (element.type.toLowerCase() == "submit" || element.type.toLowerCase() == "reset"))
+        if (tagName == "input" && type == "image" && element.hasAttribute("alt"))
+            return true;
+        if (tagName == "input" && (type == "submit" || type == "reset"))
             return true;
 
+        // There's a separate audit that makes sure this points to an actual element or elements.
+        if (element.hasAttribute("aria-labelledby"))
+            return true;
+
+        if (this.isNativeTextElement(element) && element.hasAttribute("placeholder"))
+            return true;
+
+        // This could be slow! Possible faster solution would be to use querySelector
+        // to search for label[for="<id>"] and also check the ancestors of this element
+        // to see if any of them is a label element.
         var labels = document.querySelectorAll("label");
-        var foundLabel;
+        var foundLabel = false;
         for (var j = 0; j < labels.length; j++) {
             var label = labels[j];
             if (label.control == element) {
