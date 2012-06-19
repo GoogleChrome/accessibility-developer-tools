@@ -98,9 +98,15 @@ AuditRule.prototype.runInDevtools = function(resultsCallback) {
             node.dispatchEvent(event);
         }
     }
-    chrome.devtools.inspectedWindow.eval('(function() {  var relevantNodesSelector = ' + this.relevantNodesSelector_ + ';\n' +
-          sendRelevantNodesToContentScript + ';\n sendRelevantNodesToContentScript(relevantNodesSelector, "' +
-          uniqueEventName + '"); })()');
+    var stringToEval = '(function() { var AccessibilityUtils = {};\n' +
+        // TODO all of AccessibilityUtils? Have selected methods in AuditRule?
+        'AccessibilityUtils.isElementHidden = ' + AccessibilityUtils.isElementHidden + ';\n' +
+        'AccessibilityUtils.isElementOrAncestorHidden = ' + AccessibilityUtils.isElementOrAncestorHidden + ';\n' +
+        'AccessibilityUtils.isElementImplicitlyFocusable = ' + AccessibilityUtils.isElementImplicitlyFocusable + ';\n' +
+        'var relevantNodesSelector = ' + this.relevantNodesSelector_ + ';\n' +
+        sendRelevantNodesToContentScript + ';\n sendRelevantNodesToContentScript(relevantNodesSelector, "' +
+        uniqueEventName + '"); })()';
+    chrome.devtools.inspectedWindow.eval(stringToEval);
 
     function retrieveResults() {
         var result = AuditResult.NA;

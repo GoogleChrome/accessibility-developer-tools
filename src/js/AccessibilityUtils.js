@@ -360,14 +360,25 @@ var AccessibilityUtils = {
      *     hidden from accessibility.
      */
     isElementOrAncestorHidden: function(element) {
-        if (this.isElementHidden(element))
+        if (this.isElementHidden(element)) {
             return true;
+        }
 
         if (element.parentNode) {
             return this.isElementOrAncestorHidden(element.parentNode);
         } else {
             return false;
         }
+    },
+
+    isElementImplicitlyFocusable: function(element) {
+        if (element instanceof HTMLAnchorElement || element instanceof HTMLAreaElement)
+            return element.hasAttribute('href');
+        if (element instanceof HTMLInputElement || element instanceof HTMLSelectElement ||
+            element instanceof HTMLTextAreaElement || element instanceof HTMLButtonElement ||
+            element instanceof HTMLIFrameElement)
+            return !element.disabled;
+        return false;
     }
 };
 

@@ -23,18 +23,17 @@ AuditRules.addRule({
         var unfocusableClickableElements = [];
         for (var i = 0; i < potentialOnclickElements.length; i++) {
             var element = potentialOnclickElements[i];
-
-            if (AccessibilityUtils.isElementOrAncestorHidden)
+            if (AccessibilityUtils.isElementOrAncestorHidden(element))
                 continue;
-
+            if (AccessibilityUtils.isElementImplicitlyFocusable(element))
+                continue;
             var eventListeners = getEventListeners(element);
-            if ('click' in eventListeners) {
+            if ('click' in eventListeners)
                 unfocusableClickableElements.push(element);
-            }
         }
         return unfocusableClickableElements;
     },
     test: function(element) {
-        return element.tabIndex == null;
+        return !element.hasAttribute('tabindex');
     }
 });
