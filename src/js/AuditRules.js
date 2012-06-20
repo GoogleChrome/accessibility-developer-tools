@@ -12,10 +12,10 @@ var AuditRules = {
      *       test: function(node): boolean }
      */
     addRule: function(spec) {
-        if (spec.name in this.rules)
-            throw spec.name + ' audit rule already exists';
+        if (spec.code in this.rules)
+            throw spec.code + ' audit rule already exists';
 
         var auditRule = new AuditRule(spec);
-        this.rules[spec.name] = auditRule;
+        this.rules[spec.code] = auditRule;
     }
 };

@@ -1,3 +1,5 @@
+var requiredFields = [ 'name', 'severity', 'relevantNodesSelector', 'test', 'code', 'ruleName', 'resultsDetails' ];
+
 /**
  * @constructor
  * @param {Object} spec A spec of the form
@@ -9,17 +11,29 @@
  * }
  */
 function AuditRule(spec) {
-    if (!('name' in spec && 'severity' in spec && 'relevantNodesSelector' in spec && 'test' in spec)) {
-        console.log(spec, name in spec, severity in spec, relevantNodesSelector in spec, test in spec);
-        throw 'Invalid spec: name, severity, relevantNodesSelector and test must all be specified: ' +
-              JSON.stringify(spec);
+    var isValid = true;
+    var missingFields = [];
+    for (var i = 0; i < requiredFields.length; i++) {
+        var requiredField = requiredFields[i];
+        if (!(requiredField in spec)) {
+            isValid = false;
+            missingFields.push(requiredField);
+        }
     }
-
+    if (!isValid) {
+        throw 'Invalid spec; the following fields were not specified: ' + missingFields.join(', ') +
+              '\n' + JSON.stringify(spec);
+    }
     this.name = spec.name;
     this.severity = spec.severity;
     this.relevantNodesSelector_ = spec.relevantNodesSelector;
     this.test_ = spec.test;
     this.shouldRunInDevtools = !!spec.opt_shouldRunInDevtools;
+    this.code = spec.code;
+    this.ruleName = spec.ruleName;
+    this.resultsDetails = spec.resultsDetails;
+    if (spec.url)
+        this.url = spec.url;
 };
 
 
