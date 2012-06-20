@@ -18,11 +18,10 @@ function init(result) {
 
         for (auditRuleName in AuditRules.rules) {
             var auditRule = AuditRules.rules[auditRuleName];
-            var ruleSeverity = auditResults.Severity[auditRule.severity];
             // TODO batch up results
             if (!auditRule.disabled) {
                 console.log('running', auditRuleName);
-                var resultsCallback = handleResults.bind(null, auditResults, auditRuleName, ruleSeverity);
+                var resultsCallback = handleResults.bind(null, auditResults, auditRuleName, auditRule.severity);
                 if (auditRule.shouldRunInDevtools) {
                     auditRule.runInDevtools(resultsCallback);
                 } else {
@@ -161,10 +160,7 @@ function handleResults(auditResults, auditRule, severity, results, isException) 
                     auditResults.callbacksPending--;
                     resultCallbacksPending--;
                     if (!resultCallbacksPending) {
-                        auditResults.addResult(msgs.ruleName + ' (' + results.elements.length + ')',
-                                               msgs.resultsDetails,
-                                               severity,
-                                               auditResults.createResult(resultNodes));
+                        addResult(auditResults, severity, msgs.ruleName, results.elements.length, msgs.resultsDetails, resultNodes);
                     }
 
                     if (auditResults.resultsPending == 0 && !auditResults.callbacksPending)
@@ -178,17 +174,20 @@ function handleResults(auditResults, auditRule, severity, results, isException) 
                     addChild.bind(null, auditResults));
             }
         }
-        if (!resultCallbacksPending) {
-            auditResults.addResult(msgs.ruleName + ' (' + results.elements.length + ')',
-                                   msgs.resultsDetails,
-                                   severity,
-                                   auditResults.createResult(resultNodes));
-        }
+        if (!resultCallbacksPending)
+            addResult(auditResults, severity, msgs.ruleName, results.elements.length, msgs.resultsDetails, resultNodes);
     }
     if (auditResults.resultsPending == 0 && !auditResults.callbacksPending && !resultCallbacksPending)
         finalizeAuditResults(auditResults);
 }
 
+function addResult(auditResults, severity, ruleName, numResults, resultsDetails, resultNodes) {
+    var resultString = '[' + severity + '] ' + ruleName + ' (' + numResults + ')';
+    auditResults.addResult(resultString,
+                           resultsDetails,
+                           auditResults.Severity[severity],
+                           auditResults.createResult(resultNodes));
+}
 
 function finalizeAuditResultsIfNothingPending(auditResults) {
     if (auditResults.resultsPending == 0 &&
