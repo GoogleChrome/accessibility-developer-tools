@@ -79,15 +79,16 @@ var auditMsgs = {
     },
 
     lowContrastElements: {
-        ruleName: 'Text elements should have a minimum contrast ratio of at least 4.5:1, or 3:1 for large fonts',
+        ruleName: 'Text elements should have a reasonable contrast ratio',
         resultsDetails: 'Text with a low contrast ratio between text and background may be ' +
-            'unreadable to users with low vision, or on some devices. '
+            'unreadable to users with low vision, or on some devices. Text elements should ' +
+            'have a minimum contrast ratio of at least 4.5:1, or 3:1 for large fonts.'
 /*            '<a href="http://www.w3.org/TR/WCAG20-TECHS/G18.html">WCAG Technique G18</a> gives ' +
             'more information.', */
     },
 
     nonExistentAriaLabelledbyElement: {
-        ruleName: 'aria-labelledby attributes should refer to an element which exists in the DOM',
+        ruleName: 'aria-labelledby attributes should refer to an existing element',
         resultsDetails: 'When the element that uses the aria-labelledby attribute is accessed by assistive technology ' +
             ' the element id used as the value must exist in the DOM.'
     },
