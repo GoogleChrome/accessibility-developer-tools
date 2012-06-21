@@ -25,8 +25,6 @@ AuditRules.addRule({
             var element = potentialOnclickElements[i];
             if (AccessibilityUtils.isElementOrAncestorHidden(element))
                 continue;
-            if (AccessibilityUtils.isElementImplicitlyFocusable(element))
-                continue;
             var eventListeners = getEventListeners(element);
             if ('click' in eventListeners)
                 unfocusableClickableElements.push(element);
@@ -34,7 +32,8 @@ AuditRules.addRule({
         return unfocusableClickableElements;
     },
     test: function(element) {
-        return !element.hasAttribute('tabindex');
+        return !element.hasAttribute('tabindex') &&
+               !AccessibilityUtils.isElementImplicitlyFocusable(element);
     },
     code: 'AX_CLICK_02',
     ruleName: 'Elements with onclick handlers must be focusable',
