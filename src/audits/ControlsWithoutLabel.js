@@ -28,7 +28,6 @@ AuditRules.addRule({
 
         if (control.tagName.toLowerCase() == 'button') {
             var innerText = control.innerText.replace(/^\s+|\s+$/g, '');
-            console.log('innerText: ' + JSON.stringify(innerText));
             if (innerText.length)
                 return false;
         }
