@@ -1,5 +1,7 @@
+PREAMBLE = ./src/js/Preamble.fragment
 AUDIT_RULES = $(shell find ./src/audits -name "*.js")
 JS_FILES = ./src/js/{_Constants.js,AccessibilityUtils.js,AuditRule.js,AuditRules.js,ContentScriptFramework.js,Properties.js}
+POSTSCRIPT = ./src/js/Postscript.fragment
 
 BIG_FAT_JS_FILE = ./extension/generated_accessibility.js
 TEST_DEPENDENCIES_FILE = ./test/generated_dependencies.js
@@ -9,8 +11,10 @@ TEST_DEPENDENCIES_FILE = ./test/generated_dependencies.js
 js: clean
 	@echo "\nStand back! I'm rebuilding!\n---------------------------"
 	@/bin/echo -n "* Rebuilding '$(BIG_FAT_JS_FILE)': "
-	@cat $(JS_FILES) > $(BIG_FAT_JS_FILE) && \
+	@cat $(PREAMBLE) > $(BIG_FAT_JS_FILE) && \
+	  cat $(JS_FILES) >> $(BIG_FAT_JS_FILE) && \
 	  cat $(AUDIT_RULES) >> $(BIG_FAT_JS_FILE) && \
+	  cat $(POSTSCRIPT) >> $(BIG_FAT_JS_FILE) && \
     echo "SUCCESS"
 	@/bin/echo -n "* Rebuilding test dependencies: "
 	@echo "var _dependencies = [" > $(TEST_DEPENDENCIES_FILE) && \

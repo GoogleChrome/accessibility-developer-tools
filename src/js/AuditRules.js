@@ -1,4 +1,4 @@
-var AuditRules = {
+AuditRules = {
     /** @type Object.<string, AuditRule> */
     rules: {},
 

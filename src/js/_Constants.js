@@ -1,4 +1,4 @@
-var ARIA_ROLES = {
+ARIA_ROLES = {
     'alert': true,
     'alertdialog': true,
     'application': true,
@@ -61,7 +61,7 @@ var ARIA_ROLES = {
     'treeitem': true
 };
 
-var ARIA_PROPERTIES = {
+ARIA_PROPERTIES = {
     'aria-activedescendant': true,
     'aria-atomic': true,
     'aria-autocomplete': true,
@@ -99,13 +99,13 @@ var ARIA_PROPERTIES = {
     'aria-valuetext': true,
 };
 
-var Severity =  {
+Severity =  {
     Info: 'Info',
     Warning: 'Warning',
     Severe: 'Severe'
 };
 
-var AuditResult = {
+AuditResult = {
     PASS: "PASS",
     FAIL: "FAIL",
     NA: "NA"

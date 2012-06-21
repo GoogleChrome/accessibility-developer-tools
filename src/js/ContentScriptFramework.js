@@ -1,5 +1,5 @@
-var auditResultElements = {};
-var lastElementId = 0;
+auditResultElements = {};
+lastElementId = 0;
 function convertElementToResult(element) {
     var elementId = '' + lastElementId++;
     auditResultElements[elementId] = element;

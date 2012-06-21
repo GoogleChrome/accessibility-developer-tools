@@ -1,4 +1,4 @@
-var AccessibilityUtils = {
+AccessibilityUtils = {
     focusableElementsSelector: 'input:not([type=hidden]):not([disabled]),' +
                                'select:not([disabled]),' +
                                'textarea:not([disabled]),' +

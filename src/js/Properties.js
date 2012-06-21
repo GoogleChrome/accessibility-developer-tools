@@ -1,4 +1,4 @@
-var Properties = {
+Properties = {
     textContentXPath: 'text()[normalize-space(.)!=""]/parent::*[name()!="script"]',
 
     getColorProperties: function(element) {

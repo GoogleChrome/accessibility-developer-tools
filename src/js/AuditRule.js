@@ -1,4 +1,4 @@
-var requiredFields = [ 'name', 'severity', 'relevantNodesSelector', 'test', 'code', 'ruleName', 'resultsDetails' ];
+AuditRule.requiredFields = [ 'name', 'severity', 'relevantNodesSelector', 'test', 'code', 'ruleName', 'resultsDetails' ];
 
 /**
  * @constructor
@@ -13,8 +13,8 @@ var requiredFields = [ 'name', 'severity', 'relevantNodesSelector', 'test', 'cod
 function AuditRule(spec) {
     var isValid = true;
     var missingFields = [];
-    for (var i = 0; i < requiredFields.length; i++) {
-        var requiredField = requiredFields[i];
+    for (var i = 0; i < AuditRule.requiredFields.length; i++) {
+        var requiredField = AuditRule.requiredFields[i];
         if (!(requiredField in spec)) {
             isValid = false;
             missingFields.push(requiredField);
