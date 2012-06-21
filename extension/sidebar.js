@@ -214,7 +214,7 @@ function updateView(result) {
 
 function updateHeight() {
     var styleHeightPx = window.getComputedStyle(document.body).height;
-    var matches = styleHeightPx.match(/(\d+)px/);
+    var matches = styleHeightPx.match(/((\d+)(\.\d+)?)px/);
     var styleHeight = parseInt(matches[1]);
     var calculatedScrollHeight = styleHeight + 5; // not sure why 5 but it works
 
