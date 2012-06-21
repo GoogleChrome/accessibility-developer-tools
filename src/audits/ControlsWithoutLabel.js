@@ -37,5 +37,9 @@ AuditRules.addRule({
             return true;
 
         return false;
-    }
+    },
+    code: 'AX_TEXT_01',
+    ruleName: 'Controls should have labels',
+    resultsDetails: 'Unlabelled controls may not be useable for users of assistive technology.',
+    url: 'https://code.google.com/a/google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_TEXT_01:_Controls_should_have_labels'
 });

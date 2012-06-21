@@ -16,17 +16,17 @@ function init(result) {
         auditResults.passedRules = [];
         auditResults.notApplicableRules = [];
 
-        for (auditRuleName in AuditRules.rules) {
-            var auditRule = AuditRules.rules[auditRuleName];
+        for (auditRuleCode in AuditRules.rules) {
+            var auditRule = AuditRules.rules[auditRuleCode];
             // TODO batch up results
             if (!auditRule.disabled) {
-                console.log('running', auditRuleName);
-                var resultsCallback = handleResults.bind(null, auditResults, auditRuleName, auditRule.severity);
+                console.log('running', auditRule.name);
+                var resultsCallback = handleResults.bind(null, auditResults, auditRule, auditRule.severity);
                 if (auditRule.shouldRunInDevtools) {
                     auditRule.runInDevtools(resultsCallback);
                 } else {
                     chrome.devtools.inspectedWindow.eval(
-                        'AuditRules.rules["' + auditRuleName + '"].run()',
+                        'AuditRules.rules["' + auditRuleCode + '"].run()',
                         { useContentScriptContext: true },
                         resultsCallback);
                 }
@@ -50,105 +50,30 @@ if (chrome.devtools.inspectedWindow.tabId)
     chrome.extension.sendRequest({ tabId: chrome.devtools.inspectedWindow.tabId,
                                    command: 'injectContentScript' }, init);
 
-// TODO: use closure and goog.getMsg?
-var auditMsgs = {
-    badAriaRole: {
-        ruleName: 'Elements with ARIA roles must use a valid, non-abstract ARIA role',
-        resultsDetails: 'Only valid ARIA roles will be interpreted by assistive technology like ' +
-            ' screen readers. '
-    },
-
-    controlsWithoutLabel: {
-        ruleName: 'Controls should have labels',
-        resultsDetails: 'Unlabelled controls may not be useable for users of assistive technology. ',
-/*            '<a href="http://www.w3.org/TR/WCAG20-TECHS/H44.html">WCAG Technique H44</a> gives ' +
-            'more information.', */
-    },
-
-    focusableElementNotVisibleAndNotAriaHidden: {
-        ruleName: 'These elements are focusable but either invisible or obscured by another element.',
-        resultsDetails: 'The aria-hidden ARIA attribute hides elements from assistive technology ' +
-            ' like screen readers.'
-    },
-
-    imagesWithoutAltText: {
-        ruleName: 'Images should have an alt attribute',
-        resultsDetails: 'Images should have an alt attribute, unless they have an ARIA role of "presentation". '
-/*            '<a href="http://www.w3.org./TR/WCAG20-TECHS/H37.html">WCAG technique H37</a> ' +
-            'gives more information.',  // FIXME */
-    },
-
-    lowContrastElements: {
-        ruleName: 'Text elements should have a reasonable contrast ratio',
-        resultsDetails: 'Text with a low contrast ratio between text and background may be ' +
-            'unreadable to users with low vision, or on some devices. Text elements should ' +
-            'have a minimum contrast ratio of at least 4.5:1, or 3:1 for large fonts.'
-/*            '<a href="http://www.w3.org/TR/WCAG20-TECHS/G18.html">WCAG Technique G18</a> gives ' +
-            'more information.', */
-    },
-
-    nonExistentAriaLabelledbyElement: {
-        ruleName: 'aria-labelledby attributes should refer to an existing element',
-        resultsDetails: 'When the element that uses the aria-labelledby attribute is accessed by assistive technology ' +
-            ' the element id used as the value must exist in the DOM.'
-    },
-
-    unfocusableElementsWithOnClick: {
-        ruleName: 'Elements with onclick handlers must be focusable',
-        resultsDetails: 'Interactive elements that are not keyboard focusable are inaccessible ' +
-            ' to users who cannot use a mouse. Enable keyboard focus by setting the tabindex ' +
-            ' attribute.'
-    },
-
-    videoWithoutCaptions: {
-        ruleName: 'Video elements should use <track> elements to provide captions',
-        resultsDetails: 'TODO'
-    },
-
-    videoWithoutLabels: {
-        ruleName: 'Video elements should be labeled',
-        resultsDetails: 'TODO'
-    },
-
-    videoWithoutFallbackContent: {
-        ruleName: 'Video elements should use fallback content',
-        resultsDetails: 'TODO'
-    },
-
-    generic: {
-        ruleName: '',
-        resultsDetails: ''
-    }
-};
-
 function handleResults(auditResults, auditRule, severity, results, isException) {
     auditResults.resultsPending--;
     if (isException) {
-        console.warn(auditRule, 'had an error: ', results);
+        console.warn(auditRule.name, 'had an error: ', results);
         finalizeAuditResultsIfNothingPending(auditResults);
         return;
     } else if (!results) {
-        console.warn(auditRule, 'had no results')
+        console.warn(auditRule.name, 'had no results')
         finalizeAuditResultsIfNothingPending(auditResults);
         return;
     }
     if (results.error) {
-        console.warn(auditRule, 'had an error:', results.error);
+        console.warn(auditRule.name, 'had an error:', results.error);
         finalizeAuditResultsIfNothingPending(auditResults);
         return;
     }
     auditResults.successfulResults++;
     var resultCallbacksPending = 0;
-    var msgs = auditMsgs[auditRule];
-    if (!msgs)
-        msgs = auditMsgs['generic'];
     if (results.result == AuditResult.PASS) {
         auditResults.passedRules.push(auditRule);
     } else if (results.result == AuditResult.NA ) {
         auditResults.notApplicableRules.push(auditRule);
     } else {
         var resultNodes = [];
-
         for (var i = 0; i < results.elements.length; ++i) {
             var result = results.elements[i];
             if (auditResults.createNode) {
@@ -161,7 +86,7 @@ function handleResults(auditResults, auditRule, severity, results, isException) 
                     auditResults.callbacksPending--;
                     resultCallbacksPending--;
                     if (!resultCallbacksPending) {
-                        addResult(auditResults, severity, msgs.ruleName, results.elements.length, msgs.resultsDetails, resultNodes);
+                        addResult(auditResults, auditRule, results.elements.length, resultNodes);
                     }
 
                     if (auditResults.resultsPending == 0 && !auditResults.callbacksPending)
@@ -176,17 +101,25 @@ function handleResults(auditResults, auditRule, severity, results, isException) 
             }
         }
         if (!resultCallbacksPending)
-            addResult(auditResults, severity, msgs.ruleName, results.elements.length, msgs.resultsDetails, resultNodes);
+            addResult(auditResults, auditRule, results.elements.length, resultNodes);
     }
     if (auditResults.resultsPending == 0 && !auditResults.callbacksPending && !resultCallbacksPending)
         finalizeAuditResults(auditResults);
 }
 
-function addResult(auditResults, severity, ruleName, numResults, resultsDetails, resultNodes) {
-    var resultString = '[' + severity + '] ' + ruleName + ' (' + numResults + ')';
+function addResult(auditResults, auditRule, numResults, resultNodes) {
+    var resultString = '[' + auditRule.severity + '] ' + auditRule.ruleName + ' (' + numResults + ')';
+    if (auditRule.url) {
+        var textNode1 = 'See ';
+        var urlNode = auditResults.createURL(auditRule.url, auditRule.code);
+        var textNode2 = ' for more information.';
+        resultNodes.unshift(textNode2);
+        resultNodes.unshift(urlNode);
+        resultNodes.unshift(textNode1);
+    }
     auditResults.addResult(resultString,
-                           resultsDetails,
-                           auditResults.Severity[severity],
+                           '',
+                           auditResults.Severity[auditRule.severity],
                            auditResults.createResult(resultNodes));
 }
 
@@ -202,8 +135,7 @@ function finalizeAuditResults(auditResults) {
         var passedDetails = auditResults.createResult('The following tests passed:');
         for (var i = 0; i < auditResults.passedRules.length; i++) {
             var auditRule = auditResults.passedRules[i];
-            var msgs = auditMsgs[auditRule];
-            passedDetails.addChild(msgs.ruleName);
+            passedDetails.addChild(auditRule.ruleName);
         }
         auditResults.addResult('Passing tests (' + auditResults.passedRules.length + ')',
                                '',
@@ -214,8 +146,7 @@ function finalizeAuditResults(auditResults) {
         var notApplicableDetails = auditResults.createResult('The following tests were not applicable:');
         for (var i = 0; i < auditResults.notApplicableRules.length; i++) {
             var auditRule = auditResults.notApplicableRules[i];
-            var msgs = auditMsgs[auditRule];
-            notApplicableDetails.addChild(msgs.ruleName);
+            notApplicableDetails.addChild(auditRule.ruleName);
         }
         auditResults.addResult('Not applicable tests (' + auditResults.notApplicableRules.length + ')',
                                '',

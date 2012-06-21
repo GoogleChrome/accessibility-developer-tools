@@ -20,5 +20,9 @@ AuditRules.addRule({
     },
     test: function(video) {
         return !AccessibilityUtils.hasLabel(video);
-    }
+    },
+    code: 'AX_VIDEO_03',
+    ruleName: 'Video elements should be labeled',
+    resultsDetails: 'TODO',
+    url: 'https://code.google.com/a/google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_VIDEO_03:_Video_elements_should_be_labeled'
 });

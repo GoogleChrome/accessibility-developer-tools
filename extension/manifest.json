@@ -1,6 +1,6 @@
 {
   "name": "Accessibility Developer Tools",
-  "version": "0.6.6",
+  "version": "0.6.8",
   "description": "Accessibility audit and element properties.",
   "icons": {
       "128": "images/icon128.png"
