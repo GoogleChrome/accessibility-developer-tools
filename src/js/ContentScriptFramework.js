@@ -1,12 +1,12 @@
 auditResultElements = {};
 lastElementId = 0;
-function convertElementToResult(element) {
+convertElementToResult = function(element) {
     var elementId = '' + lastElementId++;
     auditResultElements[elementId] = element;
     return elementId;
 }
 
-function getResultElement(elementId) {
+getResultElement = function(elementId) {
     var resultElement = auditResultElements[elementId];
     delete auditResultElements[elementId];
     return resultElement;
