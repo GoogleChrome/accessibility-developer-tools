@@ -19,7 +19,8 @@ AuditRules.addRule({
         var controlsSelector = ['input:not([type="hidden"]):not([disabled])',
                                 'select:not([disabled])',
                                 'textarea:not([disabled])',
-                                'button:not([disabled])'].join(', ');
+                                'button:not([disabled])',
+                                'video:not([disabled])'].join(', ');
         return this.auditscope_.querySelectorAll(controlsSelector);
     },
     test: function(control) {
@@ -38,7 +39,6 @@ AuditRules.addRule({
         return false;
     },
     code: 'AX_TEXT_01',
-    ruleName: 'Controls should have labels',
-    resultsDetails: 'Unlabelled controls may not be useable for users of assistive technology.',
+    ruleName: 'Controls and media elements should have labels',
     url: 'https://code.google.com/a/google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_TEXT_01:_Controls_should_have_labels'
 });

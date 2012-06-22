@@ -1,4 +1,4 @@
-AuditRule.requiredFields = [ 'name', 'severity', 'relevantNodesSelector', 'test', 'code', 'ruleName', 'resultsDetails' ];
+AuditRule.requiredFields = [ 'name', 'severity', 'relevantNodesSelector', 'test', 'code', 'ruleName'];
 
 /**
  * @constructor
