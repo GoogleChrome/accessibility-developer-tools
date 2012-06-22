@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Test Accessibility Extension</title>
+<!-- QUnit framework bits -->
+    <link rel="stylesheet" href="qunit.css">
+    <script src="qunit.js"></script>
+    <script src="generated_dependencies.js"></script>
+    <script>
+      for (var i=0; i < _dependencies.length; i++) {
+        var script = document.createElement('script');
+        script.src = _dependencies[i];
+        document.head.appendChild(script);
+      }
+    </script>
+
+<!-- Tests -->
+    <script src="./js/utils.js"></script>
+    <script src="./audits/badAriaRole.js"></script>
+    <script src="./audits/controlsWithoutLabel.js"></script>
+    <script src="./audits/focusableElementNotVisible.js"></script>
+    <script src="./audits/nonExistentAriaLabelledby.js"></script>
+  </head>
+  <body>
+    <h1 id="qunit-header">Test Accessibility Extension</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+    <div id="qunit-fixture">
+      <div id="fixture"></div>
+    </div>
+  </body>
+</html>

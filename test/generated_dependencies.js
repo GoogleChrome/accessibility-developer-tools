@@ -1,0 +1,17 @@
+var _dependencies = [
+  '../src/js/_Constants.js',
+  '../src/js/AccessibilityUtils.js',
+  '../src/js/AuditRule.js',
+  '../src/js/AuditRules.js',
+  '../src/js/ContentScriptFramework.js',
+  '../src/js/Properties.js',
+  '../src/audits/BadAriaRole.js',
+  '../src/audits/ControlsWithoutLabel.js',
+  '../src/audits/FocusableElementNotVisibleAndNotAriaHidden.js',
+  '../src/audits/ImageWithoutAltText.js',
+  '../src/audits/LowContrast.js',
+  '../src/audits/NonexistantAriaLabeledBy.js',
+  '../src/audits/UnfocusableElementsWithOnClick.js',
+  '../src/audits/VideoWithoutCaptions.js',
+  '../src/audits/VideoWithoutFallbackContent.js',
+];
