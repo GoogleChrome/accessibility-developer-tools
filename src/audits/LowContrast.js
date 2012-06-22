@@ -34,5 +34,5 @@ AuditRules.addRule({
     resultsDetails: 'Text with a low contrast ratio between text and background may be ' +
         'unreadable to users with low vision, or on some devices. Text elements should ' +
         'have a minimum contrast ratio of at least 4.5:1, or 3:1 for large fonts',
-    url: 'https://code.google.com/a/google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_COLOR_01:_Text_elements_should_have_a_reasonable_contrast_rat'
+    url: 'https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_COLOR_01:_Text_elements_should_have_a_reasonable_contrast_rat'
 });

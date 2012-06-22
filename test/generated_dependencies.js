@@ -10,7 +10,7 @@ var _dependencies = [
   '../src/audits/FocusableElementNotVisibleAndNotAriaHidden.js',
   '../src/audits/ImageWithoutAltText.js',
   '../src/audits/LowContrast.js',
-  '../src/audits/NonexistantAriaLabeledBy.js',
+  '../src/audits/NonExistentAriaLabeledBy.js',
   '../src/audits/UnfocusableElementsWithOnClick.js',
   '../src/audits/VideoWithoutCaptions.js',
   '../src/audits/VideoWithoutFallbackContent.js',

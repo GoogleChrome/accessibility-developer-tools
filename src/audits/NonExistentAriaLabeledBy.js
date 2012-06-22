@@ -32,5 +32,5 @@ AuditRules.addRule({
     ruleName: 'aria-labelledby attributes should refer to an element which exists in the DOM',
     resultsDetails: 'When the element that uses the aria-labelledby attribute is accessed by assistive technology ' +
         ' the element id used as the value must exist in the DOM.',
-    url: 'https://code.google.com/a/google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_ARIA_02:__aria-labelledby_attributes_should_refer_to_an_eleme'
+    url: 'https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_ARIA_02:__aria-labelledby_attributes_should_refer_to_an_eleme'
 });
