@@ -72,7 +72,7 @@ AccessibilityUtils = {
         }
 
         if (element_at_point != null && element_at_point != element &&
-            !isAncestor(element, element_at_point)) {
+            !isAncestor(element_at_point, element)) {
             return element_at_point;
         }
 

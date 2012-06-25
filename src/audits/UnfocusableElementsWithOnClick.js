@@ -23,6 +23,8 @@ AuditRules.addRule({
         var unfocusableClickableElements = [];
         for (var i = 0; i < potentialOnclickElements.length; i++) {
             var element = potentialOnclickElements[i];
+            if (element instanceof HTMLBodyElement)
+                continue;
             if (AccessibilityUtils.isElementOrAncestorHidden(element))
                 continue;
             var eventListeners = getEventListeners(element);
