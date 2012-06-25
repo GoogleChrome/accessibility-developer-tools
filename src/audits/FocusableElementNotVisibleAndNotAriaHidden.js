@@ -24,7 +24,7 @@ AuditRules.addRule({
         var overlapping = AccessibilityUtils.overlappingElement(element);
         if (overlapping) {
             var style = window.getComputedStyle(overlapping);
-            var overlappingElementBg = AccessibilityUtils.getElementBgColor(style, overlapping);
+            var overlappingElementBg = AccessibilityUtils.getBgColor(style, overlapping);
             if (overlappingElementBg && overlappingElementBg.alpha > 0)
                 return true;
         }
@@ -33,6 +33,7 @@ AuditRules.addRule({
         var style = window.getComputedStyle(element);
         if (style.opacity == 0)
             return true;
+        return false;
     },
     code: 'AX_CLICK_01',
     ruleName: 'These elements are focusable but either invisible or obscured by another element.',

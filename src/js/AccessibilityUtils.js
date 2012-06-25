@@ -347,7 +347,7 @@ AccessibilityUtils = {
             return true;
 
         if (element.hasAttribute('aria-hidden') &&
-            element.getAttribute('aria-hidden').toLowerCase() == 'true') {
+            element.getAttribute('aria-hidden').toLowerCase() != 'false') {
             return true;
         }
 
