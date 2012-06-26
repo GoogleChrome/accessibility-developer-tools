@@ -1,0 +1,104 @@
+{
+    "extName": {
+        "message": "Accessibility Developer Tools",
+        "description": "Extension name"
+    },
+    "auditTitle": {
+        "message": "Accessibility",
+        "description": "Audit title."
+    },
+    "sidebarTitle": {
+        "message": "Accessibility Properties",
+        "description": "Title for sidebar pane."
+    },
+    "passingTestsTitle": {
+        "message": "The following tests passed:",
+        "description": "Title for passing tests category"
+    },
+    "passingTestsSubtitle": {
+        "message": "Passing tests ($NUM_PASSING$)",
+        "description": "Subtitle for passing tests with number of passed tests",
+        "placeholders": {
+            "num_passing": {
+                "content": "$1"
+            }
+        }
+    },
+    "notApplicableTestsTitle": {
+        "message": "The following tests were not applicable:",
+        "description": "Title for N/A tests category"
+    },
+    "notApplicableTestsSubtitle": {
+        "message": "Not applicable tests ($NUM_NA$)",
+        "description": "Title for N/A tests category",
+        "placeholders": {
+            "num_na": {
+                "content": "$1"
+            }
+        }
+    },
+    "badAriaRole_name": {
+        "message": "Elements with ARIA roles must use a valid, non-abstract ARIA role"
+    },
+    "badAriaRole_url": {
+        "message": "https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_ARIA_01:_Elements_with_ARIA_roles_must_use_a_valid,_non-abstr"
+    },
+    "controlsWithoutLabel_name": {
+        "message": "Controls and media elements should have labels"
+    },
+    "controlsWithoutLabel_url": {
+        "message": "https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_TEXT_01:_Controls_and_media_elements_should_have_labels"
+    },
+    "focusableElementNotVisibleAndNotAriaHidden_name": {
+        "message": "These elements are focusable but either invisible or obscured by another element"
+    },
+    "focusableElementNotVisibleAndNotAriaHidden_url": {
+        "message": "https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_FOCUS_01:_These_elements_are_focusable_but_either_invisible_o"
+    },
+    "imagesWithoutAltText_name": {
+        "message": "Images should have an alt attribute"
+    },
+    "imagesWithoutAltText_url": {
+        "message": "https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_TEXT_02:_Images_should_have_an_alt_attribute,_unless_they_hav"
+    },
+    "lowContrastElements_name": {
+        "message": "Text elements should have a reasonable contrast ratio"
+    },
+    "lowContrastElements_url": {
+        "message": "https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_COLOR_01:_Text_elements_should_have_a_reasonable_contrast_rat"
+    },
+    "nonExistentAriaLabelledbyElement_name": {
+        "message": "aria-labelledby attributes should refer to an element which exists in the DOM"
+    },
+    "nonExistentAriaLabelledbyElement_url": {
+        "message": "https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_ARIA_02:__aria-labelledby_attributes_should_refer_to_an_eleme"
+    },
+    "unfocusableElementsWithOnClick_name": {
+        "message": "Elements with onclick handlers must be focusable"
+    },
+    "unfocusableElementsWithOnClick_url": {
+        "message": "https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_FOCUS_02:_Elements_with_onclick_handlers_must_be_focusable"
+    },
+    "videoWithoutCaptions_name": {
+        "message": "Video elements should use <track> elements to provide captions"
+    },
+    "videoWithoutCaptions_url": {
+        "message": "https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_VIDEO_01:_Video_elements_should_use_<track>_elements_to"
+    },
+    "auditResult_Severe": {
+        "message": "Severe",
+        "description": "Keyword for audit rule severity level Severe (options are Severe, Warning and Info)"
+    },
+    "auditResult_Warning": {
+        "message": "Warning",
+        "description": "Keyword for audit rule severity level Warning (options are Severe, Warning and Info)"
+    },
+    "auditUrl_before": {
+        "message": "See ",
+        "description": "Text to insert before the audit result more information URL. Should be short, may be empty. Full English example: 'See [AX_TEXT_01] for more information.' In this case, 'See ' is the 'audit_url_before' value, and ' for more information' is the audit_url_after' value. Note that placeholders can't be used in this case as the three parts are different nodes. For RTL languages, 'before' and 'after' should be reversed."
+    },
+    "auditUrl_after": {
+        "message": " for more information.",
+        "description": "Text to insert after the audit result more information URL. Full English example: 'See [AX_TEXT_01] for more information.' In this case, 'See ' is the 'audit_url_before' value, and ' for more information' is the audit_url_after' value. Note that placeholders can't be used in this case as the three parts are different nodes. For RTL languages, 'before' and 'after' should be reversed."
+    }
+}

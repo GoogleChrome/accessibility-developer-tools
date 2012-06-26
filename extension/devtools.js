@@ -112,9 +112,9 @@ function addResult(auditResults, auditRule, numResults, resultNodes) {
     var severity = chrome.i18n.getMessage('auditResult_' + auditRule.severity);
     var ruleName = chrome.i18n.getMessage(auditRule.name + '_name');
     var resultString = '[' + severity + '] ' + ruleName + ' (' + numResults + ')';
-    if (auditRule.url) {
+    var url = chrome.i18n.getMessage(auditRule.name + '_url');
+    if (url) {
         var textNode1 = chrome.i18n.getMessage('auditUrl_before');
-        var url = chrome.i18n.getMessage(auditRule.name + '_url');
         var urlNode = auditResults.createURL(url, auditRule.code);
         var textNode2 = chrome.i18n.getMessage('auditUrl_after');
         resultNodes.unshift(textNode2);
