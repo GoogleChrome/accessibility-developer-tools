@@ -27,5 +27,9 @@ AuditRules.addRule({
     code: 'AX_VIDEO_02',
     ruleName: 'Video elements should use fallback content',
     resultsDetails: 'TODO',
+<<<<<<< HEAD
     url: 'https://code.google.com/a/google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_VIDEO_02:_Video_elements_should_use_fallback_content'
+=======
+    url: 'https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_VIDEO_02:_Video_elements_should_use_fallback_content'
+>>>>>>> 9181204df262497cc19114c9ac6d4978f172f567
 });

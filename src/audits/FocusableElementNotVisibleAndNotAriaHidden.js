@@ -24,7 +24,7 @@ AuditRules.addRule({
         var overlapping = AccessibilityUtils.overlappingElement(element);
         if (overlapping) {
             var style = window.getComputedStyle(overlapping);
-            var overlappingElementBg = AccessibilityUtils.getElementBgColor(style, overlapping);
+            var overlappingElementBg = AccessibilityUtils.getBgColor(style, overlapping);
             if (overlappingElementBg && overlappingElementBg.alpha > 0)
                 return true;
         }
@@ -33,10 +33,11 @@ AuditRules.addRule({
         var style = window.getComputedStyle(element);
         if (style.opacity == 0)
             return true;
+        return false;
     },
     code: 'AX_CLICK_01',
     ruleName: 'These elements are focusable but either invisible or obscured by another element.',
     resultsDetails: 'The aria-hidden ARIA attribute hides elements from assistive technology ' +
         'like screen readers.',
-    url: 'https://code.google.com/a/google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_FOCUS_01:_These_elements_are_focusable_but_either_invisible_o'
+    url: 'https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_FOCUS_01:_These_elements_are_focusable_but_either_invisible_o'
 });

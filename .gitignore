@@ -1,2 +1,8 @@
 extension/generated_accessibility.js
 test/generated_dependencies.js
+test/generated_dependencies.js
+js/_base.js
+_locales/
+key.pem
+_locales/*
+js/_base.js

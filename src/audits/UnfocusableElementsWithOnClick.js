@@ -23,6 +23,8 @@ AuditRules.addRule({
         var unfocusableClickableElements = [];
         for (var i = 0; i < potentialOnclickElements.length; i++) {
             var element = potentialOnclickElements[i];
+            if (element instanceof HTMLBodyElement)
+                continue;
             if (AccessibilityUtils.isElementOrAncestorHidden(element))
                 continue;
             var eventListeners = getEventListeners(element);
@@ -40,5 +42,5 @@ AuditRules.addRule({
     resultsDetails: 'Interactive elements that are not keyboard focusable are inaccessible ' +
         ' to users who cannot use a mouse. Enable keyboard focus by setting the tabindex ' +
         ' attribute.',
-    url: 'https://code.google.com/a/google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_FOCUS_02:_Elements_with_onclick_handlers_must_be_focusable'
+    url: 'https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_FOCUS_02:_Elements_with_onclick_handlers_must_be_focusable'
 });

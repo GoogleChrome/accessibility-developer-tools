@@ -40,5 +40,5 @@ AuditRules.addRule({
     },
     code: 'AX_TEXT_01',
     ruleName: 'Controls and media elements should have labels',
-    url: 'https://code.google.com/a/google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_TEXT_01:_Controls_should_have_labels'
+    url: 'https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_TEXT_01:_Controls_and_media_elements_should_have_labels'
 });

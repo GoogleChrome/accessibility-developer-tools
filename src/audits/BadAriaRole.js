@@ -25,5 +25,5 @@ AuditRules.addRule({
     ruleName: 'Elements with ARIA roles must use a valid, non-abstract ARIA role',
     resultsDetails: 'Only valid ARIA roles will be interpreted by assistive technology like ' +
         ' screen readers.',
-    url: 'https://code.google.com/a/google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_ARIA_01:_Elements_with_ARIA_roles_must_use_a_valid,_non-abstr'
+    url: 'https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_ARIA_01:_Elements_with_ARIA_roles_must_use_a_valid,_non-abstr'
 });
