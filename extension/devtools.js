@@ -6,7 +6,8 @@ function init(result) {
     }
 
     var numAuditRules = Object.keys(AuditRules.rules).length;
-    var category = chrome.experimental.devtools.audits.addCategory('Accessibility', numAuditRules + 1);
+    var category = chrome.experimental.devtools.audits.addCategory(
+        chrome.i18n.getMessage('auditTitle'), numAuditRules + 1);
 
     category.onAuditStarted.addListener(function callback(auditResults) {
         auditResults.numAuditRules = 0;
@@ -37,7 +38,7 @@ function init(result) {
     });
 
     chrome.devtools.panels.elements.createSidebarPane(
-        'Accessibility Properties',
+        chrome.i18n.getMessage('sidebarTitle'),
         function(sidebar) {
             sidebar.setPage("sidebar.html");
             sidebar.onShown.addListener(function(window) {
@@ -108,11 +109,14 @@ function handleResults(auditResults, auditRule, severity, results, isException) 
 }
 
 function addResult(auditResults, auditRule, numResults, resultNodes) {
-    var resultString = '[' + auditRule.severity + '] ' + auditRule.ruleName + ' (' + numResults + ')';
+    var severity = chrome.i18n.getMessage('auditResult_' + auditRule.severity);
+    var ruleName = chrome.i18n.getMessage(auditRule.name + '_name');
+    var resultString = '[' + severity + '] ' + ruleName + ' (' + numResults + ')';
     if (auditRule.url) {
-        var textNode1 = 'See ';
-        var urlNode = auditResults.createURL(auditRule.url, auditRule.code);
-        var textNode2 = ' for more information.';
+        var textNode1 = chrome.i18n.getMessage('auditUrl_before');
+        var url = chrome.i18n.getMessage(auditRule.name + '_url');
+        var urlNode = auditResults.createURL(url, auditRule.code);
+        var textNode2 = chrome.i18n.getMessage('auditUrl_after');
         resultNodes.unshift(textNode2);
         resultNodes.unshift(urlNode);
         resultNodes.unshift(textNode1);
@@ -132,23 +136,23 @@ function finalizeAuditResultsIfNothingPending(auditResults) {
 
 function finalizeAuditResults(auditResults) {
     if (auditResults.passedRules.length) {
-        var passedDetails = auditResults.createResult('The following tests passed:');
+        var passedDetails = auditResults.createResult(chrome.i18n.getMessage('passingTestsTitle'));
         for (var i = 0; i < auditResults.passedRules.length; i++) {
             var auditRule = auditResults.passedRules[i];
-            passedDetails.addChild(auditRule.ruleName);
+            passedDetails.addChild(chrome.i18n.getMessage(auditRule.name + '_name'));
         }
-        auditResults.addResult('Passing tests (' + auditResults.passedRules.length + ')',
+        auditResults.addResult(chrome.i18n.getMessage('passingTestsSubtitle', [auditResults.passedRules.length]),
                                '',
                                auditResults.Severity.Info,
                                passedDetails);
     }
     if (auditResults.notApplicableRules.length) {
-        var notApplicableDetails = auditResults.createResult('The following tests were not applicable:');
+        var notApplicableDetails = auditResults.createResult(chrome.i18n.getMessage('notApplicableTestsTitle'));
         for (var i = 0; i < auditResults.notApplicableRules.length; i++) {
             var auditRule = auditResults.notApplicableRules[i];
-            notApplicableDetails.addChild(auditRule.ruleName);
+            notApplicableDetails.addChild(chrome.i18n.getMessage(auditRule.name + '_name'));
         }
-        auditResults.addResult('Not applicable tests (' + auditResults.notApplicableRules.length + ')',
+        auditResults.addResult(chrome.i18n.getMessage('notApplicableTestsSubtitle', [auditResults.notApplicableRules.length]),
                                '',
                                auditResults.Severity.Info,
                                notApplicableDetails);

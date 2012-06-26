@@ -1,7 +1,8 @@
 {
-  "name": "Accessibility Developer Tools",
-  "version": "0.7",
+  "name": "__MSG_extName__",
+  "version": "0.7.2",
   "description": "Accessibility audit and element properties.",
+  "default_locale": "en",
   "icons": {
       "128": "images/icon128.png"
   },

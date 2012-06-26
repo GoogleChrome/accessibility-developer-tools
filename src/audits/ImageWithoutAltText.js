@@ -22,8 +22,5 @@ AuditRules.addRule({
         return (!image.hasAttribute('alt') && image.getAttribute('role') != 'presentation');
     },
     code: 'AX_TEXT_02',
-    ruleName: 'Images should have an alt attribute',
-    resultsDetails: 'Images should have an alt attribute, unless they have an ARIA role of "presentation".',
-    url: 'https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_TEXT_02:_Images_should_have_an_alt_attribute,_unless_they_hav'
 });
 

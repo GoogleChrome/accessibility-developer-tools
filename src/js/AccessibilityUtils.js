@@ -347,11 +347,7 @@ AccessibilityUtils = {
             return true;
 
         if (element.hasAttribute('aria-hidden') &&
-<<<<<<< HEAD
-            element.getAttribute('aria-hidden').toLowerCase() == 'true') {
-=======
             element.getAttribute('aria-hidden').toLowerCase() != 'false') {
->>>>>>> 9181204df262497cc19114c9ac6d4978f172f567
             return true;
         }
 

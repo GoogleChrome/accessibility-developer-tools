@@ -35,9 +35,5 @@ AuditRules.addRule({
             return true;
         return false;
     },
-    code: 'AX_CLICK_01',
-    ruleName: 'These elements are focusable but either invisible or obscured by another element.',
-    resultsDetails: 'The aria-hidden ARIA attribute hides elements from assistive technology ' +
-        'like screen readers.',
-    url: 'https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_FOCUS_01:_These_elements_are_focusable_but_either_invisible_o'
+    code: 'AX_FOCUS_01',
 });

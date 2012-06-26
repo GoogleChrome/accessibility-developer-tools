@@ -23,7 +23,4 @@ AuditRules.addRule({
         return !captions.length;
     },
     code: 'AX_VIDEO_01',
-    ruleName: 'Video elements should use <track> elements to provide captions',
-    resultsDetails: 'TODO',
-    url: 'https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_VIDEO_01:_Video_elements_should_use_<track>_elements_to'
 });
