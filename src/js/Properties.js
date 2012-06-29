@@ -50,7 +50,7 @@ Properties = {
             var labelledbyId = element.getAttribute("aria-labelledby");
             var labelledby = document.getElementById(labelledbyId);
             if (!labelledby)
-                labelsForControl["aria-labelledby"] = "!No element with ID " + labelledbyId;
+                labelsForControl["aria-labelledby"] = '!' + chrome.i18n.getMessage('noElementWithId', labelledbyId);
             else
                 labelsForControl["aria-labelledby"] = convertElementToResult(labelledby);
         }
@@ -112,7 +112,6 @@ Properties = {
         videoProperties['caption-tracks'] = this.getTrackElements(element, 'captions');
         videoProperties['description-tracks'] = this.getTrackElements(element, 'descriptions');
         videoProperties['chapter-tracks'] = this.getTrackElements(element, 'chapters');
-        videoProperties['fallback-content'] = this.getFallbackContent(element);
         // error if no text alternatives?
         return videoProperties;
     },
@@ -131,19 +130,6 @@ Properties = {
             results.push(trackElement);
         }
         return results;
-    },
-
-    getFallbackContent: function(element) {
-        var clonedElement = element.cloneNode(true);
-        var clonedElementChildren = Array.prototype.slice.call(clonedElement.children);
-        for (var i = 0; i < clonedElementChildren.length; i++) {
-            var child = clonedElementChildren[i];
-            if (child.tagName == 'TRACK' || child.tagName == 'SOURCE')
-                clonedElement.removeChild(child);
-        }
-        if (clonedElement.innerHTML.trim() == '')
-            return '!No fallback content';
-        return clonedElement.innerHTML;
     },
 
     getAllProperties: function(node) {

@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <head>
   <link rel="stylesheet" type="text/css" href="sidebar.css" />
-  <script type="text/javascript" src="sidebar.js"></script>
 </head>
 <html>
 <body style="margin: 0; overflow: hidden;">
   <div id="main">
     <div id="all-properties" class="hidden properties-container">
       <div id="color-properties" class="hidden properties-container">
-        <div class="sidebar-separator">Colors</div>
+        <div class="sidebar-separator" msg="colorHeading"></div>
         <div class="properties">
           <ul class="properties">
             <li id="contrast-ratio" class="property warning hidden">
-              <span class="property">Contrast ratio</span>:
+              <span class="property" msg="contrastRatio"></span>:
               <span id="contrast-ratio-value"></span>
               <div class="bevel-border">
                 <div id="contrast-ratio-bevel" class="bevel" style="border-right-color: white; border-top-color: black;"></div>
@@ -22,10 +21,10 @@
         </div>
       </div>
       <div id="label-properties" class="hidden properties-container">
-        <div class="sidebar-separator">Labels</div>
+        <div class="sidebar-separator" msg="textHeading"></div>
         <div class="properties">
           <ul class="properties">
-            <li id="no-label" class="property warning hidden"><span class="property">No label</span></li>
+            <li id="no-label" class="property warning hidden"><span class="property" msg="noTextAlternative"></span></li>
             <li id="label-for" class="property hidden">
               <span class="property">label-for</span>:
               <span id="label-for-value"></span>
@@ -54,7 +53,7 @@
         </div>
       </div>
       <div id="aria-properties" class="hidden properties-container">
-        <div class="sidebar-separator">ARIA properties</div>
+        <div class="sidebar-separator" msg="ariaHeading"></div>
         <div class="properties">
           <ul class="properties">
             <li id="role" class="property">
@@ -65,39 +64,33 @@
         </div>
       </div>
       <div id="video-properties" class="hidden properties-container">
-        <div class="sidebar-separator">Video properties</div>
+        <div class="sidebar-separator" msg="videoHeading"></div>
         <div class="properties">
           <ul class="properties">
             <li id="caption-tracks" class="property hidden">
-              <span class="property">Caption tracks</span>:
+              <span class="property" msg="videoCaptionTracks"></span>:
               <ul id="caption-tracks-value-list" class="hidden">
               </ul>
               <span id="caption-tracks-none-value" class="hidden"></span>
             </li>
             <li id="description-tracks" class="property hidden">
-              <span class="property">Description tracks</span>:
+              <span class="property" msg="videoDescriptionTracks"></span>:
               <ul id="description-tracks-value-list" class="hidden">
               </ul>
               <span id="description-tracks-none-value" class="hidden"></span>
             </li>
             <li id="chapter-tracks" class="property hidden">
-              <span class="property">Chapter tracks</span>:
+              <span class="property" msg="videoChapterTracks"></span>:
               <ul id="chapter-tracks-value-list" class="hidden">
               </ul>
               <span id="chapter-tracks-none-value" class="hidden"></span>
-            </li>
-            <li id="fallback-content" class="property hidden">
-              <span class="property">Fallback content</span>:
-              <div id="fallback-content-value"></div>
-              <span id="fallback-content-none-value"></span>
             </li>
           </ul>
         </div>
       </div>
     </div>
-    <div id="empty" class="info">
-      No Accessibility Information
-    </div>
+    <div id="empty" class="info" msg="noAccessibilityInformation"></div>
   </div>
+  <script type="text/javascript" src="sidebar.js"></script>
 </body>
 </html>

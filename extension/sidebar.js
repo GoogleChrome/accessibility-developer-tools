@@ -231,5 +231,14 @@ function onSelectionChanged() {
         updateView);
 }
 
+function insertMessages() {
+    var nodesWithMsg = document.querySelectorAll('[msg]');
+    for (var i = 0; i < nodesWithMsg.length; i++) {
+        var node = nodesWithMsg[i];
+        node.innerText = chrome.i18n.getMessage(node.getAttribute('msg'));
+    }
+}
+
 chrome.devtools.panels.elements.onSelectionChanged.addListener(onSelectionChanged);
+insertMessages();
 onSelectionChanged();

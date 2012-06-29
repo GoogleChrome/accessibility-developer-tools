@@ -100,5 +100,54 @@
     "auditUrl_after": {
         "message": " for more information.",
         "description": "Text to insert after the audit result more information URL. Full English example: 'See [AX_TEXT_01] for more information.' In this case, 'See ' is the 'audit_url_before' value, and ' for more information' is the audit_url_after' value. Note that placeholders can't be used in this case as the three parts are different nodes. For RTL languages, 'before' and 'after' should be reversed."
+    },
+    "colorHeading": {
+        "message": "Color",
+        "description": "Heading for the 'Color' sidebar section"
+    },
+    "contrastRatio": {
+        "message": "Contrast ratio",
+        "description": "Label for the contrast ratio value in the sidebar"
+    },
+    "textHeading": {
+        "message": "Text",
+        "descrtiption": "Heading for the 'Text' sidebar section"
+    },
+    "noTextAlternative": {
+        "message": "No text alternative",
+        "description": "Warning message shown when the inspected element doesn't have any text alternative (such as label, title etc.)"
+    },
+    "ariaHeading": {
+        "message": "ARIA",
+        "description": "Heading for the 'ARIA' sidebar section"
+    },
+    "videoHeading": {
+        "message": "Video",
+        "description": "Heading for the 'Video' sidebar section"
+    },
+    "videoCaptionTracks": {
+        "message": "Caption tracks",
+        "description": "Label for the 'Caption tracks' value(s) in the sidebar"
+    },
+    "videoDescriptionTracks": {
+        "message": "Description tracks",
+        "description": "Label for the 'Description tracks' value(s) in the sidebar"
+    },
+    "videoChapterTracks": {
+        "message": "Chapter tracks",
+        "description": "Label for the 'Chapter tracks' value(s) in the sidebar"
+    },
+    "noAccessibilityInformation": {
+        "message": "No Accessibility Information",
+        "description": "Message shown when there are no accessibility-related properties to show in the sidebar"
+    },
+    "noElementWithId": {
+        "message": "No element with ID $ID$",
+        "description": "Message shown in the sidebar when no element exists with the given ID",
+        "placeholders": {
+            "id": {
+                "content": "$1"
+            }
+        }
     }
 }
