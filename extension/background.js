@@ -7,11 +7,11 @@ function injectContentScript(tabId, opt_callback) {
         function() {
             if (chrome.extension.lastError) {
                 if (opt_callback)
-                    callback({ error: chrome.extension.lastError.message });
+                    opt_callback({ error: chrome.extension.lastError.message });
                 return;
             }
             if (opt_callback)
-                callback();
+                opt_callback();
         });
 };
 
