@@ -12,33 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-AuditRules.addRule({
+goog.require('axs.AuditRules');
+goog.require('axs.constants.Severity');
+goog.require('axs.utils');
+
+axs.AuditRules.addRule({
     name: 'controlsWithoutLabel',
-    severity: Severity.Severe,
-    relevantNodesSelector: function() {
+    severity: axs.constants.Severity.Severe,
+    relevantNodesSelector: function(scope) {
         var controlsSelector = ['input:not([type="hidden"]):not([disabled])',
                                 'select:not([disabled])',
                                 'textarea:not([disabled])',
                                 'button:not([disabled])',
                                 'video:not([disabled])'].join(', ');
-        return this.auditscope_.querySelectorAll(controlsSelector);
+        return scope.querySelectorAll(controlsSelector);
     },
     test: function(control) {
-        if (AccessibilityUtils.isElementOrAncestorHidden(control))
+        if (axs.utils.isElementOrAncestorHidden(control))
             return false;
-
         if (control.tagName.toLowerCase() == 'button') {
             var innerText = control.innerText.replace(/^\s+|\s+$/g, '');
             if (innerText.length)
                 return false;
         }
-
-        if (!AccessibilityUtils.hasLabel(control))
+        if (!axs.utils.hasLabel(control))
             return true;
-
         return false;
     },
     code: 'AX_TEXT_01',
-    ruleName: 'Controls and media elements should have labels',
-    url: 'https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_TEXT_01:_Controls_and_media_elements_should_have_labels'
+    ruleName: 'Controls and media elements should have labels'
 });

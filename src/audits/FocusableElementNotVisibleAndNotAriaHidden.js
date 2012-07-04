@@ -12,28 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-AuditRules.addRule({
+goog.require('axs.AuditRules');
+goog.require('axs.constants.Severity');
+goog.require('axs.utils');
+
+axs.AuditRules.addRule({
     name: 'focusableElementNotVisibleAndNotAriaHidden',
-    severity: Severity.Warning,
-    relevantNodesSelector: function() {
-        return this.auditscope_.querySelectorAll(AccessibilityUtils.focusableElementsSelector);
+    severity: axs.constants.Severity.Warning,
+    relevantNodesSelector: function(scope) {
+        return scope.querySelectorAll(axs.utils.FOCUSABLE_ELEMENTS_SELECTOR);
     },
     test: function(element) {
-        if (AccessibilityUtils.isElementOrAncestorHidden(element))
+        if (axs.utils.isElementOrAncestorHidden(element))
             return false;
-        var overlapping = AccessibilityUtils.overlappingElement(element);
+        var overlapping = axs.utils.overlappingElement(element);
         if (overlapping) {
-            var style = window.getComputedStyle(overlapping);
-            var overlappingElementBg = AccessibilityUtils.getBgColor(style, overlapping);
+            var style = window.getComputedStyle(overlapping, null);
+            var overlappingElementBg = axs.utils.getBgColor(style, overlapping);
             if (overlappingElementBg && overlappingElementBg.alpha > 0)
                 return true;
         }
-        if (AccessibilityUtils.elementHasZeroArea(element))
+        if (axs.utils.elementHasZeroArea(element))
             return true;
-        var style = window.getComputedStyle(element);
+        var style = window.getComputedStyle(element, null);
         if (style.opacity == 0)
             return true;
         return false;
     },
-    code: 'AX_FOCUS_01',
+    code: 'AX_FOCUS_01'
 });

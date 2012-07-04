@@ -12,22 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-AuditRules.addRule({
+goog.require('axs.AuditRules');
+goog.require('axs.constants.Severity');
+goog.require('axs.utils');
+
+axs.AuditRules.addRule({
     name: 'lowContrastElements',
-    severity: Severity.Warning,
-    relevantNodesSelector: function() {
+    severity: axs.constants.Severity.Warning,
+    relevantNodesSelector: function(scope) {
       return document.evaluate(
           '/html/body//text()[normalize-space(.)!=""]/parent::*[name()!="script"]',
-          this.auditscope_,
+          scope,
           null,
           XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
           null);
     },
     test: function(element) {
-        var style = window.getComputedStyle(element);
+        var style = window.getComputedStyle(element, null);
         var contrastRatio =
-            AccessibilityUtils.getContrastRatioForElementWithComputedStyle(style, element);
-        return (contrastRatio && AccessibilityUtils.isLowContrast(contrastRatio, style));
+            axs.utils.getContrastRatioForElementWithComputedStyle(style, element);
+        return (contrastRatio && axs.utils.isLowContrast(contrastRatio, style));
     },
-    code: 'AX_COLOR_01',
+    code: 'AX_COLOR_01'
 });

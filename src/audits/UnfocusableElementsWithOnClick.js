@@ -12,20 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+goog.require('axs.AuditRules');
+goog.require('axs.constants.Severity');
+goog.require('axs.utils');
 
-AuditRules.addRule({
+axs.AuditRules.addRule({
     name: 'unfocusableElementsWithOnClick',
-    severity: Severity.Warning,
+    severity: axs.constants.Severity.Warning,
     opt_shouldRunInDevtools: true,
-    relevantNodesSelector: function() {
-        var potentialOnclickElements = document.querySelectorAll('*');
+    relevantNodesSelector: function(scope) {
+        var potentialOnclickElements = scope.querySelectorAll('*');
 
         var unfocusableClickableElements = [];
         for (var i = 0; i < potentialOnclickElements.length; i++) {
             var element = potentialOnclickElements[i];
             if (element instanceof HTMLBodyElement)
                 continue;
-            if (AccessibilityUtils.isElementOrAncestorHidden(element))
+            if (axs.utils.isElementOrAncestorHidden(element))
                 continue;
             var eventListeners = getEventListeners(element);
             if ('click' in eventListeners)
@@ -35,7 +38,7 @@ AuditRules.addRule({
     },
     test: function(element) {
         return !element.hasAttribute('tabindex') &&
-               !AccessibilityUtils.isElementImplicitlyFocusable(element);
+               !axs.utils.isElementImplicitlyFocusable(element);
     },
-    code: 'AX_FOCUS_02',
+    code: 'AX_FOCUS_02'
 });

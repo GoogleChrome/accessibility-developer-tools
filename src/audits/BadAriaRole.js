@@ -12,14 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-AuditRules.addRule({
+goog.require('axs.AuditRules');
+goog.require('axs.constants');
+
+axs.AuditRules.addRule({
     name: 'badAriaRole',
-    severity: Severity.Severe,
-    relevantNodesSelector: function() {
-      return this.auditscope_.querySelectorAll("[role]");
+    severity: axs.constants.Severity.Severe,
+    relevantNodesSelector: function(scope) {
+      return scope.querySelectorAll("[role]");
     },
     test: function(element) {
-      return !ARIA_ROLES[element.getAttribute('role')];
+      return !axs.constants.ARIA_ROLES[element.getAttribute('role')];
     },
-    code: 'AX_ARIA_01',
+    code: 'AX_ARIA_01'
 });

@@ -12,15 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-AuditRules.addRule({
+goog.require('axs.AuditRules');
+goog.require('axs.constants.Severity');
+
+axs.AuditRules.addRule({
     name: 'videoWithoutCaptions',
-    severity: Severity.Warning,
-    relevantNodesSelector: function() {
-        return this.auditscope_.querySelectorAll('video');
+    severity: axs.constants.Severity.Warning,
+    relevantNodesSelector: function(scope) {
+        return scope.querySelectorAll('video');
     },
     test: function(video) {
         var captions = video.querySelectorAll('track[kind=captions]');
         return !captions.length;
     },
-    code: 'AX_VIDEO_01',
+    code: 'AX_VIDEO_01'
 });

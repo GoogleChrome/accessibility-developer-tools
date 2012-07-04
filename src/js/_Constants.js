@@ -1,4 +1,23 @@
-ARIA_ROLES = {
+// Copyright 2012 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+goog.provide('axs.constants');
+goog.provide('axs.constants.Severity');
+goog.provide('axs.constants.AuditResult');
+
+/** @type {Object.<string, boolean>} */
+axs.constants.ARIA_ROLES = {
     'alert': true,
     'alertdialog': true,
     'application': true,
@@ -61,7 +80,8 @@ ARIA_ROLES = {
     'treeitem': true
 };
 
-ARIA_PROPERTIES = {
+/** @type {Object.<string, boolean>} */
+axs.constants.ARIA_PROPERTIES = {
     'aria-activedescendant': true,
     'aria-atomic': true,
     'aria-autocomplete': true,
@@ -96,18 +116,20 @@ ARIA_PROPERTIES = {
     'aria-valuemax': true,
     'aria-valuemin': true,
     'aria-valuenow': true,
-    'aria-valuetext': true,
+    'aria-valuetext': true
 };
 
-Severity =  {
+/** @enum {string} */
+axs.constants.Severity =  {
     Info: 'Info',
     Warning: 'Warning',
     Severe: 'Severe'
 };
 
-AuditResult = {
-    PASS: "PASS",
-    FAIL: "FAIL",
-    NA: "NA"
+/** @enum {string} */
+axs.constants.AuditResult = {
+    PASS: 'PASS',
+    FAIL: 'FAIL',
+    NA: 'NA'
 };
 

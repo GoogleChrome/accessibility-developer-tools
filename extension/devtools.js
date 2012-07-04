@@ -1,11 +1,24 @@
-function init(result) {
+// Copyright 2012 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
+function init(result) {
     if (result && 'error' in result) {
         console.warn('Could not initialise extension:' + result.error);
         return;
     }
 
-    var numAuditRules = Object.keys(AuditRules.rules).length;
+    var numAuditRules = Object.keys(axs.AuditRules.rules).length;
     var category = chrome.experimental.devtools.audits.addCategory(
         chrome.i18n.getMessage('auditTitle'), numAuditRules + 1);
 
@@ -17,8 +30,8 @@ function init(result) {
         auditResults.passedRules = [];
         auditResults.notApplicableRules = [];
 
-        for (auditRuleCode in AuditRules.rules) {
-            var auditRule = AuditRules.rules[auditRuleCode];
+        for (auditRuleCode in axs.AuditRules.rules) {
+            var auditRule = axs.AuditRules.rules[auditRuleCode];
             // TODO batch up results
             if (!auditRule.disabled) {
                 console.log('running', auditRule.name);
@@ -27,7 +40,7 @@ function init(result) {
                     auditRule.runInDevtools(resultsCallback);
                 } else {
                     chrome.devtools.inspectedWindow.eval(
-                        'AuditRules.rules["' + auditRuleCode + '"].run()',
+                        'axs.AuditRules.rules["' + auditRuleCode + '"].run()',
                         { useContentScriptContext: true },
                         resultsCallback);
                 }
@@ -69,9 +82,9 @@ function handleResults(auditResults, auditRule, severity, results, isException) 
     }
     auditResults.successfulResults++;
     var resultCallbacksPending = 0;
-    if (results.result == AuditResult.PASS) {
+    if (results.result == axs.constants.AuditResult.PASS) {
         auditResults.passedRules.push(auditRule);
-    } else if (results.result == AuditResult.NA ) {
+    } else if (results.result == axs.constants.AuditResult.NA ) {
         auditResults.notApplicableRules.push(auditRule);
     } else {
         var resultNodes = [];
@@ -79,7 +92,7 @@ function handleResults(auditResults, auditRule, severity, results, isException) 
             var result = results.elements[i];
             if (auditResults.createNode) {
                 resultNodes.push(
-                    auditResults.createNode('getResultElement("' + result + '")',
+                    auditResults.createNode('axs.content.getResultNode("' + result + '")',
                                             { useContentScriptContext: true }));
             } else {
                 function addChild(auditResults, result) {
@@ -96,7 +109,7 @@ function handleResults(auditResults, auditRule, severity, results, isException) 
                 auditResults.callbacksPending++;
                 resultCallbacksPending++;
                 chrome.devtools.inspectedWindow.eval(
-                    'getResultElement("' + result + '").outerHTML',
+                    'axs.content.getResultNode("' + result + '").outerHTML',
                     { useContentScriptContext: true },
                     addChild.bind(null, auditResults));
             }

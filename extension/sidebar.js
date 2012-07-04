@@ -1,3 +1,17 @@
+// Copyright 2012 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 var formatters = {
     'contrast-ratio': function(li, properties) {
         if (!('value' in properties)) {
@@ -10,7 +24,7 @@ var formatters = {
 
         var valueDiv = document.getElementById('contrast-ratio-value');
         var value = properties.value;
-        valueDiv.innerText = value;
+        valueDiv.innerText = value.toFixed(2);
         if ('background-color' in properties && 'foreground-color' in properties) {
             var bevelElement = document.getElementById('contrast-ratio-bevel');
             bevelElement.style.setProperty('border-right-color', properties['background-color']);
@@ -138,7 +152,7 @@ var formatters = {
         }
         var node = document.getElementById(property + '-value');
         chrome.devtools.inspectedWindow.eval(
-            'getResultElement("' + value + '").outerHTML',
+            'axs.content.getResultNode("' + value + '").outerHTML',
             { useContentScriptContext: true },
             formatElement.bind(null, node));
     },
@@ -226,7 +240,7 @@ function onSelectionChanged() {
         return;
     }
     chrome.devtools.inspectedWindow.eval(
-        'Properties.getAllProperties($0)',
+        'axs.properties.getAllProperties($0);',
         { useContentScriptContext: true },
         updateView);
 }

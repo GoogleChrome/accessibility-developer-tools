@@ -12,11 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-AuditRules.addRule({
+goog.require('axs.AuditRules');
+goog.require('axs.constants.Severity');
+
+axs.AuditRules.addRule({
     name: 'nonExistentAriaLabelledbyElement',
-    severity: Severity.Warning,
-    relevantNodesSelector: function() {
-        return this.auditscope_.querySelectorAll('[aria-labelledby]');
+    severity: axs.constants.Severity.Warning,
+    relevantNodesSelector: function(scope) {
+        return scope.querySelectorAll('[aria-labelledby]');
     },
     test: function(element) {
         var labelledBy = element.getAttribute('aria-labelledby');
@@ -28,5 +31,5 @@ AuditRules.addRule({
         }
         return false;
     },
-    code: 'AX_ARIA_02',
+    code: 'AX_ARIA_02'
 });
