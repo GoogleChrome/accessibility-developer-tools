@@ -15,6 +15,7 @@
   "permissions": [
     "experimental",
     "tabs",
+    "webNavigation",
     "<all_urls>"
   ],
   "web_accessible_resources": [

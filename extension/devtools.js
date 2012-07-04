@@ -60,6 +60,13 @@ function init(result) {
     });
 }
 
+chrome.webNavigation.onCommitted.addListener(
+    function(details) {
+        if (details.tabId == chrome.devtools.inspectedWindow.tabId && details.frameId == 0) {
+            console.log('onCommitted');
+        }
+    });
+
 if (chrome.devtools.inspectedWindow.tabId)
     chrome.extension.sendRequest({ tabId: chrome.devtools.inspectedWindow.tabId,
                                    command: 'injectContentScript' }, init);
