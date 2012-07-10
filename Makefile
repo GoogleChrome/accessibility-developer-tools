@@ -1,10 +1,9 @@
-PREAMBLE = ./src/js/Preamble.fragment
 AUDIT_RULES = $(shell find ./src/audits -name "*.js")
 JS_FILES = ./src/js/{_Constants.js,AccessibilityUtils.js,AuditRule.js,AuditRules.js,ContentScriptFramework.js,Properties.js}
 EXTERNS = ./src/js/externs.js
-POSTSCRIPT = ./src/js/Postscript.fragment
 
 BIG_FAT_JS_FILE = ./extension/generated_accessibility.js
+TEMPLATES_LIB_FILE = ./extension/Handlebar.js
 TEST_DEPENDENCIES_FILE = ./test/generated_dependencies.js
 
 CLOSURE_JAR = ~/src/closure/compiler.jar
@@ -20,6 +19,9 @@ js: clean
 	@/bin/echo -n "* Rebuilding '$(BIG_FAT_JS_FILE)': "
 	@$(CLOSURE_COMMAND) >> $(BIG_FAT_JS_FILE) && \
     echo "SUCCESS"
+	@/bin/echo -n "* Copying Handlebar.js to $(TEMPLATES_LIB_FILE): "
+	@/usr/bin/sed -E "s/exports\[\"class\"\]/window.Handlebar/" ./lib/templates/js/Handlebar.js > $(TEMPLATES_LIB_FILE) && \
+    echo "SUCCESS"
 	@/bin/echo -n "* Rebuilding test dependencies: "
 	@echo "var _dependencies = [" > $(TEST_DEPENDENCIES_FILE) && \
 	for f in $(JS_FILES); do \
@@ -34,4 +36,4 @@ js: clean
 	@echo;
 
 clean:
-	@rm -rf $(BIG_FAT_JS_FILE)
+	@rm -rf $(BIG_FAT_JS_FILE) $(TEMPLATES_LIB_FILE)

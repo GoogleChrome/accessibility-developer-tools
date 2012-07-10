@@ -434,19 +434,22 @@ axs.utils.hasLabel = function(element) {
     if (axs.utils.isNativeTextElement(element) && element.hasAttribute('placeholder'))
         return true;
 
-    // This could be slow! Possible faster solution would be to use querySelector
-    // to search for label[for='<id>'] and also check the ancestors of this element
-    // to see if any of them is a label element.
-    var labels = document.querySelectorAll('label');
-    var foundLabel = false;
-    for (var j = 0; j < labels.length; j++) {
-        var label = labels[j];
-        if (label.control == element) {
-            foundLabel = true;
-            break;
-        }
+    if (element.hasAttribute('id')) {
+        var labelsFor = document.querySelectorAll('label[for=' + element.id + ']');
+        if (labelsFor.length > 0)
+            return true;
     }
-    return foundLabel;
+
+    var parent = element.parentElement;
+    while (parent) {
+        if (parent.tagName.toLowerCase() == 'label') {
+            var parentLabel = /** HTMLLabelElement */ parent;
+            if (parentLabel.control == element)
+                return true;
+        }
+        parent = parent.parentElement;
+    }
+    return false;
 };
 
 /**
@@ -482,6 +485,213 @@ axs.utils.isElementOrAncestorHidden = function(element) {
         return axs.utils.isElementOrAncestorHidden(element.parentElement);
     else
         return false;
+};
+
+/**
+ * @param {!string} propertyName
+ * @param {!string} value
+ * @param {!Element} element
+ * @return {!Object}
+ */
+axs.utils.isValidPropertyValue = function(propertyName, value, element) {
+    var propertyKey = propertyName.replace(/^aria-/, '');
+    var property = axs.constants.ARIA_PROPERTIES[propertyKey];
+    var result = { 'name': propertyName, 'rawValue': value };
+    if (!property) {
+        result.valid = false;
+        result.reason = '"' + propertyName + '" is not a valid ARIA property';
+        return result;
+    }
+
+    var propertyType = property.valueType;
+    if (!propertyType) {
+        result.valid = false;
+        result.reason = '"' + propertyName + '" is not a valid ARIA property';
+        return result;
+    }
+
+    switch (propertyType) {
+    case "idref":
+        var validIDRefValue = axs.utils.isValidIDRefValue(value, element);
+        if (validIDRefValue.valid) {
+            result.valid = true;
+            result.value = validIDRefValue.value;
+        } else {
+            result.valid = false;
+            result.reason = validIDRefValue.reason;
+        }
+        return result;
+    case "idref_list":
+        var idrefValues = value.split(/\s+/);
+        result.valid = true;
+        for (var i = 0; i < idrefValues.length; i++) {
+            var refIsValid = axs.utils.isValidIDRefValue(idrefValues[i],  element);
+            if (!refIsValid.valid) {
+                result.valid = false;
+                if (result.reason) {
+                    var reason = result.reason;
+                    result.reason = [ reason ];
+                    result.reason.push(refIsValid.reason);
+                } else
+                    result.reason = refIsValid.reason;
+            } else {
+                if (result.values)
+                    result.values.push(refIsValid.value);
+                else
+                    result.values = [refIsValid.value];
+            }
+        }
+        return result;
+    case "integer":
+        var validNumber = axs.utils.isValidNumber(value);
+        if (!validNumber.valid) {
+            result.valid = false;
+            result.reason = validNumber.reason;
+            return result;
+        }
+        if (Math.floor(validNumber.value) != validNumber.value) {
+            result.valid = false;
+            result.reason = '' + value + ' is not a whole integer';
+        } else {
+            result.valid = true;
+            result.value = validNumber.value;
+        }
+        return result;
+    case "number":
+        var validNumber = axs.utils.isValidNumber(value);
+        if (validNumber.valid) {
+            result.valid = true;
+            result.value = validNumber.value;
+        }
+    case "string":
+        result.valid = true;
+        result.value = value;
+        return result;
+    case "token":
+        var validTokenValue = axs.utils.isValidTokenValue(propertyName, value.toLowerCase());
+        if (validTokenValue.valid) {
+            result.valid = true;
+            result.value = validTokenValue.value;
+            return result;
+        } else {
+            result.valid = false;
+            result.reason = validTokenValue.reason;
+            return result;
+        }
+    case "token_list":
+        var tokenValues = value.split(/\s+/);
+        result.valid = true;
+        for (var i = 0; i < tokenValues.length; i++) {
+            var validTokenValue = axs.utils.isValidTokenValue(propertyName, tokenValues[i].toLowerCase());
+            if (!validTokenValue.valid) {
+                result.valid = false;
+                if (result.reason) {
+                    result.reason = [ result.reason ];
+                    result.reason.push(validTokenValue.reason);
+                } else {
+                    result.reason = validTokenValue.reason;
+                    result.possibleValues = validTokenValue.possibleValues;
+                }
+            } else {
+                if (result.values)
+                    result.values.push(validTokenValue.value);
+                else
+                    result.values = [validTokenValue.value];
+            }
+        }
+        return result;
+    case "tristate":
+        var validTristate = axs.utils.isPossibleValue(value.toLowerCase(), axs.constants.MIXED_VALUES, propertyName);
+        if (validTristate.valid) {
+            result.valid = true;
+            result.value = validTristate.value;
+        } else {
+            result.valid = false;
+            result.reason = validTristate.reason;
+        }
+        return result;
+    case "true-false":
+        var validBoolean = axs.utils.isValidBoolean(value);
+        if (validBoolean.valid) {
+            result.valid = true;
+            result.value = validBoolean.value;
+        } else {
+            result.valid = false;
+            result.reason = validBoolean.reason;
+        }
+        return result;
+    case "true-false-undefined":
+        var validBoolean = axs.utils.isValidBoolean(value);
+        if (validBoolean.valid) {
+            result.valid = true;
+            result.value = validBoolean.value;
+        } else {
+            result.valid = false;
+            result.reason = validBoolean.reason;
+        }
+        return result;
+    }
+    result.valid = false
+    result.reason = 'Not a valid ARIA property';
+    return result;
+};
+
+/**
+ * @param {string} propertyName The name of the property.
+ * @param {string} value The value to check.
+ * @return {!Object}
+ */
+axs.utils.isValidTokenValue = function(propertyName, value) {
+    var propertyKey = propertyName.replace(/^aria-/, '');
+    var propertyDetails = axs.constants.ARIA_PROPERTIES[propertyKey];
+    var possibleValues = propertyDetails.valuesSet;
+    return axs.utils.isPossibleValue(value, possibleValues, propertyName);
+};
+
+/**
+ * @param {string} value
+ * @param {Object.<string, boolean>} possibleValues
+ * @return {!Object}
+ */
+axs.utils.isPossibleValue = function(value, possibleValues, propertyName) {
+    if (!possibleValues[value])
+        return { 'valid': false,
+                 'reason': '"' + value + '" is not a valid value for ' + propertyName,
+                 'possibleValues': Object.keys(possibleValues) };
+    return { 'valid': true, 'value': value };
+};
+
+/**
+ * @param {string} value
+ * @return {!Object}
+ */
+axs.utils.isValidBoolean = function(value) {
+    var parsedValue = JSON.parse(value);
+    if (!(parsedValue instanceof Boolean))
+        return { 'valid': false, 'reason': '"' + value + '" is not a true/false value' };
+    return { 'valid': true, 'value': parsedValue };
+};
+
+/**
+ * @param {string} value
+ * @param {!Element} element
+ * @return {!Object}
+ */
+axs.utils.isValidIDRefValue = function(value, element) {
+    if (!element.ownerDocument.getElementById(value))
+        return { 'valid': false, 'reason': 'No element with ID "' + value + '"' };
+    return { 'valid': true, 'value': value };
+};
+
+/**
+ * @param {string} value
+ * @return {!Object}
+ */
+axs.utils.isValidNumber = function(value) {
+    var parsedValue = JSON.parse(value);
+    if (typeof(parsedValue) != 'number')
+        return { 'valid': false, 'reason': '"' + value + '" is not a number' };
+    return { 'valid': true, 'value': parsedValue };
 };
 
 /**

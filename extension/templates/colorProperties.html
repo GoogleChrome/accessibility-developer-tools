@@ -1,0 +1,23 @@
+<div id="color-properties" class="properties-container">
+  <div class="sidebar-separator">{{heading}}</div>
+  <div class="properties">
+    <ul class="properties">
+{{?contrastRatio}}
+      <li id="contrast-ratio" 
+  {{?contrastRatio.alert}}
+          class="property warning">
+  {{/}}
+  {{^contrastRatio.alert}}
+          class="property">
+  {{/}}
+        <span class="property" msg="contrastRatio"></span>:
+        <span id="contrast-ratio-value">{{contrastRatio.value}}</span>
+        <div class="bevel-border">
+          <div id="contrast-ratio-bevel" class="bevel"
+               style="border-right-color: {{contrastRatio.backgroundColor}}; border-top-color: {{contrastRatio.foregroundColor}};"></div>
+        </div>   
+   </li>
+{{/}}
+    </ul>
+  </div>
+</div>

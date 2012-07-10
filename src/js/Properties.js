@@ -29,8 +29,8 @@ axs.properties.TEXT_CONTENT_XPATH = 'text()[normalize-space(.)!=""]/parent::*[na
  */
 axs.properties.getColorProperties = function(element) {
     var colorProperties = {};
-    colorProperties['contrast-ratio'] = axs.properties.getContrastRatioProperties(element);
-    if (!colorProperties['contrast-ratio'])  // FIXME this is awful
+    colorProperties['contrastRatio'] = axs.properties.getContrastRatioProperties(element);
+    if (!colorProperties['contrastRatio'])  // FIXME this is awful
         return null;
     return colorProperties;
 };
@@ -55,13 +55,13 @@ axs.properties.getContrastRatioProperties = function(element) {
     if (!bgColor)
         return null;
 
-    contrastRatioProperties['background-color'] = axs.utils.colorToString(bgColor);
+    contrastRatioProperties['backgroundColor'] = axs.utils.colorToString(bgColor);
     var fgColor = axs.utils.getFgColor(style, bgColor);
-    contrastRatioProperties['foreground-color'] = axs.utils.colorToString(fgColor);
+    contrastRatioProperties['foregroundColor'] = axs.utils.colorToString(fgColor);
     var value = axs.utils.getContrastRatioForElementWithComputedStyle(style, element);
     if (!value)
         return null;
-    contrastRatioProperties['value'] = value;
+    contrastRatioProperties['value'] = value.toFixed(2);
     if (axs.utils.isLowContrast(value, style))
         contrastRatioProperties['alert'] = true;
     return contrastRatioProperties;
@@ -71,7 +71,7 @@ axs.properties.getContrastRatioProperties = function(element) {
  * @param {Element} element
  * @return {Object.<string, string>}
  */
-axs.properties.findLabelsForControl = function(element) {
+axs.properties.findTextAlternatives = function(element) {
     var controlsSelector = ['input:not([type="hidden"]):not([disabled])',
                             'select:not([disabled])',
                             'textarea:not([disabled])',
@@ -81,73 +81,142 @@ axs.properties.findLabelsForControl = function(element) {
 
     var labelsForControl = {};
 
-    if (element.hasAttribute('aria-label'))
-        labelsForControl['aria-label'] = element.getAttribute('aria-label');
-
-    if (element.hasAttribute('aria-labelledby')) {
-        var labelledbyId = element.getAttribute('aria-labelledby');
-        var labelledby = document.getElementById(labelledbyId);
-        if (!labelledby)
-            labelsForControl["aria-labelledby"] = '!' + chrome.i18n.getMessage('noElementWithId', labelledbyId);
-        else
-            labelsForControl['aria-labelledby'] = axs.content.convertNodeToResult(labelledby);
+    if (element.hasAttribute('aria-label')) {
+        var ariaLabelValue = {};
+        ariaLabelValue.type = 'text';
+        ariaLabelValue.value = element.getAttribute('aria-label');
+        labelsForControl['ariaLabel'] = ariaLabelValue;
     }
 
-    if (element.hasAttribute('title'))
-        labelsForControl['title'] =  element.getAttribute('title');
-
-    if (element.hasAttribute('alt'))
-        labelsForControl['alt'] = element.getAttribute('alt');
-
-    var labelsInDocument = document.querySelectorAll('label');
-    for (var i = 0; i < labelsInDocument.length; i++) {
-        var label = labelsInDocument[i];
-
-        if (label.control == element) {
-            if (label.hasAttribute('for') && label.htmlFor == element.id)
-                labelsForControl['label-for'] = axs.content.convertNodeToResult(label);
-
-            function isAncestor(ancestor, element) {
-                if (element == null)
-                    return false;
-                if (element === ancestor)
-                    return true;
-
-                return isAncestor(ancestor, element.parentElement);
+    if (element.hasAttribute('aria-labelledby')) {
+        var labelledbyAttr = element.getAttribute('aria-labelledby');
+        var labelledbyIds = labelledbyAttr.split(/\s+/);
+        var labelledbyValue = [];
+        for (var i = 0; i < labelledbyIds.length; i++) {
+            var labelledby = {};
+            labelledby.type = 'element';
+            var labelledbyId = labelledbyIds[i];
+            labelledby.value = labelledbyId;
+            var labelledbyElement = document.getElementById(labelledbyId);
+            if (!labelledbyElement) {
+                labelledby.valid = false;
+                labelledby.errorMessage = chrome.i18n.getMessage('noElementWithId', labelledbyId);
+            } else {
+                labelledby.valid = true;
+                labelledby.text = labelledbyElement.innerText;
+                labelledby.element = axs.content.convertNodeToResult(labelledbyElement);
             }
-
-            if (isAncestor(label, element))
-                labelsForControl['label-wrapped'] = axs.content.convertNodeToResult(label);
+            labelledbyValue.push(labelledby);
+        }
+        if (labelledbyValue.length > 0) {
+            labelledbyValue[labelledbyValue.length - 1].last = true;
+            labelsForControl['ariaLabelledby'] = labelledbyValue;
         }
     }
 
+    if (element.hasAttribute('title')) {
+        var titleValue = {};
+        titleValue.type = 'string';
+        titleValue.valid = true;
+        titleValue.value =  element.getAttribute('title');
+        labelsForControl['title'] = titleValue;
+    }
+
+    if (element.hasAttribute('alt')) {
+        var altValue = {};
+        altValue.type = 'string';
+        altValue.valid = true;
+        altValue.value =  element.getAttribute('alt');
+        labelsForControl['alt'] = altValue;
+    }
+
+    if (element.hasAttribute('id')) {
+        var labelForQuerySelector = 'label[for=' + element.id + ']';
+        var labelsFor = document.querySelectorAll(labelForQuerySelector);
+        var labelForValue = [];
+        for (var i = 0; i < labelsFor.length; i++) {
+            var labelFor = {};
+            labelFor.type = 'element';
+            var label = labelsFor[i];
+            labelFor.text = label.textContent;
+            labelFor.element = axs.content.convertNodeToResult(label);
+            labelForValue.push(labelFor);
+        }
+        if (labelForValue.length > 0) {
+            labelForValue[labelForValue.length - 1].last = true;
+            labelsForControl['labelFor'] = labelForValue;
+        }
+    }
+
+    var parent = element.parentElement;
+    var labelWrappedValue = [];
+    while (parent) {
+        if (parent.tagName.toLowerCase() == 'label') {
+            var parentLabel = /** HTMLLabelElement */ parent;
+            if (parentLabel.control == element) {
+                var labelWrapped = {};
+                labelWrapped.type = 'element';
+                labelWrapped.text = parentLabel.innerText;
+                labelWrapped.element = axs.content.convertNodeToResult(parentLabel);
+                labelWrappedValue.push(labelWrapped);
+            }
+        }
+        parent = parent.parentElement;
+    }
+    if (labelWrappedValue.length > 0) {
+        labelWrappedValue[labelWrappedValue.length - 1].last = true;
+        labelsForControl['labelWrapped'] = labelWrappedValue;
+    }
+
     if (!Object.keys(labelsForControl).length)
-        labelsForControl['no-label'] = true;
+        labelsForControl['noLabel'] = true;
 
     return labelsForControl;
 };
 
-/**
- * @param {Element} element
- * @return {Object.<string, Object>}
- */
 axs.properties.getAriaProperties = function(element) {
     var ariaProperties = {};
-    ariaProperties['role'] = axs.properties.getRole(element);
-    return ariaProperties;
+    var role = axs.properties.getRole(element);
+    console.log('role', role);
+    if (!role)
+        return null;
+    ariaProperties['role'] = role;
+    if (!role.valid) {
+        return ariaProperties;
+    }
+    if (!role.details || !role.details.propertiesSet) {
+        return ariaProperties;
+    }
+
+    var statesAndProperties = [];
+    for (var property in role.details.propertiesSet) {
+        if (element.hasAttribute(property)) {
+            // check valid
+            var propertyValue = element.getAttribute(property);
+            statesAndProperties.push(axs.utils.isValidPropertyValue(property, propertyValue, element));
+        } else if (role.details.requiredPropertiesSet[property]) {
+            statesAndProperties.push({ 'name': property, 'valid': false, 'reason': 'Required property not set' });
+        }
+    }
+    if (Object.keys(statesAndProperties).length > 0)
+        ariaProperties['properties'] = statesAndProperties;
+    console.log('ariaProperties', ariaProperties);
+    if (Object.keys(ariaProperties).length > 0)
+        return ariaProperties;
+    return null;
 };
 
 /**
  * @param {Element} element
- * @return {?string}
+ * @return {Object|boolean}
  */
 axs.properties.getRole = function(element) {
     if (!element.hasAttribute('role'))
-        return null;
+        return false;
     var role = element.getAttribute('role');
-    if (!axs.constants.ARIA_ROLES[role])
-        return '!' + role;
-    return role;
+    if (axs.constants.ARIA_ROLES[role])
+        return { 'name': role, 'details': axs.constants.ARIA_ROLES[role], 'valid': true };
+    return { 'name': role, 'valid': false };
 };
 
 /**
@@ -159,9 +228,9 @@ axs.properties.getVideoProperties = function(element) {
     if (!element.webkitMatchesSelector(videoSelector))
         return null;
     var videoProperties = {};
-    videoProperties['caption-tracks'] = axs.properties.getTrackElements(element, 'captions');
-    videoProperties['description-tracks'] = axs.properties.getTrackElements(element, 'descriptions');
-    videoProperties['chapter-tracks'] = axs.properties.getTrackElements(element, 'chapters');
+    videoProperties['captionTracks'] = axs.properties.getTrackElements(element, 'captions');
+    videoProperties['descriptionTracks'] = axs.properties.getTrackElements(element, 'descriptions');
+    videoProperties['chapterTracks'] = axs.properties.getTrackElements(element, 'chapters');
     // error if no text alternatives?
     return videoProperties;
 };
@@ -169,22 +238,48 @@ axs.properties.getVideoProperties = function(element) {
 /**
  * @param {Element} element
  * @param {string} kind
- * @return {Array.<Object>|string}
+ * @return {Object}
  */
 axs.properties.getTrackElements = function(element, kind) {
     // error if resource is not available
     var trackElements = element.querySelectorAll('track[kind=' + kind + ']');
-    if (!trackElements.length)
-        return 'No ' + kind;
-    var results = [];
+    var result = {};
+    if (!trackElements.length) {
+        result.valid = false;
+        result.reason = chrome.i18n.getMessage('noTracksProvided', [kind]);
+        console.log('reason', result.reason);
+        return result;
+    }
+    result.valid = true;
+    var values = [];
     for (var i = 0; i < trackElements.length; i++) {
         var trackElement = {};
-        trackElement['src'] = trackElements[i].getAttribute('src');
-        trackElement['srclang'] = trackElements[i].getAttribute('srcLang');
-        trackElement['label'] = trackElements[i].getAttribute('label');
-        results.push(trackElement);
+        var src = trackElements[i].getAttribute('src');
+        var srcLang = trackElements[i].getAttribute('srcLang');
+        var label = trackElements[i].getAttribute('label');
+        if (!src) {
+            trackElement.valid = false;
+            trackElement.reason = chrome.i18n.getMessage('noSrcProvided');
+            console.log('reason', trackElement.reason);
+        } else {
+            trackElement.valid = true;
+            trackElement.src = src;
+        }
+        var name = '';
+        if (label) {
+            name += label;
+            if (srcLang)
+                name += ' ';
+        }
+        if (srcLang)
+            name += '(' + srcLang + ')';
+        if (name == '')
+            name = '[' + chrome.i18n.getMessage('unnamed') + ']';
+        trackElement.name = name;
+        values.push(trackElement);
     }
-    return results;
+    result.values = values;
+    return result;
 };
 
 /**
@@ -202,9 +297,9 @@ axs.properties.getAllProperties = function(node) {
         return {};
 
     var allProperties = {};
-    allProperties['aria-properties'] = axs.properties.getAriaProperties(element);
-    allProperties['color-properties'] = axs.properties.getColorProperties(element);
-    allProperties['label-properties'] = axs.properties.findLabelsForControl(element);
-    allProperties['video-properties'] = axs.properties.getVideoProperties(element);
+    allProperties['ariaProperties'] = axs.properties.getAriaProperties(element);
+    allProperties['colorProperties'] = axs.properties.getColorProperties(element);
+    allProperties['textProperties'] = axs.properties.findTextAlternatives(element);
+    allProperties['videoProperties'] = axs.properties.getVideoProperties(element);
     return allProperties;
 };

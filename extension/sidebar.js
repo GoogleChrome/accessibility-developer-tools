@@ -183,47 +183,39 @@ function updateView(result) {
         console.warn('no result');
         result = {};
     }
+    console.log('result', result);
 
-    var sections = document.querySelectorAll('.properties-container');
+    var main = document.getElementById('main');
+    main.innerHTML = '';
     var foundProperty = false;
-    for (var i = 0; i < sections.length; i++) {
-        var section = sections[i];
-        var sectionId = section.id;
-        if (!sectionId in result || !result[sectionId]) {
-            section.className = "hidden properties-container";
+
+    for (var sectionName in result) {
+        var section = result[sectionName];
+        if (!section)
             continue;
-        }
-        var sectionProperties = result[sectionId];
-        var propertyList = document.querySelector('#' + sectionId + ' ul');
-        var propertyItems = propertyList.children;
-        var foundSectionProperty = false;
-        for (var j = 0; j < propertyItems.length; j++) {
-            var propertyItem = propertyItems[j];
-            var propertyId = propertyItem.id;
-            if (!propertyId in sectionProperties || !sectionProperties[propertyId]) {
-                propertyItem.className = 'property hidden';
-                continue;
-            }
-            propertyItem.className = 'property';
-            formatProperty(propertyItem, propertyId, sectionProperties[propertyId]);
-            foundSectionProperty = true;
-        }
-        if (foundSectionProperty) {
-            section.className = "properties-container";
+
+        try {
+            var template = new Handlebar(getTemplate(sectionName));
+            template.render(section, { 'heading': chrome.i18n.getMessage(sectionName) }).appendTo(main);
             foundProperty = true;
-        } else {
-            section.className = "hidden properties-container";
+        } catch (ex) {
+            console.error('Could not render results section', section, ex);
         }
     }
 
-    if (foundProperty) {
-        document.getElementById('all-properties').className = 'properties-container'; // FIXME
-        document.getElementById('empty').className = 'info hidden';
-    } else {
-        document.getElementById('all-properties').className = 'properties-container hidden';
-        document.getElementById('empty').className = 'info';
+    if (!foundProperty) {
+        var empty = new Handlebar(getTemplate('empty'));
+        empty.render({ 'noAccessibilityInformation': chrome.i18n.getMessage('noAccessibilityInformation') }).appendTo(main);
     }
+    insertMessages();
     updateHeight();
+}
+
+function getTemplate(template) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", chrome.extension.getURL('templates/' + template + '.html'), false);
+    xhr.send();
+    return xhr.responseText;
 }
 
 function updateHeight() {

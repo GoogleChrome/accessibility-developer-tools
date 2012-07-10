@@ -34,6 +34,10 @@ li.property.warning {
     background-position: left center;
 }
 
+li.property > span.invalid {
+    text-decoration: line-through;
+}
+
 li > div {
    margin-left: 15px;
 }

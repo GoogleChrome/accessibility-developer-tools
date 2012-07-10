@@ -101,7 +101,7 @@
         "message": " for more information.",
         "description": "Text to insert after the audit result more information URL. Full English example: 'See [AX_TEXT_01] for more information.' In this case, 'See ' is the 'audit_url_before' value, and ' for more information' is the audit_url_after' value. Note that placeholders can't be used in this case as the three parts are different nodes. For RTL languages, 'before' and 'after' should be reversed."
     },
-    "colorHeading": {
+    "colorProperties": {
         "message": "Color",
         "description": "Heading for the 'Color' sidebar section"
     },
@@ -109,7 +109,7 @@
         "message": "Contrast ratio",
         "description": "Label for the contrast ratio value in the sidebar"
     },
-    "textHeading": {
+    "textProperties": {
         "message": "Text",
         "descrtiption": "Heading for the 'Text' sidebar section"
     },
@@ -117,11 +117,11 @@
         "message": "No text alternative",
         "description": "Warning message shown when the inspected element doesn't have any text alternative (such as label, title etc.)"
     },
-    "ariaHeading": {
+    "ariaProperties": {
         "message": "ARIA",
         "description": "Heading for the 'ARIA' sidebar section"
     },
-    "videoHeading": {
+    "videoProperties": {
         "message": "Video",
         "description": "Heading for the 'Video' sidebar section"
     },
@@ -137,12 +137,25 @@
         "message": "Chapter tracks",
         "description": "Label for the 'Chapter tracks' value(s) in the sidebar"
     },
+    "noTracksProvided": {
+        "message": "No $kind$",
+        "description": "Message shown when no track elements of the given kind (e.g. 'chapters', 'captions') are provided for a video element.",
+        "placeholders": {
+            "kind": {
+                "content": "$1"
+            }
+        }
+    },
+    "noSrcProvided": {
+        "message": "No <code>src</code> provided",
+        "description": "Message displayed when a video track element does not have a src attribute"
+    },
     "noAccessibilityInformation": {
         "message": "No Accessibility Information",
         "description": "Message shown when there are no accessibility-related properties to show in the sidebar"
     },
     "noElementWithId": {
-        "message": "No element with ID $ID$",
+        "message": "No element with ID $id$",
         "description": "Message shown in the sidebar when no element exists with the given ID",
         "placeholders": {
             "id": {
