@@ -3,7 +3,7 @@
   <div class="properties">
     <ul class="properties">
 {{?role}}
-      <li id="role" class="property{{^role.valid}} warning{{/}}">
+      <li id="role" class="property{{^role.valid}} warning invalid{{/}}">
         <span class="property">role</span>:
         <span id="role-value" {{^role.valid}} class="invalid" {{/}}>{{role.name}}</span>
       </li>

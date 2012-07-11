@@ -1,12 +1,12 @@
 <div id="text-properties" class="properties-container">
   <div class="sidebar-separator">{{heading}}</div>
   <div class="properties speech">
-    {{computedText}} foo bar baz
+    {{computedText}}
   </div>
   <div class="properties">
     <ul class="properties">
 {{?ariaLabelledby}}
-      <li id="aria-labelledby" class="property">
+      <li id="aria-labelledby" class="property{{?ariaLabelledby.unused}} unused{{/}}">
         <span class="property">aria-labelledby</span>:
   {{#ariaLabelledby}}
         <span class="textValue">"{{text}}"</span>{{^last}},{{/}}
@@ -14,13 +14,13 @@
       </li>
 {{/}}
 {{?ariaLabel}}
-      <li id="aria-label" class="property">
+      <li id="aria-label" class="property{{?ariaLabel.unused}} unused{{/}}">
         <span class="property">aria-label</span>:
         <span class="textValue">"{{ariaLabel.value}}"</span>
       </li>
 {{/}}
 {{?labelFor}}
-      <li class="property">
+      <li class="property{{?labelFor.unused}} unused{{/}}">
         <span class="property">label-for</span>:
   {{#labelFor}}
         <span class="textValue">"{{text}}"</span>{{^last}},{{/}}
@@ -28,7 +28,7 @@
       </li>
 {{/}}
 {{?labelWrapped}}
-      <li id="label-wrapped" class="property">
+      <li id="label-wrapped" class="property{{?labelWrapped.unused}} unused{{/}}">
         <span class="property">label-wrapped</span>:
   {{#labelWrapped}}
         <span class="textValue">"{{text}}"</span>{{^last}},{{/}}
@@ -36,13 +36,13 @@
       </li>
 {{/}}
 {{?alt}}
-      <li id="alt" class="property">
+      <li id="alt" class="property{{?alt.unused}} unused{{/}}">
         <span class="property">alt</span>:
         <span id="alt-value">"{{alt.value}}"</span>
       </li>
 {{/}}
 {{?title}}
-      <li id="title" class="property">
+      <li id="title" class="property{{?title.unused}} unused{{/}}">
         <span class="property">title</span>:
         <span id="title-value">"{{title.value}}"</span>
       </li>

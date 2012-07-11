@@ -72,26 +72,16 @@ axs.properties.getContrastRatioProperties = function(element) {
  * @return {Object.<string, string>}
  */
 axs.properties.findTextAlternatives = function(element) {
-    var controlsSelector = ['input:not([type="hidden"]):not([disabled])',
-                            'select:not([disabled])',
-                            'textarea:not([disabled])',
-                            'button:not([disabled])'].join(', ');
-    if (!element.webkitMatchesSelector(controlsSelector))
-        return null;
-
-    var labelsForControl = {};
-
-    if (element.hasAttribute('aria-label')) {
-        var ariaLabelValue = {};
-        ariaLabelValue.type = 'text';
-        ariaLabelValue.value = element.getAttribute('aria-label');
-        labelsForControl['ariaLabel'] = ariaLabelValue;
-    }
+    var textAlternatives = {};
+    var computedText = null;
 
     if (element.hasAttribute('aria-labelledby')) {
         var labelledbyAttr = element.getAttribute('aria-labelledby');
         var labelledbyIds = labelledbyAttr.split(/\s+/);
-        var labelledbyValue = [];
+        var labelledbyValue = {};
+        labelledbyValue.valid = true;
+        var labelledbyText = [];
+        var labelledbyValues = [];
         for (var i = 0; i < labelledbyIds.length; i++) {
             var labelledby = {};
             labelledby.type = 'element';
@@ -100,18 +90,104 @@ axs.properties.findTextAlternatives = function(element) {
             var labelledbyElement = document.getElementById(labelledbyId);
             if (!labelledbyElement) {
                 labelledby.valid = false;
+                labelledbyValue.valid = false;
                 labelledby.errorMessage = chrome.i18n.getMessage('noElementWithId', labelledbyId);
             } else {
                 labelledby.valid = true;
-                labelledby.text = labelledbyElement.innerText;
+                labelledby.text = labelledbyElement.innerText; // FIXME use computed text value
+                labelledbyText.push(labelledbyElement.innerText.trim());
                 labelledby.element = axs.content.convertNodeToResult(labelledbyElement);
             }
-            labelledbyValue.push(labelledby);
+            labelledbyValues.push(labelledby);
         }
-        if (labelledbyValue.length > 0) {
-            labelledbyValue[labelledbyValue.length - 1].last = true;
-            labelsForControl['ariaLabelledby'] = labelledbyValue;
+        if (labelledbyValues.length > 0) {
+            labelledbyValues[labelledbyValues.length - 1].last = true;
+            labelledbyValue.values = labelledbyValues;
+            labelledbyValue.text = labelledbyText.join(' ');
+            computedText = labelledbyValue.text;
+            textAlternatives['ariaLabelledby'] = labelledbyValue;
         }
+    }
+
+    if (element.hasAttribute('aria-label')) {
+        var ariaLabelValue = {};
+        ariaLabelValue.type = 'text';
+        ariaLabelValue.value = element.getAttribute('aria-label');
+        if (computedText)
+            ariaLabelValue.unused = true;
+        else
+            computedText = ariaLabelValue.value;
+        textAlternatives['ariaLabel'] = ariaLabelValue;
+    }
+
+    if (element.webkitMatchesSelector('img') && element.hasAttribute('alt')) {
+        var altValue = {};
+        altValue.type = 'string';
+        altValue.valid = true;
+        altValue.value =  element.getAttribute('alt');
+        if (computedText)
+            altValue.unused = true;
+        else
+            computedText = altValue.value;
+        textAlternatives['alt'] = altValue;
+    }
+
+    var controlsSelector = ['input:not([type="hidden"]):not([disabled])',
+                            'select:not([disabled])',
+                            'textarea:not([disabled])',
+                            'button:not([disabled])',
+                            'video:not([disabled])'].join(', ');
+    if (element.webkitMatchesSelector(controlsSelector)) {
+        if (element.hasAttribute('id')) {
+            var labelForQuerySelector = 'label[for=' + element.id + ']';
+            var labelsFor = document.querySelectorAll(labelForQuerySelector);
+            var labelForValue = {};
+            var labelForValues = [];
+            var labelForText = [];
+            for (var i = 0; i < labelsFor.length; i++) {
+                var labelFor = {};
+                labelFor.type = 'element';
+                var label = labelsFor[i];
+                labelFor.text = label.textContent;
+                labelForText.push(label.textContent.trim());
+                labelFor.element = axs.content.convertNodeToResult(label);
+                labelForValues.push(labelFor);
+            }
+            if (labelForValues.length > 0) {
+                labelForValues[labelForValues.length - 1].last = true;
+                labelForValue.values = labelForValues;
+                labelForValue.text = labelForText.join(' ');
+                if (computedText)
+                    labelForValue.unused = true;
+                else
+                    computedText = labelForValue.text;
+                textAlternatives['labelFor'] = labelForValue;
+            }
+        }
+
+        var parent = element.parentElement;
+        var labelWrappedValue = {};
+        while (parent) {
+            if (parent.tagName.toLowerCase() == 'label') {
+                var parentLabel = /** HTMLLabelElement */ parent;
+                if (parentLabel.control == element) {
+                    labelWrappedValue.type = 'element';
+                    labelWrappedValue.text = parentLabel.innerText;
+                    labelWrappedValue.element = axs.content.convertNodeToResult(parentLabel);
+                    break;
+                }
+            }
+            parent = parent.parentElement;
+        }
+        if (labelWrappedValue.text) {
+            if (computedText)
+                labelWrappedValue.unused = true;
+            else
+                computedText = labelWrappedValue.text;
+            textAlternatives['labelWrapped'] = labelWrappedValue;
+        }
+        if (!Object.keys(textAlternatives).length)
+            textAlternatives['noLabel'] = true;
     }
 
     if (element.hasAttribute('title')) {
@@ -119,59 +195,16 @@ axs.properties.findTextAlternatives = function(element) {
         titleValue.type = 'string';
         titleValue.valid = true;
         titleValue.value =  element.getAttribute('title');
-        labelsForControl['title'] = titleValue;
+        if (computedText)
+            titleValue.unused = true;
+        else
+            computedText = titleValue.value;
+        textAlternatives['title'] = titleValue;
     }
 
-    if (element.hasAttribute('alt')) {
-        var altValue = {};
-        altValue.type = 'string';
-        altValue.valid = true;
-        altValue.value =  element.getAttribute('alt');
-        labelsForControl['alt'] = altValue;
-    }
+    textAlternatives['computedText'] = computedText;
 
-    if (element.hasAttribute('id')) {
-        var labelForQuerySelector = 'label[for=' + element.id + ']';
-        var labelsFor = document.querySelectorAll(labelForQuerySelector);
-        var labelForValue = [];
-        for (var i = 0; i < labelsFor.length; i++) {
-            var labelFor = {};
-            labelFor.type = 'element';
-            var label = labelsFor[i];
-            labelFor.text = label.textContent;
-            labelFor.element = axs.content.convertNodeToResult(label);
-            labelForValue.push(labelFor);
-        }
-        if (labelForValue.length > 0) {
-            labelForValue[labelForValue.length - 1].last = true;
-            labelsForControl['labelFor'] = labelForValue;
-        }
-    }
-
-    var parent = element.parentElement;
-    var labelWrappedValue = [];
-    while (parent) {
-        if (parent.tagName.toLowerCase() == 'label') {
-            var parentLabel = /** HTMLLabelElement */ parent;
-            if (parentLabel.control == element) {
-                var labelWrapped = {};
-                labelWrapped.type = 'element';
-                labelWrapped.text = parentLabel.innerText;
-                labelWrapped.element = axs.content.convertNodeToResult(parentLabel);
-                labelWrappedValue.push(labelWrapped);
-            }
-        }
-        parent = parent.parentElement;
-    }
-    if (labelWrappedValue.length > 0) {
-        labelWrappedValue[labelWrappedValue.length - 1].last = true;
-        labelsForControl['labelWrapped'] = labelWrappedValue;
-    }
-
-    if (!Object.keys(labelsForControl).length)
-        labelsForControl['noLabel'] = true;
-
-    return labelsForControl;
+    return textAlternatives;
 };
 
 axs.properties.getAriaProperties = function(element) {

@@ -16,10 +16,10 @@ div.properties {
 }
 
 div.properties.speech {
-    background-image: url(images/chromevox-16.png);
+    background-image: url(images/speech-16.png);
     background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 21px;
+    background-position: 2px center;
+    padding-left: 22px;
 }
 
 div.properties:last-child {
@@ -40,13 +40,17 @@ li.property {
     padding-left: 15px;
 }
 
+li.property.unused {
+    opacity: 0.5;
+}
+
 li.property.warning {
     background-image: url(images/warningIcon.png);
     background-repeat: no-repeat;
     background-position: left center;
 }
 
-li.property > span.invalid {
+.invalid {
     text-decoration: line-through;
 }
 
