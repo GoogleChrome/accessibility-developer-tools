@@ -1,9 +1,23 @@
 <div id="text-properties" class="properties-container">
   <div class="sidebar-separator">{{heading}}</div>
+  <div class="properties speech">
+    {{computedText}} foo bar baz
+  </div>
   <div class="properties">
     <ul class="properties">
-{{?noLabel}}
-      <li id="no-label" class="property warning"><span class="property">No label</span></li>
+{{?ariaLabelledby}}
+      <li id="aria-labelledby" class="property">
+        <span class="property">aria-labelledby</span>:
+  {{#ariaLabelledby}}
+        <span class="textValue">"{{text}}"</span>{{^last}},{{/}}
+  {{/}}
+      </li>
+{{/}}
+{{?ariaLabel}}
+      <li id="aria-label" class="property">
+        <span class="property">aria-label</span>:
+        <span class="textValue">"{{ariaLabel.value}}"</span>
+      </li>
 {{/}}
 {{?labelFor}}
       <li class="property">
@@ -21,20 +35,6 @@
   {{/}}
       </li>
 {{/}}
-{{?ariaLabel}}
-      <li id="aria-label" class="property">
-        <span class="property">aria-label</span>:
-        <span class="textValue">"{{ariaLabel.value}}"</span>
-      </li>
-{{/}}
-{{?ariaLabelledby}}
-      <li id="aria-labelledby" class="property">
-        <span class="property">aria-labelledby</span>:
-  {{#ariaLabelledby}}
-        <span class="textValue">"{{text}}"</span>{{^last}},{{/}}
-  {{/}}
-      </li>
-{{/}}
 {{?alt}}
       <li id="alt" class="property">
         <span class="property">alt</span>:
@@ -46,6 +46,9 @@
         <span class="property">title</span>:
         <span id="title-value">"{{title.value}}"</span>
       </li>
+{{/}}
+{{?noLabel}}
+      <li id="no-label" class="property warning"><span class="property">No label</span></li>
 {{/}}
     </ul>
   </div>

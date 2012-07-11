@@ -11,7 +11,19 @@ body {
 }
 
 div.properties {
-    margin: 5px;
+    padding: 5px;
+    border-bottom: 1px solid #BFBFBF;
+}
+
+div.properties.speech {
+    background-image: url(images/chromevox-16.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 21px;
+}
+
+div.properties:last-child {
+    border-bottom: none;
 }
 
 ul.properties {
