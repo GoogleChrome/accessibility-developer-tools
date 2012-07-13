@@ -20,7 +20,7 @@ js: clean
 	@$(CLOSURE_COMMAND) >> $(BIG_FAT_JS_FILE) && \
     echo "SUCCESS"
 	@/bin/echo -n "* Copying Handlebar.js to $(TEMPLATES_LIB_FILE): "
-	@/usr/bin/sed -E "s/exports\[\"class\"\]/window.Handlebar/" ./lib/templates/js/Handlebar.js > $(TEMPLATES_LIB_FILE) && \
+	@/bin/cp ./lib/templates/js/HandlebarBrowser.js $(TEMPLATES_LIB_FILE) && \
     echo "SUCCESS"
 	@/bin/echo -n "* Rebuilding test dependencies: "
 	@echo "var _dependencies = [" > $(TEST_DEPENDENCIES_FILE) && \

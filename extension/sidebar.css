@@ -13,6 +13,7 @@ body {
 div.properties {
     padding: 5px;
     border-bottom: 1px solid #BFBFBF;
+    min-height: 12px;
 }
 
 div.properties.speech {
@@ -20,6 +21,11 @@ div.properties.speech {
     background-repeat: no-repeat;
     background-position: 2px center;
     padding-left: 22px;
+}
+
+span.none {
+    font-style: italic;
+    opacity: 0.5;
 }
 
 div.properties:last-child {

@@ -69,67 +69,145 @@ axs.properties.getContrastRatioProperties = function(element) {
 
 /**
  * @param {Element} element
- * @return {Object.<string, string>}
+ * @param {!Object} textAlternatives The properties object to fill in
+ * @param {boolean=} opt_recursive Whether this is a recursive call or not
+ * @return {?string} The calculated text alternative for the given element
  */
-axs.properties.findTextAlternatives = function(element) {
-    var textAlternatives = {};
+axs.properties.findTextAlternatives = function(element, textAlternatives, opt_recursive) {
+    var recursive = opt_recursive || false;
+
+    // 1. Skip hidden elements unless the author specifies to use them via an aria-labelledby or
+    // aria-describedby being used in the current computation.
+    if (!recursive && axs.utils.isElementOrAncestorHidden(element))
+        return null;
+
     var computedText = null;
 
-    if (element.hasAttribute('aria-labelledby')) {
-        var labelledbyAttr = element.getAttribute('aria-labelledby');
-        var labelledbyIds = labelledbyAttr.split(/\s+/);
-        var labelledbyValue = {};
-        labelledbyValue.valid = true;
-        var labelledbyText = [];
-        var labelledbyValues = [];
-        for (var i = 0; i < labelledbyIds.length; i++) {
-            var labelledby = {};
-            labelledby.type = 'element';
-            var labelledbyId = labelledbyIds[i];
-            labelledby.value = labelledbyId;
-            var labelledbyElement = document.getElementById(labelledbyId);
-            if (!labelledbyElement) {
-                labelledby.valid = false;
-                labelledbyValue.valid = false;
-                labelledby.errorMessage = chrome.i18n.getMessage('noElementWithId', labelledbyId);
-            } else {
-                labelledby.valid = true;
-                labelledby.text = labelledbyElement.innerText; // FIXME use computed text value
-                labelledbyText.push(labelledbyElement.innerText.trim());
-                labelledby.element = axs.content.convertNodeToResult(labelledbyElement);
-            }
-            labelledbyValues.push(labelledby);
-        }
-        if (labelledbyValues.length > 0) {
-            labelledbyValues[labelledbyValues.length - 1].last = true;
-            labelledbyValue.values = labelledbyValues;
-            labelledbyValue.text = labelledbyText.join(' ');
-            computedText = labelledbyValue.text;
-            textAlternatives['ariaLabelledby'] = labelledbyValue;
-        }
+    if (!recursive) {
+        // 2A. The aria-labelledby attribute takes precedence as the element's text alternative
+        // unless this computation is already occurring as the result of a recursive aria-labelledby
+        // declaration.
+        computedText = axs.properties.getTextFromAriaLabelledby(element, textAlternatives);
     }
 
+    // 2A. If aria-labelledby is empty or undefined, the aria-label attribute, which defines an
+    // explicit text string, is used.
     if (element.hasAttribute('aria-label')) {
         var ariaLabelValue = {};
         ariaLabelValue.type = 'text';
         ariaLabelValue.value = element.getAttribute('aria-label');
         if (computedText)
             ariaLabelValue.unused = true;
-        else
+        else if (!(recursive && axs.utils.elementIsControl(element)))
             computedText = ariaLabelValue.value;
         textAlternatives['ariaLabel'] = ariaLabelValue;
     }
 
-    if (element.webkitMatchesSelector('img') && element.hasAttribute('alt')) {
-        var altValue = {};
-        altValue.type = 'string';
-        altValue.valid = true;
-        altValue.value =  element.getAttribute('alt');
+    // 2A. If aria-labelledby and aria-label are both empty or undefined, and if the element is not
+    // marked as presentational (role="presentation", check for the presence of an equivalent host
+    // language attribute or element for associating a label, and use those mechanisms to determine
+    // a text alternative.
+    if (!element.hasAttribute('role') || element.getAttribute('role') != 'presentation') {
+        computedText = axs.properties.getTextFromHostLangaugeAttributes(element, textAlternatives, computedText);
+    }
+    
+    // 2B. 
+    if (recursive && axs.utils.elementIsControl(element)) {
+        // include the value of the embedded control as part of the text alternative in the
+        // following manner:
+        // If the embedded control is a text field, use its value.
+        // If the embedded control is a menu, use the text alternative of the chosen menu item.
+        // If the embedded control is a select or combobox, use the chosen option.
+        // If the embedded control is a range (e.g. a spinbutton or slider), use the value of the
+        // aria-valuetext attribute if available, or otherwise the value of the aria-valuenow
+        // attribute.
+    }
+
+    // 2C. Otherwise, if the attributes checked in rules A and B didn't provide results, text is
+    // collected from descendant content if the current element's role allows "Name From: contents."
+    if (!computedText) {
+        // TODO
+        computedText = null;
+    }
+
+    // 2D. The last resort is to use text from a tooltip attribute (such as the title attribute in
+    // HTML). This is used only if nothing else, including subtree content, has provided results.
+    if (element.hasAttribute('title')) {
+        var titleValue = {};
+        titleValue.type = 'string';
+        titleValue.valid = true;
+        titleValue.value =  element.getAttribute('title');
         if (computedText)
-            altValue.unused = true;
+            titleValue.unused = true;
         else
-            computedText = altValue.value;
-        textAlternatives['alt'] = altValue;
+            computedText = titleValue.value;
+        textAlternatives['title'] = titleValue;
+    }
+
+    if (Object.keys(textAlternatives).length == 0 && computedText == null)
+        return null;
+
+    return computedText;
+};
+
+axs.properties.getTextFromAriaLabelledby = function(element, textAlternatives) {
+    var computedText = null;
+    if (!element.hasAttribute('aria-labelledby')) 
+        return computedText;
+
+    var labelledbyAttr = element.getAttribute('aria-labelledby');
+    var labelledbyIds = labelledbyAttr.split(/\s+/);
+    var labelledbyValue = {};
+    labelledbyValue.valid = true;
+    var labelledbyText = [];
+    var labelledbyValues = [];
+    for (var i = 0; i < labelledbyIds.length; i++) {
+        var labelledby = {};
+        labelledby.type = 'element';
+        var labelledbyId = labelledbyIds[i];
+        labelledby.value = labelledbyId;
+        var labelledbyElement = document.getElementById(labelledbyId);
+        if (!labelledbyElement) {
+            labelledby.valid = false;
+            labelledbyValue.valid = false;
+            labelledby.errorMessage = chrome.i18n.getMessage('noElementWithId', labelledbyId);
+        } else {
+            labelledby.valid = true;
+            labelledby.text = axs.properties.findTextAlternatives(labelledbyElement, {});
+            labelledbyText.push(labelledbyElement.innerText.trim());
+            labelledby.element = axs.content.convertNodeToResult(labelledbyElement);
+        }
+        labelledbyValues.push(labelledby);
+    }
+    if (labelledbyValues.length > 0) {
+        labelledbyValues[labelledbyValues.length - 1].last = true;
+        labelledbyValue.values = labelledbyValues;
+        labelledbyValue.text = labelledbyText.join(' ');
+            computedText = labelledbyValue.text;
+        textAlternatives['ariaLabelledby'] = labelledbyValue;
+    }
+
+    return computedText;
+};
+axs.properties.getTextFromHostLangaugeAttributes = function(element, textAlternatives, existingComputedText) {
+    var computedText = existingComputedText;
+    if (element.webkitMatchesSelector('img')) {
+        if (element.hasAttribute('alt')) {
+            var altValue = {};
+            altValue.type = 'string';
+            altValue.valid = true;
+            altValue.value =  element.getAttribute('alt');
+            if (computedText)
+                altValue.unused = true;
+            else
+                computedText = altValue.value;
+            textAlternatives['alt'] = altValue;
+        } else {
+            var altValue = {};
+            altValue.valid = false;
+            altValue.errorMessage = 'No alt value provided';
+            textAlternatives['alt'] = altValue;
+        }
     }
 
     var controlsSelector = ['input:not([type="hidden"]):not([disabled])',
@@ -189,25 +267,26 @@ axs.properties.findTextAlternatives = function(element) {
         if (!Object.keys(textAlternatives).length)
             textAlternatives['noLabel'] = true;
     }
+    return computedText;
+};
 
-    if (element.hasAttribute('title')) {
-        var titleValue = {};
-        titleValue.type = 'string';
-        titleValue.valid = true;
-        titleValue.value =  element.getAttribute('title');
-        if (computedText)
-            titleValue.unused = true;
-        else
-            computedText = titleValue.value;
-        textAlternatives['title'] = titleValue;
+/**
+ * @param {Element} element
+ * @return {Object}
+ */
+axs.properties.getTextProperties = function(element) {
+    var textProperties = {};
+    var computedText = axs.properties.findTextAlternatives(element, textProperties);
+    if (Object.keys(textProperties).length == 0) {
+        if (!computedText)
+            return null;
+        textProperties.hasProperties = false;
+    } else {
+        textProperties.hasProperties = true;
     }
 
-    if (Object.keys(textAlternatives).length == 0 && computedText == null)
-        return null;
-
-    textAlternatives['computedText'] = computedText;
-
-    return textAlternatives;
+    textProperties.computedText = computedText;
+    return textProperties;
 };
 
 axs.properties.getAriaProperties = function(element) {
@@ -330,7 +409,7 @@ axs.properties.getAllProperties = function(node) {
     var allProperties = {};
     allProperties['ariaProperties'] = axs.properties.getAriaProperties(element);
     allProperties['colorProperties'] = axs.properties.getColorProperties(element);
-    allProperties['textProperties'] = axs.properties.findTextAlternatives(element);
+    allProperties['textProperties'] = axs.properties.getTextProperties(element);
     allProperties['videoProperties'] = axs.properties.getVideoProperties(element);
     return allProperties;
 };

@@ -141,6 +141,15 @@ axs.utils.overlappingElement = function(element) {
 
 /**
  * @param {Element} element
+ * @return boolean
+ */
+axs.utils.elementIsControl = function(element) {
+    // TODO
+    return false;
+};
+
+/**
+ * @param {Element} element
  * @return {boolean}
  */
 axs.utils.elementIsVisible = function(element) {

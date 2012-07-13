@@ -117,6 +117,10 @@
         "message": "No text alternative",
         "description": "Warning message shown when the inspected element doesn't have any text alternative (such as label, title etc.)"
     },
+    "noText": {
+        "message": "None",
+        "description": "Informative value displayed when there is intentionally no computed text for an element."
+    },   
     "ariaProperties": {
         "message": "ARIA",
         "description": "Heading for the 'ARIA' sidebar section"
@@ -137,25 +141,12 @@
         "message": "Chapter tracks",
         "description": "Label for the 'Chapter tracks' value(s) in the sidebar"
     },
-    "noTracksProvided": {
-        "message": "No $kind$",
-        "description": "Message shown when no track elements of the given kind (e.g. 'chapters', 'captions') are provided for a video element.",
-        "placeholders": {
-            "kind": {
-                "content": "$1"
-            }
-        }
-    },
-    "noSrcProvided": {
-        "message": "No <code>src</code> provided",
-        "description": "Message displayed when a video track element does not have a src attribute"
-    },
     "noAccessibilityInformation": {
         "message": "No Accessibility Information",
         "description": "Message shown when there are no accessibility-related properties to show in the sidebar"
     },
     "noElementWithId": {
-        "message": "No element with ID $id$",
+        "message": "No element with ID $ID$",
         "description": "Message shown in the sidebar when no element exists with the given ID",
         "placeholders": {
             "id": {

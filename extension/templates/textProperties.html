@@ -1,8 +1,13 @@
 <div id="text-properties" class="properties-container">
   <div class="sidebar-separator">{{heading}}</div>
   <div class="properties speech">
+{{?computedText}}
     {{computedText}}
+{{/}}{{^computedText}}
+    <span msg="noText" class="none"></span>
+{{/}}
   </div>
+{{?hasProperties}}
   <div class="properties">
     <ul class="properties">
 {{?ariaLabelledby}}
@@ -36,9 +41,13 @@
       </li>
 {{/}}
 {{?alt}}
-      <li id="alt" class="property{{?alt.unused}} unused{{/}}">
+      <li id="alt" class="property{{?alt.unused}} unused{{/}}{{^alt.valid}} warning{{/}}">
         <span class="property">alt</span>:
+  {{?alt.valid}}
         <span id="alt-value">"{{alt.value}}"</span>
+  {{:}}
+        <span id="alt-value" class="none">undefined</span>
+  {{/}}
       </li>
 {{/}}
 {{?title}}
@@ -52,4 +61,5 @@
 {{/}}
     </ul>
   </div>
+{{/}}
 </div>
