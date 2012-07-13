@@ -8,7 +8,7 @@
 {{?ariaLabelledby}}
       <li id="aria-labelledby" class="property{{?ariaLabelledby.unused}} unused{{/}}">
         <span class="property">aria-labelledby</span>:
-  {{#ariaLabelledby}}
+  {{#ariaLabelledby.values}}
         <span class="textValue">"{{text}}"</span>{{^last}},{{/}}
   {{/}}
       </li>
@@ -19,7 +19,7 @@
         <span class="textValue">"{{ariaLabel.value}}"</span>
       </li>
 {{/}}
-{{?labelFor}}
+{{?labelFor.values}}
       <li class="property{{?labelFor.unused}} unused{{/}}">
         <span class="property">label-for</span>:
   {{#labelFor}}

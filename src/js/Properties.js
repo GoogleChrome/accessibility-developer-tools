@@ -202,6 +202,9 @@ axs.properties.findTextAlternatives = function(element) {
         textAlternatives['title'] = titleValue;
     }
 
+    if (Object.keys(textAlternatives).length == 0 && computedText == null)
+        return null;
+
     textAlternatives['computedText'] = computedText;
 
     return textAlternatives;

@@ -41,7 +41,7 @@ li.property {
 }
 
 li.property.unused {
-    opacity: 0.5;
+    text-decoration: line-through;
 }
 
 li.property.warning {
