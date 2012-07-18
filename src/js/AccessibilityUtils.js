@@ -144,7 +144,28 @@ axs.utils.overlappingElement = function(element) {
  * @return boolean
  */
 axs.utils.elementIsControl = function(element) {
-    // TODO
+    // HTML control
+    if (element instanceof HTMLButtonElement)
+        return true;
+    if (element instanceof HTMLInputElement)
+        return true;
+    if (element instanceof HTMLSelectElement)
+        return true;
+    if (element instanceof HTMLTextAreaElement)
+        return true;
+/*
+    if (element.hasAttribute('role')) {
+        var roleValue = element.getAttribute('role');
+        // TODO is this correct?
+        if (roleValue) {
+            var role = axs.constants.ARIA_ROLES[roleValue];
+            if (role) {
+                if (role.allParentRolesSet['widget'])
+                    return true;
+            }
+        }
+    }
+*/
     return false;
 };
 

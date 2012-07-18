@@ -466,9 +466,9 @@ axs.constants.ARIA_ROLES = {
     }
 };
 
-// Inherit all properties and requiredProperties from parent hierarchy.
 for (var roleName in axs.constants.ARIA_ROLES) {
     var role = axs.constants.ARIA_ROLES[roleName];
+    // Inherit all properties and requiredProperties from parent hierarchy.
     function addAllPropertiesToSet(role, propertiesName, propertiesSet) {
         var properties = role[propertiesName]
         if (properties) {
@@ -490,6 +490,22 @@ for (var roleName in axs.constants.ARIA_ROLES) {
     var requiredPropertiesSet = {};
     addAllPropertiesToSet(role, 'requiredProperties', requiredPropertiesSet);
     role['requiredPropertiesSet'] = requiredPropertiesSet;
+
+    // Squash parent hierarchy on to role object
+    function addAllParentRolesToSet(role, set) {
+        if (!role['parent'])
+            return;
+
+        var parents = role['parent'];
+        for (var j = 0; j < parents.length; j++) {
+            var parentRoleName = parents[j];
+            set[parentRoleName] = true;
+            addAllParentRolesToSet(axs.constants.ARIA_ROLES[parentRoleName], set);
+        }
+    }
+    var parentRolesSet = {};
+    addAllParentRolesToSet(role, parentRolesSet);
+    role['allParentRolesSet'] = parentRolesSet;
 }
 
 /** @type {Object.<string, Object>} */

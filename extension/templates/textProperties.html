@@ -2,7 +2,7 @@
   <div class="sidebar-separator">{{heading}}</div>
   <div class="properties speech">
 {{?computedText}}
-    {{computedText}}
+    <span class="textValue">{{computedText}}</span>
 {{/}}{{^computedText}}
     <span msg="noText" class="none"></span>
 {{/}}
@@ -21,13 +21,13 @@
 {{?ariaLabel}}
       <li id="aria-label" class="property{{?ariaLabel.unused}} unused{{/}}">
         <span class="property">aria-label</span>:
-        <span class="textValue">"{{ariaLabel.value}}"</span>
+        <span class="textValue">"{{ariaLabel.text}}"</span>
       </li>
 {{/}}
 {{?labelFor.values}}
       <li class="property{{?labelFor.unused}} unused{{/}}">
         <span class="property">label-for</span>:
-  {{#labelFor}}
+  {{#labelFor.values}}
         <span class="textValue">"{{text}}"</span>{{^last}},{{/}}
   {{/}}
       </li>
@@ -35,20 +35,23 @@
 {{?labelWrapped}}
       <li id="label-wrapped" class="property{{?labelWrapped.unused}} unused{{/}}">
         <span class="property">label-wrapped</span>:
-  {{#labelWrapped}}
-        <span class="textValue">"{{text}}"</span>{{^last}},{{/}}
-  {{/}}
+        <span class="textValue">"{{labelWrapped.text}}"</span>
       </li>
 {{/}}
 {{?alt}}
       <li id="alt" class="property{{?alt.unused}} unused{{/}}{{^alt.valid}} warning{{/}}">
         <span class="property">alt</span>:
   {{?alt.valid}}
-        <span id="alt-value">"{{alt.value}}"</span>
+        <span class="textValue" id="alt-value">"{{alt.value}}"</span>
   {{:}}
         <span id="alt-value" class="none">undefined</span>
   {{/}}
       </li>
+{{/}}
+{{?content}}
+      <li id="content" class="property{{?content.unused}} unused{{/}}">
+        <span class="property">content</span>:
+        <span class="textValue">{{content.text}}</span>
 {{/}}
 {{?title}}
       <li id="title" class="property{{?title.unused}} unused{{/}}">

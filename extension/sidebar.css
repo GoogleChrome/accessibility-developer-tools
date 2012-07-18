@@ -10,6 +10,10 @@ body {
     display: none;
 }
 
+#main {
+    max-width: 100%;
+}
+
 div.properties {
     padding: 5px;
     border-bottom: 1px solid #BFBFBF;
@@ -54,6 +58,14 @@ li.property.warning {
     background-image: url(images/warningIcon.png);
     background-repeat: no-repeat;
     background-position: left center;
+}
+
+.textValue {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
 }
 
 .invalid {
