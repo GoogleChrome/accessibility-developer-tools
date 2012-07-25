@@ -289,7 +289,7 @@ axs.utils.parseColor = function(colorString) {
         return new axs.utils.Color(r, g, b, a);
     }
 
-    var rgbaRegex = /^rgba\((\d+), (\d+), (\d+), (\d+)\)/;
+    var rgbaRegex = /^rgba\((\d+), (\d+), (\d+), (\d+(\.\d+)?)\)/;
     match = colorString.match(rgbaRegex);
     if (match) {
         var a = parseInt(match[4], 10);

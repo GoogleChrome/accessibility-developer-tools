@@ -177,7 +177,6 @@ axs.properties.findTextAlternatives = function(element) {
 axs.properties.getAriaProperties = function(element) {
     var ariaProperties = {};
     var role = axs.properties.getRole(element);
-    console.log('role', role);
     if (!role)
         return null;
     ariaProperties['role'] = role;
@@ -200,7 +199,6 @@ axs.properties.getAriaProperties = function(element) {
     }
     if (Object.keys(statesAndProperties).length > 0)
         ariaProperties['properties'] = statesAndProperties;
-    console.log('ariaProperties', ariaProperties);
     if (Object.keys(ariaProperties).length > 0)
         return ariaProperties;
     return null;
@@ -247,7 +245,6 @@ axs.properties.getTrackElements = function(element, kind) {
     if (!trackElements.length) {
         result.valid = false;
         result.reason = chrome.i18n.getMessage('noTracksProvided', [kind]);
-        console.log('reason', result.reason);
         return result;
     }
     result.valid = true;
@@ -260,7 +257,6 @@ axs.properties.getTrackElements = function(element, kind) {
         if (!src) {
             trackElement.valid = false;
             trackElement.reason = chrome.i18n.getMessage('noSrcProvided');
-            console.log('reason', trackElement.reason);
         } else {
             trackElement.valid = true;
             trackElement.src = src;
@@ -287,7 +283,6 @@ axs.properties.getTrackElements = function(element, kind) {
  * @return {Object.<string, Object>}
  */
 axs.properties.getAllProperties = function(node) {
-    console.log('getAllProperties for', node);
     /** @type {Element} */ var element;
     if (node.nodeType == Node.ELEMENT_NODE)
         element = /** @type {Element} */ node;
