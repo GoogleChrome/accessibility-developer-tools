@@ -25,19 +25,7 @@ axs.AuditRules.addRule({
     test: function(element) {
         if (axs.utils.isElementOrAncestorHidden(element))
             return false;
-        var overlapping = axs.utils.overlappingElement(element);
-        if (overlapping) {
-            var style = window.getComputedStyle(overlapping, null);
-            var overlappingElementBg = axs.utils.getBgColor(style, overlapping);
-            if (overlappingElementBg && overlappingElementBg.alpha > 0)
-                return true;
-        }
-        if (axs.utils.elementHasZeroArea(element))
-            return true;
-        var style = window.getComputedStyle(element, null);
-        if (style.opacity == 0)
-            return true;
-        return false;
+        return !axs.utils.elementIsVisible(element)
     },
     code: 'AX_FOCUS_01'
 });
