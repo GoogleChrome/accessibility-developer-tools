@@ -5,20 +5,24 @@
 {{?role}}
       <li id="role" class="property{{^role.valid}} warning invalid{{/}}">
         <span class="property">role</span>:
-        <span id="role-value" {{^role.valid}} class="invalid" {{/}}>{{role.name}}</span>
+        <span id="role-value">{{role.name}}</span>
       </li>
 {{/}}
 {{#properties}}
-      <li id="{{name}}" class="property{{^role.valid}} warning{{/}}">
+  {{?text}}
+      <li id="{{name}}" class="property{{^valid}} warning invalid{{/}}">
         <span class="property">{{name}}</span>:
-  {{?valid}}
-        <span>{{value}}</span>
-  {{/}}
-  {{^valid}}
-        <span>{{reason}}</span>
-  {{/}}
+        <span class="text">"{{text}}"</span>
       </li>
-{{/}}
+  {{:}}{{?idref}}
+      <!-- TODO -->
+  {{:}}
+      <li id="{{name}}" class="property{{^valid}} warning invalid{{/}}">
+        <span class="property">{{name}}</span>:
+        <span>{{value}}</span>
+      </li>
+  {{/idref}}{{/text}}
+{{/properties}}
     </ul>
         </div>
 </div>

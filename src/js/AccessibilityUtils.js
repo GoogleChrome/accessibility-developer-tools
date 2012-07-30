@@ -143,7 +143,7 @@ axs.utils.overlappingElement = function(element) {
  * @param {Element} element
  * @return boolean
  */
-axs.utils.elementIsControl = function(element) {
+axs.utils.elementIsHtmlControl = function(element) {
     // HTML control
     if (element instanceof HTMLButtonElement)
         return true;
@@ -153,21 +153,27 @@ axs.utils.elementIsControl = function(element) {
         return true;
     if (element instanceof HTMLTextAreaElement)
         return true;
-/*
+
+    return false;
+};
+
+/**
+ * @param {Element} element
+ * @return boolean
+ */
+axs.utils.elementIsAriaWidget = function(element) {
     if (element.hasAttribute('role')) {
         var roleValue = element.getAttribute('role');
         // TODO is this correct?
         if (roleValue) {
             var role = axs.constants.ARIA_ROLES[roleValue];
-            if (role) {
-                if (role.allParentRolesSet['widget'])
-                    return true;
-            }
+            console.log('WIDGET_ROLES', axs.constants.WIDGET_ROLES);
+            if (role && 'widget' in role['allParentRolesSet'])
+                return true;
         }
     }
-*/
     return false;
-};
+}
 
 /**
  * @param {Element} element
@@ -548,6 +554,7 @@ axs.utils.isValidPropertyValue = function(propertyName, value, element) {
             result.value = validIDRefValue.value;
         } else {
             result.valid = false;
+            result.value = value;
             result.reason = validIDRefValue.reason;
         }
         return result;
@@ -564,12 +571,11 @@ axs.utils.isValidPropertyValue = function(propertyName, value, element) {
                     result.reason.push(refIsValid.reason);
                 } else
                     result.reason = refIsValid.reason;
-            } else {
-                if (result.values)
-                    result.values.push(refIsValid.value);
-                else
-                    result.values = [refIsValid.value];
             }
+            if (result.values)
+                result.values.push(refIsValid.value);
+            else
+                result.values = [refIsValid.value];
         }
         return result;
     case "integer":
@@ -605,6 +611,7 @@ axs.utils.isValidPropertyValue = function(propertyName, value, element) {
             return result;
         } else {
             result.valid = false;
+            result.value = value;
             result.reason = validTokenValue.reason;
             return result;
         }
@@ -622,12 +629,12 @@ axs.utils.isValidPropertyValue = function(propertyName, value, element) {
                     result.reason = validTokenValue.reason;
                     result.possibleValues = validTokenValue.possibleValues;
                 }
-            } else {
-                if (result.values)
-                    result.values.push(validTokenValue.value);
-                else
-                    result.values = [validTokenValue.value];
             }
+            // TODO (more structured result)
+            if (result.values)
+                result.values.push(validTokenValue.value);
+            else
+                result.values = [validTokenValue.value];
         }
         return result;
     case "tristate":
@@ -637,6 +644,7 @@ axs.utils.isValidPropertyValue = function(propertyName, value, element) {
             result.value = validTristate.value;
         } else {
             result.valid = false;
+            result.value = value;
             result.reason = validTristate.reason;
         }
         return result;
@@ -647,6 +655,7 @@ axs.utils.isValidPropertyValue = function(propertyName, value, element) {
             result.value = validBoolean.value;
         } else {
             result.valid = false;
+            result.value = value;
             result.reason = validBoolean.reason;
         }
         return result;
@@ -657,6 +666,7 @@ axs.utils.isValidPropertyValue = function(propertyName, value, element) {
             result.value = validBoolean.value;
         } else {
             result.valid = false;
+            result.value = value;
             result.reason = validBoolean.reason;
         }
         return result;
@@ -675,6 +685,7 @@ axs.utils.isValidTokenValue = function(propertyName, value) {
     var propertyKey = propertyName.replace(/^aria-/, '');
     var propertyDetails = axs.constants.ARIA_PROPERTIES[propertyKey];
     var possibleValues = propertyDetails.valuesSet;
+    console.log('isValidTokenValue', propertyName, value, propertyDetails, possibleValues);
     return axs.utils.isPossibleValue(value, possibleValues, propertyName);
 };
 
@@ -686,6 +697,7 @@ axs.utils.isValidTokenValue = function(propertyName, value) {
 axs.utils.isPossibleValue = function(value, possibleValues, propertyName) {
     if (!possibleValues[value])
         return { 'valid': false,
+                 'value': value,
                  'reason': '"' + value + '" is not a valid value for ' + propertyName,
                  'possibleValues': Object.keys(possibleValues) };
     return { 'valid': true, 'value': value };
@@ -697,8 +709,11 @@ axs.utils.isPossibleValue = function(value, possibleValues, propertyName) {
  */
 axs.utils.isValidBoolean = function(value) {
     var parsedValue = JSON.parse(value);
-    if (!(parsedValue instanceof Boolean))
-        return { 'valid': false, 'reason': '"' + value + '" is not a true/false value' };
+    console.log('isValidBoolean', value, parsedValue);
+    if (typeof(parsedValue) != 'boolean')
+        return { 'valid': false,
+                 'value': value,
+                 'reason': '"' + value + '" is not a true/false value' };
     return { 'valid': true, 'value': parsedValue };
 };
 
@@ -720,9 +735,19 @@ axs.utils.isValidIDRefValue = function(value, element) {
 axs.utils.isValidNumber = function(value) {
     var parsedValue = JSON.parse(value);
     if (typeof(parsedValue) != 'number')
-        return { 'valid': false, 'reason': '"' + value + '" is not a number' };
+        return { 'valid': false,
+                 'value': value,
+                 'reason': '"' + value + '" is not a number' };
     return { 'valid': true, 'value': parsedValue };
 };
+
+/**
+ * Get the value for the given ARIA widget or HTML control.
+ */
+axs.utils.getValueForWidget = function(element) {
+    // ARIA widget if has valid ARIA role and 'widget' is in allParentRolesSet.
+    // HTML control if input,
+}
 
 /**
  * @param {Element} element

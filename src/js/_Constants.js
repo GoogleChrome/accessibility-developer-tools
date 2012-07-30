@@ -466,6 +466,9 @@ axs.constants.ARIA_ROLES = {
     }
 };
 
+axs.constants.WIDGET_ROLES = {};
+
+// TODO make a AriaRole object etc.
 for (var roleName in axs.constants.ARIA_ROLES) {
     var role = axs.constants.ARIA_ROLES[roleName];
     // Inherit all properties and requiredProperties from parent hierarchy.
@@ -506,6 +509,8 @@ for (var roleName in axs.constants.ARIA_ROLES) {
     var parentRolesSet = {};
     addAllParentRolesToSet(role, parentRolesSet);
     role['allParentRolesSet'] = parentRolesSet;
+    if ('widget' in parentRolesSet)
+        axs.constants.WIDGET_ROLES[roleName] = role;
 }
 
 /** @type {Object.<string, Object>} */
@@ -700,6 +705,200 @@ axs.constants.ARIA_PROPERTIES = {
         "valueType": "string"
     }
 };
+
+/**
+ * A constant indicating no role name.
+ * @type {string}
+ */
+axs.constants.NO_ROLE_NAME = ' ';
+
+/**
+ * A mapping from ARIA role names to their message ids.
+ * Copied from ChromeVox:
+ * http://code.google.com/p/google-axs-chrome/source/browse/trunk/chromevox/common/aria_util.js
+ * @type {Object.<string, string>}
+ */
+axs.constants.WIDGET_ROLE_TO_NAME = {
+  'alert' : 'aria_role_alert',
+  'alertdialog' : 'aria_role_alertdialog',
+  'button' : 'aria_role_button',
+  'checkbox' : 'aria_role_checkbox',
+  'columnheader' : 'aria_role_columnheader',
+  'combobox' : 'aria_role_combobox',
+  'dialog' : 'aria_role_dialog',
+  'grid' : 'aria_role_grid',
+  'gridcell' : 'aria_role_gridcell',
+  'link' : 'aria_role_link',
+  'listbox' : 'aria_role_listbox',
+  'log' : 'aria_role_log',
+  'marquee' : 'aria_role_marquee',
+  'menu' : 'aria_role_menu',
+  'menubar' : 'aria_role_menubar',
+  'menuitem' : 'aria_role_menuitem',
+  'menuitemcheckbox' : 'aria_role_menuitemcheckbox',
+  'menuitemradio' : 'aria_role_menuitemradio',
+  'option' : axs.constants.NO_ROLE_NAME,
+  'progressbar' : 'aria_role_progressbar',
+  'radio' : 'aria_role_radio',
+  'radiogroup' : 'aria_role_radiogroup',
+  'rowheader' : 'aria_role_rowheader',
+  'scrollbar' : 'aria_role_scrollbar',
+  'slider' : 'aria_role_slider',
+  'spinbutton' : 'aria_role_spinbutton',
+  'status' : 'aria_role_status',
+  'tab' : 'aria_role_tab',
+  'tabpanel' : 'aria_role_tabpanel',
+  'textbox' : 'aria_role_textbox',
+  'timer' : 'aria_role_timer',
+  'toolbar' : 'aria_role_toolbar',
+  'tooltip' : 'aria_role_tooltip',
+  'treeitem' : 'aria_role_treeitem'
+};
+
+
+/**
+ * @type {Object.<string, string>}
+ * Copied from ChromeVox:
+ * http://code.google.com/p/google-axs-chrome/source/browse/trunk/chromevox/common/aria_util.js
+ */
+axs.constants.STRUCTURE_ROLE_TO_NAME = {
+  'article' : 'aria_role_article',
+  'application' : 'aria_role_application',
+  'banner' : 'aria_role_banner',
+  'columnheader' : 'aria_role_columnheader',
+  'complementary' : 'aria_role_complementary',
+  'contentinfo' : 'aria_role_contentinfo',
+  'definition' : 'aria_role_definition',
+  'directory' : 'aria_role_directory',
+  'document' : 'aria_role_document',
+  'form' : 'aria_role_form',
+  'group' : 'aria_role_group',
+  'heading' : 'aria_role_heading',
+  'img' : 'aria_role_img',
+  'list' : 'aria_role_list',
+  'listitem' : 'aria_role_listitem',
+  'main' : 'aria_role_main',
+  'math' : 'aria_role_math',
+  'navigation' : 'aria_role_navigation',
+  'note' : 'aria_role_note',
+  'region' : 'aria_role_region',
+  'rowheader' : 'aria_role_rowheader',
+  'search' : 'aria_role_search',
+  'separator' : 'aria_role_separator'
+};
+
+
+/**
+ * @type {Array.<Object>}
+ * Copied from ChromeVox:
+ * http://code.google.com/p/google-axs-chrome/source/browse/trunk/chromevox/common/aria_util.js
+ */
+axs.constants.ATTRIBUTE_VALUE_TO_STATUS = [
+  { name: 'aria-autocomplete', values:
+      {'inline' : 'aria_autocomplete_inline',
+       'list' : 'aria_autocomplete_list',
+       'both' : 'aria_autocomplete_both'} },
+  { name: 'aria-checked', values:
+      {'true' : 'aria_checked_true',
+       'false' : 'aria_checked_false',
+       'mixed' : 'aria_checked_mixed'} },
+  { name: 'aria-disabled', values:
+      {'true' : 'aria_disabled_true'} },
+  { name: 'aria-expanded', values:
+      {'true' : 'aria_expanded_true',
+       'false' : 'aria_expanded_false'} },
+  { name: 'aria-invalid', values:
+      {'true' : 'aria_invalid_true',
+       'grammar' : 'aria_invalid_grammar',
+       'spelling' : 'aria_invalid_spelling'} },
+  { name: 'aria-multiline', values:
+      {'true' : 'aria_multiline_true'} },
+  { name: 'aria-multiselectable', values:
+      {'true' : 'aria_multiselectable_true'} },
+  { name: 'aria-pressed', values:
+      {'true' : 'aria_pressed_true',
+       'false' : 'aria_pressed_false',
+       'mixed' : 'aria_pressed_mixed'} },
+  { name: 'aria-readonly', values:
+      {'true' : 'aria_readonly_true'} },
+  { name: 'aria-required', values:
+      {'true' : 'aria_required_true'} },
+  { name: 'aria-selected', values:
+      {'true' : 'aria_selected_true',
+       'false' : 'aria_selected_false'} }
+];
+
+/**
+ * Copied from ChromeVox:
+ * http://code.google.com/p/google-axs-chrome/source/browse/trunk/chromevox/common/dom_util.js
+ * @type {Object}
+ */
+axs.constants.INPUT_TYPE_TO_INFORMATION_TABLE_MSG = {
+  'button' : 'input_type_button',
+  'checkbox' : 'input_type_checkbox',
+  'color' : 'input_type_color',
+  'datetime' : 'input_type_datetime',
+  'datetime-local' : 'input_type_datetime_local',
+  'date' : 'input_type_date',
+  'email' : 'input_type_email',
+  'file' : 'input_type_file',
+  'image' : 'input_type_image',
+  'month' : 'input_type_month',
+  'number' : 'input_type_number',
+  'password' : 'input_type_password',
+  'radio' : 'input_type_radio',
+  'range' : 'input_type_range',
+  'reset' : 'input_type_reset',
+  'search' : 'input_type_search',
+  'submit' : 'input_type_submit',
+  'tel' : 'input_type_tel',
+  'text' : 'input_type_text',
+  'url' : 'input_type_url',
+  'week' : 'input_type_week'
+};
+
+
+/**
+ * Copied from ChromeVox:
+ * http://code.google.com/p/google-axs-chrome/source/browse/trunk/chromevox/common/dom_util.js
+ * @type {Object}
+ */
+axs.constants.TAG_TO_INFORMATION_TABLE_VERBOSE_MSG = {
+  'A' : 'tag_link',
+  'BUTTON' : 'tag_button',
+  'H1' : 'tag_h1',
+  'H2' : 'tag_h2',
+  'H3' : 'tag_h3',
+  'H4' : 'tag_h4',
+  'H5' : 'tag_h5',
+  'H6' : 'tag_h6',
+  'LI' : 'tag_li',
+  'OL' : 'tag_ol',
+  'SELECT' : 'tag_select',
+  'TEXTAREA' : 'tag_textarea',
+  'UL' : 'tag_ul',
+  'SECTION' : 'tag_section',
+  'NAV' : 'tag_nav',
+  'ARTICLE' : 'tag_article',
+  'ASIDE' : 'tag_aside',
+  'HGROUP' : 'tag_hgroup',
+  'HEADER' : 'tag_header',
+  'FOOTER' : 'tag_footer',
+  'TIME' : 'tag_time',
+  'MARK' : 'tag_mark'
+};
+
+/**
+ * Copied from ChromeVox:
+ * http://code.google.com/p/google-axs-chrome/source/browse/trunk/chromevox/common/dom_util.js
+ * @type {Object}
+ */
+axs.constants.TAG_TO_INFORMATION_TABLE_BRIEF_MSG = {
+  'BUTTON' : 'tag_button',
+  'SELECT' : 'tag_select',
+  'TEXTAREA' : 'tag_textarea'
+};
+
 
 axs.constants.MIXED_VALUES = {
     "true": true,

@@ -3,7 +3,7 @@
   <div class="properties speech">
 {{?computedText}}
     <span class="textValue">{{computedText}}</span>
-{{/}}{{^computedText}}
+{{:}}
     <span msg="noText" class="none"></span>
 {{/}}
   </div>
@@ -11,10 +11,15 @@
   <div class="properties">
     <ul class="properties">
 {{?ariaLabelledby}}
-      <li id="aria-labelledby" class="property{{?ariaLabelledby.unused}} unused{{/}}">
+      <li id="aria-labelledby" class="property{{?ariaLabelledby.unused}} unused{{/}}{{^ariaLabelledby.valid}} warning{{/}}">
         <span class="property">aria-labelledby</span>:
+          <ul class="valuelist">
   {{#ariaLabelledby.values}}
-        <span class="textValue">"{{text}}"</span>{{^last}},{{/}}
+    {{?valid}}
+        <li><span class="textvalue">"{{text}}"</span>{{^last}},{{/}}</li>
+    {{:}}
+        <li><span class="error">{{errorMessage}}</span>{{^last}},{{/}}</li>
+    {{/}}
   {{/}}
       </li>
 {{/}}
@@ -42,7 +47,7 @@
       <li id="alt" class="property{{?alt.unused}} unused{{/}}{{^alt.valid}} warning{{/}}">
         <span class="property">alt</span>:
   {{?alt.valid}}
-        <span class="textValue" id="alt-value">"{{alt.value}}"</span>
+        <span class="textValue" id="alt-value">"{{alt.text}}"</span>
   {{:}}
         <span id="alt-value" class="none">undefined</span>
   {{/}}
@@ -56,11 +61,11 @@
 {{?title}}
       <li id="title" class="property{{?title.unused}} unused{{/}}">
         <span class="property">title</span>:
-        <span id="title-value">"{{title.value}}"</span>
+        <span id="title-value">"{{title.text}}"</span>
       </li>
 {{/}}
 {{?noLabel}}
-      <li id="no-label" class="property warning"><span class="property">No label</span></li>
+      <li id="no-label" class="property warning"><span class="error">No label</span></li>
 {{/}}
     </ul>
   </div>

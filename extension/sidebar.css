@@ -57,7 +57,7 @@ li.property.unused {
 li.property.warning {
     background-image: url(images/warningIcon.png);
     background-repeat: no-repeat;
-    background-position: left center;
+    background-position: left 2px;
 }
 
 .textValue {
@@ -66,6 +66,24 @@ li.property.warning {
     overflow: hidden;
     text-overflow: ellipsis;
     display: inline-block;
+}
+
+li.textValue {
+    display: block;
+}
+
+.error {
+    color: #C80000;
+    font-style: italic;
+    font-family: Lucida Grande, sans-serif;
+}
+
+ul.valuelist {
+    list-style-image: none;
+    list-style-position: outside;
+    list-style-type: none;
+    padding: 0;
+    padding-left: 1em;
 }
 
 .invalid {
