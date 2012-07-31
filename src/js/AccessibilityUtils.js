@@ -167,7 +167,6 @@ axs.utils.elementIsAriaWidget = function(element) {
         // TODO is this correct?
         if (roleValue) {
             var role = axs.constants.ARIA_ROLES[roleValue];
-            console.log('WIDGET_ROLES', axs.constants.WIDGET_ROLES);
             if (role && 'widget' in role['allParentRolesSet'])
                 return true;
         }
@@ -551,10 +550,10 @@ axs.utils.isValidPropertyValue = function(propertyName, value, element) {
         var validIDRefValue = axs.utils.isValidIDRefValue(value, element);
         if (validIDRefValue.valid) {
             result.valid = true;
-            result.value = validIDRefValue.value;
+            result.idref = validIDRefValue.value;
         } else {
             result.valid = false;
-            result.value = value;
+            result.idref = value;
             result.reason = validIDRefValue.reason;
         }
         return result;

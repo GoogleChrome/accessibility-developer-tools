@@ -33,7 +33,7 @@ function updateView(result) {
             template.render(section, { 'heading': chrome.i18n.getMessage(sectionName) }).appendTo(main);
             foundProperty = true;
         } catch (ex) {
-            console.error('Could not render results section', section, ex);
+            console.error('Could not render results section', section, ex.toString());
         }
     }
 
@@ -42,6 +42,7 @@ function updateView(result) {
         empty.render({ 'noAccessibilityInformation': chrome.i18n.getMessage('noAccessibilityInformation') }).appendTo(main);
     }
     insertMessages();
+    insertIdrefEventListeners();
     updateHeight();
 }
 
@@ -61,8 +62,20 @@ function updateHeight() {
     window.sidebar.setHeight(calculatedScrollHeight + "px");
 }
 
+function insertIdrefEventListeners() {
+    var elementsWithIdref = document.querySelectorAll('[idref]');
+    for (var i = 0; i < elementsWithIdref.length; i++) {
+        var element = elementsWithIdref[i];
+        var idref = element.getAttribute('idref');
+        var inspectElement = 'var element = document.getElementById("' + idref + '");\n' +
+                             'if (element) inspect(element);';
+        element.addEventListener('click',
+                                 function() { chrome.devtools.inspectedWindow.eval(inspectElement) });
+    }
+}
+
 function onSelectionChanged() {
-    if (!chrome.experimental.devtools.inspectedWindow.tabId) {
+    if (!chrome.devtools.inspectedWindow.tabId) {
         return;
     }
     chrome.devtools.inspectedWindow.eval(

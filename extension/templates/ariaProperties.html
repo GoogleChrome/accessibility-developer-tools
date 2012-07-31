@@ -9,19 +9,20 @@
       </li>
 {{/}}
 {{#properties}}
+      <li id="{{name}}" class="property{{^valid}} warning invalid{{/}}">
+        <span class="property">{{name}}</span>:
   {{?text}}
-      <li id="{{name}}" class="property{{^valid}} warning invalid{{/}}">
-        <span class="property">{{name}}</span>:
         <span class="text">"{{text}}"</span>
-      </li>
   {{:}}{{?idref}}
-      <!-- TODO -->
-  {{:}}
-      <li id="{{name}}" class="property{{^valid}} warning invalid{{/}}">
-        <span class="property">{{name}}</span>:
+        <!-- TODO: better formatting? -->
+        <a href="#" idref="{{idref}}">{{idref}}</a>
+  {{:}}{{?value}}
         <span>{{value}}</span>
       </li>
-  {{/idref}}{{/text}}
+  {{:}}{{?reason}}
+        <span class="text error">{{reason}}</span>
+  {{/reason}}{{/value}}{{/idref}}{{/text}}
+      </li>
 {{/properties}}
     </ul>
         </div>
