@@ -103,8 +103,8 @@ axs.utils.elementIsOutsideScrollArea = function(element) {
     var scroll_top = document.body.scrollTop;
     var scroll_left = document.body.scrollLeft;
 
-    if (rect.top > scroll_height || rect.bottom < -scroll_top ||
-        rect.left > scroll_width || rect.right < -scroll_left)
+    if (rect.top >= scroll_height || rect.bottom <= -scroll_top ||
+        rect.left >= scroll_width || rect.right <= -scroll_left)
         return true;
     return false;
 };

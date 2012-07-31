@@ -14,12 +14,20 @@
 
 goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
+goog.require('axs.utils');
 
 axs.AuditRules.addRule({
     name: 'imagesWithoutAltText',
     severity: axs.constants.Severity.Warning,
     relevantNodesSelector: function(scope) {
-        return scope.querySelectorAll('img');
+        var imgElements = scope.querySelectorAll('img');
+        var relevantNodes = [];
+        for (var i = 0; i < imgElements.length; i++) {
+            var img = imgElements[i];
+            if (!axs.utils.isElementOrAncestorHidden(img))
+                relevantNodes.push(img);
+        }
+        return relevantNodes;
     },
     test: function(image) {
         return (!image.hasAttribute('alt') && image.getAttribute('role') != 'presentation');
