@@ -707,6 +707,28 @@ axs.constants.ARIA_PROPERTIES = {
 };
 
 /**
+ * All of the states and properties which apply globally.
+ */
+axs.constants.GLOBAL_PROPERTIES = [
+    "aria-atomic",
+    "aria-busy",  // (state)
+    "aria-controls",
+    "aria-describedby",
+    "aria-disabled",  // (state)
+    "aria-dropeffect",
+    "aria-flowto",
+    "aria-grabbed",  // (state)
+    "aria-haspopup",
+    "aria-hidden",  // (state)
+    "aria-invalid",  // (state)
+    "aria-label",
+    "aria-labelledby",
+    "aria-live",
+    "aria-owns",
+    "aria-relevant"
+];
+
+/**
  * A constant indicating no role name.
  * @type {string}
  */
@@ -898,7 +920,6 @@ axs.constants.TAG_TO_INFORMATION_TABLE_BRIEF_MSG = {
   'SELECT' : 'tag_select',
   'TEXTAREA' : 'tag_textarea'
 };
-
 
 axs.constants.MIXED_VALUES = {
     "true": true,

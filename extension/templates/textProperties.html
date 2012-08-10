@@ -2,7 +2,7 @@
   <div class="sidebar-separator">{{heading}}</div>
   <div class="properties speech">
 {{?computedText}}
-    <span class="textValue">{{computedText}}</span>
+    <span class="text">{{computedText}}</span>
 {{:}}
     <span msg="noText" class="none"></span>
 {{/}}
@@ -18,7 +18,7 @@
     {{?valid}}
         <li><span class="textvalue">"{{text}}"</span>{{^last}},{{/}}</li>
     {{:}}
-        <li><span class="error">{{errorMessage}}</span>{{^last}},{{/}}</li>
+        <li><span class="error text">{{errorMessage}}</span>{{^last}},{{/}}</li>
     {{/}}
   {{/}}
       </li>
@@ -26,28 +26,28 @@
 {{?ariaLabel}}
       <li id="aria-label" class="property{{?ariaLabel.unused}} unused{{/}}">
         <span class="property">aria-label</span>:
-        <span class="textValue">"{{ariaLabel.text}}"</span>
+        <span class="text">"{{ariaLabel.text}}"</span>
       </li>
 {{/}}
 {{?labelFor.values}}
       <li class="property{{?labelFor.unused}} unused{{/}}">
         <span class="property">label-for</span>:
   {{#labelFor.values}}
-        <span class="textValue">"{{text}}"</span>{{^last}},{{/}}
+        <span class="text">"{{text}}"</span>{{^last}},{{/}}
   {{/}}
       </li>
 {{/}}
 {{?labelWrapped}}
       <li id="label-wrapped" class="property{{?labelWrapped.unused}} unused{{/}}">
         <span class="property">label-wrapped</span>:
-        <span class="textValue">"{{labelWrapped.text}}"</span>
+        <span class="text">"{{labelWrapped.text}}"</span>
       </li>
 {{/}}
 {{?alt}}
       <li id="alt" class="property{{?alt.unused}} unused{{/}}{{^alt.valid}} warning{{/}}">
         <span class="property">alt</span>:
   {{?alt.valid}}
-        <span class="textValue" id="alt-value">"{{alt.text}}"</span>
+        <span class="text" id="alt-value">"{{alt.text}}"</span>
   {{:}}
         <span id="alt-value" class="none">undefined</span>
   {{/}}
@@ -56,7 +56,7 @@
 {{?content}}
       <li id="content" class="property{{?content.unused}} unused{{/}}">
         <span class="property">content</span>:
-        <span class="textValue">{{content.text}}</span>
+        <span class="text">{{content.text}}</span>
 {{/}}
 {{?title}}
       <li id="title" class="property{{?title.unused}} unused{{/}}">
@@ -65,7 +65,7 @@
       </li>
 {{/}}
 {{?noLabel}}
-      <li id="no-label" class="property warning"><span class="error">No label</span></li>
+      <li id="no-label" class="property warning"><span class="error text">No label</span></li>
 {{/}}
     </ul>
   </div>

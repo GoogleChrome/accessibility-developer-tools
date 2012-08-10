@@ -462,33 +462,62 @@ axs.properties.getTextProperties = function(node) {
  * @return {Object}
  */
 axs.properties.getAriaProperties = function(element) {
+    console.log('getAriaProperties', element);
     var ariaProperties = {};
+    var statesAndProperties = axs.properties.getGlobalAriaProperties(element);
+    console.log('statesAndProperties', statesAndProperties);
+    if (Object.keys(statesAndProperties).length > 0)
+        ariaProperties['properties'] = axs.utils.values(statesAndProperties);
     var role = axs.properties.getRole(element);
-    if (!role)
-        return null;
+    if (!role) {
+        if (Object.keys(ariaProperties).length)
+            return ariaProperties;
+        else
+            return null;
+    }
     ariaProperties['role'] = role;
-    if (!role.valid) {
+    if (!role.valid || !role.details || !role.details.propertiesSet)
         return ariaProperties;
-    }
-    if (!role.details || !role.details.propertiesSet) {
-        return ariaProperties;
-    }
 
-    var statesAndProperties = [];
     for (var property in role.details.propertiesSet) {
+        if (property in statesAndProperties)
+            continue;
         if (element.hasAttribute(property)) {
-            // check valid
             var propertyValue = element.getAttribute(property);
-            statesAndProperties.push(axs.utils.isValidPropertyValue(property, propertyValue, element));
+            statesAndProperties[property] =
+                axs.utils.getAriaPropertyValue(property, propertyValue, element);
+            if ('values' in statesAndProperties[property]) {
+                var values = statesAndProperties[property].values;
+                values[values.length - 1].isLast = true;
+            }
         } else if (role.details.requiredPropertiesSet[property]) {
-            statesAndProperties.push({ 'name': property, 'valid': false, 'reason': 'Required property not set' });
+            statesAndProperties[property] = 
+                { 'name': property, 'valid': false, 'reason': 'Required property not set' };
         }
     }
     if (Object.keys(statesAndProperties).length > 0)
-        ariaProperties['properties'] = statesAndProperties;
+        ariaProperties['properties'] = axs.utils.values(statesAndProperties);
     if (Object.keys(ariaProperties).length > 0)
         return ariaProperties;
     return null;
+};
+
+/**
+ * Gets the ARIA properties which apply to all elements, not just elements with ARIA roles.
+ * @param {Element} element
+ * @return {!Object}
+ */
+axs.properties.getGlobalAriaProperties = function(element) {
+    var globalProperties = {};
+    for (var i = 0; i < axs.constants.GLOBAL_PROPERTIES.length; i++) {
+        var property = axs.constants.GLOBAL_PROPERTIES[i];
+        if (element.hasAttribute(property)) {
+            var propertyValue = element.getAttribute(property);
+            globalProperties[property] = 
+                axs.utils.getAriaPropertyValue(property, propertyValue, element);
+        }
+    }
+    return globalProperties;
 };
 
 /**

@@ -60,12 +60,13 @@ li.property.warning {
     background-position: left 2px;
 }
 
-.textValue {
+.text {
     max-width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     display: inline-block;
+    font-family: Lucida Grande, sans-serif;
 }
 
 li.textValue {
@@ -75,7 +76,6 @@ li.textValue {
 .error {
     color: #C80000;
     font-style: italic;
-    font-family: Lucida Grande, sans-serif;
 }
 
 ul.valuelist {

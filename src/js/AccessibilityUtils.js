@@ -528,7 +528,7 @@ axs.utils.isElementOrAncestorHidden = function(element) {
  * @param {!Element} element
  * @return {!Object}
  */
-axs.utils.isValidPropertyValue = function(propertyName, value, element) {
+axs.utils.getAriaPropertyValue = function(propertyName, value, element) {
     var propertyKey = propertyName.replace(/^aria-/, '');
     var property = axs.constants.ARIA_PROPERTIES[propertyKey];
     var result = { 'name': propertyName, 'rawValue': value };
@@ -547,34 +547,18 @@ axs.utils.isValidPropertyValue = function(propertyName, value, element) {
 
     switch (propertyType) {
     case "idref":
-        var validIDRefValue = axs.utils.isValidIDRefValue(value, element);
-        if (validIDRefValue.valid) {
-            result.valid = true;
-            result.idref = validIDRefValue.value;
-        } else {
-            result.valid = false;
-            result.idref = value;
-            result.reason = validIDRefValue.reason;
-        }
-        return result;
+        return axs.utils.isValidIDRefValue(value, element);
     case "idref_list":
         var idrefValues = value.split(/\s+/);
         result.valid = true;
         for (var i = 0; i < idrefValues.length; i++) {
             var refIsValid = axs.utils.isValidIDRefValue(idrefValues[i],  element);
-            if (!refIsValid.valid) {
+            if (!refIsValid.valid)
                 result.valid = false;
-                if (result.reason) {
-                    var reason = result.reason;
-                    result.reason = [ reason ];
-                    result.reason.push(refIsValid.reason);
-                } else
-                    result.reason = refIsValid.reason;
-            }
             if (result.values)
-                result.values.push(refIsValid.value);
+                result.values.push(refIsValid);
             else
-                result.values = [refIsValid.value];
+                result.values = [refIsValid];
         }
         return result;
     case "integer":
@@ -723,8 +707,10 @@ axs.utils.isValidBoolean = function(value) {
  */
 axs.utils.isValidIDRefValue = function(value, element) {
     if (!element.ownerDocument.getElementById(value))
-        return { 'valid': false, 'reason': 'No element with ID "' + value + '"' };
-    return { 'valid': true, 'value': value };
+        return { 'valid': false,
+                 'idref': value,
+                 'reason': 'No element with ID "' + value + '"' };
+    return { 'valid': true, 'idref': value };
 };
 
 /**
@@ -741,14 +727,6 @@ axs.utils.isValidNumber = function(value) {
 };
 
 /**
- * Get the value for the given ARIA widget or HTML control.
- */
-axs.utils.getValueForWidget = function(element) {
-    // ARIA widget if has valid ARIA role and 'widget' is in allParentRolesSet.
-    // HTML control if input,
-}
-
-/**
  * @param {Element} element
  * @return {boolean}
  */
@@ -760,4 +738,21 @@ axs.utils.isElementImplicitlyFocusable = function(element) {
         element instanceof HTMLIFrameElement)
         return !element.disabled;
     return false;
+};
+
+/**
+ * Returns an array containing the values of the given JSON-compatible object.
+ * (Simply ignores any function values.)
+ * @param {Object} obj
+ * @return {Array}
+ */
+axs.utils.values = function(obj) {
+    console.log('axs.utils.values', obj);
+    var values = [];
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key) && typeof obj[key] != 'function')
+            values.push(obj[key]);
+    }
+    console.log('values', values, obj);
+    return values;
 };

@@ -30,10 +30,13 @@ function updateView(result) {
 
         try {
             var template = new Handlebar(getTemplate(sectionName));
-            template.render(section, { 'heading': chrome.i18n.getMessage(sectionName) }).appendTo(main);
+            template.render(section,
+                            { 'heading': chrome.i18n.getMessage(sectionName),
+                              'ariaPartial': new Handlebar(getTemplate('ariaProperty'))
+                            }).appendTo(main);
             foundProperty = true;
         } catch (ex) {
-            console.error('Could not render results section', section, ex.toString());
+            console.error('Could not render results section', section, ex);
         }
     }
 
@@ -67,11 +70,18 @@ function insertIdrefEventListeners() {
     for (var i = 0; i < elementsWithIdref.length; i++) {
         var element = elementsWithIdref[i];
         var idref = element.getAttribute('idref');
-        var inspectElement = 'var element = document.getElementById("' + idref + '");\n' +
-                             'if (element) inspect(element);';
-        element.addEventListener('click',
-                                 function() { chrome.devtools.inspectedWindow.eval(inspectElement) });
+        addEventListener(element, idref);
     }
+}
+
+function addEventListener(element, idref) {
+    element.addEventListener('click',
+                             function() {
+        chrome.devtools.inspectedWindow.eval(
+            'var element = document.getElementById("' + idref + '");\n' +
+            'if (element) inspect(element);'
+        );
+    });
 }
 
 function onSelectionChanged() {
