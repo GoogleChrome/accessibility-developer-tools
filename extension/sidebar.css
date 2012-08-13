@@ -102,8 +102,9 @@ span.info {
     font-style: italic;
 }
 
-span.warning-text {
+span.warning {
     font-style: italic;
+    opacity: 0.5;
 }
 
 .bevel-border {

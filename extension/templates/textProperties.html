@@ -16,9 +16,9 @@
           <ul class="valuelist">
   {{#ariaLabelledby.values}}
     {{?valid}}
-        <li><span class="textvalue">"{{text}}"</span>{{^last}},{{/}}</li>
+        <li><span class="text">"{{text}}"</span>{{^last}},{{/}}</li>
     {{:}}
-        <li><span class="error text">{{errorMessage}}</span>{{^last}},{{/}}</li>
+        <li><span class="invalid">{{value}}</span>{{^last}},{{/}}</li>
     {{/}}
   {{/}}
       </li>

@@ -500,7 +500,7 @@ axs.utils.isElementHidden = function(element) {
         return true;
 
     if (element.hasAttribute('aria-hidden') &&
-        element.getAttribute('aria-hidden').toLowerCase() != 'false') {
+        element.getAttribute('aria-hidden').toLowerCase() == 'true') {
         return true;
     }
 
