@@ -13,17 +13,21 @@
 // limitations under the License.
 
 goog.require('axs.AuditRules');
-goog.require('axs.utils');
+goog.require('axs.constants');
 
 axs.AuditRules.addRule({
-    name: 'badAriaRole',
+    name: 'requiredAriaAttributeMissing',
     severity: axs.constants.Severity.Severe,
     relevantNodesSelector: function(scope) {
-        return scope.querySelectorAll("[role]");
+        return scope.querySelectorAll('[role]');
     },
     test: function(element) {
-        var role = axs.utils.getRole(element)
-        return !role.valid;
+        var role = axs.utils.getRole(element);
+        var requiredProperties = role.details.requiredPropertiesSet;
+        for (var property in requiredProperties) {
+            if (!element.hasAttribute(property))
+                return true;
+        }
     },
-    code: 'AX_ARIA_01'
+    code: 'AX_ARIA_03'
 });

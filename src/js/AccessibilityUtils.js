@@ -523,6 +523,19 @@ axs.utils.isElementOrAncestorHidden = function(element) {
 };
 
 /**
+ * @param {Element} element
+ * @return {Object|boolean}
+ */
+axs.utils.getRole = function(element) {
+    if (!element.hasAttribute('role'))
+        return false;
+    var role = element.getAttribute('role');
+    if (axs.constants.ARIA_ROLES[role])
+        return { 'name': role, 'details': axs.constants.ARIA_ROLES[role], 'valid': true };
+    return { 'name': role, 'valid': false };
+};
+
+/**
  * @param {!string} propertyName
  * @param {!string} value
  * @param {!Element} element
@@ -691,7 +704,12 @@ axs.utils.isPossibleValue = function(value, possibleValues, propertyName) {
  * @return {!Object}
  */
 axs.utils.isValidBoolean = function(value) {
-    var parsedValue = JSON.parse(value);
+    console.log('isValidBoolean', value);
+    try {
+        var parsedValue = JSON.parse(value);
+    } catch (e) {
+        parsedValue = '';
+    }
     console.log('isValidBoolean', value, parsedValue);
     if (typeof(parsedValue) != 'boolean')
         return { 'valid': false,

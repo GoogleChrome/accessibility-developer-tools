@@ -37,6 +37,12 @@
             }
         }
     },
+    "badAriaAttributeValue_name": {
+        "message": "ARIA state and property values must be valid."
+    },
+    "badAriaAttributeValue_url": {
+        "message": ""
+    },
     "badAriaRole_name": {
         "message": "Elements with ARIA roles must use a valid, non-abstract ARIA role"
     },

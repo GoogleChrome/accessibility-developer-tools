@@ -468,7 +468,7 @@ axs.properties.getAriaProperties = function(element) {
     console.log('statesAndProperties', statesAndProperties);
     if (Object.keys(statesAndProperties).length > 0)
         ariaProperties['properties'] = axs.utils.values(statesAndProperties);
-    var role = axs.properties.getRole(element);
+    var role = axs.utils.getRole(element);
     if (!role) {
         if (Object.keys(ariaProperties).length)
             return ariaProperties;
@@ -491,7 +491,7 @@ axs.properties.getAriaProperties = function(element) {
                 values[values.length - 1].isLast = true;
             }
         } else if (role.details.requiredPropertiesSet[property]) {
-            statesAndProperties[property] = 
+            statesAndProperties[property] =
                 { 'name': property, 'valid': false, 'reason': 'Required property not set' };
         }
     }
@@ -513,24 +513,11 @@ axs.properties.getGlobalAriaProperties = function(element) {
         var property = axs.constants.GLOBAL_PROPERTIES[i];
         if (element.hasAttribute(property)) {
             var propertyValue = element.getAttribute(property);
-            globalProperties[property] = 
+            globalProperties[property] =
                 axs.utils.getAriaPropertyValue(property, propertyValue, element);
         }
     }
     return globalProperties;
-};
-
-/**
- * @param {Element} element
- * @return {Object|boolean}
- */
-axs.properties.getRole = function(element) {
-    if (!element.hasAttribute('role'))
-        return false;
-    var role = element.getAttribute('role');
-    if (axs.constants.ARIA_ROLES[role])
-        return { 'name': role, 'details': axs.constants.ARIA_ROLES[role], 'valid': true };
-    return { 'name': role, 'valid': false };
 };
 
 /**
