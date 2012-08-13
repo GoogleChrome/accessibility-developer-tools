@@ -79,6 +79,12 @@
     "nonExistentAriaLabelledbyElement_url": {
         "message": "https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_ARIA_02:__aria-labelledby_attributes_should_refer_to_an_eleme"
     },
+    "requiredAriaAttributeMissing_name": {
+        "message": "Elements with ARIA roles must have all required attributes for that role"
+    },
+    "requiredAriaAttributeMissing_url": {
+        "message": ""
+    },
     "unfocusableElementsWithOnClick_name": {
         "message": "Elements with onclick handlers must be focusable"
     },
