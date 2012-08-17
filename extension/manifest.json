@@ -19,7 +19,12 @@
     "<all_urls>"
   ],
   "web_accessible_resources": [
-    "generated_accessibility.js",
+    "generated/axs.js",
+    "generated/constants.js",
+    "generated/content.js",
+    "generated/utils.js",
+    "generated/properties.js",
+    "generated/audits.js",
     "devtools.js",
     "devtools.html",
     "sidebar.html",

@@ -4,8 +4,8 @@ test("No elements === no problems.", function() {
   // Setup fixture
   var fixtures = document.getElementById('qunit-fixture');
   deepEqual(
-    AuditRules.rules.badAriaRole.run(fixtures),
-    { result: AuditResult.NA }
+    axs.AuditRules.rules.badAriaRole.run(fixtures),
+    { result: axs.constants.AuditResult.NA }
   );
 });
 
@@ -16,16 +16,16 @@ test("No roles === no problems.", function() {
     fixtures.appendChild(document.createElement('div'));
 
   deepEqual(
-    AuditRules.rules.badAriaRole.run(fixtures),
-    { result: AuditResult.NA }
+    axs.AuditRules.rules.badAriaRole.run(fixtures),
+    { result: axs.constants.AuditResult.NA }
   );
 });
 
 test("Good role === no problems.", function() {
   // Setup fixture
   var fixtures = document.getElementById('qunit-fixture');
-  for (r in ARIA_ROLES) {
-    if (ARIA_ROLES.hasOwnProperty(r)) {
+  for (r in axs.constants.ARIA_ROLES) {
+    if (axs.constants.ARIA_ROLES.hasOwnProperty(r)) {
       var div = document.createElement('div');
       div.setAttribute('role', r);
       fixtures.appendChild(div);
@@ -33,7 +33,7 @@ test("Good role === no problems.", function() {
   }
 
   deepEqual(
-    AuditRules.rules.badAriaRole.run(fixtures),
-    { elements: [], result: AuditResult.PASS }
+    axs.AuditRules.rules.badAriaRole.run(fixtures),
+    { elements: [], result: axs.constants.AuditResult.PASS }
   );
 });

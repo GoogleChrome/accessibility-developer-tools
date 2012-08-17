@@ -62,7 +62,7 @@ function init(result) {
 
 if (chrome.devtools.inspectedWindow.tabId)
     chrome.extension.sendRequest({ tabId: chrome.devtools.inspectedWindow.tabId,
-                                   command: 'injectContentScript' }, init);
+                                   command: 'injectContentScripts' }, init);
 
 function handleResults(auditResults, auditRule, severity, results, isException) {
     auditResults.resultsPending--;

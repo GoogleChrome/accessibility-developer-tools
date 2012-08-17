@@ -12,24 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
-
-goog.provide('axs.AuditRules');
-
-if (!axs.AuditRules.rules) {
-    /** @type Object.<string, axs.AuditRule> */
-    axs.AuditRules.rules = {};
-}
-
-/**
- * Adds an audit rule with the given spec to the list of rules.
- * Throws an exception if a rule with the given name already exists.
- * @param {Object} spec A spec of the form specified in axs.AuditRule.
- */
-axs.AuditRules.addRule = function(spec) {
-    if (spec.name in axs.AuditRules.rules)
-        return;
-
-    var auditRule = new axs.AuditRule(spec);
-    axs.AuditRules.rules[spec.name] = auditRule;
-};
+goog.provide('axs');

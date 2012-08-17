@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+goog.require('axs.constants');
 goog.provide('axs.utils');
 goog.provide('axs.utils.Color');
 
