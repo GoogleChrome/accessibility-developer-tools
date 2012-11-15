@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.constants');
 
-axs.AuditRules.addRule({
+axs.AuditRule.specs.requiredAriaAttributeMissing = {
     name: 'requiredAriaAttributeMissing',
     severity: axs.constants.Severity.Severe,
     relevantNodesSelector: function(scope) {
@@ -30,4 +31,4 @@ axs.AuditRules.addRule({
         }
     },
     code: 'AX_ARIA_03'
-});
+};

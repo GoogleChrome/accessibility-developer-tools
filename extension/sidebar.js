@@ -89,7 +89,7 @@ function onSelectionChanged() {
         return;
     }
     chrome.devtools.inspectedWindow.eval(
-        'axs.properties.getAllProperties($0);',
+        'axs.extensionProperties.getAllProperties($0);',
         { useContentScriptContext: true },
         updateView);
 }

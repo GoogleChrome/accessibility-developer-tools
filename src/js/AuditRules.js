@@ -16,20 +16,23 @@ goog.require('axs.AuditRule');
 
 goog.provide('axs.AuditRules');
 
-if (!axs.AuditRules.rules) {
-    /** @type Object.<string, axs.AuditRule> */
-    axs.AuditRules.rules = {};
-}
-
 /**
- * Adds an audit rule with the given spec to the list of rules.
- * Throws an exception if a rule with the given name already exists.
- * @param {Object} spec A spec of the form specified in axs.AuditRule.
+ * Gets the audit rule with the given name.
+ * @param {string} name
+ * @return {axs.AuditRule}
  */
-axs.AuditRules.addRule = function(spec) {
-    if (spec.name in axs.AuditRules.rules)
-        return;
+axs.AuditRules.getRule = function(name) {
+    if (!axs.AuditRules.rules) {
+        /** @type Object.<string, axs.AuditRule> */
+        axs.AuditRules.rules = {};
+        for (var specName in axs.AuditRule.specs) {
+            var spec = axs.AuditRule.specs[specName];
+            if (!!spec['opt_requiresConsoleAPI'])
+                continue;
+            var auditRule = new axs.AuditRule(spec);
+            axs.AuditRules.rules[spec.name] = auditRule;
+        }
+    }
 
-    var auditRule = new axs.AuditRule(spec);
-    axs.AuditRules.rules[spec.name] = auditRule;
-};
+    return axs.AuditRules.rules[name];
+}

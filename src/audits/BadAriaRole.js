@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.utils');
 
-axs.AuditRules.addRule({
+axs.AuditRule.specs.badAriaRole = {
     name: 'badAriaRole',
     severity: axs.constants.Severity.Severe,
     relevantNodesSelector: function(scope) {
@@ -26,4 +27,4 @@ axs.AuditRules.addRule({
         return !role.valid;
     },
     code: 'AX_ARIA_01'
-});
+};

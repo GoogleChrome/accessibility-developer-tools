@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 goog.require('axs.utils');
 
-axs.AuditRules.addRule({
+axs.AuditRule.specs.imagesWithoutAltText = {
     name: 'imagesWithoutAltText',
     severity: axs.constants.Severity.Warning,
     relevantNodesSelector: function(scope) {
@@ -33,4 +34,4 @@ axs.AuditRules.addRule({
         return (!image.hasAttribute('alt') && image.getAttribute('role') != 'presentation');
     },
     code: 'AX_TEXT_02'
-});
+};

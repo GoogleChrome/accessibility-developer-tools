@@ -12,14 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 goog.require('axs.utils');
 
-axs.AuditRules.addRule({
+axs.AuditRule.specs.unfocusableElementsWithOnClick = {
     name: 'unfocusableElementsWithOnClick',
     severity: axs.constants.Severity.Warning,
-    opt_shouldRunInDevtools: true,
+    opt_requiresConsoleAPI: true,
     relevantNodesSelector: function(scope) {
         var potentialOnclickElements = scope.querySelectorAll('*');
 
@@ -41,4 +42,4 @@ axs.AuditRules.addRule({
                !axs.utils.isElementImplicitlyFocusable(element);
     },
     code: 'AX_FOCUS_02'
-});
+};

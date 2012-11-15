@@ -15,7 +15,7 @@
 goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 
-axs.AuditRules.addRule({
+axs.AuditRule.specs.videoWithoutCaptions = {
     name: 'videoWithoutCaptions',
     severity: axs.constants.Severity.Warning,
     relevantNodesSelector: function(scope) {
@@ -26,4 +26,4 @@ axs.AuditRules.addRule({
         return !captions.length;
     },
     code: 'AX_VIDEO_01'
-});
+};

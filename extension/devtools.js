@@ -18,7 +18,8 @@ function init(result) {
         return;
     }
 
-    var numAuditRules = Object.keys(axs.AuditRules.rules).length;
+    var numAuditRules = Object.keys(axs.AuditRule.specs).length;
+    console.log('audit rules: ', Object.keys(axs.AuditRule.specs));
     var category = chrome.experimental.devtools.audits.addCategory(
         chrome.i18n.getMessage('auditTitle'), numAuditRules + 1);
 
@@ -30,17 +31,18 @@ function init(result) {
         auditResults.passedRules = [];
         auditResults.notApplicableRules = [];
 
-        for (auditRuleCode in axs.AuditRules.rules) {
-            var auditRule = axs.AuditRules.rules[auditRuleCode];
+        for (auditRuleName in axs.AuditRule.specs) {
+            var auditRule = axs.ExtensionAuditRules.getRule(auditRuleName);
             // TODO batch up results
             if (!auditRule.disabled) {
-                console.log('running', auditRule.name);
+                console.log('running', auditRule);
                 var resultsCallback = handleResults.bind(null, auditResults, auditRule, auditRule.severity);
                 if (auditRule.shouldRunInDevtools) {
                     auditRule.runInDevtools(resultsCallback);
                 } else {
                     chrome.devtools.inspectedWindow.eval(
-                        'axs.AuditRules.rules["' + auditRuleCode + '"].run()',
+                        'console.log("' + auditRuleName + '");\n' +
+                        'axs.ExtensionAuditRules.getRule("' + auditRuleName + '").run()',
                         { useContentScriptContext: true },
                         resultsCallback);
                 }

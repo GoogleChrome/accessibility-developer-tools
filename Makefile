@@ -1,4 +1,4 @@
-AUDIT_RULES = $(shell find ./src/audits -name "*.js")
+AUDIT_RULES = $(shell find ./src/audits -name "*.js" | sed -e "s/^/--js /g")
 NUM_AUDIT_RULES = $(shell echo `find ./src/audits -name "*.js" | wc -l`)
 NUM_AUDIT_RULE_SOURCES = `expr $(NUM_AUDIT_RULES) + 2`
 EXTERNS = ./src/js/externs.js
@@ -10,7 +10,7 @@ TEST_DEPENDENCIES_FILE = generated_dependencies.js
 TEST_DEPENDENCIES_REL_DIR = generated
 
 CLOSURE_JAR = ~/src/closure/compiler.jar
-CLOSURE_COMMAND = java -jar $(CLOSURE_JAR) \
+EXTENSION_CLOSURE_COMMAND = java -jar $(CLOSURE_JAR) \
 --formatting PRETTY_PRINT --summary_detail_level 3 --compilation_level SIMPLE_OPTIMIZATIONS \
 --warning_level VERBOSE --externs $(EXTERNS) \
 --module axs:1 \
@@ -19,16 +19,32 @@ CLOSURE_COMMAND = java -jar $(CLOSURE_JAR) \
   --js ./src/js/Constants.js \
 --module utils:1:constants \
   --js ./src/js/AccessibilityUtils.js \
---module content:1:axs \
-  --js ./src/js/ContentScriptFramework.js \
---module properties:1:utils,constants,content \
+--module properties:1:utils,constants \
   --js ./src/js/Properties.js \
---module audits:$(NUM_AUDIT_RULE_SOURCES):content,constants,utils \
+--module audits:$(NUM_AUDIT_RULE_SOURCES):constants,utils \
   --js ./src/js/AuditRule.js \
   --js ./src/js/AuditRules.js \
-  --js $(AUDIT_RULES) 
+  $(AUDIT_RULES) \
+--module extension:5:audits,properties \
+  --js ./src/extension/base.js \
+  --js ./src/js/ContentScriptFramework.js \
+  --js ./src/extension/ExtensionAuditRule.js \
+  --js ./src/extension/ExtensionAuditRules.js \
+  --js ./src/extension/ExtensionProperties.js
 
 MODULES = axs constants utils content properties audits
+
+LIBRARY_CLOSURE_COMMAND = java -jar $(CLOSURE_JAR) \
+--formatting PRETTY_PRINT --summary_detail_level 3 --compilation_level SIMPLE_OPTIMIZATIONS \
+--warning_level VERBOSE --externs $(EXTERNS) \
+  --js ./src/js/axs.js \
+  --js ./src/js/Constants.js \
+  --js ./src/js/AccessibilityUtils.js \
+  --js ./src/js/AuditRule.js \
+  --js ./src/js/AuditRules.js \
+  $(AUDIT_RULES)
+
+LIBRARY_OUTPUT_FILE = ./gen/axs_testing.js
 
 .PHONY: clean js
 
@@ -55,3 +71,7 @@ js: clean
 
 clean:
 	@rm -rf $(GENERATED_JS_FILES_DIR) $(TEMPLATES_LIB_FILE) $(TEST_DIR)/$(TEST_DEPENDENCIES_REL_DIR)
+
+export:
+	@rm -f $(LIBRARY_OUTPUT_FILE)
+	@$(LIBRARY_CLOSURE_COMMAND) --js_output_file $(LIBRARY_OUTPUT_FILE)

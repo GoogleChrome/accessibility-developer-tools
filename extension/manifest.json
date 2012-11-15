@@ -21,7 +21,7 @@
   "web_accessible_resources": [
     "generated/axs.js",
     "generated/constants.js",
-    "generated/content.js",
+    "generated/extension.js",
     "generated/utils.js",
     "generated/properties.js",
     "generated/audits.js",

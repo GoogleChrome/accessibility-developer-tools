@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.content');
 goog.require('axs.utils');
 
 goog.provide('axs.properties');
@@ -318,7 +317,7 @@ axs.properties.getTextFromAriaLabelledby = function(element, textAlternatives) {
             labelledby.text = axs.properties.findTextAlternatives(labelledbyElement, {}, true);
             labelledby.lastWord = axs.properties.getLastWord(labelledby.text);
             labelledbyText.push(labelledbyElement.innerText.trim());
-            labelledby.element = axs.content.convertNodeToResult(labelledbyElement);
+            labelledby.element = labelledbyElement;
         }
         labelledbyValues.push(labelledby);
     }
@@ -376,7 +375,7 @@ axs.properties.getTextFromHostLangaugeAttributes = function(element, textAlterna
                     labelFor.text = labelText.trim();
                     labelForText.push(labelText.trim());
                 }
-                labelFor.element = axs.content.convertNodeToResult(label);
+                labelFor.element = label;
                 labelForValues.push(labelFor);
             }
             if (labelForValues.length > 0) {
@@ -396,12 +395,12 @@ axs.properties.getTextFromHostLangaugeAttributes = function(element, textAlterna
         var labelWrappedValue = {};
         while (parent) {
             if (parent.tagName.toLowerCase() == 'label') {
-                var parentLabel = /** HTMLLabelElement */ parent;
+                var parentLabel = /** @type {HTMLLabelElement} */ parent;
                 if (parentLabel.control == element) {
                     labelWrappedValue.type = 'element';
                     labelWrappedValue.text = axs.properties.findTextAlternatives(parentLabel, {}, true);
                     labelWrappedValue.lastWord = axs.properties.getLastWord(labelWrappedValue.text);
-                    labelWrappedValue.element = axs.content.convertNodeToResult(parentLabel);
+                    labelWrappedValue.element = parentLabel;
                     break;
                 }
             }

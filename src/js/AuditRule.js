@@ -13,7 +13,6 @@
 // limitations under the License.
 
 goog.require('axs.constants');
-goog.require('axs.content');
 goog.provide('axs.AuditRule');
 
 /**
@@ -23,8 +22,7 @@ goog.provide('axs.AuditRule');
  *       severity: Severity,
  *       relevantNodesSelector: function(): Array.<node>|NodeList|XPathResult,
  *       test: function(node): boolean,
- *       code: string,
- *       opt_shouldRunInDevtools: boolean }.
+ *       code: string }
  */
 axs.AuditRule = function(spec) {
     var isValid = true;
@@ -53,9 +51,6 @@ axs.AuditRule = function(spec) {
     /** @type {function(Node): boolean} */
     this.test_ = spec.test;
 
-    /** @type {boolean} */
-    this.shouldRunInDevtools = !!spec.opt_shouldRunInDevtools;
-
     /** @type {string} */
     this.code = spec.code;
 };
@@ -76,6 +71,16 @@ axs.AuditRule.requiredFields =
 axs.AuditRule.NOT_APPLICABLE = { result: axs.constants.AuditResult.NA };
 
 /**
+ * Add the given node to the given array.  This is abstracted so that subclasses
+ * can modify the node value as necessary.
+ * @param {Array.<Node>} nodes
+ * @param {Node} node
+ */
+axs.AuditRule.prototype.addNode = function(nodes, node) {
+    nodes.push(node);
+};
+
+/**
  * @param {?Element} opt_scope The scope in which the node selector should run.
  *     Defaults to `document`.
  * @return {?Object.<string, (axs.constants.AuditResult|?Array.<Node>)>}
@@ -94,7 +99,7 @@ axs.AuditRule.prototype.run = function(opt_scope) {
             for (var i = 0; i < relevantNodes.snapshotLength; i++) {
                 var node = relevantNodes.snapshotItem(i);
                 if (this.test_(node))
-                    failingNodes.push(axs.content.convertNodeToResult(node));
+                    this.addNode(failingNodes, node);
             }
         } else {
             console.warn('Unknown XPath result type', relevantNodes);
@@ -106,60 +111,11 @@ axs.AuditRule.prototype.run = function(opt_scope) {
         for (var i = 0; i < relevantNodes.length; i++) {
             var node = relevantNodes[i];
             if (this.test_(node))
-                failingNodes.push(axs.content.convertNodeToResult(node));
+                this.addNode(failingNodes, node);
         }
     }
     var result = failingNodes.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS;
     return { result: result, elements: failingNodes };
 };
 
-axs.AuditRule.prototype.runInDevtools = function(resultsCallback) {
-    var extensionId = chrome.i18n.getMessage("@@extension_id"); // yes, really.
-    var uniqueEventName = extensionId + '-' + this.name;
-
-    function addEventListener(uniqueEventName, test) {
-        function handleEventListenersEvent(event) {
-            var element = event.target;
-            window.relevantNodes.push(element);
-            if (test(element))
-                window.failingNodes.push(axs.content.convertNodeToResult(event.target));
-        }
-        window.relevantNodes = [];
-        window.failingNodes = [];
-        document.addEventListener(uniqueEventName, handleEventListenersEvent, false);
-    }
-    chrome.devtools.inspectedWindow.eval('(' + addEventListener + ')("'+ uniqueEventName + '", ' + this.test_ + ')',
-                                         { useContentScriptContext: true });
-
-    function sendRelevantNodesToContentScript(relevantNodesSelector, eventName) {
-        var relevantNodes = relevantNodesSelector(document);
-        for (var i = 0; i < relevantNodes.length; i++) {
-            var node = relevantNodes[i];
-            var event = document.createEvent('Event');
-            event.initEvent(eventName, true, false);
-            node.dispatchEvent(event);
-        }
-    }
-    var stringToEval = '(function() { var axs = {};\n' +
-        'axs.utils = {};\n' +
-        // TODO all of axs.utils? Have selected methods in AuditRule?
-        'axs.utils.isElementHidden = ' + axs.utils.isElementHidden + ';\n' +
-        'axs.utils.isElementOrAncestorHidden = ' + axs.utils.isElementOrAncestorHidden + ';\n' +
-        'axs.utils.isElementImplicitlyFocusable = ' + axs.utils.isElementImplicitlyFocusable + ';\n' +
-        'var relevantNodesSelector = ' + this.relevantNodesSelector_ + ';\n' +
-        'var sendRelevantNodesToContentScript = ' + sendRelevantNodesToContentScript + ';\n' +
-        'sendRelevantNodesToContentScript(relevantNodesSelector, "' +
-        uniqueEventName + '"); })()';
-    chrome.devtools.inspectedWindow.eval(stringToEval);
-
-    function retrieveResults() {
-        var result = axs.constants.AuditResult.NA;
-        if (window.relevantNodes.length)
-            result = window.failingNodes.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS;
-
-        return { result: result, elements: window.failingNodes };
-    }
-    chrome.devtools.inspectedWindow.eval('(' + retrieveResults + ')()',
-                                         { useContentScriptContext: true },
-                                         resultsCallback)
-};
+axs.AuditRule.specs = {};
