@@ -51,15 +51,15 @@ LIBRARY_OUTPUT_FILE = ./gen/axs_testing.js
 js: clean
 	@echo "\nStand back! I'm rebuilding!\n---------------------------"
 	@/bin/echo -n "* Rebuilding generated JS modules: "
-	@/bin/echo -n $(CLOSURE_COMMAND)
+	@/bin/echo -n $(EXTENSION_CLOSURE_COMMAND)
 	@/bin/echo
-	@$(CLOSURE_COMMAND) --module_output_path_prefix $(GENERATED_JS_FILES_DIR)/ && \
+	@$(EXTENSION_CLOSURE_COMMAND) --module_output_path_prefix $(GENERATED_JS_FILES_DIR)/ && \
     echo "SUCCESS"
 	@/bin/echo -n "* Copying Handlebar.js to $(TEMPLATES_LIB_FILE): "
 	@/bin/cp ./lib/templates/js/HandlebarBrowser.js $(TEMPLATES_LIB_FILE) && \
     echo "SUCCESS"
 	@/bin/echo -n "* Rebuilding test dependencies: "
-	@$(CLOSURE_COMMAND) --module_output_path_prefix $(TEST_DIR)/$(TEST_DEPENDENCIES_REL_DIR)/ && \
+	@$(EXTENSION_CLOSURE_COMMAND) --module_output_path_prefix $(TEST_DIR)/$(TEST_DEPENDENCIES_REL_DIR)/ && \
 	pushd $(TEST_DIR) && \
 	echo "var _dependencies = [" > $(TEST_DEPENDENCIES_FILE) && \
 	for m in $(MODULES); do \
