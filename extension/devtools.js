@@ -31,13 +31,13 @@ function init(result) {
         auditResults.passedRules = [];
         auditResults.notApplicableRules = [];
 
-        for (auditRuleName in axs.AuditRule.specs) {
+        for (var auditRuleName in axs.AuditRule.specs) {
             var auditRule = axs.ExtensionAuditRules.getRule(auditRuleName);
             // TODO batch up results
             if (!auditRule.disabled) {
                 console.log('running', auditRule);
                 var resultsCallback = handleResults.bind(null, auditResults, auditRule, auditRule.severity);
-                if (auditRule.shouldRunInDevtools) {
+                if (auditRule.requiresConsoleAPI) {
                     auditRule.runInDevtools(resultsCallback);
                 } else {
                     chrome.devtools.inspectedWindow.eval(

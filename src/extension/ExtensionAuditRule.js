@@ -33,7 +33,7 @@ axs.ExtensionAuditRule = function(spec) {
     axs.AuditRule.call(this, spec);
 
     /** @type {boolean} */
-    this.shouldRunInDevtools = !!spec['opt_requiresConsoleAPI'];
+    this.requiresConsoleAPI = !!spec['opt_requiresConsoleAPI'];
 };
 base.inherits(axs.ExtensionAuditRule, axs.AuditRule);
 

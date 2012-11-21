@@ -27,8 +27,6 @@ axs.AuditRules.getRule = function(name) {
         axs.AuditRules.rules = {};
         for (var specName in axs.AuditRule.specs) {
             var spec = axs.AuditRule.specs[specName];
-            if (!!spec['opt_requiresConsoleAPI'])
-                continue;
             var auditRule = new axs.AuditRule(spec);
             axs.AuditRules.rules[spec.name] = auditRule;
         }

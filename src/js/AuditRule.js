@@ -22,7 +22,8 @@ goog.provide('axs.AuditRule');
  *       severity: Severity,
  *       relevantNodesSelector: function(): Array.<node>|NodeList|XPathResult,
  *       test: function(node): boolean,
- *       code: string }
+ *       code: string,
+ *       opt_requiresConsoleAPI: boolean }.
  */
 axs.AuditRule = function(spec) {
     var isValid = true;
@@ -53,6 +54,9 @@ axs.AuditRule = function(spec) {
 
     /** @type {string} */
     this.code = spec.code;
+
+    /** @type {boolean} */
+    this.requiresConsoleAPI = !!spec['opt_requiresConsoleAPI'];
 };
 
 /**
