@@ -378,6 +378,52 @@ axs.utils.values = function(a) {
   console.log("values", b, a);
   return b
 };
+axs.utils.getQuerySelectorText = function(a) {
+  if(null == a || "HTML" == a.tagName) {
+    return"html"
+  }
+  if("BODY" == a.tagName) {
+    return"body"
+  }
+  if(a.hasAttribute) {
+    if(a.id) {
+      return"#" + a.id
+    }
+    if(a.className) {
+      for(var b = "", c = 0;c < a.classList.length;c++) {
+        b += "." + a.classList[c]
+      }
+      var d = 0;
+      if(a.parentNode) {
+        for(c = 0;c < a.parentNode.children.length;c++) {
+          var e = a.parentNode.children[c];
+          e.webkitMatchesSelector(b) && d++;
+          if(e === a) {
+            break
+          }
+        }
+      }else {
+        d = 1
+      }
+      return 1 == d ? axs.utils.getQuerySelectorText(a.parentNode) + " > " + b : axs.utils.getQuerySelectorText(a.parentNode) + " > " + b + ":nth-of-type(" + d + ")"
+    }
+    if(a.parentNode) {
+      b = a.parentNode.children;
+      d = 1;
+      for(c = 0;b[c] !== a;) {
+        b[c].tagName == a.tagName && d++, c++
+      }
+      c = "";
+      "BODY" != a.parentNode.tagName && (c = axs.utils.getQuerySelectorText(a.parentNode) + " > ");
+      return 1 == d ? c + a.tagName : c + a.tagName + ":nth-of-type(" + d + ")"
+    }
+  }else {
+    if(a.selectorText) {
+      return a.selectorText
+    }
+  }
+  return""
+};
 axs.AuditRule = function(a) {
   for(var b = !0, c = [], d = 0;d < axs.AuditRule.requiredFields.length;d++) {
     var e = axs.AuditRule.requiredFields[d];
@@ -390,7 +436,8 @@ axs.AuditRule = function(a) {
   this.severity = a.severity;
   this.relevantNodesSelector_ = a.relevantNodesSelector;
   this.test_ = a.test;
-  this.code = a.code
+  this.code = a.code;
+  this.requiresConsoleAPI = !!a.opt_requiresConsoleAPI
 };
 axs.AuditRule.requiredFields = ["name", "severity", "relevantNodesSelector", "test", "code"];
 axs.AuditRule.NOT_APPLICABLE = {result:axs.constants.AuditResult.NA};
@@ -427,11 +474,8 @@ axs.AuditRules.getRule = function(a) {
   if(!axs.AuditRules.rules) {
     axs.AuditRules.rules = {};
     for(var b in axs.AuditRule.specs) {
-      var c = axs.AuditRule.specs[b];
-      if(!c.opt_requiresConsoleAPI) {
-        var d = new axs.AuditRule(c);
-        axs.AuditRules.rules[c.name] = d
-      }
+      var c = axs.AuditRule.specs[b], d = new axs.AuditRule(c);
+      axs.AuditRules.rules[c.name] = d
     }
   }
   return axs.AuditRules.rules[a]
