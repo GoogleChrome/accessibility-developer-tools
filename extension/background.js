@@ -2,6 +2,7 @@ var inspectedTabs = [];
 
 function injectContentScript(tabId, remaining_scripts, opt_callback) {
     var script = remaining_scripts.shift();
+    console.log('injectContentScript', script);
     chrome.tabs.executeScript(
         tabId,
         { file: script },
@@ -21,10 +22,10 @@ function injectContentScript(tabId, remaining_scripts, opt_callback) {
 function injectContentScripts(tabId, opt_callback) {
     var scripts = [ 'generated/axs.js',
                     'generated/constants.js',
-                    'generated/extension.js',
                     'generated/utils.js',
                     'generated/properties.js',
-                    'generated/audits.js' ]
+                    'generated/audits.js',
+                    'generated/extension.js' ]
     injectContentScript(tabId, scripts, opt_callback);
 }
 
