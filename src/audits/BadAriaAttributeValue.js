@@ -25,19 +25,15 @@ axs.AuditRule.specs.badAriaAttributeValue = {
         for (var property in axs.constants.ARIA_PROPERTIES)
             selector += '[aria-' + property + '],';
         selector = selector.substring(0, selector.length - 1);  // trailing comma
-        console.log('selector', selector);
         return scope.querySelectorAll(selector);
     },
     test: function(element) {
-        console.log('checking', element);
         for (var property in axs.constants.ARIA_PROPERTIES) {
             var ariaProperty = 'aria-' + property;
-            console.log('property', ariaProperty);
             if (!element.hasAttribute(ariaProperty))
                 continue;
             var propertyValueText = element.getAttribute(ariaProperty);
             var propertyValue = axs.utils.getAriaPropertyValue(ariaProperty, propertyValueText, element);
-            console.log('propertyValue', propertyValue, propertyValueText);
             if (!propertyValue.valid)
                 return true;
         }

@@ -480,23 +480,33 @@ axs.AuditRules.getRule = function(a) {
   }
   return axs.AuditRules.rules[a]
 };
+axs.Audit = {};
+axs.Audit.run = function(a) {
+  console.log("axs auditrules runall");
+  var a = !!a, b = [], c;
+  for(c in axs.AuditRule.specs) {
+    var d = axs.AuditRules.getRule(c);
+    if(d && !d.disabled && (a || !d.requiresConsoleAPI)) {
+      var e = d.run();
+      e.rule = d;
+      b.push(e)
+    }
+  }
+  return b
+};
 axs.AuditRule.specs.badAriaAttributeValue = {name:"badAriaAttributeValue", severity:axs.constants.Severity.Severe, relevantNodesSelector:function(a) {
   var b = "", c;
   for(c in axs.constants.ARIA_PROPERTIES) {
     b += "[aria-" + c + "],"
   }
   b = b.substring(0, b.length - 1);
-  console.log("selector", b);
   return a.querySelectorAll(b)
 }, test:function(a) {
-  console.log("checking", a);
   for(var b in axs.constants.ARIA_PROPERTIES) {
     var c = "aria-" + b;
-    console.log("property", c);
     if(a.hasAttribute(c)) {
-      var d = a.getAttribute(c), c = axs.utils.getAriaPropertyValue(c, d, a);
-      console.log("propertyValue", c, d);
-      if(!c.valid) {
+      var d = a.getAttribute(c);
+      if(!axs.utils.getAriaPropertyValue(c, d, a).valid) {
         return!0
       }
     }
@@ -546,7 +556,11 @@ axs.AuditRule.specs.nonExistentAriaLabelledbyElement = {name:"nonExistentAriaLab
 axs.AuditRule.specs.requiredAriaAttributeMissing = {name:"requiredAriaAttributeMissing", severity:axs.constants.Severity.Severe, relevantNodesSelector:function(a) {
   return a.querySelectorAll("[role]")
 }, test:function(a) {
-  var b = axs.utils.getRole(a).details.requiredPropertiesSet, c;
+  var b = axs.utils.getRole(a);
+  if(!b.valid) {
+    return!0
+  }
+  var b = b.details.requiredPropertiesSet, c;
   for(c in b) {
     if(!a.hasAttribute(c)) {
       return!0

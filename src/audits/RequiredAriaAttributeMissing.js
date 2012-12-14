@@ -24,6 +24,8 @@ axs.AuditRule.specs.requiredAriaAttributeMissing = {
     },
     test: function(element) {
         var role = axs.utils.getRole(element);
+        if (!role.valid)
+            return true;  // That's a different error.
         var requiredProperties = role.details.requiredPropertiesSet;
         for (var property in requiredProperties) {
             if (!element.hasAttribute(property))

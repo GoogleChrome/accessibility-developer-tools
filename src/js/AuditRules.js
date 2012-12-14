@@ -33,4 +33,4 @@ axs.AuditRules.getRule = function(name) {
     }
 
     return axs.AuditRules.rules[name];
-}
+};

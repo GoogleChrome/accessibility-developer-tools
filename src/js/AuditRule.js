@@ -85,7 +85,7 @@ axs.AuditRule.prototype.addNode = function(nodes, node) {
 };
 
 /**
- * @param {?Element} opt_scope The scope in which the node selector should run.
+ * @param {Element=} opt_scope The scope in which the node selector should run.
  *     Defaults to `document`.
  * @return {?Object.<string, (axs.constants.AuditResult|?Array.<Node>)>}
  */
