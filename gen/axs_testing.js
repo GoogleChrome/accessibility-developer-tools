@@ -482,7 +482,6 @@ axs.AuditRules.getRule = function(a) {
 };
 axs.Audit = {};
 axs.Audit.run = function(a) {
-  console.log("axs auditrules runall");
   var a = !!a, b = [], c;
   for(c in axs.AuditRule.specs) {
     var d = axs.AuditRules.getRule(c);
@@ -558,7 +557,7 @@ axs.AuditRule.specs.requiredAriaAttributeMissing = {name:"requiredAriaAttributeM
 }, test:function(a) {
   var b = axs.utils.getRole(a);
   if(!b.valid) {
-    return!0
+    return!1
   }
   var b = b.details.requiredPropertiesSet, c;
   for(c in b) {
