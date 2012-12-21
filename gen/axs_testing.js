@@ -444,29 +444,37 @@ axs.AuditRule.NOT_APPLICABLE = {result:axs.constants.AuditResult.NA};
 axs.AuditRule.prototype.addNode = function(a, b) {
   a.push(b)
 };
-axs.AuditRule.prototype.run = function(a) {
-  var a = this.relevantNodesSelector_(a || document), b = [];
-  if(a instanceof XPathResult) {
-    if(a.resultType == XPathResult.ORDERED_NODE_SNAPSHOT_TYPE) {
-      if(!a.snapshotLength) {
+axs.AuditRule.prototype.run = function(a, b) {
+  function c(a) {
+    for(var b = 0;b < d.length;b++) {
+      if(a.webkitMatchesSelector(d[b])) {
+        return!0
+      }
+    }
+    return!1
+  }
+  var d = a || [], e = this.relevantNodesSelector_(b || document), f = [];
+  if(e instanceof XPathResult) {
+    if(e.resultType == XPathResult.ORDERED_NODE_SNAPSHOT_TYPE) {
+      if(!e.snapshotLength) {
         return axs.AuditRule.NOT_APPLICABLE
       }
-      for(var c = 0;c < a.snapshotLength;c++) {
-        var d = a.snapshotItem(c);
-        this.test_(d) && this.addNode(b, d)
+      for(var g = 0;g < e.snapshotLength;g++) {
+        var h = e.snapshotItem(g);
+        this.test_(h) && !c(h) && this.addNode(f, h)
       }
     }else {
-      return console.warn("Unknown XPath result type", a), null
+      return console.warn("Unknown XPath result type", e), null
     }
   }else {
-    if(!a.length) {
+    if(!e.length) {
       return{result:axs.constants.AuditResult.NA}
     }
-    for(c = 0;c < a.length;c++) {
-      d = a[c], this.test_(d) && this.addNode(b, d)
+    for(g = 0;g < e.length;g++) {
+      h = e[g], this.test_(h) && !c(h) && this.addNode(f, h)
     }
   }
-  return{result:b.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS, elements:b}
+  return{result:f.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS, elements:f}
 };
 axs.AuditRule.specs = {};
 axs.AuditRules = {};
@@ -481,17 +489,26 @@ axs.AuditRules.getRule = function(a) {
   return axs.AuditRules.rules[a]
 };
 axs.Audit = {};
+axs.AuditConfiguration = function() {
+};
+axs.AuditConfiguration.prototype = {rules_:{}, withConsoleApi:!1, ignoreSelectors:function(a, b) {
+  a in this.rules_ || (this.rules_[a] = {});
+  "ignore" in this.rules_[a] || (this.rules_[a].ignore = []);
+  Array.prototype.push.call(this.rules_[a].ignore, b)
+}, getIgnoreSelectors:function(a) {
+  return a in this.rules_ && "ignore" in this.rules_[a] ? this.rules_[a].ignore : []
+}};
 axs.Audit.run = function(a) {
-  var a = !!a, b = [], c;
-  for(c in axs.AuditRule.specs) {
-    var d = axs.AuditRules.getRule(c);
-    if(d && !d.disabled && (a || !d.requiresConsoleAPI)) {
-      var e = d.run();
-      e.rule = d;
-      b.push(e)
+  var a = a || new axs.AuditConfiguration, b = a.withConsoleApi, c = [], d;
+  for(d in axs.AuditRule.specs) {
+    var e = axs.AuditRules.getRule(d);
+    if(e && !e.disabled && (b || !e.requiresConsoleAPI)) {
+      var f = a.getIgnoreSelectors(e.name), f = e.run(f);
+      f.rule = e;
+      c.push(f)
     }
   }
-  return b
+  return c
 };
 axs.AuditRule.specs.badAriaAttributeValue = {name:"badAriaAttributeValue", severity:axs.constants.Severity.Severe, relevantNodesSelector:function(a) {
   var b = "", c;

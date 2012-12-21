@@ -4,7 +4,7 @@ test("No elements === no problems.", function() {
   // Setup fixture
   var fixtures = document.getElementById('qunit-fixture');
   deepEqual(
-    axs.AuditRules.rules.badAriaRole.run(fixtures),
+    axs.AuditRules.getRule('badAriaRole').run([], fixtures),
     { result: axs.constants.AuditResult.NA }
   );
 });
@@ -16,7 +16,7 @@ test("No roles === no problems.", function() {
     fixtures.appendChild(document.createElement('div'));
 
   deepEqual(
-    axs.AuditRules.rules.badAriaRole.run(fixtures),
+    axs.AuditRules.getRule('badAriaRole').run([], fixtures),
     { result: axs.constants.AuditResult.NA }
   );
 });
@@ -33,7 +33,7 @@ test("Good role === no problems.", function() {
   }
 
   deepEqual(
-    axs.AuditRules.rules.badAriaRole.run(fixtures),
+    axs.AuditRules.getRule('badAriaRole').run([], fixtures),
     { elements: [], result: axs.constants.AuditResult.PASS }
   );
 });

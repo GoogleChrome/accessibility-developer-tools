@@ -13,6 +13,7 @@
 // limitations under the License.
 
 goog.require('axs.constants');
+
 goog.provide('axs.AuditRule');
 
 /**
@@ -85,16 +86,27 @@ axs.AuditRule.prototype.addNode = function(nodes, node) {
 };
 
 /**
+ * @param {Array.<string>=} opt_ignoreSelectors
  * @param {Element=} opt_scope The scope in which the node selector should run.
  *     Defaults to `document`.
  * @return {?Object.<string, (axs.constants.AuditResult|?Array.<Node>)>}
  */
-axs.AuditRule.prototype.run = function(opt_scope) {
+axs.AuditRule.prototype.run = function(opt_ignoreSelectors, opt_scope) {
+    var ignoreSelectors = opt_ignoreSelectors || [];
     var scope = opt_scope || document;
 
     var relevantNodes = this.relevantNodesSelector_(scope);
 
     var failingNodes = [];
+
+    function ignored(node) {
+        for (var i = 0; i < ignoreSelectors.length; i++) {
+          if (node.webkitMatchesSelector(ignoreSelectors[i]))
+            return true;          
+        }
+        return false;
+    }
+
     if (relevantNodes instanceof XPathResult) {
         if (relevantNodes.resultType == XPathResult.ORDERED_NODE_SNAPSHOT_TYPE) {
             if (!relevantNodes.snapshotLength)
@@ -102,7 +114,7 @@ axs.AuditRule.prototype.run = function(opt_scope) {
 
             for (var i = 0; i < relevantNodes.snapshotLength; i++) {
                 var node = relevantNodes.snapshotItem(i);
-                if (this.test_(node))
+                if (this.test_(node) && !ignored(node))
                     this.addNode(failingNodes, node);
             }
         } else {
@@ -114,7 +126,7 @@ axs.AuditRule.prototype.run = function(opt_scope) {
             return { result: axs.constants.AuditResult.NA };
         for (var i = 0; i < relevantNodes.length; i++) {
             var node = relevantNodes[i];
-            if (this.test_(node))
+            if (this.test_(node) && !ignored(node))
                 this.addNode(failingNodes, node);
         }
     }
