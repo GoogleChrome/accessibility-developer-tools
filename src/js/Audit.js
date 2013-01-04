@@ -22,12 +22,24 @@ goog.provide('axs.AuditConfiguration');
  * @constructor
  */
 axs.AuditConfiguration = function() {
+  /**
+   * Dictionary of { audit rule name : { rules } } where rules is a dictionary
+   * of { rule type : value }.
+   * Possible rule types:
+   * - ignore: value is a list of CSS selectors representing parts of the page
+   *           which can be ignored for this audit rule.
+   * @type {Object.<string, ?>}
+   */
+  this.rules_ = {};
+
+  /**
+   * Whether this audit run can use the console API.
+   * @type {boolean}
+   */
+  withConsoleApi: false;
 };
 
 axs.AuditConfiguration.prototype = {
-  rules_: {},
-  withConsoleApi: false,
-
   /**
    * Add the given nodes to the ignore list for the given audit rule.
    * @param {string} auditRuleName The name of the audit rule
