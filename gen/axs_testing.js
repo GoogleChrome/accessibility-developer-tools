@@ -490,8 +490,10 @@ axs.AuditRules.getRule = function(a) {
 };
 axs.Audit = {};
 axs.AuditConfiguration = function() {
+  this.rules_ = {};
+  this.withConsoleApi = !1
 };
-axs.AuditConfiguration.prototype = {rules_:{}, withConsoleApi:!1, ignoreSelectors:function(a, b) {
+axs.AuditConfiguration.prototype = {ignoreSelectors:function(a, b) {
   a in this.rules_ || (this.rules_[a] = {});
   "ignore" in this.rules_[a] || (this.rules_[a].ignore = []);
   Array.prototype.push.call(this.rules_[a].ignore, b)

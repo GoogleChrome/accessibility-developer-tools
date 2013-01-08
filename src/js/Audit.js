@@ -1,3 +1,4 @@
+
 // Copyright 2012 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +29,7 @@ axs.AuditConfiguration = function() {
    * Possible rule types:
    * - ignore: value is a list of CSS selectors representing parts of the page
    *           which can be ignored for this audit rule.
-   * @type {Object.<string, ?>}
+   * @type {Object}
    */
   this.rules_ = {};
 
@@ -36,7 +37,7 @@ axs.AuditConfiguration = function() {
    * Whether this audit run can use the console API.
    * @type {boolean}
    */
-  withConsoleApi: false;
+  this.withConsoleApi = false;
 };
 
 axs.AuditConfiguration.prototype = {
