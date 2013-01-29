@@ -1,3 +1,0 @@
-[submodule "lib/templates"]
-	path = lib/templates
-	url = https://github.com/kalman/templates.git
