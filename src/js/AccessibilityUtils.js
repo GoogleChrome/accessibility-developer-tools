@@ -682,7 +682,6 @@ axs.utils.isValidTokenValue = function(propertyName, value) {
     var propertyKey = propertyName.replace(/^aria-/, '');
     var propertyDetails = axs.constants.ARIA_PROPERTIES[propertyKey];
     var possibleValues = propertyDetails.valuesSet;
-    console.log('isValidTokenValue', propertyName, value, propertyDetails, possibleValues);
     return axs.utils.isPossibleValue(value, possibleValues, propertyName);
 };
 
@@ -705,13 +704,11 @@ axs.utils.isPossibleValue = function(value, possibleValues, propertyName) {
  * @return {!Object}
  */
 axs.utils.isValidBoolean = function(value) {
-    console.log('isValidBoolean', value);
     try {
         var parsedValue = JSON.parse(value);
     } catch (e) {
         parsedValue = '';
     }
-    console.log('isValidBoolean', value, parsedValue);
     if (typeof(parsedValue) != 'boolean')
         return { 'valid': false,
                  'value': value,
@@ -766,16 +763,28 @@ axs.utils.isElementImplicitlyFocusable = function(element) {
  * @return {Array}
  */
 axs.utils.values = function(obj) {
-    console.log('axs.utils.values', obj);
     var values = [];
     for (var key in obj) {
         if (obj.hasOwnProperty(key) && typeof obj[key] != 'function')
             values.push(obj[key]);
     }
-    console.log('values', values, obj);
     return values;
 };
 
+/**
+ * Returns an object containing the same keys and values as the given
+ * JSON-compatible object. (Simply ignores any function values.)
+ * @param {Object} obj
+ * @return {Object}
+ */
+axs.utils.namedValues = function(obj) {
+    var values = {};
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key) && typeof obj[key] != 'function')
+            values[key] = obj[key];
+    }
+    return values
+};
 
 /** Gets a CSS selector text for a DOM object.
  * @param {Node} obj The DOM object.

@@ -342,21 +342,18 @@ axs.utils.getAriaPropertyValue = function(a, b, c) {
   return d
 };
 axs.utils.isValidTokenValue = function(a, b) {
-  var c = a.replace(/^aria-/, ""), c = axs.constants.ARIA_PROPERTIES[c], d = c.valuesSet;
-  console.log("isValidTokenValue", a, b, c, d);
-  return axs.utils.isPossibleValue(b, d, a)
+  var c = a.replace(/^aria-/, "");
+  return axs.utils.isPossibleValue(b, axs.constants.ARIA_PROPERTIES[c].valuesSet, a)
 };
 axs.utils.isPossibleValue = function(a, b, c) {
   return!b[a] ? {valid:!1, value:a, reason:'"' + a + '" is not a valid value for ' + c, possibleValues:Object.keys(b)} : {valid:!0, value:a}
 };
 axs.utils.isValidBoolean = function(a) {
-  console.log("isValidBoolean", a);
   try {
     var b = JSON.parse(a)
   }catch(c) {
     b = ""
   }
-  console.log("isValidBoolean", a, b);
   return"boolean" != typeof b ? {valid:!1, value:a, reason:'"' + a + '" is not a true/false value'} : {valid:!0, value:b}
 };
 axs.utils.isValidIDRefValue = function(a, b) {
@@ -370,12 +367,17 @@ axs.utils.isElementImplicitlyFocusable = function(a) {
   return a instanceof HTMLAnchorElement || a instanceof HTMLAreaElement ? a.hasAttribute("href") : a instanceof HTMLInputElement || a instanceof HTMLSelectElement || a instanceof HTMLTextAreaElement || a instanceof HTMLButtonElement || a instanceof HTMLIFrameElement ? !a.disabled : !1
 };
 axs.utils.values = function(a) {
-  console.log("axs.utils.values", a);
   var b = [], c;
   for(c in a) {
     a.hasOwnProperty(c) && "function" != typeof a[c] && b.push(a[c])
   }
-  console.log("values", b, a);
+  return b
+};
+axs.utils.namedValues = function(a) {
+  var b = {}, c;
+  for(c in a) {
+    a.hasOwnProperty(c) && "function" != typeof a[c] && (b[c] = a[c])
+  }
   return b
 };
 axs.utils.getQuerySelectorText = function(a) {
@@ -506,11 +508,31 @@ axs.Audit.run = function(a) {
     var e = axs.AuditRules.getRule(d);
     if(e && !e.disabled && (b || !e.requiresConsoleAPI)) {
       var f = a.getIgnoreSelectors(e.name), f = e.run(f);
-      f.rule = e;
+      f.rule = axs.utils.namedValues(e);
       c.push(f)
     }
   }
   return c
+};
+axs.Audit.createReport = function(a) {
+  var b;
+  b = "*** Begin accessibility audit results ***\nAn accessibility audit found ";
+  for(var c = 0, d = "", e = 0, f = "", g = 0;g < a.length;g++) {
+    var h = a[g];
+    h.rule.severity == axs.constants.Severity.Severe ? (e++, f += "\n\n" + axs.Audit.accessibilityErrorMessage(h)) : (c++, d += "\n\n" + axs.Audit.accessibilityErrorMessage(h))
+  }
+  0 < e && (b += e + (1 == e ? " error " : " errors "), 0 < c && (b += "and "));
+  0 < c && (b += c + (1 == c ? " warning " : " warnings "));
+  b += "on this page.\nFor more information, please see http://chromium.org/developers/accessibility/webui-accessibility-audit";
+  b += f;
+  b += d;
+  return b += "\n*** End accessibility audit results ***"
+};
+axs.Audit.accessibilityErrorMessage = function(a) {
+  for(var b = a.rule.severity == axs.constants.Severity.Severe ? "Error: " : "Warning: ", b = b + (a.rule.name + " (" + a.rule.code + ") failed on the following " + (1 == a.elements.length ? "element" : "elements")), b = 1 == a.elements.length ? b + ":" : b + (" (1 - " + Math.min(5, a.elements.length) + " of " + a.elements.length + "):"), c = Math.min(a.elements.length, 5), d = 0;d < c;d++) {
+    b += "\n" + axs.utils.getQuerySelectorText(a.elements[d])
+  }
+  return b
 };
 axs.AuditRule.specs.badAriaAttributeValue = {name:"badAriaAttributeValue", severity:axs.constants.Severity.Severe, relevantNodesSelector:function(a) {
   var b = "", c;

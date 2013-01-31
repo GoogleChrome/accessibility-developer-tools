@@ -14,6 +14,7 @@
 // limitations under the License.
 
 goog.require('axs.AuditRules');
+goog.require('axs.utils');
 
 goog.provide('axs.Audit');
 goog.provide('axs.AuditConfiguration');
@@ -67,8 +68,12 @@ axs.AuditConfiguration.prototype = {
 /**
  * Runs an audit with all of the audit rules.
  * @param {axs.AuditConfiguration=} opt_configuration
- * @return {Array.<Object>} Array of Object: result (boolean) and elements
- * (array of elements).
+ * @return {Array.<Object>} Array of Object:
+ *     {
+ *       result,    // @type {axs.constants.AuditResult}
+ *       elements,  // @type {Array.<Element>}
+ *       rule       // @type {axs.AuditRule} - data only (name, severity, code)
+ *     }
  */
 axs.Audit.run = function(opt_configuration) {
     var configuration = opt_configuration || new axs.AuditConfiguration();
@@ -86,9 +91,84 @@ axs.Audit.run = function(opt_configuration) {
 
         var ignoreSelectors = configuration.getIgnoreSelectors(auditRule.name);
         var result = auditRule.run(ignoreSelectors);
-        result.rule = auditRule;
+        result.rule = axs.utils.namedValues(auditRule);
         results.push(result);
     }
 
     return results;
+};
+
+/**
+ * Create a report based on the results of an Audit.
+ * @param {Object} results The results returned from axs.Audit.run();
+ */
+axs.Audit.createReport = function(results) {
+    var message = '*** Begin accessibility audit results ***';
+    message += '\nAn accessibility audit found ';
+
+    var numWarnings = 0;
+    var warningsMessage = '';
+    var numErrors = 0;
+    var errorsMessage = '';
+
+    for (var i = 0; i < results.length; i++) {
+        var result = results[i];
+        if (result.rule.severity == axs.constants.Severity.Severe) {
+            numErrors++;
+            errorsMessage += '\n\n' +
+                             axs.Audit.accessibilityErrorMessage(result);
+        } else {
+            numWarnings++;
+            warningsMessage += '\n\n' +
+                               axs.Audit.accessibilityErrorMessage(result);
+        }
+    }
+
+    if (numErrors > 0) {
+        message += numErrors + (numErrors == 1 ? ' error ' : ' errors ');
+        if (numWarnings > 0)
+             message += 'and ';
+    }
+    if (numWarnings > 0) {
+        message += numWarnings +
+            (numWarnings == 1 ? ' warning ' : ' warnings ');
+    }
+    message += 'on this page.\n';
+    message += 'For more information, please see ' +
+       'http://chromium.org/developers/accessibility/webui-accessibility-audit';
+
+    message += errorsMessage;
+    message += warningsMessage;
+
+    message += '\n*** End accessibility audit results ***';
+    return message;
+};
+
+/**
+ * Creates an error message for a given accessibility audit result object.
+ * @param {Object.<string, (string|Array.<Element>)>} result The result
+ *     object returned from the audit.
+ * @return {string} An error message describing the failure and listing the
+ *     query selectors for up to five elements which failed the audit rule.
+ */
+axs.Audit.accessibilityErrorMessage = function(result) {
+    if (result.rule.severity == axs.constants.Severity.Severe)
+        var message = 'Error: '
+    else
+        var message = 'Warning: '
+    message += result.rule.name + ' (' + result.rule.code + 
+        ') failed on the following ' +
+        (result.elements.length == 1 ? 'element' : 'elements');
+
+    if (result.elements.length == 1)
+        message += ':'
+    else {
+        message += ' (1 - ' + Math.min(5, result.elements.length) +
+                   ' of ' + result.elements.length + '):';
+    }
+
+    var maxElements = Math.min(result.elements.length, 5);
+    for (var i = 0; i < maxElements; i++)
+        message += '\n' + axs.utils.getQuerySelectorText(result.elements[i]);
+    return message;
 };
