@@ -102,7 +102,7 @@ axs.AuditRule.prototype.run = function(opt_ignoreSelectors, opt_scope) {
     function ignored(node) {
         for (var i = 0; i < ignoreSelectors.length; i++) {
           if (node.webkitMatchesSelector(ignoreSelectors[i]))
-            return true;          
+            return true;
         }
         return false;
     }

@@ -503,6 +503,7 @@ axs.AuditRules.getRule = function(a) {
 axs.Audit = {};
 axs.AuditConfiguration = function() {
   this.rules_ = {};
+  this.scope = null;
   this.withConsoleApi = !1
 };
 axs.AuditConfiguration.prototype = {ignoreSelectors:function(a, b) {

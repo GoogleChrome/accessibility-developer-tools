@@ -10,7 +10,7 @@ TEST_DEPENDENCIES_REL_DIR = generated
 CLOSURE_JAR = ~/src/closure/compiler.jar
 MODULES = axs constants utils content properties audits
 
-LIBRARY_CLOSURE_COMMAND = java -jar $(CLOSURE_JAR) \
+LIBRARY_CLOSURE_COMMAND = java -jar $(CLOSURE_JAR) --language_in ECMASCRIPT5 \
 --formatting PRETTY_PRINT --summary_detail_level 3 --compilation_level SIMPLE_OPTIMIZATIONS \
 --warning_level VERBOSE --externs $(EXTERNS) \
   --js ./src/js/axs.js \

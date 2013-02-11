@@ -1,4 +1,3 @@
-
 // Copyright 2012 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,8 +30,17 @@ axs.AuditConfiguration = function() {
    * - ignore: value is a list of CSS selectors representing parts of the page
    *           which can be ignored for this audit rule.
    * @type {Object}
+   * @private
    */
   this.rules_ = {};
+
+  /**
+   * The "start point" for the audit: the element which contains the portion of
+   * the page which should be audited.
+   * If null, the document will be used as the scope.
+   * @type {?Element}
+   */
+  this.scope = null;
 
   /**
    * Whether this audit run can use the console API.
@@ -43,7 +51,7 @@ axs.AuditConfiguration = function() {
 
 axs.AuditConfiguration.prototype = {
   /**
-   * Add the given nodes to the ignore list for the given audit rule.
+   * Add the given selectors to the ignore list for the given audit rule.
    * @param {string} auditRuleName The name of the audit rule
    * @param {Array.<string>} selectors Query selectors to match nodes to
    *     ignore
@@ -56,13 +64,20 @@ axs.AuditConfiguration.prototype = {
     Array.prototype.push.call(this.rules_[auditRuleName].ignore, selectors);
   },
 
+  /**
+   * Gets the selectors which have been added to the ignore list for the given
+   * audit rule.
+   * @param {string} auditRuleName The name of the audit rule
+   * @return {Array.<string>} A list of query selector strings which match nodes
+   * to be ignored for the given rule.
+   */
   getIgnoreSelectors: function(auditRuleName) {
     if ((auditRuleName in this.rules_) &&
         ('ignore' in this.rules_[auditRuleName])) {
         return this.rules_[auditRuleName].ignore;
     }
     return [];
-  }
+  },
 };
 
 /**
