@@ -113,6 +113,9 @@ axs.Audit.createReport = function(results) {
 
     for (var i = 0; i < results.length; i++) {
         var result = results[i];
+        if (result.result != axs.constants.AuditResult.FAIL)
+            continue;
+
         if (result.rule.severity == axs.constants.Severity.Severe) {
             numErrors++;
             errorsMessage += '\n\n' +
@@ -156,7 +159,7 @@ axs.Audit.accessibilityErrorMessage = function(result) {
         var message = 'Error: '
     else
         var message = 'Warning: '
-    message += result.rule.name + ' (' + result.rule.code + 
+    message += result.rule.name + ' (' + result.rule.code +
         ') failed on the following ' +
         (result.elements.length == 1 ? 'element' : 'elements');
 

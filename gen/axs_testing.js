@@ -99,11 +99,13 @@ axs.utils.elementIsTransparent = function(a) {
   return"0" == a.style.opacity
 };
 axs.utils.elementHasZeroArea = function(a) {
-  var a = a.getBoundingClientRect(), b = a.top - a.bottom;
+  a = a.getBoundingClientRect();
+  var b = a.top - a.bottom;
   return!(a.right - a.left) || !b ? !0 : !1
 };
 axs.utils.elementIsOutsideScrollArea = function(a) {
-  var a = a.getBoundingClientRect(), b = document.body.scrollWidth, c = document.body.scrollTop, d = document.body.scrollLeft;
+  a = a.getBoundingClientRect();
+  var b = document.body.scrollWidth, c = document.body.scrollTop, d = document.body.scrollLeft;
   return a.top >= document.body.scrollHeight || a.bottom <= -c || a.left >= b || a.right <= -d ? !0 : !1
 };
 axs.utils.overlappingElement = function(a) {
@@ -140,7 +142,9 @@ axs.utils.elementIsVisible = function(a) {
   return!0
 };
 axs.utils.isLargeFont = function(a) {
-  var b = a.fontSize, a = "bold" == a.fontWeight, c = b.match(/(\d+)px/);
+  var b = a.fontSize;
+  a = "bold" == a.fontWeight;
+  var c = b.match(/(\d+)px/);
   if(c) {
     return b = parseInt(c[1], 10), a && 19.2 <= b || 24 <= b ? !0 : !1
   }
@@ -198,7 +202,8 @@ axs.utils.getFgColor = function(a, b) {
 axs.utils.parseColor = function(a) {
   var b = a.match(/^rgb\((\d+), (\d+), (\d+)\)$/);
   if(b) {
-    var a = parseInt(b[1], 10), c = parseInt(b[2], 10), b = parseInt(b[3], 10), d;
+    a = parseInt(b[1], 10);
+    var c = parseInt(b[2], 10), b = parseInt(b[3], 10), d;
     return new axs.utils.Color(a, c, b, 1)
   }
   return(b = a.match(/^rgba\((\d+), (\d+), (\d+), (\d+(\.\d+)?)\)/)) ? (d = parseInt(b[4], 10), a = parseInt(b[1], 10), c = parseInt(b[2], 10), b = parseInt(b[3], 10), new axs.utils.Color(a, c, b, d)) : null
@@ -211,7 +216,11 @@ axs.utils.flattenColors = function(a, b) {
   return new axs.utils.Color((1 - c) * b.red + c * a.red, (1 - c) * b.green + c * a.green, (1 - c) * b.blue + c * a.blue, 1)
 };
 axs.utils.calculateLuminance = function(a) {
-  var b = a.red / 255, c = a.green / 255, a = a.blue / 255, b = 0.03928 >= b ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4), c = 0.03928 >= c ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4), a = 0.03928 >= a ? a / 12.92 : Math.pow((a + 0.055) / 1.055, 2.4);
+  var b = a.red / 255, c = a.green / 255;
+  a = a.blue / 255;
+  b = 0.03928 >= b ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4);
+  c = 0.03928 >= c ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  a = 0.03928 >= a ? a / 12.92 : Math.pow((a + 0.055) / 1.055, 2.4);
   return 0.2126 * b + 0.7152 * c + 0.0722 * a
 };
 axs.utils.getContrastRatioForElement = function(a) {
@@ -230,7 +239,8 @@ axs.utils.getContrastRatioForElementWithComputedStyle = function(a, b) {
   return!d ? null : axs.utils.calculateContrastRatio(d, c)
 };
 axs.utils.isNativeTextElement = function(a) {
-  var b = a.tagName.toLowerCase(), a = a.type ? a.type.toLowerCase() : "";
+  var b = a.tagName.toLowerCase();
+  a = a.type ? a.type.toLowerCase() : "";
   if("textarea" == b) {
     return!0
   }
@@ -461,9 +471,9 @@ axs.AuditRule.prototype.run = function(a, b) {
       if(!e.snapshotLength) {
         return axs.AuditRule.NOT_APPLICABLE
       }
-      for(var g = 0;g < e.snapshotLength;g++) {
-        var h = e.snapshotItem(g);
-        this.test_(h) && !c(h) && this.addNode(f, h)
+      for(var h = 0;h < e.snapshotLength;h++) {
+        var g = e.snapshotItem(h);
+        this.test_(g) && !c(g) && this.addNode(f, g)
       }
     }else {
       return console.warn("Unknown XPath result type", e), null
@@ -472,8 +482,8 @@ axs.AuditRule.prototype.run = function(a, b) {
     if(!e.length) {
       return{result:axs.constants.AuditResult.NA}
     }
-    for(g = 0;g < e.length;g++) {
-      h = e[g], this.test_(h) && !c(h) && this.addNode(f, h)
+    for(h = 0;h < e.length;h++) {
+      g = e[h], this.test_(g) && !c(g) && this.addNode(f, g)
     }
   }
   return{result:f.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS, elements:f}
@@ -503,7 +513,8 @@ axs.AuditConfiguration.prototype = {ignoreSelectors:function(a, b) {
   return a in this.rules_ && "ignore" in this.rules_[a] ? this.rules_[a].ignore : []
 }};
 axs.Audit.run = function(a) {
-  var a = a || new axs.AuditConfiguration, b = a.withConsoleApi, c = [], d;
+  a = a || new axs.AuditConfiguration;
+  var b = a.withConsoleApi, c = [], d;
   for(d in axs.AuditRule.specs) {
     var e = axs.AuditRules.getRule(d);
     if(e && !e.disabled && (b || !e.requiresConsoleAPI)) {
@@ -517,9 +528,9 @@ axs.Audit.run = function(a) {
 axs.Audit.createReport = function(a) {
   var b;
   b = "*** Begin accessibility audit results ***\nAn accessibility audit found ";
-  for(var c = 0, d = "", e = 0, f = "", g = 0;g < a.length;g++) {
-    var h = a[g];
-    h.rule.severity == axs.constants.Severity.Severe ? (e++, f += "\n\n" + axs.Audit.accessibilityErrorMessage(h)) : (c++, d += "\n\n" + axs.Audit.accessibilityErrorMessage(h))
+  for(var c = 0, d = "", e = 0, f = "", h = 0;h < a.length;h++) {
+    var g = a[h];
+    g.result == axs.constants.AuditResult.FAIL && (g.rule.severity == axs.constants.Severity.Severe ? (e++, f += "\n\n" + axs.Audit.accessibilityErrorMessage(g)) : (c++, d += "\n\n" + axs.Audit.accessibilityErrorMessage(g)))
   }
   0 < e && (b += e + (1 == e ? " error " : " errors "), 0 < c && (b += "and "));
   0 < c && (b += c + (1 == c ? " warning " : " warnings "));
@@ -569,7 +580,8 @@ axs.AuditRule.specs.focusableElementNotVisibleAndNotAriaHidden = {name:"focusabl
   return axs.utils.isElementOrAncestorHidden(a) ? !1 : !axs.utils.elementIsVisible(a)
 }, code:"AX_FOCUS_01"};
 axs.AuditRule.specs.imagesWithoutAltText = {name:"imagesWithoutAltText", severity:axs.constants.Severity.Warning, relevantNodesSelector:function(a) {
-  for(var a = a.querySelectorAll("img"), b = [], c = 0;c < a.length;c++) {
+  a = a.querySelectorAll("img");
+  for(var b = [], c = 0;c < a.length;c++) {
     var d = a[c];
     axs.utils.isElementOrAncestorHidden(d) || b.push(d)
   }
@@ -586,7 +598,8 @@ axs.AuditRule.specs.lowContrastElements = {name:"lowContrastElements", severity:
 axs.AuditRule.specs.nonExistentAriaLabelledbyElement = {name:"nonExistentAriaLabelledbyElement", severity:axs.constants.Severity.Warning, relevantNodesSelector:function(a) {
   return a.querySelectorAll("[aria-labelledby]")
 }, test:function(a) {
-  for(var a = a.getAttribute("aria-labelledby").split(/\s+/), b = 0;b < a.length;b++) {
+  a = a.getAttribute("aria-labelledby").split(/\s+/);
+  for(var b = 0;b < a.length;b++) {
     if(!document.getElementById(a[b])) {
       return!0
     }
@@ -608,7 +621,8 @@ axs.AuditRule.specs.requiredAriaAttributeMissing = {name:"requiredAriaAttributeM
   }
 }, code:"AX_ARIA_03"};
 axs.AuditRule.specs.unfocusableElementsWithOnClick = {name:"unfocusableElementsWithOnClick", severity:axs.constants.Severity.Warning, opt_requiresConsoleAPI:!0, relevantNodesSelector:function(a) {
-  for(var a = a.querySelectorAll("*"), b = [], c = 0;c < a.length;c++) {
+  a = a.querySelectorAll("*");
+  for(var b = [], c = 0;c < a.length;c++) {
     var d = a[c];
     d instanceof HTMLBodyElement || axs.utils.isElementOrAncestorHidden(d) || "click" in getEventListeners(d) && b.push(d)
   }
