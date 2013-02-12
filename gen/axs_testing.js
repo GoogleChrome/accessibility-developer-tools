@@ -471,9 +471,9 @@ axs.AuditRule.prototype.run = function(a, b) {
       if(!e.snapshotLength) {
         return axs.AuditRule.NOT_APPLICABLE
       }
-      for(var h = 0;h < e.snapshotLength;h++) {
-        var g = e.snapshotItem(h);
-        this.test_(g) && !c(g) && this.addNode(f, g)
+      for(var g = 0;g < e.snapshotLength;g++) {
+        var h = e.snapshotItem(g);
+        this.test_(h) && !c(h) && this.addNode(f, h)
       }
     }else {
       return console.warn("Unknown XPath result type", e), null
@@ -482,8 +482,8 @@ axs.AuditRule.prototype.run = function(a, b) {
     if(!e.length) {
       return{result:axs.constants.AuditResult.NA}
     }
-    for(h = 0;h < e.length;h++) {
-      g = e[h], this.test_(g) && !c(g) && this.addNode(f, g)
+    for(g = 0;g < e.length;g++) {
+      h = e[g], this.test_(h) && !c(h) && this.addNode(f, h)
     }
   }
   return{result:f.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS, elements:f}
@@ -525,19 +525,19 @@ axs.Audit.run = function(a) {
   }
   return c
 };
-axs.Audit.createReport = function(a) {
-  var b;
-  b = "*** Begin accessibility audit results ***\nAn accessibility audit found ";
-  for(var c = 0, d = "", e = 0, f = "", h = 0;h < a.length;h++) {
-    var g = a[h];
-    g.result == axs.constants.AuditResult.FAIL && (g.rule.severity == axs.constants.Severity.Severe ? (e++, f += "\n\n" + axs.Audit.accessibilityErrorMessage(g)) : (c++, d += "\n\n" + axs.Audit.accessibilityErrorMessage(g)))
+axs.Audit.createReport = function(a, b) {
+  var c;
+  c = "*** Begin accessibility audit results ***\nAn accessibility audit found ";
+  for(var d = 0, e = "", f = 0, g = "", h = 0;h < a.length;h++) {
+    var j = a[h];
+    j.result == axs.constants.AuditResult.FAIL && (j.rule.severity == axs.constants.Severity.Severe ? (f++, g += "\n\n" + axs.Audit.accessibilityErrorMessage(j)) : (d++, e += "\n\n" + axs.Audit.accessibilityErrorMessage(j)))
   }
-  0 < e && (b += e + (1 == e ? " error " : " errors "), 0 < c && (b += "and "));
-  0 < c && (b += c + (1 == c ? " warning " : " warnings "));
-  b += "on this page.\nFor more information, please see http://chromium.org/developers/accessibility/webui-accessibility-audit";
-  b += f;
-  b += d;
-  return b += "\n*** End accessibility audit results ***"
+  0 < f && (c += f + (1 == f ? " error " : " errors "), 0 < d && (c += "and "));
+  0 < d && (c += d + (1 == d ? " warning " : " warnings "));
+  c = c + "on this page.\n" + ("For more information, please see " + (void 0 != b ? b : "https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules"));
+  c += g;
+  c += e;
+  return c += "\n*** End accessibility audit results ***"
 };
 axs.Audit.accessibilityErrorMessage = function(a) {
   for(var b = a.rule.severity == axs.constants.Severity.Severe ? "Error: " : "Warning: ", b = b + (a.rule.name + " (" + a.rule.code + ") failed on the following " + (1 == a.elements.length ? "element" : "elements")), b = 1 == a.elements.length ? b + ":" : b + (" (1 - " + Math.min(5, a.elements.length) + " of " + a.elements.length + "):"), c = Math.min(a.elements.length, 5), d = 0;d < c;d++) {

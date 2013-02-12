@@ -101,8 +101,12 @@ axs.Audit.run = function(opt_configuration) {
 /**
  * Create a report based on the results of an Audit.
  * @param {Object} results The results returned from axs.Audit.run();
+ * @param {?string} opt_url A URL to visit for more information. If not
+ *     provided, this will default to
+ *     https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules.
+ * @return {string} A report of the audit results.
  */
-axs.Audit.createReport = function(results) {
+axs.Audit.createReport = function(results, opt_url) {
     var message = '*** Begin accessibility audit results ***';
     message += '\nAn accessibility audit found ';
 
@@ -138,7 +142,8 @@ axs.Audit.createReport = function(results) {
     }
     message += 'on this page.\n';
     message += 'For more information, please see ' +
-       'http://chromium.org/developers/accessibility/webui-accessibility-audit';
+        (opt_url != undefined ? opt_url :
+        'https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules');
 
     message += errorsMessage;
     message += warningsMessage;
