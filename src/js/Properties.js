@@ -363,6 +363,14 @@ axs.properties.getTextFromHostLangaugeAttributes = function(element, textAlterna
             altValue.valid = false;
             altValue.errorMessage = 'No alt value provided';
             textAlternatives['alt'] = altValue;
+            var src = element.src;
+            if (typeof(src) == 'string') {
+                var parts = src.split('/');
+                var filename = parts.pop();
+                var filenameValue = { text: filename }
+                textAlternatives['filename'] = filenameValue;
+                computedName = filename;
+            }
         }
     }
 
