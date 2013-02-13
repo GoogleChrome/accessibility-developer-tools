@@ -496,13 +496,16 @@ axs.utils.isElementHidden = function(element) {
     if (!(element instanceof HTMLElement))
         return false;
 
+    if (element.hasAttribute('chromevoxignoreariahidden'))
+        var chromevoxignoreariahidden = true;
+
     var style = window.getComputedStyle(element, null);
     if (style.display == 'none' || style.visibility == 'hidden')
         return true;
 
     if (element.hasAttribute('aria-hidden') &&
         element.getAttribute('aria-hidden').toLowerCase() == 'true') {
-        return true;
+        return !chromevoxignoreariahidden;
     }
 
     return false;
@@ -561,7 +564,10 @@ axs.utils.getAriaPropertyValue = function(propertyName, value, element) {
 
     switch (propertyType) {
     case "idref":
-        return axs.utils.isValidIDRefValue(value, element);
+        var isValid = axs.utils.isValidIDRefValue(value, element);
+        result.valid = isValid.valid;
+        result.reason = isValid.reason;
+        result.idref = isValid.idref;
     case "idref_list":
         var idrefValues = value.split(/\s+/);
         result.valid = true;

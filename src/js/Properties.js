@@ -26,6 +26,18 @@ axs.properties.TEXT_CONTENT_XPATH = 'text()[normalize-space(.)!=""]/parent::*[na
  * @param {Element} element
  * @return {Object.<string, Object>}
  */
+axs.properties.getFocusProperties = function(element) {
+    var focusProperties = {};
+    var tabindex = element.getAttribute('tabindex');
+    if (tabindex != undefined)
+        return { tabindex: { value: tabindex, valid: true }};
+    return null;
+}
+
+/**
+ * @param {Element} element
+ * @return {Object.<string, Object>}
+ */
 axs.properties.getColorProperties = function(element) {
     var colorProperties = {};
     colorProperties['contrastRatio'] = axs.properties.getContrastRatioProperties(element);
@@ -464,9 +476,19 @@ axs.properties.getAriaProperties = function(element) {
     console.log('getAriaProperties', element);
     var ariaProperties = {};
     var statesAndProperties = axs.properties.getGlobalAriaProperties(element);
+
+    for (var property in axs.constants.ARIA_PROPERTIES) {
+        var attributeName = 'aria-' + property;
+        if (element.hasAttribute(attributeName)) {
+            var propertyValue = element.getAttribute(attributeName);
+            statesAndProperties[attributeName] =
+                axs.utils.getAriaPropertyValue(attributeName, propertyValue, element);
+        }
+    }
     console.log('statesAndProperties', statesAndProperties);
     if (Object.keys(statesAndProperties).length > 0)
         ariaProperties['properties'] = axs.utils.values(statesAndProperties);
+
     var role = axs.utils.getRole(element);
     if (!role) {
         if (Object.keys(ariaProperties).length)
@@ -596,6 +618,7 @@ axs.properties.getAllProperties = function(node) {
     var allProperties = {};
     allProperties['ariaProperties'] = axs.properties.getAriaProperties(element);
     allProperties['colorProperties'] = axs.properties.getColorProperties(element);
+    allProperties['focusProperties'] = axs.properties.getFocusProperties(element);
     allProperties['textProperties'] = axs.properties.getTextProperties(node);
     allProperties['videoProperties'] = axs.properties.getVideoProperties(element);
     return allProperties;

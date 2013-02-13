@@ -104,8 +104,13 @@ axs.Audit.run = function(opt_configuration) {
         if (!withConsoleApi && auditRule.requiresConsoleAPI)
             continue;
 
+        var args = [];
         var ignoreSelectors = configuration.getIgnoreSelectors(auditRule.name);
-        var result = auditRule.run(ignoreSelectors);
+        if (ignoreSelectors.length > 0 || configuration.scope)
+            args.push(ignoreSelectors);
+        if (configuration.scope)
+            args.push(configuration.scope);
+        var result = auditRule.run.apply(auditRule, args);
         result.rule = axs.utils.namedValues(auditRule);
         results.push(result);
     }
