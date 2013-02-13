@@ -93,7 +93,7 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
         return null;  // Skip comments
     case Node.ELEMENT_NODE:
         element = /** @type {Element} */ node;
-        if (element.tagName == 'script') {
+        if (element.tagName.toLowerCase() == 'script') {
             return null;  // Skip script elements
         }
         break;
