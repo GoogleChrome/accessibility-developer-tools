@@ -13,7 +13,6 @@
 // limitations under the License.
 
 goog.require('axs.AuditRule');
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 
