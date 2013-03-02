@@ -506,7 +506,7 @@ axs.AuditRules.getRule = function(a) {
 axs.Audit = {};
 axs.AuditConfiguration = function() {
   this.rules_ = {};
-  this.scope = null;
+  this.auditRulesToIgnore = this.auditRulesToRun = this.scope = null;
   this.withConsoleApi = !1
 };
 axs.AuditConfiguration.prototype = {ignoreSelectors:function(a, c) {
@@ -519,15 +519,21 @@ axs.AuditConfiguration.prototype = {ignoreSelectors:function(a, c) {
 axs.Audit.run = function(a) {
   a = a || new axs.AuditConfiguration;
   var c = a.withConsoleApi, b = [], d;
-  for(d in axs.AuditRule.specs) {
-    var e = axs.AuditRules.getRule(d);
-    if(e && !e.disabled && (c || !e.requiresConsoleAPI)) {
-      var f = [], g = a.getIgnoreSelectors(e.name);
-      (0 < g.length || a.scope) && f.push(g);
-      a.scope && f.push(a.scope);
-      f = e.run.apply(e, f);
-      f.rule = axs.utils.namedValues(e);
-      b.push(f)
+  d = a.auditRulesToRun && 0 < a.auditRulesToRun.length ? a.auditRulesToRun : Object.keys(axs.AuditRule.specs);
+  if(a.auditRulesToIgnore) {
+    for(var e = 0;e < a.auditRulesToIgnore.length;e++) {
+      var f = a.auditRulesToIgnore[e];
+      0 > d.indexOf(f) || d.splice(d.indexOf(f), 1)
+    }
+  }
+  for(e = 0;e < d.length;e++) {
+    if((f = axs.AuditRules.getRule(d[e])) && !f.disabled && (c || !f.requiresConsoleAPI)) {
+      var g = [], h = a.getIgnoreSelectors(f.name);
+      (0 < h.length || a.scope) && g.push(h);
+      a.scope && g.push(a.scope);
+      g = f.run.apply(f, g);
+      g.rule = axs.utils.namedValues(f);
+      b.push(g)
     }
   }
   return b

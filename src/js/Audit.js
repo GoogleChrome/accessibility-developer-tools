@@ -43,6 +43,20 @@ axs.AuditConfiguration = function() {
   this.scope = null;
 
   /**
+   * A list of rule names representing the audit rules to be run. If this is
+   * empty or |null|, all audit rules will be run.
+   * @type {Array.<String>}
+   */
+  this.auditRulesToRun = null;
+
+  /**
+   * A list of rule names representing the audit rules which should not be run.
+   * If this is empty or |null|, all audit rules will be run.
+   * @type {Array.<String>}
+   */
+  this.auditRulesToIgnore = null;
+
+  /**
    * Whether this audit run can use the console API.
    * @type {boolean}
    */
@@ -95,7 +109,24 @@ axs.Audit.run = function(opt_configuration) {
     var withConsoleApi = configuration.withConsoleApi;
     var results = [];
 
-    for (var auditRuleName in axs.AuditRule.specs) {
+    var auditRules;
+    if (configuration.auditRulesToRun &&
+        configuration.auditRulesToRun.length > 0) {
+        auditRules = configuration.auditRulesToRun;
+    } else
+        auditRules = Object.keys(axs.AuditRule.specs);
+
+    if (configuration.auditRulesToIgnore) {
+        for (var i = 0; i < configuration.auditRulesToIgnore.length; i++) {
+            var auditRuleToIgnore = configuration.auditRulesToIgnore[i];
+            if (auditRules.indexOf(auditRuleToIgnore) < 0)
+                continue;
+            auditRules.splice(auditRules.indexOf(auditRuleToIgnore), 1);
+        }
+    }
+
+    for (var i = 0; i < auditRules.length; i++) {
+        var auditRuleName = auditRules[i];
         var auditRule = axs.AuditRules.getRule(auditRuleName);
         if (!auditRule)
             continue; // Shouldn't happen, but fail silently if it does.
