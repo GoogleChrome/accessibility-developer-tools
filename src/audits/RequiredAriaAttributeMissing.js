@@ -28,6 +28,9 @@ axs.AuditRule.specs.requiredAriaAttributeMissing = {
             return false;  // That's a different error.
         var requiredProperties = role.details.requiredPropertiesSet;
         for (var property in requiredProperties) {
+            var propertyDetails = axs.constants.ARIA_PROPERTIES[property];
+            if ('defaultValue' in propertyDetails)
+                return false;
             if (!element.hasAttribute(property))
                 return true;
         }
