@@ -651,18 +651,7 @@ axs.utils.getAriaPropertyValue = function(propertyName, value, element) {
             result.reason = validTristate.reason;
         }
         return result;
-    case "true-false":
-        var validBoolean = axs.utils.isValidBoolean(value);
-        if (validBoolean.valid) {
-            result.valid = true;
-            result.value = validBoolean.value;
-        } else {
-            result.valid = false;
-            result.value = value;
-            result.reason = validBoolean.reason;
-        }
-        return result;
-    case "true-false-undefined":
+    case "boolean":
         var validBoolean = axs.utils.isValidBoolean(value);
         if (validBoolean.valid) {
             result.valid = true;
