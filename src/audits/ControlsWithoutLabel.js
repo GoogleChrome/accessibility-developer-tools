@@ -17,9 +17,12 @@ goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 goog.require('axs.utils');
 
+/**
+ * @type {axs.AuditRule.Spec}
+ */
 axs.AuditRule.specs.controlsWithoutLabel = {
     name: 'controlsWithoutLabel',
-    severity: axs.constants.Severity.Severe,
+    severity: axs.constants.Severity.SEVERE,
     relevantNodesSelector: function(scope) {
         var controlsSelector = ['input:not([type="hidden"]):not([disabled])',
                                 'select:not([disabled])',

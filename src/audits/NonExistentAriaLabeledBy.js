@@ -16,9 +16,12 @@ goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 
+/**
+ * @type {axs.AuditRule.Spec}
+ */
 axs.AuditRule.specs.nonExistentAriaLabelledbyElement = {
     name: 'nonExistentAriaLabelledbyElement',
-    severity: axs.constants.Severity.Warning,
+    severity: axs.constants.Severity.WARNING,
     relevantNodesSelector: function(scope) {
         return scope.querySelectorAll('[aria-labelledby]');
     },

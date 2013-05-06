@@ -468,46 +468,62 @@ axs.constants.ARIA_ROLES = {
 
 axs.constants.WIDGET_ROLES = {};
 
+/**
+ * Squashes the parent hierarchy on to role object.
+ * @param {Object} role
+ * @param {Object} set
+ * @private
+ */
+axs.constants.addAllParentRolesToSet_ = function(role, set) {
+  if (!role['parent'])
+      return;
+  var parents = role['parent'];
+  for (var j = 0; j < parents.length; j++) {
+    var parentRoleName = parents[j];
+    set[parentRoleName] = true;
+    axs.constants.addAllParentRolesToSet_(
+        axs.constants.ARIA_ROLES[parentRoleName], set);
+  }
+}
+
+/**
+ * Adds all properties and requiredProperties from parent hierarchy.
+ * @param {Object} role
+ * @param {string} propertiesName
+ * @param {Object} propertiesSet
+ * @private
+ */
+axs.constants.addAllPropertiesToSet_ = function(role, propertiesName,
+    propertiesSet) {
+  var properties = role[propertiesName]
+  if (properties) {
+    for (var i = 0; i < properties.length; i++)
+      propertiesSet[properties[i]] = true;
+  }
+  if (role['parent']) {
+    var parents = role['parent'];
+    for (var j = 0; j < parents.length; j++) {
+      var parentRoleName = parents[j];
+      axs.constants.addAllPropertiesToSet_(
+          axs.constants.ARIA_ROLES[parentRoleName], propertiesName,
+          propertiesSet);
+    }
+  }
+}
+
 // TODO make a AriaRole object etc.
 for (var roleName in axs.constants.ARIA_ROLES) {
     var role = axs.constants.ARIA_ROLES[roleName];
-    // Inherit all properties and requiredProperties from parent hierarchy.
-    function addAllPropertiesToSet(role, propertiesName, propertiesSet) {
-        var properties = role[propertiesName]
-        if (properties) {
-            for (var i = 0; i < properties.length; i++)
-                propertiesSet[properties[i]] = true;
-        }
-        if (role['parent']) {
-            var parents = role['parent'];
-            for (var j = 0; j < parents.length; j++) {
-                var parentRoleName = parents[j];
-                addAllPropertiesToSet(axs.constants.ARIA_ROLES[parentRoleName], propertiesName, propertiesSet);
-            }
-        }
-    }
+
     var propertiesSet = {};
-    addAllPropertiesToSet(role, 'properties', propertiesSet);
+    axs.constants.addAllPropertiesToSet_(role, 'properties', propertiesSet);
     role['propertiesSet'] = propertiesSet;
 
     var requiredPropertiesSet = {};
-    addAllPropertiesToSet(role, 'requiredProperties', requiredPropertiesSet);
+    axs.constants.addAllPropertiesToSet_(role, 'requiredProperties', requiredPropertiesSet);
     role['requiredPropertiesSet'] = requiredPropertiesSet;
-
-    // Squash parent hierarchy on to role object
-    function addAllParentRolesToSet(role, set) {
-        if (!role['parent'])
-            return;
-
-        var parents = role['parent'];
-        for (var j = 0; j < parents.length; j++) {
-            var parentRoleName = parents[j];
-            set[parentRoleName] = true;
-            addAllParentRolesToSet(axs.constants.ARIA_ROLES[parentRoleName], set);
-        }
-    }
     var parentRolesSet = {};
-    addAllParentRolesToSet(role, parentRolesSet);
+    axs.constants.addAllParentRolesToSet_(role, parentRolesSet);
     role['allParentRolesSet'] = parentRolesSet;
     if ('widget' in parentRolesSet)
         axs.constants.WIDGET_ROLES[roleName] = role;
@@ -982,9 +998,9 @@ for (var propertyName in axs.constants.ARIA_PROPERTIES) {
 
 /** @enum {string} */
 axs.constants.Severity =  {
-    Info: 'Info',
-    Warning: 'Warning',
-    Severe: 'Severe'
+    INFO: 'Info',
+    WARNING: 'Warning',
+    SEVERE: 'Severe'
 };
 
 /** @enum {string} */
@@ -993,4 +1009,3 @@ axs.constants.AuditResult = {
     FAIL: 'FAIL',
     NA: 'NA'
 };
-

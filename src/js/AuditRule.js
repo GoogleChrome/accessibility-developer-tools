@@ -15,16 +15,11 @@
 goog.require('axs.constants');
 
 goog.provide('axs.AuditRule');
+goog.provide('axs.AuditRule.Spec');
 
 /**
  * @constructor
- * @param {Object} spec A spec of the form
- *     { name: string,
- *       severity: Severity,
- *       relevantNodesSelector: function(): Array.<node>|NodeList|XPathResult,
- *       test: function(node): boolean,
- *       code: string,
- *       opt_requiresConsoleAPI: boolean }.
+ * @param {axs.AuditRule.Spec} spec
  */
 axs.AuditRule = function(spec) {
     var isValid = true;
@@ -59,6 +54,15 @@ axs.AuditRule = function(spec) {
     /** @type {boolean} */
     this.requiresConsoleAPI = !!spec['opt_requiresConsoleAPI'];
 };
+
+/** @typedef {{ name: string,
+ *              severity: axs.constants.Severity,
+ *              relevantNodesSelector: function(?Node):
+ *                  (Array.<Node>|NodeList|XPathResult),
+ *              test: function(Node): boolean,
+ *              code: string,
+ *              opt_requiresConsoleAPI: boolean }} */
+axs.AuditRule.Spec;
 
 /**
  * @const

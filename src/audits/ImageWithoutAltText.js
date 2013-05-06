@@ -17,9 +17,12 @@ goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 goog.require('axs.utils');
 
+/**
+ * @type {axs.AuditRule.Spec}
+ */
 axs.AuditRule.specs.imagesWithoutAltText = {
     name: 'imagesWithoutAltText',
-    severity: axs.constants.Severity.Warning,
+    severity: axs.constants.Severity.WARNING,
     relevantNodesSelector: function(scope) {
         var imgElements = scope.querySelectorAll('img');
         var relevantNodes = [];

@@ -17,9 +17,12 @@ goog.require('axs.AuditRules');
 goog.require('axs.constants');
 goog.require('axs.utils');
 
+/**
+ * @type {axs.AuditRule.Spec}
+ */
 axs.AuditRule.specs.badAriaAttributeValue = {
     name: 'badAriaAttributeValue',
-    severity: axs.constants.Severity.Severe,
+    severity: axs.constants.Severity.SEVERE,
     relevantNodesSelector: function(scope) {
         var selector = '';
         for (var property in axs.constants.ARIA_PROPERTIES)

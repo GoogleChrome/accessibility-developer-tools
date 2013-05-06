@@ -16,9 +16,12 @@ goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.constants');
 
+/**
+ * @type {axs.AuditRule.Spec}
+ */
 axs.AuditRule.specs.requiredAriaAttributeMissing = {
     name: 'requiredAriaAttributeMissing',
-    severity: axs.constants.Severity.Severe,
+    severity: axs.constants.Severity.SEVERE,
     relevantNodesSelector: function(scope) {
         return scope.querySelectorAll('[role]');
     },

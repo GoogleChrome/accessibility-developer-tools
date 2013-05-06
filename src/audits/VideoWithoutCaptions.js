@@ -15,9 +15,12 @@
 goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 
+/**
+ * @type {axs.AuditRule.Spec}
+ */
 axs.AuditRule.specs.videoWithoutCaptions = {
     name: 'videoWithoutCaptions',
-    severity: axs.constants.Severity.Warning,
+    severity: axs.constants.Severity.WARNING,
     relevantNodesSelector: function(scope) {
         return scope.querySelectorAll('video');
     },

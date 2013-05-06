@@ -17,9 +17,12 @@ goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 goog.require('axs.utils');
 
+/**
+ * @type {axs.AuditRule.Spec}
+ */
 axs.AuditRule.specs.lowContrastElements = {
     name: 'lowContrastElements',
-    severity: axs.constants.Severity.Warning,
+    severity: axs.constants.Severity.WARNING,
     relevantNodesSelector: function(scope) {
       return document.evaluate(
           '/html/body//text()[normalize-space(.)!=""]/parent::*[name()!="script"]',

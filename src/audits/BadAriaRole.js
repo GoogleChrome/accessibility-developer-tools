@@ -16,9 +16,12 @@ goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.utils');
 
+/**
+ * @type {axs.AuditRule.Spec}
+ */
 axs.AuditRule.specs.badAriaRole = {
     name: 'badAriaRole',
-    severity: axs.constants.Severity.Severe,
+    severity: axs.constants.Severity.SEVERE,
     relevantNodesSelector: function(scope) {
         return scope.querySelectorAll("[role]");
     },

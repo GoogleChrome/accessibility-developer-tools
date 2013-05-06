@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+goog.require('axs.AuditResults');
 goog.require('axs.AuditRules');
 goog.require('axs.utils');
 
@@ -91,7 +92,7 @@ axs.AuditConfiguration.prototype = {
         return this.rules_[auditRuleName].ignore;
     }
     return [];
-  },
+  }
 };
 
 /**
@@ -150,8 +151,32 @@ axs.Audit.run = function(opt_configuration) {
 };
 
 /**
+ * Create an AuditResults object citing failures and warnings, for use in
+ * continuous builds.
+ * @param {Array.<Object>} results The results returned from the audit run.
+ * @return  {axs.AuditResults} a report of the audit results.
+ */
+axs.Audit.auditResults = function(results) {
+    var auditResults = new axs.AuditResults();
+    for (var i = 0; i < results.length; i++) {
+        var result = results[i];
+        if (result.result != axs.constants.AuditResult.FAIL)
+            continue;
+
+        if (result.rule.severity == axs.constants.Severity.SEVERE) {
+            auditResults.addError(
+                axs.Audit.accessibilityErrorMessage(result));
+        } else {
+            auditResults.addWarning(
+                axs.Audit.accessibilityErrorMessage(result));
+        }
+    }
+    return auditResults;
+};
+
+/**
  * Create a report based on the results of an Audit.
- * @param {Object} results The results returned from axs.Audit.run();
+ * @param {Array.<Object>} results The results returned from axs.Audit.run();
  * @param {?string} opt_url A URL to visit for more information. If not
  *     provided, this will default to
  *     https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules.
@@ -161,43 +186,12 @@ axs.Audit.createReport = function(results, opt_url) {
     var message = '*** Begin accessibility audit results ***';
     message += '\nAn accessibility audit found ';
 
-    var numWarnings = 0;
-    var warningsMessage = '';
-    var numErrors = 0;
-    var errorsMessage = '';
+    message += axs.Audit.auditResults(results).toString();
 
-    for (var i = 0; i < results.length; i++) {
-        var result = results[i];
-        if (result.result != axs.constants.AuditResult.FAIL)
-            continue;
-
-        if (result.rule.severity == axs.constants.Severity.Severe) {
-            numErrors++;
-            errorsMessage += '\n\n' +
-                             axs.Audit.accessibilityErrorMessage(result);
-        } else {
-            numWarnings++;
-            warningsMessage += '\n\n' +
-                               axs.Audit.accessibilityErrorMessage(result);
-        }
-    }
-
-    if (numErrors > 0) {
-        message += numErrors + (numErrors == 1 ? ' error ' : ' errors ');
-        if (numWarnings > 0)
-             message += 'and ';
-    }
-    if (numWarnings > 0) {
-        message += numWarnings +
-            (numWarnings == 1 ? ' warning ' : ' warnings ');
-    }
-    message += 'on this page.\n';
-    message += 'For more information, please see ' +
-        (opt_url != undefined ? opt_url :
-        'https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules');
-
-    message += errorsMessage;
-    message += warningsMessage;
+    message += '\nFor more information, please see ' ;
+    message += (opt_url != undefined ? opt_url :
+        'https://code.google.com/p/accessibility-developer-tools/' +
+        'wiki/AuditRules');
 
     message += '\n*** End accessibility audit results ***';
     return message;
@@ -211,7 +205,7 @@ axs.Audit.createReport = function(results, opt_url) {
  *     query selectors for up to five elements which failed the audit rule.
  */
 axs.Audit.accessibilityErrorMessage = function(result) {
-    if (result.rule.severity == axs.constants.Severity.Severe)
+    if (result.rule.severity == axs.constants.Severity.SEVERE)
         var message = 'Error: '
     else
         var message = 'Warning: '
@@ -227,7 +221,17 @@ axs.Audit.accessibilityErrorMessage = function(result) {
     }
 
     var maxElements = Math.min(result.elements.length, 5);
-    for (var i = 0; i < maxElements; i++)
-        message += '\n' + axs.utils.getQuerySelectorText(result.elements[i]);
+    for (var i = 0; i < maxElements; i++) {
+        var element = result.elements[i];
+        message += '\n';
+        // Get query selector not browser independent. catch any errors and
+        // default to simple tagName.
+        try {
+            message += axs.utils.getQuerySelectorText(element);
+        } catch (err) {
+            message += ' tagName:' + element.tagName;
+            message += ' id:' + element.id;
+        }
+    }
     return message;
 };

@@ -17,9 +17,12 @@ goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 goog.require('axs.utils');
 
+/**
+ * @type {axs.AuditRule.Spec}
+ */
 axs.AuditRule.specs.unfocusableElementsWithOnClick = {
     name: 'unfocusableElementsWithOnClick',
-    severity: axs.constants.Severity.Warning,
+    severity: axs.constants.Severity.WARNING,
     opt_requiresConsoleAPI: true,
     relevantNodesSelector: function(scope) {
         var potentialOnclickElements = scope.querySelectorAll('*');
