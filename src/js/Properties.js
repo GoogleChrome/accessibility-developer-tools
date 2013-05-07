@@ -92,7 +92,7 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
     case Node.COMMENT_NODE:
         return null;  // Skip comments
     case Node.ELEMENT_NODE:
-        element = /** @type {Element} */ node;
+        element = /** @type {Element} */ (node);
         if (element.tagName.toLowerCase() == 'script') {
             return null;  // Skip script elements
         }
@@ -158,7 +158,7 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
         // following manner:
         if (element instanceof HTMLInputElement) {
             // If the embedded control is a text field, use its value.
-            var inputElement = /** @type {HTMLInputElement} */ element;
+            var inputElement = /** @type {HTMLInputElement} */ (element);
             if (inputElement.type == 'text') {
                 if (inputElement.value && inputElement.value.length > 0)
                     textAlternatives['controlValue'] = { 'text': inputElement.value };
@@ -415,7 +415,7 @@ axs.properties.getTextFromHostLangaugeAttributes = function(element, textAlterna
         var labelWrappedValue = {};
         while (parent) {
             if (parent.tagName.toLowerCase() == 'label') {
-                var parentLabel = /** @type {HTMLLabelElement} */ parent;
+                var parentLabel = /** @type {HTMLLabelElement} */ (parent);
                 if (parentLabel.control == element) {
                     labelWrappedValue.type = 'element';
                     labelWrappedValue.text = axs.properties.findTextAlternatives(parentLabel, {}, true);
@@ -617,7 +617,7 @@ axs.properties.getTrackElements = function(element, kind) {
 axs.properties.getAllProperties = function(node) {
     /** @type {Element} */ var element;
     if (node.nodeType == Node.ELEMENT_NODE)
-        element = /** @type {Element} */ node;
+        element = /** @type {Element} */ (node);
     if (node.nodeType == Node.TEXT_NODE)
         element = node.parentElement;
     if (!element)
