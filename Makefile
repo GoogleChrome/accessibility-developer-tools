@@ -18,6 +18,7 @@ LIBRARY_CLOSURE_COMMAND = java -jar $(CLOSURE_JAR) --language_in ECMASCRIPT5 \
   --js ./src/js/AccessibilityUtils.js \
   --js ./src/js/AuditRule.js \
   --js ./src/js/AuditRules.js \
+  --js ./src/js/AuditResults.js \
   --js ./src/js/Audit.js \
   $(AUDIT_RULES)
 

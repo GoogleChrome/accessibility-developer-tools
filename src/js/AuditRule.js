@@ -62,6 +62,17 @@ axs.AuditRule = function(spec) {
  *              test: function(Node): boolean,
  *              code: string,
  *              opt_requiresConsoleAPI: boolean }} */
+axs.AuditRule.SpecWithConsoleAPI;
+
+/** @typedef {{ name: string,
+ *              severity: axs.constants.Severity,
+ *              relevantNodesSelector: function(?Node):
+ *                  (Array.<Node>|NodeList|XPathResult),
+ *              test: function(Node): boolean,
+ *              code: string }} */
+axs.AuditRule.SpecWithoutConsoleAPI;
+
+/** @typedef {(axs.AuditRule.SpecWithConsoleAPI|axs.AuditRule.SpecWithoutConsoleAPI)} */
 axs.AuditRule.Spec;
 
 /**
