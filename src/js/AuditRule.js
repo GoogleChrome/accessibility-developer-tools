@@ -51,11 +51,19 @@ axs.AuditRule = function(spec) {
     /** @type {string} */
     this.code = spec.code;
 
+    /** @type {string} */
+    this.heading = spec.heading || '';
+
+    /** @type {string} */
+    this.url = spec.url || '';
+
     /** @type {boolean} */
     this.requiresConsoleAPI = !!spec['opt_requiresConsoleAPI'];
 };
 
 /** @typedef {{ name: string,
+ *              heading: string,
+ *              url: string,
  *              severity: axs.constants.Severity,
  *              relevantNodesSelector: function(?Node):
  *                  (Array.<Node>|NodeList|XPathResult),
@@ -65,6 +73,8 @@ axs.AuditRule = function(spec) {
 axs.AuditRule.SpecWithConsoleAPI;
 
 /** @typedef {{ name: string,
+ *              heading: string,
+ *              url: string,
  *              severity: axs.constants.Severity,
  *              relevantNodesSelector: function(?Node):
  *                  (Array.<Node>|NodeList|XPathResult),

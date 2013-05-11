@@ -21,6 +21,8 @@ goog.require('axs.constants.Severity');
  */
 axs.AuditRule.specs.nonExistentAriaLabelledbyElement = {
     name: 'nonExistentAriaLabelledbyElement',
+    heading: 'aria-labelledby attributes should refer to an element which exists in the DOM',
+    url: 'https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_ARIA_02:__aria-labelledby_attributes_should_refer_to_an_eleme',
     severity: axs.constants.Severity.WARNING,
     relevantNodesSelector: function(scope) {
         return scope.querySelectorAll('[aria-labelledby]');

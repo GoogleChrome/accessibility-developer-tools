@@ -21,6 +21,8 @@ goog.require('axs.constants');
  */
 axs.AuditRule.specs.requiredAriaAttributeMissing = {
     name: 'requiredAriaAttributeMissing',
+    heading: 'Elements with ARIA roles must have all required attributes for that role',
+    url: '',
     severity: axs.constants.Severity.SEVERE,
     relevantNodesSelector: function(scope) {
         return scope.querySelectorAll('[role]');

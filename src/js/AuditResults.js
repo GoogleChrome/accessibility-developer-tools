@@ -96,17 +96,17 @@ axs.AuditResults.prototype.toString = function() {
   var message = '';
   for (var i = 0; i < this.errors_.length; i++) {
     if (i == 0) {
-      message += '\nErrors:';
+      message += '\nErrors:\n';
     }
     var result = this.errors_[i];
-    message += result + '\n';
+    message += result + '\n\n';
   }
   for (var i = 0; i < this.warnings_.length; i++) {
     if (i == 0) {
-      message += '\nWarnings:';
+      message += '\nWarnings:\n';
     }
     var result = this.warnings_[i];
-    message += result + '\n';
+    message += result + '\n\n';
   }
   return message;
 };

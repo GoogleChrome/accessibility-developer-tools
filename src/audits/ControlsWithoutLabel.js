@@ -22,6 +22,8 @@ goog.require('axs.utils');
  */
 axs.AuditRule.specs.controlsWithoutLabel = {
     name: 'controlsWithoutLabel',
+    heading: 'Controls and media elements should have labels',
+    url: 'https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_TEXT_01:_Controls_and_media_elements_should_have_labels',
     severity: axs.constants.Severity.SEVERE,
     relevantNodesSelector: function(scope) {
         var controlsSelector = ['input:not([type="hidden"]):not([disabled])',

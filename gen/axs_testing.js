@@ -453,6 +453,8 @@ axs.AuditRule = function(a) {
   this.relevantNodesSelector_ = a.relevantNodesSelector;
   this.test_ = a.test;
   this.code = a.code;
+  this.heading = a.heading || "";
+  this.url = a.url || "";
   this.requiresConsoleAPI = !!a.opt_requiresConsoleAPI
 };
 axs.AuditRule.requiredFields = ["name", "severity", "relevantNodesSelector", "test", "code"];
@@ -528,11 +530,11 @@ axs.AuditResults.prototype.getWarnings = function() {
 };
 axs.AuditResults.prototype.toString = function() {
   for(var a = "", b = 0;b < this.errors_.length;b++) {
-    0 == b && (a += "\nErrors:");
-    var c = this.errors_[b], a = a + (c + "\n")
+    0 == b && (a += "\nErrors:\n");
+    var c = this.errors_[b], a = a + (c + "\n\n")
   }
   for(b = 0;b < this.warnings_.length;b++) {
-    0 == b && (a += "\nWarnings:"), c = this.warnings_[b], a += c + "\n"
+    0 == b && (a += "\nWarnings:\n"), c = this.warnings_[b], a += c + "\n\n"
   }
   return a
 };
@@ -581,12 +583,11 @@ axs.Audit.auditResults = function(a) {
 axs.Audit.createReport = function(a, b) {
   var c;
   c = "*** Begin accessibility audit results ***\nAn accessibility audit found " + axs.Audit.auditResults(a).toString();
-  c += "\nFor more information, please see ";
-  c += void 0 != b ? b : "https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules";
+  b && (c += "\nFor more information, please see ", c += b);
   return c += "\n*** End accessibility audit results ***"
 };
 axs.Audit.accessibilityErrorMessage = function(a) {
-  for(var b = a.rule.severity == axs.constants.Severity.SEVERE ? "Error: " : "Warning: ", b = b + (a.rule.name + " (" + a.rule.code + ") failed on the following " + (1 == a.elements.length ? "element" : "elements")), b = 1 == a.elements.length ? b + ":" : b + (" (1 - " + Math.min(5, a.elements.length) + " of " + a.elements.length + "):"), c = Math.min(a.elements.length, 5), d = 0;d < c;d++) {
+  for(var b = a.rule.severity == axs.constants.Severity.SEVERE ? "Error: " : "Warning: ", b = b + (a.rule.code + " (" + a.rule.heading + ") failed on the following " + (1 == a.elements.length ? "element" : "elements")), b = 1 == a.elements.length ? b + ":" : b + (" (1 - " + Math.min(5, a.elements.length) + " of " + a.elements.length + "):"), c = Math.min(a.elements.length, 5), d = 0;d < c;d++) {
     var e = a.elements[d], b = b + "\n";
     try {
       b += axs.utils.getQuerySelectorText(e)
@@ -594,79 +595,15 @@ axs.Audit.accessibilityErrorMessage = function(a) {
       b += " tagName:" + e.tagName, b += " id:" + e.id
     }
   }
+  "" != a.rule.url && (b += "\nSee " + a.rule.url + " for more information.");
   return b
 };
-axs.AuditRule.specs.audioWithoutControls = {name:"audioWithoutControls", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+axs.AuditRule.specs.audioWithoutControls = {name:"audioWithoutControls", heading:"Audio elements should have controls", url:"", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
   return a.querySelectorAll("audio[autoplay]")
 }, test:function(a) {
   return!a.querySelectorAll("[controls]").length && 3 < a.duration
 }, code:"AX_AUDIO_01"};
-axs.AuditRule.specs.pageWithoutTitle = {name:"pageWithoutTitle", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
-  return a
-}, test:function(a) {
-  a = a.querySelector("head");
-  if(!a) {
-    return!0
-  }
-  a = a.querySelector("title");
-  return!a.length || !a[0].textContent
-}, code:"AX_TITLE_01"};
-axs.AuditRule.specs.lowContrastElements = {name:"lowContrastElements", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
-  return document.evaluate('/html/body//text()[normalize-space(.)!=""]/parent::*[name()!="script"]', a, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
-}, test:function(a) {
-  var b = window.getComputedStyle(a, null);
-  return(a = axs.utils.getContrastRatioForElementWithComputedStyle(b, a)) && axs.utils.isLowContrast(a, b)
-}, code:"AX_COLOR_01"};
-axs.AuditRule.specs.nonExistentAriaLabelledbyElement = {name:"nonExistentAriaLabelledbyElement", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
-  return a.querySelectorAll("[aria-labelledby]")
-}, test:function(a) {
-  a = a.getAttribute("aria-labelledby").split(/\s+/);
-  for(var b = 0;b < a.length;b++) {
-    if(!document.getElementById(a[b])) {
-      return!0
-    }
-  }
-  return!1
-}, code:"AX_ARIA_02"};
-axs.AuditRule.specs.requiredAriaAttributeMissing = {name:"requiredAriaAttributeMissing", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
-  return a.querySelectorAll("[role]")
-}, test:function(a) {
-  var b = axs.utils.getRole(a);
-  if(!b.valid) {
-    return!1
-  }
-  var b = b.details.requiredPropertiesSet, c;
-  for(c in b) {
-    b = c.replace(/^aria-/, "");
-    if("defaultValue" in axs.constants.ARIA_PROPERTIES[b]) {
-      return!1
-    }
-    if(!a.hasAttribute(c)) {
-      return!0
-    }
-  }
-}, code:"AX_ARIA_03"};
-axs.AuditRule.specs.focusableElementNotVisibleAndNotAriaHidden = {name:"focusableElementNotVisibleAndNotAriaHidden", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
-  return a.querySelectorAll(axs.utils.FOCUSABLE_ELEMENTS_SELECTOR)
-}, test:function(a) {
-  return axs.utils.isElementOrAncestorHidden(a) ? !1 : !axs.utils.elementIsVisible(a)
-}, code:"AX_FOCUS_01"};
-axs.AuditRule.specs.linkWithUnclearPurpose = {name:"linkWithUnclearPurpose", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
-  return a.querySelectorAll("a")
-}, test:function(a) {
-  return/^\s*click\s*here\s*[^a-z]?$/i.test(a.textContent)
-}, code:"AX_TITLE_01"};
-axs.AuditRule.specs.controlsWithoutLabel = {name:"controlsWithoutLabel", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
-  return a.querySelectorAll('input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])')
-}, test:function(a) {
-  return axs.utils.isElementOrAncestorHidden(a) || "button" == a.tagName.toLowerCase() && a.innerText.replace(/^\s+|\s+$/g, "").length ? !1 : !axs.utils.hasLabel(a) ? !0 : !1
-}, code:"AX_TEXT_01", ruleName:"Controls and media elements should have labels"};
-axs.AuditRule.specs.videoWithoutCaptions = {name:"videoWithoutCaptions", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
-  return a.querySelectorAll("video")
-}, test:function(a) {
-  return!a.querySelectorAll("track[kind=captions]").length
-}, code:"AX_VIDEO_01"};
-axs.AuditRule.specs.badAriaAttributeValue = {name:"badAriaAttributeValue", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
+axs.AuditRule.specs.badAriaAttributeValue = {name:"badAriaAttributeValue", heading:"ARIA state and property values must be valid", url:"", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
   var b = "", c;
   for(c in axs.constants.ARIA_PROPERTIES) {
     b += "[aria-" + c + "],"
@@ -685,12 +622,22 @@ axs.AuditRule.specs.badAriaAttributeValue = {name:"badAriaAttributeValue", sever
   }
   return!1
 }, code:"AX_ARIA_04"};
-axs.AuditRule.specs.badAriaRole = {name:"badAriaRole", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
+axs.AuditRule.specs.badAriaRole = {name:"badAriaRole", heading:"Elements with ARIA roles must use a valid, non-abstract ARIA role", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_ARIA_01:_Elements_with_ARIA_roles_must_use_a_valid,_non-abstr", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
   return a.querySelectorAll("[role]")
 }, test:function(a) {
   return!axs.utils.getRole(a).valid
 }, code:"AX_ARIA_01"};
-axs.AuditRule.specs.imagesWithoutAltText = {name:"imagesWithoutAltText", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+axs.AuditRule.specs.controlsWithoutLabel = {name:"controlsWithoutLabel", heading:"Controls and media elements should have labels", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_TEXT_01:_Controls_and_media_elements_should_have_labels", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
+  return a.querySelectorAll('input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])')
+}, test:function(a) {
+  return axs.utils.isElementOrAncestorHidden(a) || "button" == a.tagName.toLowerCase() && a.innerText.replace(/^\s+|\s+$/g, "").length ? !1 : !axs.utils.hasLabel(a) ? !0 : !1
+}, code:"AX_TEXT_01", ruleName:"Controls and media elements should have labels"};
+axs.AuditRule.specs.focusableElementNotVisibleAndNotAriaHidden = {name:"focusableElementNotVisibleAndNotAriaHidden", heading:"These elements are focusable but either invisible or obscured by another element", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_FOCUS_01:_These_elements_are_focusable_but_either_invisible_o", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+  return a.querySelectorAll(axs.utils.FOCUSABLE_ELEMENTS_SELECTOR)
+}, test:function(a) {
+  return axs.utils.isElementOrAncestorHidden(a) ? !1 : !axs.utils.elementIsVisible(a)
+}, code:"AX_FOCUS_01"};
+axs.AuditRule.specs.imagesWithoutAltText = {name:"imagesWithoutAltText", heading:"Images should have an alt attribute", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_TEXT_02:_Images_should_have_an_alt_attribute,_unless_they_hav", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
   a = a.querySelectorAll("img");
   for(var b = [], c = 0;c < a.length;c++) {
     var d = a[c];
@@ -700,7 +647,57 @@ axs.AuditRule.specs.imagesWithoutAltText = {name:"imagesWithoutAltText", severit
 }, test:function(a) {
   return!a.hasAttribute("alt") && "presentation" != a.getAttribute("role")
 }, code:"AX_TEXT_02"};
-axs.AuditRule.specs.unfocusableElementsWithOnClick = {name:"unfocusableElementsWithOnClick", severity:axs.constants.Severity.WARNING, opt_requiresConsoleAPI:!0, relevantNodesSelector:function(a) {
+axs.AuditRule.specs.linkWithUnclearPurpose = {name:"linkWithUnclearPurpose", heading:"The purpose of each link should be clear from the link text", url:"", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+  return a.querySelectorAll("a")
+}, test:function(a) {
+  return/^\s*click\s*here\s*[^a-z]?$/i.test(a.textContent)
+}, code:"AX_TITLE_01"};
+axs.AuditRule.specs.lowContrastElements = {name:"lowContrastElements", heading:"Text elements should have a reasonable contrast ratio", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_COLOR_01:_Text_elements_should_have_a_reasonable_contrast_rat", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+  return document.evaluate('/html/body//text()[normalize-space(.)!=""]/parent::*[name()!="script"]', a, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
+}, test:function(a) {
+  var b = window.getComputedStyle(a, null);
+  return(a = axs.utils.getContrastRatioForElementWithComputedStyle(b, a)) && axs.utils.isLowContrast(a, b)
+}, code:"AX_COLOR_01"};
+axs.AuditRule.specs.nonExistentAriaLabelledbyElement = {name:"nonExistentAriaLabelledbyElement", heading:"aria-labelledby attributes should refer to an element which exists in the DOM", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_ARIA_02:__aria-labelledby_attributes_should_refer_to_an_eleme", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+  return a.querySelectorAll("[aria-labelledby]")
+}, test:function(a) {
+  a = a.getAttribute("aria-labelledby").split(/\s+/);
+  for(var b = 0;b < a.length;b++) {
+    if(!document.getElementById(a[b])) {
+      return!0
+    }
+  }
+  return!1
+}, code:"AX_ARIA_02"};
+axs.AuditRule.specs.pageWithoutTitle = {name:"pageWithoutTitle", heading:"Web pages have titles that describe topic or purpose", url:"", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+  return a
+}, test:function(a) {
+  a = a.querySelector("head");
+  if(!a) {
+    return!0
+  }
+  a = a.querySelector("title");
+  return!a.length || !a[0].textContent
+}, code:"AX_TITLE_01"};
+axs.AuditRule.specs.requiredAriaAttributeMissing = {name:"requiredAriaAttributeMissing", heading:"Elements with ARIA roles must have all required attributes for that role", url:"", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
+  return a.querySelectorAll("[role]")
+}, test:function(a) {
+  var b = axs.utils.getRole(a);
+  if(!b.valid) {
+    return!1
+  }
+  var b = b.details.requiredPropertiesSet, c;
+  for(c in b) {
+    b = c.replace(/^aria-/, "");
+    if("defaultValue" in axs.constants.ARIA_PROPERTIES[b]) {
+      return!1
+    }
+    if(!a.hasAttribute(c)) {
+      return!0
+    }
+  }
+}, code:"AX_ARIA_03"};
+axs.AuditRule.specs.unfocusableElementsWithOnClick = {name:"unfocusableElementsWithOnClick", heading:"Elements with onclick handlers must be focusable", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_FOCUS_02:_Elements_with_onclick_handlers_must_be_focusable", severity:axs.constants.Severity.WARNING, opt_requiresConsoleAPI:!0, relevantNodesSelector:function(a) {
   a = a.querySelectorAll("*");
   for(var b = [], c = 0;c < a.length;c++) {
     var d = a[c];
@@ -710,4 +707,9 @@ axs.AuditRule.specs.unfocusableElementsWithOnClick = {name:"unfocusableElementsW
 }, test:function(a) {
   return!a.hasAttribute("tabindex") && !axs.utils.isElementImplicitlyFocusable(a)
 }, code:"AX_FOCUS_02"};
+axs.AuditRule.specs.videoWithoutCaptions = {name:"videoWithoutCaptions", heading:"Video elements should use <track> elements to provide captions", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_VIDEO_01:_Video_elements_should_use_<track>_elements_to", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+  return a.querySelectorAll("video")
+}, test:function(a) {
+  return!a.querySelectorAll("track[kind=captions]").length
+}, code:"AX_VIDEO_01"};
 

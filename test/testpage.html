@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Accessibility tools test page</title>
-  <script type="text/javascript" src="./axs_testing.js"></script>
+  <script type="text/javascript" src="../gen/axs_testing.js"></script>
 </head>
 <body style="margin-bottom: 0px;" aria-hidden="true" chromevoxignoreariahidden="true" role="application" chromevoxoriginalrole="null">
   <div>
@@ -112,6 +112,7 @@ function handlekey(event) {
   <div role="textbox" aria-labelledby="menu-label-test"/>
   <div role="checkbox">Checkbox without aria-checked</div>
 
+  
   <script>
     var results = axs.Audit.run();
     console.log(results);

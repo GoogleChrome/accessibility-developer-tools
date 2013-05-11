@@ -20,6 +20,8 @@ goog.require('axs.constants.Severity');
  */
 axs.AuditRule.specs.audioWithoutControls = {
     name: 'audioWithoutControls',
+    heading: 'Audio elements should have controls',
+    url: '',
     severity: axs.constants.Severity.WARNING,
     relevantNodesSelector: function(scope) {
         return scope.querySelectorAll('audio[autoplay]');

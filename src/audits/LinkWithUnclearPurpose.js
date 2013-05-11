@@ -20,6 +20,8 @@ goog.require('axs.constants.Severity');
  */
 axs.AuditRule.specs.linkWithUnclearPurpose = {
     name: 'linkWithUnclearPurpose',
+    heading: 'The purpose of each link should be clear from the link text',
+    url: '',
     severity: axs.constants.Severity.WARNING,
     relevantNodesSelector: function(scope) {
         return scope.querySelectorAll('a');

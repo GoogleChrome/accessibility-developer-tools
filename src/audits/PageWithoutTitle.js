@@ -20,6 +20,8 @@ goog.require('axs.constants.Severity');
  */
 axs.AuditRule.specs.pageWithoutTitle = {
     name: 'pageWithoutTitle',
+    heading: 'Web pages have titles that describe topic or purpose',
+    url: '',
     severity: axs.constants.Severity.WARNING,
     relevantNodesSelector: function(scope) {
         return scope;

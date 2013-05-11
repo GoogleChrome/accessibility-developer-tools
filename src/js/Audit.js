@@ -188,10 +188,10 @@ axs.Audit.createReport = function(results, opt_url) {
 
     message += axs.Audit.auditResults(results).toString();
 
-    message += '\nFor more information, please see ' ;
-    message += (opt_url != undefined ? opt_url :
-        'https://code.google.com/p/accessibility-developer-tools/' +
-        'wiki/AuditRules');
+    if (opt_url) {
+        message += '\nFor more information, please see ' ;
+        message += opt_url;
+    }
 
     message += '\n*** End accessibility audit results ***';
     return message;
@@ -209,7 +209,7 @@ axs.Audit.accessibilityErrorMessage = function(result) {
         var message = 'Error: '
     else
         var message = 'Warning: '
-    message += result.rule.name + ' (' + result.rule.code +
+    message += result.rule.code + ' (' + result.rule.heading +
         ') failed on the following ' +
         (result.elements.length == 1 ? 'element' : 'elements');
 
@@ -233,5 +233,7 @@ axs.Audit.accessibilityErrorMessage = function(result) {
             message += ' id:' + element.id;
         }
     }
+    if (result.rule.url != '')
+        message += '\nSee ' + result.rule.url + ' for more information.';
     return message;
 };

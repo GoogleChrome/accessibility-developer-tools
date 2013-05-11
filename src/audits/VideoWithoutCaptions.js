@@ -20,6 +20,8 @@ goog.require('axs.constants.Severity');
  */
 axs.AuditRule.specs.videoWithoutCaptions = {
     name: 'videoWithoutCaptions',
+    heading: 'Video elements should use <track> elements to provide captions',
+    url: 'https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_VIDEO_01:_Video_elements_should_use_<track>_elements_to',
     severity: axs.constants.Severity.WARNING,
     relevantNodesSelector: function(scope) {
         return scope.querySelectorAll('video');

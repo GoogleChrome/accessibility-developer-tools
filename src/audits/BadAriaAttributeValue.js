@@ -22,6 +22,8 @@ goog.require('axs.utils');
  */
 axs.AuditRule.specs.badAriaAttributeValue = {
     name: 'badAriaAttributeValue',
+    heading: 'ARIA state and property values must be valid',
+    url: '',
     severity: axs.constants.Severity.SEVERE,
     relevantNodesSelector: function(scope) {
         var selector = '';
