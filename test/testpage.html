@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC>
 <html>
 <head>
-  <title>Accessibility tools test page</title>
+  <!-- Removed the title for the PageWithoutTitle audit to catch. -->
   <script type="text/javascript" src="../gen/axs_testing.js"></script>
 </head>
 <body style="margin-bottom: 0px;" aria-hidden="true" chromevoxignoreariahidden="true" role="application" chromevoxoriginalrole="null">
@@ -78,6 +78,29 @@ function handlekey(event) {
   <div style="color: #999; font-size: 18pt;">Large low-contrast text</div>
   <div style="font-size: 10px;" id="absolute">Absolute sized text</div>
   <style>
+    .bgimage {
+      background-image:url(https://lh5.googleusercontent.com/-sCg4gG_WAnM/UNS3_JRkvVI/AAAAAAAAAyk/8OT1wOmSC30/s16-c-k/icon_11_document_list.png);
+      display: inline-block;
+      height:16px;
+      width: 16px;
+    }
+    .bgImageNone {
+      background-image: none;
+    }
+    .bigbgimage {
+      background-image:url(http://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Google_Chrome_icon_%282011%29.svg/150px-Google_Chrome_icon_%282011%29.svg.png);
+      height:150px;
+      width: 150px;
+    }
+  </style>
+  <span>
+    A small image in the background (div): <div id="backgroundiconDiv" title="Drive Document" class="bgimage" ></div><br>
+    A small image in the background (span): <span id="backgroundiconSpan" title="Drive Document" class="bgimage" ></span><br>
+    A small image in the background with text content (will no be flagged): <span title="Drive Document" class="bgimage" >Text</span><br>
+    A 'none' image in the background (will no be flagged): <span title="Drive Document" class="bgimageNone" ></span><br>
+    A large image in the background (will not be flagged): <div title="Big image" class="bigbgimage" ></div>
+  </span>
+  <style>
     .absolute {
       font-size: 12px;
     }
@@ -98,6 +121,7 @@ function handlekey(event) {
     <source src="videos/arduino.webm" type="video/webm" />
   </video>
 -->
+  <audio autoplay id="audioTest" src="005.ogg" type="audio/ogg; codecs=vorbis"></audio>
   <div id="ariahidden" aria-hidden="true" tabindex="0" style="height: 20px;">ARIA-hidden</div>
   <div id="notariahidden" tabindex="0">Not ARIA-hidden</div>
   <div id="overlapping" style="position: relative; top: -40px; height: 40px; background: rgba(255, 255, 255, 0.5);">Overlapping div</div>
@@ -111,8 +135,10 @@ function handlekey(event) {
   </div>
   <div role="textbox" aria-labelledby="menu-label-test"/>
   <div role="checkbox">Checkbox without aria-checked</div>
+  <div>
+    For Google,<a href="http://google.com/"> click here.</a>
+  </div>
 
-  
   <script>
     var results = axs.Audit.run();
     console.log(results);
