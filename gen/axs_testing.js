@@ -413,23 +413,20 @@ window.addEventListener("message", function(a) {
       "returnOrigin" in a.data && (b = a.data.returnOrigin);
       a.source.postMessage({request:"postUri", uri:document.documentURI}, b)
     }else {
-      "postUri" == a.data.request && (window.parent != window ? window.parent.postMessage(a.data, "*") : axs.content.frameURIs[a.data.uri] = !0)
+      "postUri" == a.data.request && (window.parent != window ? window.parent.postMessage(a.data, "*") : (a = a.data.uri, 0 <= a.indexOf("#") ? axs.content.frameURIs[a.split("#", 1)[0]] = !0 : axs.content.frameURIs[a] = !0))
     }
   }
 }, !1);
 (function() {
   function a(a) {
-    a = a.split("://");
+    a = a.split("://", 2);
     a[1] = a[1].split("/")[0];
     return a.join("://")
   }
   for(var b = document.querySelectorAll("iframe"), c = 0;c < b.length;c++) {
     var d = b[c], e = "*", f = d.src;
-    if(f || 0 == f.length) {
-      e = a(f)
-    }
+    f && 0 < f.length && (e = a(f));
     f = a(document.documentURI);
-    console.log("iframe.src", d.src, "frameOrigin", e, "document.documentURI", document.documentURI, "docOrigin", f);
     try {
       d.contentWindow.postMessage({request:"getUri", returnOrigin:f}, e)
     }catch(g) {
