@@ -325,7 +325,7 @@ axs.properties.getTextFromAriaLabelledby = function(element, textAlternatives) {
         if (!labelledbyElement) {
             labelledby.valid = false;
             labelledbyValue.valid = false;
-            labelledby.errorMessage = chrome.i18n.getMessage('noElementWithId', labelledbyId);
+            labelledby.errorMessage = { 'messageKey': 'noElementWithId', 'args': [labelledbyId] };
         } else {
             labelledby.valid = true;
             labelledby.text = axs.properties.findTextAlternatives(labelledbyElement, {}, true);
@@ -499,31 +499,37 @@ axs.properties.getAriaProperties = function(element) {
     if (Object.keys(statesAndProperties).length > 0)
         ariaProperties['properties'] = axs.utils.values(statesAndProperties);
 
-    var role = axs.utils.getRole(element);
-    if (!role) {
+    var roles = axs.utils.getRoles(element);
+    if (!roles) {
         if (Object.keys(ariaProperties).length)
             return ariaProperties;
         else
             return null;
     }
-    ariaProperties['role'] = role;
-    if (!role.valid || !role.details || !role.details.propertiesSet)
+    ariaProperties['roles'] = roles;
+    if (!roles.valid || !roles['roles'])
         return ariaProperties;
 
-    for (var property in role.details.propertiesSet) {
-        if (property in statesAndProperties)
+    var roleDetails = roles['roles'];
+    for (var i = 0; i < roleDetails.length; i++) {
+        var role = roleDetails[i];
+        if (!role.details || !role.details.propertiesSet)
             continue;
-        if (element.hasAttribute(property)) {
-            var propertyValue = element.getAttribute(property);
-            statesAndProperties[property] =
-                axs.utils.getAriaPropertyValue(property, propertyValue, element);
-            if ('values' in statesAndProperties[property]) {
-                var values = statesAndProperties[property].values;
-                values[values.length - 1].isLast = true;
+        for (var property in role.details.propertiesSet) {
+            if (property in statesAndProperties)
+                continue;
+            if (element.hasAttribute(property)) {
+                var propertyValue = element.getAttribute(property);
+                statesAndProperties[property] =
+                    axs.utils.getAriaPropertyValue(property, propertyValue, element);
+                if ('values' in statesAndProperties[property]) {
+                    var values = statesAndProperties[property].values;
+                    values[values.length - 1].isLast = true;
+                }
+            } else if (role.details.requiredPropertiesSet[property]) {
+                statesAndProperties[property] =
+                    { 'name': property, 'valid': false, 'reason': 'Required property not set' };
             }
-        } else if (role.details.requiredPropertiesSet[property]) {
-            statesAndProperties[property] =
-                { 'name': property, 'valid': false, 'reason': 'Required property not set' };
         }
     }
     if (Object.keys(statesAndProperties).length > 0)
@@ -578,7 +584,7 @@ axs.properties.getTrackElements = function(element, kind) {
     var result = {};
     if (!trackElements.length) {
         result.valid = false;
-        result.reason = chrome.i18n.getMessage('noTracksProvided', [kind]);
+        result.reason = { 'messageKey': 'noTracksProvided', 'args': [[kind]] };
         return result;
     }
     result.valid = true;
@@ -590,7 +596,7 @@ axs.properties.getTrackElements = function(element, kind) {
         var label = trackElements[i].getAttribute('label');
         if (!src) {
             trackElement.valid = false;
-            trackElement.reason = chrome.i18n.getMessage('noSrcProvided');
+            trackElement.reason = { 'messageKey': 'noSrcProvided' };
         } else {
             trackElement.valid = true;
             trackElement.src = src;
@@ -604,7 +610,7 @@ axs.properties.getTrackElements = function(element, kind) {
         if (srcLang)
             name += '(' + srcLang + ')';
         if (name == '')
-            name = '[' + chrome.i18n.getMessage('unnamed') + ']';
+            name = '[' + { 'messageKey': 'unnamed' } + ']';
         trackElement.name = name;
         values.push(trackElement);
     }

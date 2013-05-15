@@ -529,16 +529,37 @@ axs.utils.isElementOrAncestorHidden = function(element) {
 };
 
 /**
+ * @param {Element} element An element to check
+ * @return {boolean} True if the given element is an inline element, false
+ *     otherwise.
+ */
+axs.utils.isInlineElement = function(element) {
+    var tagName = element.tagName.toUpperCase();
+    return axs.constants.InlineElements[tagName];
+}
+
+/**
  * @param {Element} element
  * @return {Object|boolean}
  */
-axs.utils.getRole = function(element) {
+axs.utils.getRoles = function(element) {
     if (!element.hasAttribute('role'))
         return false;
-    var role = element.getAttribute('role');
-    if (axs.constants.ARIA_ROLES[role])
-        return { 'name': role, 'details': axs.constants.ARIA_ROLES[role], 'valid': true };
-    return { 'name': role, 'valid': false };
+    var roleValue = element.getAttribute('role');
+    var roleNames = roleValue.split(' ');
+    var roles = []
+    var valid = true;
+    for (var i = 0; i < roleNames.length; i++) {
+        var role = roleNames[i];
+        if (axs.constants.ARIA_ROLES[role])
+            roles.push({'name': role, 'details': axs.constants.ARIA_ROLES[role], 'valid': true});
+        else {
+            roles.push({'name': role, 'valid': false});
+            valid = false;
+        }
+    }
+
+    return { 'roles': roles, 'valid': valid };
 };
 
 /**

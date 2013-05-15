@@ -20,7 +20,10 @@ console.warn = function(vararg) { };
 
 var JSON = { };
 
-/** @param {Object} object */
+/**
+ * @param {Object} object
+ * @return {string}
+ */
 JSON.stringify = function(object) { };
 
 /** @param {Element} element */

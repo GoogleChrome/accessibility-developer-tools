@@ -1,4 +1,4 @@
-// Copyright 2012 Google Inc.
+// Copyright 2013 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,22 +14,28 @@
 
 goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
+goog.require('axs.properties');
 goog.require('axs.utils');
 
 /**
  * @type {axs.AuditRule.Spec}
  */
-axs.AuditRule.specs.badAriaRole = {
-    name: 'badAriaRole',
-    heading: 'Elements with ARIA roles must use a valid, non-abstract ARIA role',
-    url: 'https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_ARIA_01:_Elements_with_ARIA_roles_must_use_a_valid,_non-abstr',
-    severity: axs.constants.Severity.SEVERE,
+axs.AuditRule.specs.mainRoleOnInappropriateElement = {
+    name: 'mainRoleOnInappropriateElement',
+    heading: 'role=main should only appear on significant elements',
+    url: '',
+    severity: axs.constants.Severity.WARNING,
     relevantNodesSelector: function(scope) {
-        return scope.querySelectorAll("[role]");
+        return scope.querySelectorAll('[role~=main]');
     },
     test: function(element) {
-        var roles = axs.utils.getRoles(element)
-        return !roles.valid;
+        if (axs.utils.isInlineElement(element))
+            return true;
+        var computedTextContent = axs.properties.findTextAlternatives(element, {});
+        if (computedTextContent.length < 50)
+            return true;
+
+        return false;
     },
-    code: 'AX_ARIA_01'
+    code: 'AX_ARIA_04'
 };

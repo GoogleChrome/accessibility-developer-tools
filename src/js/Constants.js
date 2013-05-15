@@ -1009,3 +1009,45 @@ axs.constants.AuditResult = {
     FAIL: 'FAIL',
     NA: 'NA'
 };
+
+/** @enum {boolean} */
+axs.constants.InlineElements = {
+    // fontstyle
+    'TT': true,
+    'I': true,
+    'B': true,
+    'BIG': true,
+    'SMALL': true,
+
+    // phrase
+    'EM': true,
+    'STRONG': true,
+    'DFN': true,
+    'CODE': true,
+    'SAMP': true,
+    'KBD': true,
+    'VAR': true,
+    'CITE': true,
+    'ABBR': true,
+    'ACRONYM': true,
+
+    // special
+    'A': true,
+    'IMG': true,
+    'OBJECT': true,
+    'BR': true,
+    'SCRIPT': true,
+    'MAP': true,
+    'Q': true,
+    'SUB': true,
+    'SUP': true,
+    'SPAN': true,
+    'BDO': true,
+
+    // formctrl
+    'INPUT': true,
+    'SELECT': true,
+    'TEXTAREA': true,
+    'LABEL': true,
+    'BUTTON': true
+ }

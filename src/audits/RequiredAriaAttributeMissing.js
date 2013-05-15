@@ -28,17 +28,20 @@ axs.AuditRule.specs.requiredAriaAttributeMissing = {
         return scope.querySelectorAll('[role]');
     },
     test: function(element) {
-        var role = axs.utils.getRole(element);
-        if (!role.valid)
+        var roles = axs.utils.getRoles(element);
+        if (!roles.valid)
             return false;  // That's a different error.
-        var requiredProperties = role.details.requiredPropertiesSet;
-        for (var property in requiredProperties) {
-            var propertyKey = property.replace(/^aria-/, '');
-            var propertyDetails = axs.constants.ARIA_PROPERTIES[propertyKey];
-            if ('defaultValue' in propertyDetails)
-                return false;
-            if (!element.hasAttribute(property))
-                return true;
+        for (var i = 0; i < roles.roles.length; i++) {
+            var role = roles.roles[i];
+            var requiredProperties = role.details.requiredPropertiesSet;
+            for (var property in requiredProperties) {
+                var propertyKey = property.replace(/^aria-/, '');
+                var propertyDetails = axs.constants.ARIA_PROPERTIES[propertyKey];
+                if ('defaultValue' in propertyDetails)
+                    continue;
+                if (!element.hasAttribute(property))
+                    return true;
+            }
         }
     },
     code: 'AX_ARIA_03'
