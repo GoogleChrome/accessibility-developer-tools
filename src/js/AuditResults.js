@@ -33,6 +33,7 @@ axs.AuditResults = function() {
    */
   this.warnings_ = [];
 };
+goog.exportSymbol('axs.AuditResults', axs.AuditResults);
 
 /**
  * Adds an error message to the AuditResults object.
@@ -44,6 +45,8 @@ axs.AuditResults.prototype.addError = function(errorMessage) {
   }
 
 };
+goog.exportProperty(axs.AuditResults.prototype, 'addError',
+                    axs.AuditResults.prototype.addError);
 
 /**
  * Adds a warning message to the AuditResults object.
@@ -55,6 +58,8 @@ axs.AuditResults.prototype.addWarning = function(warningMessage) {
   }
 
 };
+goog.exportProperty(axs.AuditResults.prototype, 'addWarning',
+                    axs.AuditResults.prototype.addWarning);
 
 /**
  * Returns the number of errors in this AuditResults object.
@@ -63,6 +68,8 @@ axs.AuditResults.prototype.addWarning = function(warningMessage) {
 axs.AuditResults.prototype.numErrors = function() {
   return this.errors_.length;
 };
+goog.exportProperty(axs.AuditResults.prototype, 'numErrors',
+                    axs.AuditResults.prototype.numErrors);
 
 /**
  * Returns the number of warnings in this AuditResults object.
@@ -71,6 +78,8 @@ axs.AuditResults.prototype.numErrors = function() {
 axs.AuditResults.prototype.numWarnings = function() {
   return this.warnings_.length;
 };
+goog.exportProperty(axs.AuditResults.prototype, 'numWarnings',
+                    axs.AuditResults.prototype.numWarnings);
 
 /**
  * Returns the errors in this AuditResults object.
@@ -79,6 +88,8 @@ axs.AuditResults.prototype.numWarnings = function() {
 axs.AuditResults.prototype.getErrors = function() {
   return this.errors_;
 };
+goog.exportProperty(axs.AuditResults.prototype, 'getErrors',
+                    axs.AuditResults.prototype.getErrors);
 
 /**
  * Returns the warnings in this AuditResults object.
@@ -87,6 +98,8 @@ axs.AuditResults.prototype.getErrors = function() {
 axs.AuditResults.prototype.getWarnings = function() {
   return this.warnings_;
 };
+goog.exportProperty(axs.AuditResults.prototype, 'getWarnings',
+                    axs.AuditResults.prototype.getWarnings);
 
 /**
  * Returns a string message depicting AuditResults values.
@@ -110,5 +123,7 @@ axs.AuditResults.prototype.toString = function() {
   }
   return message;
 };
+goog.exportProperty(axs.AuditResults.prototype, 'toString',
+                    axs.AuditResults.prototype.toString);
 
 

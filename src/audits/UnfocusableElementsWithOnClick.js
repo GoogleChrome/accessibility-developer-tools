@@ -32,7 +32,7 @@ axs.AuditRule.specs.unfocusableElementsWithOnClick = {
         var unfocusableClickableElements = [];
         for (var i = 0; i < potentialOnclickElements.length; i++) {
             var element = potentialOnclickElements[i];
-            if (element instanceof HTMLBodyElement)
+            if (element instanceof element.ownerDocument.defaultView.HTMLBodyElement)
                 continue;
             if (axs.utils.isElementOrAncestorHidden(element))
                 continue;

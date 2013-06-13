@@ -62,7 +62,13 @@ axs.AuditConfiguration = function() {
    * @type {boolean}
    */
   this.withConsoleApi = false;
+
+  goog.exportProperty(this, 'scope', this.scope);
+  goog.exportProperty(this, 'auditRulesToRun', this.auditRulesToRun);
+  goog.exportProperty(this, 'auditRulesToIgnore', this.auditRulesToIgnore);
+  goog.exportProperty(this, 'withConsoleApi', this.withConsoleApi);
 };
+goog.exportSymbol('axs.AuditConfiguration', axs.AuditConfiguration);
 
 axs.AuditConfiguration.prototype = {
   /**
@@ -94,6 +100,10 @@ axs.AuditConfiguration.prototype = {
     return [];
   }
 };
+goog.exportProperty(axs.AuditConfiguration.prototype, 'ignoreSelectors',
+                    axs.AuditConfiguration.prototype.ignoreSelectors);
+goog.exportProperty(axs.AuditConfiguration.prototype, 'getIgnoreSelectors',
+                    axs.AuditConfiguration.prototype.getIgnoreSelectors);
 
 /**
  * Runs an audit with all of the audit rules.
@@ -149,6 +159,7 @@ axs.Audit.run = function(opt_configuration) {
 
     return results;
 };
+goog.exportSymbol('axs.Audit.run', axs.Audit.run);
 
 /**
  * Create an AuditResults object citing failures and warnings, for use in
@@ -173,6 +184,7 @@ axs.Audit.auditResults = function(results) {
     }
     return auditResults;
 };
+goog.exportSymbol('axs.Audit.auditResults', axs.Audit.auditResults);
 
 /**
  * Create a report based on the results of an Audit.
@@ -196,6 +208,7 @@ axs.Audit.createReport = function(results, opt_url) {
     message += '\n*** End accessibility audit results ***';
     return message;
 };
+goog.exportSymbol('axs.Audit.createReport', axs.Audit.createReport);
 
 /**
  * Creates an error message for a given accessibility audit result object.
@@ -237,3 +250,4 @@ axs.Audit.accessibilityErrorMessage = function(result) {
         message += '\nSee ' + result.rule.url + ' for more information.';
     return message;
 };
+goog.exportSymbol('axs.Audit.accessibilityErrorMessage', axs.Audit.accessibilityErrorMessage);

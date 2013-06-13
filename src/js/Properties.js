@@ -154,9 +154,11 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
 
     // 2B (HTML version).
     if (recursive && axs.utils.elementIsHtmlControl(element)) {
+        var defaultView = element.ownerDocument.defaultView;
+
         // include the value of the embedded control as part of the text alternative in the
         // following manner:
-        if (element instanceof HTMLInputElement) {
+        if (element instanceof defaultView.HTMLInputElement) {
             // If the embedded control is a text field, use its value.
             var inputElement = /** @type {HTMLInputElement} */ (element);
             if (inputElement.type == 'text') {
@@ -171,7 +173,7 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
         }
         // If the embedded control is a menu, use the text alternative of the chosen menu item.
         // If the embedded control is a select or combobox, use the chosen option.
-        if (element instanceof HTMLSelectElement) {
+        if (element instanceof defaultView.HTMLSelectElement) {
             textAlternatives['controlValue'] = { 'text': inputElement.value };
         }
 

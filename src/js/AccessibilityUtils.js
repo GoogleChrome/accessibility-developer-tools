@@ -145,14 +145,16 @@ axs.utils.overlappingElement = function(element) {
  * @return boolean
  */
 axs.utils.elementIsHtmlControl = function(element) {
+    var defaultView = element.ownerDocument.defaultView;
+
     // HTML control
-    if (element instanceof HTMLButtonElement)
+    if (element instanceof defaultView.HTMLButtonElement)
         return true;
-    if (element instanceof HTMLInputElement)
+    if (element instanceof defaultView.HTMLInputElement)
         return true;
-    if (element instanceof HTMLSelectElement)
+    if (element instanceof defaultView.HTMLSelectElement)
         return true;
-    if (element instanceof HTMLTextAreaElement)
+    if (element instanceof defaultView.HTMLTextAreaElement)
         return true;
 
     return false;
@@ -493,8 +495,8 @@ axs.utils.hasLabel = function(element) {
  * @return {boolean} True if the element is hidden from accessibility.
  */
 axs.utils.isElementHidden = function(element) {
-    if (!(element instanceof HTMLElement))
-        return false;
+    if (!(element instanceof element.ownerDocument.defaultView.HTMLElement))
+      return false;
 
     if (element.hasAttribute('chromevoxignoreariahidden'))
         var chromevoxignoreariahidden = true;
@@ -742,11 +744,16 @@ axs.utils.isValidNumber = function(value) {
  * @return {boolean}
  */
 axs.utils.isElementImplicitlyFocusable = function(element) {
-    if (element instanceof HTMLAnchorElement || element instanceof HTMLAreaElement)
+    var defaultView = element.ownerDocument.defaultView;
+
+    if (element instanceof defaultView.HTMLAnchorElement ||
+        element instanceof defaultView.HTMLAreaElement)
         return element.hasAttribute('href');
-    if (element instanceof HTMLInputElement || element instanceof HTMLSelectElement ||
-        element instanceof HTMLTextAreaElement || element instanceof HTMLButtonElement ||
-        element instanceof HTMLIFrameElement)
+    if (element instanceof defaultView.HTMLInputElement ||
+        element instanceof defaultView.HTMLSelectElement ||
+        element instanceof defaultView.HTMLTextAreaElement ||
+        element instanceof defaultView.HTMLButtonElement ||
+        element instanceof defaultView.HTMLIFrameElement)
         return !element.disabled;
     return false;
 };
