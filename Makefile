@@ -13,7 +13,9 @@ MODULES = axs constants utils content properties audits
 LIBRARY_CLOSURE_COMMAND = java -jar $(CLOSURE_JAR) --language_in ECMASCRIPT5 \
 --formatting PRETTY_PRINT --summary_detail_level 3 --compilation_level SIMPLE_OPTIMIZATIONS \
 --warning_level VERBOSE --externs $(EXTERNS) \
+  --js ./lib/closure/base.js \
   --js ./src/js/axs.js \
+  --js ./src/js/ContentScriptFramework.js \
   --js ./src/js/Constants.js \
   --js ./src/js/AccessibilityUtils.js \
   --js ./src/js/Properties.js \

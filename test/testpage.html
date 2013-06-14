@@ -5,6 +5,11 @@
   <script type="text/javascript" src="../gen/axs_testing.js"></script>
 </head>
 <body style="margin-bottom: 0px;" aria-hidden="true" chromevoxignoreariahidden="true" role="application" chromevoxoriginalrole="null">
+  <script>
+    window.addEventListener("message", function(event) {
+//      console.log("message: ", event);
+    });
+  </script>
   <div>
     A form element without a label: <input type="text"></input>
   </div>
@@ -152,6 +157,5 @@ function handlekey(event) {
     var message = axs.Audit.createReport(results);
     console.log(message);
   </script>
-
 </body>
 </html>
