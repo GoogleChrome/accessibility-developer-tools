@@ -391,6 +391,19 @@ axs.browserUtils = {};
 axs.browserUtils.matchSelector = function(a, b) {
   return a.webkitMatchesSelector ? a.webkitMatchesSelector(b) : a.mozMatchesSelector(b)
 };
+axs.content = {};
+axs.content.auditResultNodes || (axs.content.auditResultNodes = {});
+axs.content.lastNodeId || (axs.content.lastNodeId = 0);
+axs.content.convertNodeToResult = function(a) {
+  var b = "" + axs.content.lastNodeId++;
+  axs.content.auditResultNodes[b] = a;
+  return b
+};
+axs.content.getResultNode = function(a) {
+  var b = axs.content.auditResultNodes[a];
+  delete axs.content.auditResultNodes[a];
+  return b
+};
 axs.constants = {};
 axs.constants.ARIA_ROLES = {alert:{namefrom:["author"], parent:["region"]}, alertdialog:{namefrom:["author"], namerequired:!0, parent:["alert", "dialog"]}, application:{namefrom:["author"], namerequired:!0, parent:["landmark"]}, article:{namefrom:["author"], parent:["document", "region"]}, banner:{namefrom:["author"], parent:["landmark"]}, button:{childpresentational:!0, namefrom:["contents", "author"], namerequired:!0, parent:["command"], properties:["aria-expanded", "aria-pressed"]}, checkbox:{namefrom:["contents", 
 "author"], namerequired:!0, parent:["input"], requiredProperties:["aria-checked"], properties:["aria-checked"]}, columnheader:{namefrom:["contents", "author"], namerequired:!0, parent:["gridcell", "sectionhead", "widget"], properties:["aria-sort"]}, combobox:{mustcontain:["listbox", "textbox"], namefrom:["author"], namerequired:!0, parent:["select"], requiredProperties:["aria-expanded"], properties:["aria-expanded", "aria-autocomplete", "aria-required"]}, command:{"abstract":!0, namefrom:["author"], 

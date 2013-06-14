@@ -9,6 +9,7 @@ LIBRARY_CLOSURE_COMMAND = java -jar $(CLOSURE_JAR) --language_in ECMASCRIPT5 \
   --js ./lib/closure-library/closure/goog/base.js \
   --js ./src/js/axs.js \
   --js ./src/js/BrowserUtils.js \
+  --js ./src/js/ContentScriptFramework.js \
   --js ./src/js/Constants.js \
   --js ./src/js/AccessibilityUtils.js \
   --js ./src/js/Properties.js \
