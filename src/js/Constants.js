@@ -983,8 +983,9 @@ axs.constants.MIXED_VALUES = {
     "true": true,
     "false": true,
     "mixed": true
-}
+};
 
+(function() {
 // pull values lists into sets
 for (var propertyName in axs.constants.ARIA_PROPERTIES) {
     var propertyDetails = axs.constants.ARIA_PROPERTIES[propertyName];
@@ -995,6 +996,7 @@ for (var propertyName in axs.constants.ARIA_PROPERTIES) {
         valuesSet[propertyDetails.values[i]] = true;
     propertyDetails.valuesSet = valuesSet;
 }
+})();
 
 /** @enum {string} */
 axs.constants.Severity =  {

@@ -404,6 +404,35 @@ axs.content.getResultNode = function(a) {
   delete axs.content.auditResultNodes[a];
   return b
 };
+axs.content.frameURIs = {};
+axs.content.frameURIs[document.documentURI] = !0;
+window.addEventListener("message", function(a) {
+  var b = JSON.parse(a.data);
+  if("request" in b) {
+    if("getUrl" == b.request) {
+      var c = "*";
+      "returnOrigin" in b && (c = b.returnOrigin);
+      a.source.postMessage(JSON.stringify({request:"postUrl", uri:document.documentURI}), c)
+    }else {
+      "postUrl" == b.request && (window.parent != window ? window.parent.postMessage(a.data, "*") : axs.content.frameURIs[b.uri] = !0)
+    }
+  }
+}, !1);
+(function() {
+  function a(a) {
+    a = a.split("://");
+    a[1] = a[1].split("/")[0];
+    return a.join("://")
+  }
+  for(var b = document.querySelectorAll("iframe"), c = 0;c < b.length;c++) {
+    var d = b[c], e = a(d.src), f = a(document.documentURI);
+    try {
+      d.contentWindow.postMessage(JSON.stringify({request:"getUrl", returnOrigin:f}), e)
+    }catch(g) {
+      console.warn("got exception", g)
+    }
+  }
+})();
 axs.constants = {};
 axs.constants.ARIA_ROLES = {alert:{namefrom:["author"], parent:["region"]}, alertdialog:{namefrom:["author"], namerequired:!0, parent:["alert", "dialog"]}, application:{namefrom:["author"], namerequired:!0, parent:["landmark"]}, article:{namefrom:["author"], parent:["document", "region"]}, banner:{namefrom:["author"], parent:["landmark"]}, button:{childpresentational:!0, namefrom:["contents", "author"], namerequired:!0, parent:["command"], properties:["aria-expanded", "aria-pressed"]}, checkbox:{namefrom:["contents", 
 "author"], namerequired:!0, parent:["input"], requiredProperties:["aria-checked"], properties:["aria-checked"]}, columnheader:{namefrom:["contents", "author"], namerequired:!0, parent:["gridcell", "sectionhead", "widget"], properties:["aria-sort"]}, combobox:{mustcontain:["listbox", "textbox"], namefrom:["author"], namerequired:!0, parent:["select"], requiredProperties:["aria-expanded"], properties:["aria-expanded", "aria-autocomplete", "aria-required"]}, command:{"abstract":!0, namefrom:["author"], 
@@ -476,15 +505,17 @@ submit:"input_type_submit", tel:"input_type_tel", text:"input_type_text", url:"i
 axs.constants.TAG_TO_INFORMATION_TABLE_VERBOSE_MSG = {A:"tag_link", BUTTON:"tag_button", H1:"tag_h1", H2:"tag_h2", H3:"tag_h3", H4:"tag_h4", H5:"tag_h5", H6:"tag_h6", LI:"tag_li", OL:"tag_ol", SELECT:"tag_select", TEXTAREA:"tag_textarea", UL:"tag_ul", SECTION:"tag_section", NAV:"tag_nav", ARTICLE:"tag_article", ASIDE:"tag_aside", HGROUP:"tag_hgroup", HEADER:"tag_header", FOOTER:"tag_footer", TIME:"tag_time", MARK:"tag_mark"};
 axs.constants.TAG_TO_INFORMATION_TABLE_BRIEF_MSG = {BUTTON:"tag_button", SELECT:"tag_select", TEXTAREA:"tag_textarea"};
 axs.constants.MIXED_VALUES = {"true":!0, "false":!0, mixed:!0};
-for(var propertyName in axs.constants.ARIA_PROPERTIES) {
-  var propertyDetails = axs.constants.ARIA_PROPERTIES[propertyName];
-  if(propertyDetails.values) {
-    for(var valuesSet = {}, i = 0;i < propertyDetails.values.length;i++) {
-      valuesSet[propertyDetails.values[i]] = !0
+(function() {
+  for(var a in axs.constants.ARIA_PROPERTIES) {
+    var b = axs.constants.ARIA_PROPERTIES[a];
+    if(b.values) {
+      for(var c = {}, d = 0;d < b.values.length;d++) {
+        c[b.values[d]] = !0
+      }
+      b.valuesSet = c
     }
-    propertyDetails.valuesSet = valuesSet
   }
-}
+})();
 axs.constants.Severity = {INFO:"Info", WARNING:"Warning", SEVERE:"Severe"};
 axs.constants.AuditResult = {PASS:"PASS", FAIL:"FAIL", NA:"NA"};
 axs.constants.InlineElements = {TT:!0, I:!0, B:!0, BIG:!0, SMALL:!0, EM:!0, STRONG:!0, DFN:!0, CODE:!0, SAMP:!0, KBD:!0, VAR:!0, CITE:!0, ABBR:!0, ACRONYM:!0, A:!0, IMG:!0, OBJECT:!0, BR:!0, SCRIPT:!0, MAP:!0, Q:!0, SUB:!0, SUP:!0, SPAN:!0, BDO:!0, INPUT:!0, SELECT:!0, TEXTAREA:!0, LABEL:!0, BUTTON:!0};
@@ -1263,7 +1294,7 @@ axs.AuditRule = function(a) {
   this.url = a.url || "";
   this.requiresConsoleAPI = !!a.opt_requiresConsoleAPI
 };
-axs.AuditRule.requiredFields = ["name", "severity", "relevantNodesSelector", "test", "code"];
+axs.AuditRule.requiredFields = "name severity relevantNodesSelector test code heading".split(" ");
 axs.AuditRule.NOT_APPLICABLE = {result:axs.constants.AuditResult.NA};
 axs.AuditRule.prototype.addNode = function(a, b) {
   a.push(b)

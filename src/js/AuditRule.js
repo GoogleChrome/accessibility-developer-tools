@@ -90,7 +90,7 @@ axs.AuditRule.Spec;
  * @const
  */
 axs.AuditRule.requiredFields =
-    [ 'name', 'severity', 'relevantNodesSelector', 'test', 'code' ];
+    [ 'name', 'severity', 'relevantNodesSelector', 'test', 'code', 'heading' ];
 
 
 /**
