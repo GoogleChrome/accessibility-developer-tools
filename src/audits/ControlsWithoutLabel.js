@@ -37,7 +37,7 @@ axs.AuditRule.specs.controlsWithoutLabel = {
         if (axs.utils.isElementOrAncestorHidden(control))
             return false;
         if (control.tagName.toLowerCase() == 'button') {
-            var innerText = control.innerText.replace(/^\s+|\s+$/g, '');
+            var innerText = control.textContent.replace(/^\s+|\s+$/g, '');
             if (innerText.length)
                 return false;
         }
