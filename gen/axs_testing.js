@@ -509,7 +509,8 @@ axs.utils.overlappingElement = function(a) {
   return null == c || c == a || b(c, a) ? null : c
 };
 axs.utils.elementIsHtmlControl = function(a) {
-  return a instanceof HTMLButtonElement || a instanceof HTMLInputElement || a instanceof HTMLSelectElement || a instanceof HTMLTextAreaElement ? !0 : !1
+  var b = a.ownerDocument.defaultView;
+  return a instanceof b.HTMLButtonElement || a instanceof b.HTMLInputElement || a instanceof b.HTMLSelectElement || a instanceof b.HTMLTextAreaElement ? !0 : !1
 };
 axs.utils.elementIsAriaWidget = function(a) {
   return a.hasAttribute("role") && (a = a.getAttribute("role")) && (a = axs.constants.ARIA_ROLES[a]) && "widget" in a.allParentRolesSet ? !0 : !1
@@ -668,7 +669,7 @@ axs.utils.hasLabel = function(a) {
   return!1
 };
 axs.utils.isElementHidden = function(a) {
-  if(!(a instanceof HTMLElement)) {
+  if(!(a instanceof a.ownerDocument.defaultView.HTMLElement)) {
     return!1
   }
   if(a.hasAttribute("chromevoxignoreariahidden")) {
@@ -758,7 +759,8 @@ axs.utils.isValidNumber = function(a) {
   return"number" != typeof b ? {valid:!1, value:a, reason:'"' + a + '" is not a number'} : {valid:!0, value:b}
 };
 axs.utils.isElementImplicitlyFocusable = function(a) {
-  return a instanceof HTMLAnchorElement || a instanceof HTMLAreaElement ? a.hasAttribute("href") : a instanceof HTMLInputElement || a instanceof HTMLSelectElement || a instanceof HTMLTextAreaElement || a instanceof HTMLButtonElement || a instanceof HTMLIFrameElement ? !a.disabled : !1
+  var b = a.ownerDocument.defaultView;
+  return a instanceof b.HTMLAnchorElement || a instanceof b.HTMLAreaElement ? a.hasAttribute("href") : a instanceof b.HTMLInputElement || a instanceof b.HTMLSelectElement || a instanceof b.HTMLTextAreaElement || a instanceof b.HTMLButtonElement || a instanceof b.HTMLIFrameElement ? !a.disabled : !1
 };
 axs.utils.values = function(a) {
   var b = [], c;
@@ -793,7 +795,7 @@ axs.utils.getQuerySelectorText = function(a) {
       if(a.parentNode) {
         for(c = 0;c < a.parentNode.children.length;c++) {
           var e = a.parentNode.children[c];
-          e.mozMatchesSelector(b) && d++;
+          axs.browserUtils.matchSelector(e, b) && d++;
           if(e === a) {
             break
           }
@@ -845,7 +847,7 @@ axs.AuditRule.prototype.addNode = function(a, b) {
 axs.AuditRule.prototype.run = function(a, b) {
   function c(a) {
     for(var b = 0;b < d.length;b++) {
-      if(a.mozMatchesSelector(d[b])) {
+      if(axs.browserUtils.matchSelector(a, d[b])) {
         return!0
       }
     }
@@ -890,24 +892,31 @@ axs.AuditResults = function() {
   this.errors_ = [];
   this.warnings_ = []
 };
+goog.exportSymbol("axs.AuditResults", axs.AuditResults);
 axs.AuditResults.prototype.addError = function(a) {
   "" != a && this.errors_.push(a)
 };
+goog.exportProperty(axs.AuditResults.prototype, "addError", axs.AuditResults.prototype.addError);
 axs.AuditResults.prototype.addWarning = function(a) {
   "" != a && this.warnings_.push(a)
 };
+goog.exportProperty(axs.AuditResults.prototype, "addWarning", axs.AuditResults.prototype.addWarning);
 axs.AuditResults.prototype.numErrors = function() {
   return this.errors_.length
 };
+goog.exportProperty(axs.AuditResults.prototype, "numErrors", axs.AuditResults.prototype.numErrors);
 axs.AuditResults.prototype.numWarnings = function() {
   return this.warnings_.length
 };
+goog.exportProperty(axs.AuditResults.prototype, "numWarnings", axs.AuditResults.prototype.numWarnings);
 axs.AuditResults.prototype.getErrors = function() {
   return this.errors_
 };
+goog.exportProperty(axs.AuditResults.prototype, "getErrors", axs.AuditResults.prototype.getErrors);
 axs.AuditResults.prototype.getWarnings = function() {
   return this.warnings_
 };
+goog.exportProperty(axs.AuditResults.prototype, "getWarnings", axs.AuditResults.prototype.getWarnings);
 axs.AuditResults.prototype.toString = function() {
   for(var a = "", b = 0;b < this.errors_.length;b++) {
     0 == b && (a += "\nErrors:\n");
@@ -918,12 +927,18 @@ axs.AuditResults.prototype.toString = function() {
   }
   return a
 };
+goog.exportProperty(axs.AuditResults.prototype, "toString", axs.AuditResults.prototype.toString);
 axs.Audit = {};
 axs.AuditConfiguration = function() {
   this.rules_ = {};
   this.auditRulesToIgnore = this.auditRulesToRun = this.scope = null;
-  this.withConsoleApi = !1
+  this.withConsoleApi = !1;
+  goog.exportProperty(this, "scope", this.scope);
+  goog.exportProperty(this, "auditRulesToRun", this.auditRulesToRun);
+  goog.exportProperty(this, "auditRulesToIgnore", this.auditRulesToIgnore);
+  goog.exportProperty(this, "withConsoleApi", this.withConsoleApi)
 };
+goog.exportSymbol("axs.AuditConfiguration", axs.AuditConfiguration);
 axs.AuditConfiguration.prototype = {ignoreSelectors:function(a, b) {
   a in this.rules_ || (this.rules_[a] = {});
   "ignore" in this.rules_[a] || (this.rules_[a].ignore = []);
@@ -931,6 +946,8 @@ axs.AuditConfiguration.prototype = {ignoreSelectors:function(a, b) {
 }, getIgnoreSelectors:function(a) {
   return a in this.rules_ && "ignore" in this.rules_[a] ? this.rules_[a].ignore : []
 }};
+goog.exportProperty(axs.AuditConfiguration.prototype, "ignoreSelectors", axs.AuditConfiguration.prototype.ignoreSelectors);
+goog.exportProperty(axs.AuditConfiguration.prototype, "getIgnoreSelectors", axs.AuditConfiguration.prototype.getIgnoreSelectors);
 axs.Audit.run = function(a) {
   a = a || new axs.AuditConfiguration;
   var b = a.withConsoleApi, c = [], d;
@@ -953,6 +970,7 @@ axs.Audit.run = function(a) {
   }
   return c
 };
+goog.exportSymbol("axs.Audit.run", axs.Audit.run);
 axs.Audit.auditResults = function(a) {
   for(var b = new axs.AuditResults, c = 0;c < a.length;c++) {
     var d = a[c];
@@ -960,12 +978,14 @@ axs.Audit.auditResults = function(a) {
   }
   return b
 };
+goog.exportSymbol("axs.Audit.auditResults", axs.Audit.auditResults);
 axs.Audit.createReport = function(a, b) {
   var c;
   c = "*** Begin accessibility audit results ***\nAn accessibility audit found " + axs.Audit.auditResults(a).toString();
   b && (c += "\nFor more information, please see ", c += b);
   return c += "\n*** End accessibility audit results ***"
 };
+goog.exportSymbol("axs.Audit.createReport", axs.Audit.createReport);
 axs.Audit.accessibilityErrorMessage = function(a) {
   for(var b = a.rule.severity == axs.constants.Severity.SEVERE ? "Error: " : "Warning: ", b = b + (a.rule.code + " (" + a.rule.heading + ") failed on the following " + (1 == a.elements.length ? "element" : "elements")), b = 1 == a.elements.length ? b + ":" : b + (" (1 - " + Math.min(5, a.elements.length) + " of " + a.elements.length + "):"), c = Math.min(a.elements.length, 5), d = 0;d < c;d++) {
     var e = a.elements[d], b = b + "\n";
@@ -977,6 +997,11 @@ axs.Audit.accessibilityErrorMessage = function(a) {
   }
   "" != a.rule.url && (b += "\nSee " + a.rule.url + " for more information.");
   return b
+};
+goog.exportSymbol("axs.Audit.accessibilityErrorMessage", axs.Audit.accessibilityErrorMessage);
+axs.browserUtils = {};
+axs.browserUtils.matchSelector = function(a, b) {
+  return a.webkitMatchesSelector ? a.webkitMatchesSelector(b) : a.mozMatchesSelector(b)
 };
 axs.AuditRule.specs.audioWithoutControls = {name:"audioWithoutControls", heading:"Audio elements should have controls", url:"", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
   return a.querySelectorAll("audio[autoplay]")
@@ -1101,7 +1126,7 @@ axs.AuditRule.specs.unfocusableElementsWithOnClick = {name:"unfocusableElementsW
   a = a.querySelectorAll("*");
   for(var b = [], c = 0;c < a.length;c++) {
     var d = a[c];
-    d instanceof HTMLBodyElement || axs.utils.isElementOrAncestorHidden(d) || "click" in getEventListeners(d) && b.push(d)
+    d instanceof d.ownerDocument.defaultView.HTMLBodyElement || axs.utils.isElementOrAncestorHidden(d) || "click" in getEventListeners(d) && b.push(d)
   }
   return b
 }, test:function(a) {
