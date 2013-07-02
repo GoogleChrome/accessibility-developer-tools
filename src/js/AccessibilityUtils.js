@@ -806,7 +806,7 @@ axs.utils.getQuerySelectorText = function(obj) {
       if (obj.parentNode) {
         for (i = 0; i < obj.parentNode.children.length; i++) {
           var similar = obj.parentNode.children[i];
-          if (similar.webkitMatchesSelector(selector))
+          if (similar.mozMatchesSelector(selector))
             total++;
           if (similar === obj)
             break;

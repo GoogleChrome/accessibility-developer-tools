@@ -793,7 +793,7 @@ axs.utils.getQuerySelectorText = function(a) {
       if(a.parentNode) {
         for(c = 0;c < a.parentNode.children.length;c++) {
           var e = a.parentNode.children[c];
-          e.webkitMatchesSelector(b) && d++;
+          e.mozMatchesSelector(b) && d++;
           if(e === a) {
             break
           }
@@ -845,7 +845,7 @@ axs.AuditRule.prototype.addNode = function(a, b) {
 axs.AuditRule.prototype.run = function(a, b) {
   function c(a) {
     for(var b = 0;b < d.length;b++) {
-      if(a.webkitMatchesSelector(d[b])) {
+      if(a.mozMatchesSelector(d[b])) {
         return!0
       }
     }
