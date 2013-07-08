@@ -64,7 +64,12 @@ window.addEventListener('message',  function(e) {
             if (window.parent != window) {
                 window.parent.postMessage(e.data, '*')
             } else {
-                axs.content.frameURIs[e.data['uri']] = true;
+                var uri = e.data['uri'];
+                axs.content.frameURIs[uri] = true;
+                if (uri.indexOf('#') >= 0) {
+                    axs.content.frameURIs[uri.split('#', 1)[0]] = true;
+                }
+
             }
         }
     }
@@ -72,10 +77,7 @@ window.addEventListener('message',  function(e) {
 
 (function() {
 function getOrigin(url) {
-    var urlParts = url.split('://');
-    if (urlParts.length != 2) {
-        console.log('urlParts', urlParts)
-    }
+    var urlParts = url.split('://', 2);
     urlParts[1] = urlParts[1].split('/')[0];
     return urlParts.join('://');
 }
@@ -85,7 +87,6 @@ for (var i = 0; i < iframes.length; i++) {
     var iframe = iframes[i];
     var frameOrigin = '*';
     var src = iframe.src;
-    console.log('src', src);
     if (src && src.length > 0)
         frameOrigin = getOrigin(src);
     var docOrigin = getOrigin(document.documentURI);
