@@ -407,14 +407,13 @@ axs.content.getResultNode = function(a) {
 axs.content.frameURIs = {};
 axs.content.frameURIs[document.documentURI] = !0;
 window.addEventListener("message", function(a) {
-  var b = JSON.parse(a.data);
-  if("request" in b) {
-    if("getUrl" == b.request) {
-      var c = "*";
-      "returnOrigin" in b && (c = b.returnOrigin);
-      a.source.postMessage(JSON.stringify({request:"postUrl", uri:document.documentURI}), c)
+  if("object" == typeof a.data && "request" in a.data) {
+    if("getUri" == a.data.request) {
+      var b = "*";
+      "returnOrigin" in a.data && (b = a.data.returnOrigin);
+      a.source.postMessage({request:"postUri", uri:document.documentURI}, b)
     }else {
-      "postUrl" == b.request && (window.parent != window ? window.parent.postMessage(a.data, "*") : axs.content.frameURIs[b.uri] = !0)
+      "postUri" == a.data.request && (window.parent != window ? window.parent.postMessage(a.data, "*") : axs.content.frameURIs[a.data.uri] = !0)
     }
   }
 }, !1);
@@ -425,11 +424,16 @@ window.addEventListener("message", function(a) {
     return a.join("://")
   }
   for(var b = document.querySelectorAll("iframe"), c = 0;c < b.length;c++) {
-    var d = b[c], e = a(d.src), f = a(document.documentURI);
+    var d = b[c], e = "*", f = d.src;
+    if(f || 0 == f.length) {
+      e = a(f)
+    }
+    f = a(document.documentURI);
+    console.log("iframe.src", d.src, "frameOrigin", e, "document.documentURI", document.documentURI, "docOrigin", f);
     try {
-      d.contentWindow.postMessage(JSON.stringify({request:"getUrl", returnOrigin:f}), e)
+      d.contentWindow.postMessage({request:"getUri", returnOrigin:f}, e)
     }catch(g) {
-      console.warn("got exception", g)
+      console.warn("got exception when trying to postMessage from " + f + " to " + e, g)
     }
   }
 })();

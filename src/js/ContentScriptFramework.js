@@ -50,20 +50,21 @@ axs.content.frameURIs = {};
 axs.content.frameURIs[document.documentURI] = true;
 
 window.addEventListener('message',  function(e) {
-    var obj = JSON.parse(e.data);
-    if ('request' in obj) {
-        if (obj['request'] == 'getUrl') {
+    if (typeof e.data != 'object')
+        return;
+    if ('request' in e.data) {
+        if (e.data['request'] == 'getUri') {
             var origin = '*';
-            if ('returnOrigin' in obj)
-                origin = obj['returnOrigin'];
-            e.source.postMessage(JSON.stringify({'request': 'postUrl',
-                                                 'uri': document.documentURI}),
+            if ('returnOrigin' in e.data)
+                origin = e.data['returnOrigin'];
+            e.source.postMessage({'request': 'postUri',
+                                  'uri': document.documentURI},
                                  origin);
-        } else if (obj['request'] == 'postUrl') {
+        } else if (e.data['request'] == 'postUri') {
             if (window.parent != window) {
                 window.parent.postMessage(e.data, '*')
             } else {
-                axs.content.frameURIs[obj['uri']] = true;
+                axs.content.frameURIs[e.data['uri']] = true;
             }
         }
     }
@@ -72,6 +73,9 @@ window.addEventListener('message',  function(e) {
 (function() {
 function getOrigin(url) {
     var urlParts = url.split('://');
+    if (urlParts.length != 2) {
+        console.log('urlParts', urlParts)
+    }
     urlParts[1] = urlParts[1].split('/')[0];
     return urlParts.join('://');
 }
@@ -79,15 +83,18 @@ function getOrigin(url) {
 var iframes = document.querySelectorAll('iframe');
 for (var i = 0; i < iframes.length; i++) {
     var iframe = iframes[i];
+    var frameOrigin = '*';
     var src = iframe.src;
-    var frameOrigin = getOrigin(src);
+    console.log('src', src);
+    if (src && src.length > 0)
+        frameOrigin = getOrigin(src);
     var docOrigin = getOrigin(document.documentURI);
-
     try {
-        iframe.contentWindow.postMessage(JSON.stringify({'request': 'getUrl' ,
-                                                         'returnOrigin': docOrigin}), frameOrigin);
+        iframe.contentWindow.postMessage({'request': 'getUri' ,
+                                          'returnOrigin': docOrigin}, frameOrigin);
     } catch (e) {
-        console.warn('got exception', e);
+        console.warn('got exception when trying to postMessage from ' +
+                     docOrigin + ' to ' + frameOrigin, e);
     }
 }
 })();
