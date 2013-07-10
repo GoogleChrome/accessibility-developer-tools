@@ -65,11 +65,10 @@ window.addEventListener('message',  function(e) {
                 window.parent.postMessage(e.data, '*')
             } else {
                 var uri = e.data['uri'];
-                axs.content.frameURIs[uri] = true;
-                if (uri.indexOf('#') >= 0) {
+                if (uri.indexOf('#') >= 0)
                     axs.content.frameURIs[uri.split('#', 1)[0]] = true;
-                }
-
+                else
+                    axs.content.frameURIs[uri] = true;
             }
         }
     }
