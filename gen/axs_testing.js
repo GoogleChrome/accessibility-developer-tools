@@ -499,6 +499,26 @@ axs.utils.calculateContrastRatio = function(a, b) {
   var c = axs.utils.calculateLuminance(a), d = axs.utils.calculateLuminance(b);
   return(Math.max(c, d) + 0.05) / (Math.min(c, d) + 0.05)
 };
+axs.utils.luminanceRatio = function(a, b) {
+  return(Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
+};
+axs.utils.asElement = function(a) {
+  switch(a.nodeType) {
+    case Node.COMMENT_NODE:
+      return null;
+    case Node.ELEMENT_NODE:
+      if("script" == a.tagName.toLowerCase()) {
+        return null
+      }
+      break;
+    case Node.TEXT_NODE:
+      a = a.parentElement;
+      break;
+    default:
+      return console.warn("Unhandled node type: ", a.nodeType), null
+  }
+  return a
+};
 axs.utils.elementIsTransparent = function(a) {
   return"0" == a.style.opacity
 };
@@ -546,7 +566,13 @@ axs.utils.isLargeFont = function(a) {
   a = "bold" == a.fontWeight;
   var c = b.match(/(\d+)px/);
   if(c) {
-    return b = parseInt(c[1], 10), a && 19.2 <= b || 24 <= b ? !0 : !1
+    b = parseInt(c[1], 10);
+    if(c = window.getComputedStyle(document.body, null).fontSize.match(/(\d+)px/)) {
+      var d = parseInt(c[1], 10), c = 1.2 * d, d = 1.5 * d
+    }else {
+      c = 19.2, d = 24
+    }
+    return a && b >= c || b >= d
   }
   if(c = b.match(/(\d+)em/)) {
     return b = parseInt(c[1], 10), a && 1.2 <= b || 1.5 <= b ? !0 : !1
@@ -606,20 +632,115 @@ axs.utils.parseColor = function(a) {
   }
   return(b = a.match(/^rgba\((\d+), (\d+), (\d+), (\d+(\.\d+)?)\)/)) ? (d = parseInt(b[4], 10), a = parseInt(b[1], 10), c = parseInt(b[2], 10), b = parseInt(b[3], 10), new axs.utils.Color(a, c, b, d)) : null
 };
+axs.utils.colorChannelToString = function(a) {
+  return 15 >= a ? "0" + a.toString(16) : a.toString(16)
+};
 axs.utils.colorToString = function(a) {
-  return"rgba(" + [a.red, a.green, a.blue, a.alpha].join() + ")"
+  return 1 == a.alpha ? "#" + axs.utils.colorChannelToString(a.red) + axs.utils.colorChannelToString(a.green) + axs.utils.colorChannelToString(a.blue) : "rgba(" + [a.red, a.green, a.blue, a.alpha].join() + ")"
+};
+axs.utils.luminanceFromContrastRatio = function(a, b, c) {
+  return c ? (a + 0.05) * b - 0.05 : (a + 0.05) / b - 0.05
+};
+axs.utils.translateColor = function(a, b) {
+  var c = a[0], c = (b - c) / ((c > b ? 0 : 1) - c);
+  return axs.utils.fromYCC([b, a[1] - a[1] * c, a[2] - a[2] * c])
+};
+axs.utils.suggestColors = function(a, b, c, d) {
+  if(!axs.utils.isLowContrast(c, d, !0)) {
+    return null
+  }
+  var e = {}, f = axs.utils.calculateLuminance(a), g = axs.utils.calculateLuminance(b), h = axs.utils.isLargeFont(d) ? 3 : 4.5, k = axs.utils.isLargeFont(d) ? 4.5 : 7, m = g > f, l = axs.utils.luminanceFromContrastRatio(f, h + 0.02, m), n = axs.utils.luminanceFromContrastRatio(f, k + 0.02, m), q = axs.utils.toYCC(b);
+  if(axs.utils.isLowContrast(c, d, !1) && 1 >= l && 0 <= l) {
+    var p = axs.utils.translateColor(q, l), l = axs.utils.calculateContrastRatio(p, a);
+    axs.utils.calculateLuminance(p);
+    f = {};
+    f.fg = axs.utils.colorToString(p);
+    f.bg = axs.utils.colorToString(a);
+    f.contrast = l.toFixed(2);
+    e.AA = f
+  }
+  axs.utils.isLowContrast(c, d, !0) && (1 >= n && 0 <= n) && (n = axs.utils.translateColor(q, n), l = axs.utils.calculateContrastRatio(n, a), f = {}, f.fg = axs.utils.colorToString(n), f.bg = axs.utils.colorToString(a), f.contrast = l.toFixed(2), e.AAA = f);
+  h = axs.utils.luminanceFromContrastRatio(g, h + 0.02, !m);
+  g = axs.utils.luminanceFromContrastRatio(g, k + 0.02, !m);
+  a = axs.utils.toYCC(a);
+  !("AA" in e) && (axs.utils.isLowContrast(c, d, !1) && 1 >= h && 0 <= h) && (k = axs.utils.translateColor(a, h), l = axs.utils.calculateContrastRatio(b, k), f = {}, f.bg = axs.utils.colorToString(k), f.fg = axs.utils.colorToString(b), f.contrast = l.toFixed(2), e.AA = f);
+  !("AAA" in e) && (axs.utils.isLowContrast(c, d, !0) && 1 >= g && 0 <= g) && (c = axs.utils.translateColor(a, g), l = axs.utils.calculateContrastRatio(b, c), f = {}, f.bg = axs.utils.colorToString(c), f.fg = axs.utils.colorToString(b), f.contrast = l.toFixed(2), e.AAA = f);
+  return e
 };
 axs.utils.flattenColors = function(a, b) {
   var c = a.alpha;
   return new axs.utils.Color((1 - c) * b.red + c * a.red, (1 - c) * b.green + c * a.green, (1 - c) * b.blue + c * a.blue, 1)
 };
 axs.utils.calculateLuminance = function(a) {
+  return axs.utils.toYCC(a)[0]
+};
+axs.utils.RGBToYCCMatrix = function(a, b) {
+  return[[a, 1 - a - b, b], [-a / (2 - 2 * b), (a + b - 1) / (2 - 2 * b), (1 - b) / (2 - 2 * b)], [(1 - a) / (2 - 2 * a), (a + b - 1) / (2 - 2 * a), -b / (2 - 2 * a)]]
+};
+axs.utils.invert3x3Matrix = function(a) {
+  var b = a[0][0], c = a[0][1], d = a[0][2], e = a[1][0], f = a[1][1], g = a[1][2], h = a[2][0], k = a[2][1];
+  a = a[2][2];
+  return axs.utils.scalarMultiplyMatrix([[f * a - g * k, d * k - c * a, c * g - d * f], [g * h - e * a, b * a - d * h, d * e - b * g], [e * k - f * h, h * c - b * k, b * f - c * e]], 1 / (b * (f * a - g * k) - c * (a * e - g * h) + d * (e * k - f * h)))
+};
+axs.utils.scalarMultiplyMatrix = function(a, b) {
+  for(var c = [[], [], []], d = 0;3 > d;d++) {
+    for(var e = 0;3 > e;e++) {
+      c[d][e] = a[d][e] * b
+    }
+  }
+  return c
+};
+axs.utils.kR = 0.2126;
+axs.utils.kB = 0.0722;
+axs.utils.YCC_MATRIX = axs.utils.RGBToYCCMatrix(axs.utils.kR, axs.utils.kB);
+axs.utils.INVERTED_YCC_MATRIX = axs.utils.invert3x3Matrix(axs.utils.YCC_MATRIX);
+axs.utils.convertColor = function(a, b) {
+  var c = b[0], d = b[1], e = b[2];
+  return[a[0][0] * c + a[0][1] * d + a[0][2] * e, a[1][0] * c + a[1][1] * d + a[1][2] * e, a[2][0] * c + a[2][1] * d + a[2][2] * e]
+};
+axs.utils.multiplyMatrices = function(a, b) {
+  for(var c = [[], [], []], d = 0;3 > d;d++) {
+    for(var e = 0;3 > e;e++) {
+      c[d][e] = a[d][0] * b[0][e] + a[d][1] * b[1][e] + a[d][2] * b[2][e]
+    }
+  }
+  return c
+};
+axs.utils.toYCC = function(a) {
   var b = a.red / 255, c = a.green / 255;
   a = a.blue / 255;
   b = 0.03928 >= b ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4);
   c = 0.03928 >= c ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
   a = 0.03928 >= a ? a / 12.92 : Math.pow((a + 0.055) / 1.055, 2.4);
-  return 0.2126 * b + 0.7152 * c + 0.0722 * a
+  return axs.utils.convertColor(axs.utils.YCC_MATRIX, [b, c, a])
+};
+axs.utils.fromYCC = function(a) {
+  var b = axs.utils.convertColor(axs.utils.INVERTED_YCC_MATRIX, a), c = b[0];
+  a = b[1];
+  b = b[2];
+  c = 0.00303949 >= c ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
+  a = 0.00303949 >= a ? 12.92 * a : 1.055 * Math.pow(a, 1 / 2.4) - 0.055;
+  b = 0.00303949 >= b ? 12.92 * b : 1.055 * Math.pow(b, 1 / 2.4) - 0.055;
+  c = Math.min(Math.max(Math.round(255 * c), 0), 255);
+  a = Math.min(Math.max(Math.round(255 * a), 0), 255);
+  b = Math.min(Math.max(Math.round(255 * b), 0), 255);
+  return new axs.utils.Color(c, a, b, 1)
+};
+axs.utils.scalarMultiplyMatrix = function(a, b) {
+  for(var c = [[], [], []], d = 0;3 > d;d++) {
+    for(var e = 0;3 > e;e++) {
+      c[d][e] = a[d][e] * b
+    }
+  }
+  return c
+};
+axs.utils.multiplyMatrices = function(a, b) {
+  for(var c = [[], [], []], d = 0;3 > d;d++) {
+    for(var e = 0;3 > e;e++) {
+      c[d][e] = a[d][0] * b[0][e] + a[d][1] * b[1][e] + a[d][2] * b[2][e]
+    }
+  }
+  return c
 };
 axs.utils.getContrastRatioForElement = function(a) {
   var b = window.getComputedStyle(a, null);
@@ -666,8 +787,8 @@ axs.utils.isNativeTextElement = function(a) {
       return!1
   }
 };
-axs.utils.isLowContrast = function(a, b) {
-  return 3 > a || !axs.utils.isLargeFont(b) && 4.5 > a
+axs.utils.isLowContrast = function(a, b, c) {
+  return c ? 4.5 > a || !axs.utils.isLargeFont(b) && 7 > a : 3 > a || !axs.utils.isLargeFont(b) && 4.5 > a
 };
 axs.utils.hasLabel = function(a) {
   var b = a.tagName.toLowerCase(), c = a.type ? a.type.toLowerCase() : "";
@@ -865,34 +986,21 @@ axs.properties.getContrastRatioProperties = function(a) {
     return null
   }
   b.backgroundColor = axs.utils.colorToString(d);
-  d = axs.utils.getFgColor(c, d);
-  b.foregroundColor = axs.utils.colorToString(d);
+  var e = axs.utils.getFgColor(c, d);
+  b.foregroundColor = axs.utils.colorToString(e);
   a = axs.utils.getContrastRatioForElementWithComputedStyle(c, a);
   if(!a) {
     return null
   }
   b.value = a.toFixed(2);
   axs.utils.isLowContrast(a, c) && (b.alert = !0);
+  (a = axs.utils.suggestColors(d, e, a, c)) && Object.keys(a).length && (b.suggestedColors = a);
   return b
 };
 axs.properties.findTextAlternatives = function(a, b, c) {
   var d = c || !1;
-  switch(a.nodeType) {
-    case Node.COMMENT_NODE:
-      return null;
-    case Node.ELEMENT_NODE:
-      c = a;
-      if("script" == c.tagName.toLowerCase()) {
-        return null
-      }
-      break;
-    case Node.TEXT_NODE:
-      c = a.parentElement;
-      break;
-    default:
-      return console.warn("Unhandled node type: ", a.nodeType), null
-  }
-  if(!d && axs.utils.isElementOrAncestorHidden(c)) {
+  c = axs.utils.asElement(a);
+  if(!c || !d && axs.utils.isElementOrAncestorHidden(c)) {
     return null
   }
   if(a.nodeType == Node.TEXT_NODE) {
@@ -967,10 +1075,10 @@ axs.properties.getTextFromAriaLabelledby = function(a, b) {
     return c
   }
   for(var d = a.getAttribute("aria-labelledby").split(/\s+/), e = {valid:!0}, f = [], g = [], h = 0;h < d.length;h++) {
-    var k = {type:"element"}, l = d[h];
-    k.value = l;
-    var m = document.getElementById(l);
-    m ? (k.valid = !0, k.text = axs.properties.findTextAlternatives(m, {}, !0), k.lastWord = axs.properties.getLastWord(k.text), f.push(m.innerText.trim()), k.element = m) : (k.valid = !1, e.valid = !1, k.errorMessage = {messageKey:"noElementWithId", args:[l]});
+    var k = {type:"element"}, m = d[h];
+    k.value = m;
+    var l = document.getElementById(m);
+    l ? (k.valid = !0, k.text = axs.properties.findTextAlternatives(l, {}, !0), k.lastWord = axs.properties.getLastWord(k.text), f.push(l.innerText.trim()), k.element = l) : (k.valid = !1, e.valid = !1, k.errorMessage = {messageKey:"noElementWithId", args:[m]});
     g.push(k)
   }
   0 < g.length && (g[g.length - 1].last = !0, e.values = g, e.text = f.join(" "), e.lastWord = axs.properties.getLastWord(e.text), c = e.text, b.ariaLabelledby = e);
@@ -990,9 +1098,9 @@ axs.properties.getTextFromHostLangaugeAttributes = function(a, b, c) {
   if(a.webkitMatchesSelector('input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])')) {
     if(a.hasAttribute("id")) {
       for(var d = document.querySelectorAll("label[for=" + a.id + "]"), e = {}, f = [], g = [], h = 0;h < d.length;h++) {
-        var k = {type:"element"}, l = d[h], m = axs.properties.findTextAlternatives(l, {}, !0);
-        m && 0 < m.trim().length && (k.text = m.trim(), g.push(m.trim()));
-        k.element = l;
+        var k = {type:"element"}, m = d[h], l = axs.properties.findTextAlternatives(m, {}, !0);
+        l && 0 < l.trim().length && (k.text = l.trim(), g.push(l.trim()));
+        k.element = m;
         f.push(k)
       }
       0 < f.length && (f[f.length - 1].last = !0, e.values = f, e.text = g.join(" "), e.lastWord = axs.properties.getLastWord(e.text), c ? e.unused = !0 : c = e.text, b.labelFor = e)
@@ -1093,10 +1201,10 @@ axs.properties.getTrackElements = function(a, b) {
   }
   d.valid = !0;
   for(var e = [], f = 0;f < c.length;f++) {
-    var g = {}, h = c[f].getAttribute("src"), k = c[f].getAttribute("srcLang"), l = c[f].getAttribute("label");
+    var g = {}, h = c[f].getAttribute("src"), k = c[f].getAttribute("srcLang"), m = c[f].getAttribute("label");
     h ? (g.valid = !0, g.src = h) : (g.valid = !1, g.reason = {messageKey:"noSrcProvided"});
     h = "";
-    l && (h += l, k && (h += " "));
+    m && (h += m, k && (h += " "));
     k && (h += "(" + k + ")");
     "" == h && (h = "[[object Object]]");
     g.name = h;
@@ -1106,9 +1214,7 @@ axs.properties.getTrackElements = function(a, b) {
   return d
 };
 axs.properties.getAllProperties = function(a) {
-  var b;
-  a.nodeType == Node.ELEMENT_NODE && (b = a);
-  a.nodeType == Node.TEXT_NODE && (b = a.parentElement);
+  var b = axs.utils.asElement(a);
   if(!b) {
     return{}
   }

@@ -75,6 +75,9 @@ axs.properties.getContrastRatioProperties = function(element) {
     contrastRatioProperties['value'] = value.toFixed(2);
     if (axs.utils.isLowContrast(value, style))
         contrastRatioProperties['alert'] = true;
+    var suggestedColors = axs.utils.suggestColors(bgColor, fgColor, value, style);
+    if (suggestedColors && Object.keys(suggestedColors).length)
+        contrastRatioProperties['suggestedColors'] = suggestedColors;
     return contrastRatioProperties;
 };
 
@@ -87,23 +90,9 @@ axs.properties.getContrastRatioProperties = function(element) {
 axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recursive) {
     var recursive = opt_recursive || false;
 
-    /** @type {Element} */ var element;
-    switch (node.nodeType) {
-    case Node.COMMENT_NODE:
-        return null;  // Skip comments
-    case Node.ELEMENT_NODE:
-        element = /** @type {Element} */ (node);
-        if (element.tagName.toLowerCase() == 'script') {
-            return null;  // Skip script elements
-        }
-        break;
-    case Node.TEXT_NODE:
-        element = node.parentElement;
-        break;
-    default:
-        console.warn('Unhandled node type: ', node.nodeType);
+    /** @type {Element} */ var element = axs.utils.asElement(node);
+    if (!element)
         return null;
-    }
 
     // 1. Skip hidden elements unless the author specifies to use them via an aria-labelledby or
     // aria-describedby being used in the current computation.
@@ -623,11 +612,7 @@ axs.properties.getTrackElements = function(element, kind) {
  * @return {Object.<string, Object>}
  */
 axs.properties.getAllProperties = function(node) {
-    /** @type {Element} */ var element;
-    if (node.nodeType == Node.ELEMENT_NODE)
-        element = /** @type {Element} */ (node);
-    if (node.nodeType == Node.TEXT_NODE)
-        element = node.parentElement;
+    /** @type {Element} */ var element = axs.utils.asElement(node);
     if (!element)
         return {};
 
