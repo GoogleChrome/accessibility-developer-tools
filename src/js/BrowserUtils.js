@@ -2,7 +2,6 @@ goog.provide('axs.browserUtils');
 
 /**
  * Use Firefox matcher when Webkit is not supported.
- * @constructor
  * @param {Node} node
  * @param {String} selector
  * @returns {Boolean}
