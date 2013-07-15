@@ -5,16 +5,9 @@
 <!-- QUnit framework bits -->
     <link rel="stylesheet" href="qunit.css">
     <script src="qunit.js"></script>
-    <script src="generated_dependencies.js"></script>
-    <script>
-      for (var i=0; i < _dependencies.length; i++) {
-        var script = document.createElement('script');
-        script.src = _dependencies[i];
-        document.head.appendChild(script);
-      }
-    </script>
-
+    <script src="../gen/axs_testing.js"></script>
 <!-- Tests -->
+    <script src="./js/browserUtils.js"></script>
     <script src="./js/utils.js"></script>
     <script src="./audits/badAriaRole.js"></script>
     <script src="./audits/controlsWithoutLabel.js"></script>

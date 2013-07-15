@@ -3,3 +3,4 @@ test/generated_dependencies.js
 key.pem
 extension/Handlebar.js
 upload.py
+gen/axs_testing.js
