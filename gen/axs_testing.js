@@ -1251,7 +1251,7 @@ axs.AuditRule.prototype.addNode = function(a, b) {
 axs.AuditRule.prototype.run = function(a, b) {
   function c(a) {
     for(var b = 0;b < d.length;b++) {
-      if(a.webkitMatchesSelector(d[b])) {
+      if(axs.browserUtils.matchSelector(a, d[b])) {
         return!0
       }
     }
@@ -1439,7 +1439,7 @@ axs.AuditRule.specs.badAriaRole = {name:"badAriaRole", heading:"Elements with AR
 axs.AuditRule.specs.controlsWithoutLabel = {name:"controlsWithoutLabel", heading:"Controls and media elements should have labels", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_TEXT_01:_Controls_and_media_elements_should_have_labels", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
   return a.querySelectorAll('input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])')
 }, test:function(a) {
-  return axs.utils.isElementOrAncestorHidden(a) || "button" == a.tagName.toLowerCase() && a.innerText.replace(/^\s+|\s+$/g, "").length ? !1 : axs.utils.hasLabel(a) ? !1 : !0
+  return axs.utils.isElementOrAncestorHidden(a) || "button" == a.tagName.toLowerCase() && a.textContent.replace(/^\s+|\s+$/g, "").length ? !1 : axs.utils.hasLabel(a) ? !1 : !0
 }, code:"AX_TEXT_01", ruleName:"Controls and media elements should have labels"};
 axs.AuditRule.specs.focusableElementNotVisibleAndNotAriaHidden = {name:"focusableElementNotVisibleAndNotAriaHidden", heading:"These elements are focusable but either invisible or obscured by another element", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_FOCUS_01:_These_elements_are_focusable_but_either_invisible_o", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
   return a.querySelectorAll(axs.utils.FOCUSABLE_ELEMENTS_SELECTOR)
