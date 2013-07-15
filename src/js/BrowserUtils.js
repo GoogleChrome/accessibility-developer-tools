@@ -8,7 +8,7 @@ goog.provide('axs.browserUtils');
  * @returns {Boolean}
  */
 axs.browserUtils.matchSelector = function(node, selector) {
-  if(node.webkitMatchesSelector){
+  if (node.webkitMatchesSelector) {
     return node.webkitMatchesSelector(selector);
   } else {
     return node.mozMatchesSelector(selector);
