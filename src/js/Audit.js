@@ -195,17 +195,13 @@ goog.exportSymbol('axs.Audit.auditResults', axs.Audit.auditResults);
  * @return {string} A report of the audit results.
  */
 axs.Audit.createReport = function(results, opt_url) {
-    var message = '*** Begin accessibility audit results ***';
-    message += '\nAn accessibility audit found ';
-
-    message += axs.Audit.auditResults(results).toString();
+    var message = axs.Audit.auditResults(results).toString();
 
     if (opt_url) {
         message += '\nFor more information, please see ' ;
         message += opt_url;
     }
 
-    message += '\n*** End accessibility audit results ***';
     return message;
 };
 goog.exportSymbol('axs.Audit.createReport', axs.Audit.createReport);
