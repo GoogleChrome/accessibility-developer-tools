@@ -21,7 +21,7 @@ test('Button element with inner text needs no label', function() {
     var fixture = document.getElementById('qunit-fixture');
 
     var button = document.createElement('button');
-    button.innerText = 'Click me!';
+    button.textContent = 'Click me!';
     fixture.appendChild(button);
 
     var rule = axs.AuditRules.getRule('controlsWithoutLabel');

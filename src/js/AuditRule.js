@@ -13,6 +13,7 @@
 // limitations under the License.
 
 goog.require('axs.constants');
+goog.require('axs.browserUtils');
 
 goog.provide('axs.AuditRule');
 goog.provide('axs.AuditRule.Spec');
@@ -126,7 +127,7 @@ axs.AuditRule.prototype.run = function(opt_ignoreSelectors, opt_scope) {
 
     function ignored(node) {
         for (var i = 0; i < ignoreSelectors.length; i++) {
-          if (node.webkitMatchesSelector(ignoreSelectors[i]))
+          if (axs.browserUtils.matchSelector(node, ignoreSelectors[i]))
             return true;
         }
         return false;
