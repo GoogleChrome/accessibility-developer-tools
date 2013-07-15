@@ -1226,6 +1226,50 @@ axs.properties.getAllProperties = function(a) {
   c.videoProperties = axs.properties.getVideoProperties(b);
   return c
 };
+axs.AuditResults = function() {
+  this.errors_ = [];
+  this.warnings_ = []
+};
+goog.exportSymbol("axs.AuditResults", axs.AuditResults);
+axs.AuditResults.prototype.addError = function(a) {
+  "" != a && this.errors_.push(a)
+};
+goog.exportProperty(axs.AuditResults.prototype, "addError", axs.AuditResults.prototype.addError);
+axs.AuditResults.prototype.addWarning = function(a) {
+  "" != a && this.warnings_.push(a)
+};
+goog.exportProperty(axs.AuditResults.prototype, "addWarning", axs.AuditResults.prototype.addWarning);
+axs.AuditResults.prototype.numErrors = function() {
+  return this.errors_.length
+};
+goog.exportProperty(axs.AuditResults.prototype, "numErrors", axs.AuditResults.prototype.numErrors);
+axs.AuditResults.prototype.numWarnings = function() {
+  return this.warnings_.length
+};
+goog.exportProperty(axs.AuditResults.prototype, "numWarnings", axs.AuditResults.prototype.numWarnings);
+axs.AuditResults.prototype.getErrors = function() {
+  return this.errors_
+};
+goog.exportProperty(axs.AuditResults.prototype, "getErrors", axs.AuditResults.prototype.getErrors);
+axs.AuditResults.prototype.getWarnings = function() {
+  return this.warnings_
+};
+goog.exportProperty(axs.AuditResults.prototype, "getWarnings", axs.AuditResults.prototype.getWarnings);
+axs.AuditResults.prototype.toString = function() {
+  for(var a = "", b = 0;b < this.errors_.length;b++) {
+    0 == b && (a += "\nErrors:\n");
+    var c = this.errors_[b], a = a + (c + "\n\n")
+  }
+  for(b = 0;b < this.warnings_.length;b++) {
+    0 == b && (a += "\nWarnings:\n"), c = this.warnings_[b], a += c + "\n\n"
+  }
+  return a
+};
+goog.exportProperty(axs.AuditResults.prototype, "toString", axs.AuditResults.prototype.toString);
+axs.browserUtils = {};
+axs.browserUtils.matchSelector = function(a, b) {
+  return a.webkitMatchesSelector ? a.webkitMatchesSelector(b) : a.mozMatchesSelector(b)
+};
 axs.AuditRule = function(a) {
   for(var b = !0, c = [], d = 0;d < axs.AuditRule.requiredFields.length;d++) {
     var e = axs.AuditRule.requiredFields[d];
@@ -1292,46 +1336,6 @@ axs.AuditRules.getRule = function(a) {
   }
   return axs.AuditRules.rules[a]
 };
-axs.AuditResults = function() {
-  this.errors_ = [];
-  this.warnings_ = []
-};
-goog.exportSymbol("axs.AuditResults", axs.AuditResults);
-axs.AuditResults.prototype.addError = function(a) {
-  "" != a && this.errors_.push(a)
-};
-goog.exportProperty(axs.AuditResults.prototype, "addError", axs.AuditResults.prototype.addError);
-axs.AuditResults.prototype.addWarning = function(a) {
-  "" != a && this.warnings_.push(a)
-};
-goog.exportProperty(axs.AuditResults.prototype, "addWarning", axs.AuditResults.prototype.addWarning);
-axs.AuditResults.prototype.numErrors = function() {
-  return this.errors_.length
-};
-goog.exportProperty(axs.AuditResults.prototype, "numErrors", axs.AuditResults.prototype.numErrors);
-axs.AuditResults.prototype.numWarnings = function() {
-  return this.warnings_.length
-};
-goog.exportProperty(axs.AuditResults.prototype, "numWarnings", axs.AuditResults.prototype.numWarnings);
-axs.AuditResults.prototype.getErrors = function() {
-  return this.errors_
-};
-goog.exportProperty(axs.AuditResults.prototype, "getErrors", axs.AuditResults.prototype.getErrors);
-axs.AuditResults.prototype.getWarnings = function() {
-  return this.warnings_
-};
-goog.exportProperty(axs.AuditResults.prototype, "getWarnings", axs.AuditResults.prototype.getWarnings);
-axs.AuditResults.prototype.toString = function() {
-  for(var a = "", b = 0;b < this.errors_.length;b++) {
-    0 == b && (a += "\nErrors:\n");
-    var c = this.errors_[b], a = a + (c + "\n\n")
-  }
-  for(b = 0;b < this.warnings_.length;b++) {
-    0 == b && (a += "\nWarnings:\n"), c = this.warnings_[b], a += c + "\n\n"
-  }
-  return a
-};
-goog.exportProperty(axs.AuditResults.prototype, "toString", axs.AuditResults.prototype.toString);
 axs.Audit = {};
 axs.AuditConfiguration = function() {
   this.rules_ = {};
@@ -1403,10 +1407,6 @@ axs.Audit.accessibilityErrorMessage = function(a) {
   return b
 };
 goog.exportSymbol("axs.Audit.accessibilityErrorMessage", axs.Audit.accessibilityErrorMessage);
-axs.browserUtils = {};
-axs.browserUtils.matchSelector = function(a, b) {
-  return a.webkitMatchesSelector ? a.webkitMatchesSelector(b) : a.mozMatchesSelector(b)
-};
 axs.AuditRule.specs.audioWithoutControls = {name:"audioWithoutControls", heading:"Audio elements should have controls", url:"", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
   return a.querySelectorAll("audio[autoplay]")
 }, test:function(a) {
