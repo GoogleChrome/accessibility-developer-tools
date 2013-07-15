@@ -319,7 +319,7 @@ axs.properties.getTextFromAriaLabelledby = function(element, textAlternatives) {
             labelledby.valid = true;
             labelledby.text = axs.properties.findTextAlternatives(labelledbyElement, {}, true);
             labelledby.lastWord = axs.properties.getLastWord(labelledby.text);
-            labelledbyText.push(labelledbyElement.innerText.trim());
+            labelledbyText.push(labelledbyElement.textContent.trim());
             labelledby.element = labelledbyElement;
         }
         labelledbyValues.push(labelledby);

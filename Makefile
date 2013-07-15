@@ -23,6 +23,7 @@ LIBRARY_CLOSURE_COMMAND = java -jar $(CLOSURE_JAR) --language_in ECMASCRIPT5 \
   --js ./src/js/AuditRules.js \
   --js ./src/js/AuditResults.js \
   --js ./src/js/Audit.js \
+  --js ./src/js/BrowserUtils.js \
   $(AUDIT_RULES)
 
 LIBRARY_OUTPUT_FILE = ./gen/axs_testing.js

@@ -1078,7 +1078,7 @@ axs.properties.getTextFromAriaLabelledby = function(a, b) {
     var k = {type:"element"}, m = d[h];
     k.value = m;
     var l = document.getElementById(m);
-    l ? (k.valid = !0, k.text = axs.properties.findTextAlternatives(l, {}, !0), k.lastWord = axs.properties.getLastWord(k.text), f.push(l.innerText.trim()), k.element = l) : (k.valid = !1, e.valid = !1, k.errorMessage = {messageKey:"noElementWithId", args:[m]});
+    l ? (k.valid = !0, k.text = axs.properties.findTextAlternatives(l, {}, !0), k.lastWord = axs.properties.getLastWord(k.text), f.push(l.textContent.trim()), k.element = l) : (k.valid = !1, e.valid = !1, k.errorMessage = {messageKey:"noElementWithId", args:[m]});
     g.push(k)
   }
   0 < g.length && (g[g.length - 1].last = !0, e.values = g, e.text = f.join(" "), e.lastWord = axs.properties.getLastWord(e.text), c = e.text, b.ariaLabelledby = e);
@@ -1226,72 +1226,6 @@ axs.properties.getAllProperties = function(a) {
   c.videoProperties = axs.properties.getVideoProperties(b);
   return c
 };
-axs.AuditRule = function(a) {
-  for(var b = !0, c = [], d = 0;d < axs.AuditRule.requiredFields.length;d++) {
-    var e = axs.AuditRule.requiredFields[d];
-    e in a || (b = !1, c.push(e))
-  }
-  if(!b) {
-    throw"Invalid spec; the following fields were not specified: " + c.join(", ") + "\n" + JSON.stringify(a);
-  }
-  this.name = a.name;
-  this.severity = a.severity;
-  this.relevantNodesSelector_ = a.relevantNodesSelector;
-  this.test_ = a.test;
-  this.code = a.code;
-  this.heading = a.heading || "";
-  this.url = a.url || "";
-  this.requiresConsoleAPI = !!a.opt_requiresConsoleAPI
-};
-axs.AuditRule.requiredFields = ["name", "severity", "relevantNodesSelector", "test", "code"];
-axs.AuditRule.NOT_APPLICABLE = {result:axs.constants.AuditResult.NA};
-axs.AuditRule.prototype.addNode = function(a, b) {
-  a.push(b)
-};
-axs.AuditRule.prototype.run = function(a, b) {
-  function c(a) {
-    for(var b = 0;b < d.length;b++) {
-      if(a.webkitMatchesSelector(d[b])) {
-        return!0
-      }
-    }
-    return!1
-  }
-  var d = a || [], e = this.relevantNodesSelector_(b || document), f = [];
-  if(e instanceof XPathResult) {
-    if(e.resultType == XPathResult.ORDERED_NODE_SNAPSHOT_TYPE) {
-      if(!e.snapshotLength) {
-        return axs.AuditRule.NOT_APPLICABLE
-      }
-      for(var g = 0;g < e.snapshotLength;g++) {
-        var h = e.snapshotItem(g);
-        this.test_(h) && !c(h) && this.addNode(f, h)
-      }
-    }else {
-      return console.warn("Unknown XPath result type", e), null
-    }
-  }else {
-    if(!e.length) {
-      return{result:axs.constants.AuditResult.NA}
-    }
-    for(g = 0;g < e.length;g++) {
-      h = e[g], this.test_(h) && !c(h) && this.addNode(f, h)
-    }
-  }
-  return{result:f.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS, elements:f}
-};
-axs.AuditRule.specs = {};
-axs.AuditRules = {};
-axs.AuditRules.getRule = function(a) {
-  if(!axs.AuditRules.rules) {
-    axs.AuditRules.rules = {};
-    for(var b in axs.AuditRule.specs) {
-      var c = axs.AuditRule.specs[b], d = new axs.AuditRule(c);
-      axs.AuditRules.rules[c.name] = d
-    }
-  }
-  return axs.AuditRules.rules[a]
-};
 axs.AuditResults = function() {
   this.errors_ = [];
   this.warnings_ = []
@@ -1332,6 +1266,76 @@ axs.AuditResults.prototype.toString = function() {
   return a
 };
 goog.exportProperty(axs.AuditResults.prototype, "toString", axs.AuditResults.prototype.toString);
+axs.browserUtils = {};
+axs.browserUtils.matchSelector = function(a, b) {
+  return a.webkitMatchesSelector ? a.webkitMatchesSelector(b) : a.mozMatchesSelector(b)
+};
+axs.AuditRule = function(a) {
+  for(var b = !0, c = [], d = 0;d < axs.AuditRule.requiredFields.length;d++) {
+    var e = axs.AuditRule.requiredFields[d];
+    e in a || (b = !1, c.push(e))
+  }
+  if(!b) {
+    throw"Invalid spec; the following fields were not specified: " + c.join(", ") + "\n" + JSON.stringify(a);
+  }
+  this.name = a.name;
+  this.severity = a.severity;
+  this.relevantNodesSelector_ = a.relevantNodesSelector;
+  this.test_ = a.test;
+  this.code = a.code;
+  this.heading = a.heading || "";
+  this.url = a.url || "";
+  this.requiresConsoleAPI = !!a.opt_requiresConsoleAPI
+};
+axs.AuditRule.requiredFields = ["name", "severity", "relevantNodesSelector", "test", "code"];
+axs.AuditRule.NOT_APPLICABLE = {result:axs.constants.AuditResult.NA};
+axs.AuditRule.prototype.addNode = function(a, b) {
+  a.push(b)
+};
+axs.AuditRule.prototype.run = function(a, b) {
+  function c(a) {
+    for(var b = 0;b < d.length;b++) {
+      if(axs.browserUtils.matchSelector(a, d[b])) {
+        return!0
+      }
+    }
+    return!1
+  }
+  var d = a || [], e = this.relevantNodesSelector_(b || document), f = [];
+  if(e instanceof XPathResult) {
+    if(e.resultType == XPathResult.ORDERED_NODE_SNAPSHOT_TYPE) {
+      if(!e.snapshotLength) {
+        return axs.AuditRule.NOT_APPLICABLE
+      }
+      for(var g = 0;g < e.snapshotLength;g++) {
+        var h = e.snapshotItem(g);
+        this.test_(h) && !c(h) && this.addNode(f, h)
+      }
+    }else {
+      return console.warn("Unknown XPath result type", e), null
+    }
+  }else {
+    if(!e.length) {
+      return{result:axs.constants.AuditResult.NA}
+    }
+    for(g = 0;g < e.length;g++) {
+      h = e[g], this.test_(h) && !c(h) && this.addNode(f, h)
+    }
+  }
+  return{result:f.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS, elements:f}
+};
+axs.AuditRule.specs = {};
+axs.AuditRules = {};
+axs.AuditRules.getRule = function(a) {
+  if(!axs.AuditRules.rules) {
+    axs.AuditRules.rules = {};
+    for(var b in axs.AuditRule.specs) {
+      var c = axs.AuditRule.specs[b], d = new axs.AuditRule(c);
+      axs.AuditRules.rules[c.name] = d
+    }
+  }
+  return axs.AuditRules.rules[a]
+};
 axs.Audit = {};
 axs.AuditConfiguration = function() {
   this.rules_ = {};
@@ -1435,7 +1439,7 @@ axs.AuditRule.specs.badAriaRole = {name:"badAriaRole", heading:"Elements with AR
 axs.AuditRule.specs.controlsWithoutLabel = {name:"controlsWithoutLabel", heading:"Controls and media elements should have labels", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_TEXT_01:_Controls_and_media_elements_should_have_labels", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
   return a.querySelectorAll('input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])')
 }, test:function(a) {
-  return axs.utils.isElementOrAncestorHidden(a) || "button" == a.tagName.toLowerCase() && a.innerText.replace(/^\s+|\s+$/g, "").length ? !1 : axs.utils.hasLabel(a) ? !1 : !0
+  return axs.utils.isElementOrAncestorHidden(a) || "button" == a.tagName.toLowerCase() && a.textContent.replace(/^\s+|\s+$/g, "").length ? !1 : axs.utils.hasLabel(a) ? !1 : !0
 }, code:"AX_TEXT_01", ruleName:"Controls and media elements should have labels"};
 axs.AuditRule.specs.focusableElementNotVisibleAndNotAriaHidden = {name:"focusableElementNotVisibleAndNotAriaHidden", heading:"These elements are focusable but either invisible or obscured by another element", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_FOCUS_01:_These_elements_are_focusable_but_either_invisible_o", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
   return a.querySelectorAll(axs.utils.FOCUSABLE_ELEMENTS_SELECTOR)
