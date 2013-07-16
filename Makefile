@@ -30,5 +30,5 @@ js: clean
 	@$(LIBRARY_CLOSURE_COMMAND) --js_output_file $(LIBRARY_OUTPUT_FILE)
 
 clean:
-	@rm -rf $(LIBRARY_OUTPUT_FILE)
+	@rm $(LIBRARY_OUTPUT_FILE)
 
