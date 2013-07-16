@@ -25,7 +25,7 @@ LIBRARY_OUTPUT_FILE = ./gen/axs_testing.js
 js: clean
 	@$(LIBRARY_CLOSURE_COMMAND) --js_output_file $(LIBRARY_OUTPUT_FILE)
 
-test: clean js
+test: js
 	@open ./test/index.html
 
 clean:
