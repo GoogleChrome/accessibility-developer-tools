@@ -21,7 +21,7 @@ LIBRARY_CLOSURE_COMMAND = java -jar $(CLOSURE_JAR) --language_in ECMASCRIPT5 \
 
 LIBRARY_OUTPUT_FILE = ./gen/axs_testing.js
 
-.PHONY: clean js
+.PHONY: test clean
 
 test: clean
 	@$(LIBRARY_CLOSURE_COMMAND) --js_output_file $(LIBRARY_OUTPUT_FILE)
