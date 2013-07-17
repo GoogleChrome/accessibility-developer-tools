@@ -21,5 +21,5 @@ test: clean js
 	@open ./test/index.html
 
 clean:
-	@rm $(LIBRARY_OUTPUT_FILE)
+	@rm -f $(LIBRARY_OUTPUT_FILE)
 
