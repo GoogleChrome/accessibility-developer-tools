@@ -14,11 +14,11 @@ LIBRARY_OUTPUT_FILE = ./gen/axs_testing.js
 
 .PHONY: test clean js
 
-test: js
-	@open ./test/index.html
-
 js: clean
 	@$(LIBRARY_CLOSURE_COMMAND) --js_output_file $(LIBRARY_OUTPUT_FILE)
+
+test: clean js
+	@open ./test/index.html
 
 clean:
 	@rm $(LIBRARY_OUTPUT_FILE)
