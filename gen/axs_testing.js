@@ -968,7 +968,7 @@ axs.utils.getQuerySelectorText = function(a) {
       if(a.parentNode) {
         for(c = 0;c < a.parentNode.children.length;c++) {
           var e = a.parentNode.children[c];
-          e.webkitMatchesSelector(b) && d++;
+          axs.browserUtils.matchSelector(e, b) && d++;
           if(e === a) {
             break
           }
@@ -1397,7 +1397,7 @@ axs.properties.getTextFromAriaLabelledby = function(a, b) {
   return c
 };
 axs.properties.getTextFromHostLangaugeAttributes = function(a, b, c) {
-  if(a.webkitMatchesSelector("img")) {
+  if(axs.browserUtils.matchSelector(a, "img")) {
     if(a.hasAttribute("alt")) {
       var d = {type:"string", valid:!0};
       d.text = a.getAttribute("alt");
@@ -1407,7 +1407,7 @@ axs.properties.getTextFromHostLangaugeAttributes = function(a, b, c) {
       d = {valid:!1, errorMessage:"No alt value provided"}, b.alt = d, d = a.src, "string" == typeof d && (c = d.split("/").pop(), b.filename = {text:c})
     }
   }
-  if(a.webkitMatchesSelector('input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])')) {
+  if(axs.browserUtils.matchSelector(a, 'input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])')) {
     if(a.hasAttribute("id")) {
       for(var d = document.querySelectorAll("label[for=" + a.id + "]"), e = {}, f = [], g = [], h = 0;h < d.length;h++) {
         var k = {type:"element"}, m = d[h], l = axs.properties.findTextAlternatives(m, {}, !0);
@@ -1497,7 +1497,7 @@ axs.properties.getGlobalAriaProperties = function(a) {
   return b
 };
 axs.properties.getVideoProperties = function(a) {
-  if(!a.webkitMatchesSelector("video")) {
+  if(!axs.browserUtils.matchSelector(a, "video")) {
     return null
   }
   var b = {};
