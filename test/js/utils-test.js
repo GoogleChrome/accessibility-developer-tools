@@ -93,3 +93,18 @@ test("A placeholder counts a label.", function() {
   element3.placeholder = "Add me to your mailing list";
   equal(axs.utils.hasLabel(element3), false);
 });
+
+module("getQuerySelectorText", {
+  setup: function () {
+    this.fixture_ = document.getElementById('fixture');
+  }
+});
+test("returns the selector text for a nested object with a class attribute", function() {
+  var targetNode = document.createElement('em')
+  targetNode.setAttribute('class', 'foo');
+  var targetParentNode = document.createElement('p');
+  targetParentNode.appendChild(targetNode);
+  this.fixture_.appendChild(targetParentNode);
+
+  equal(axs.utils.getQuerySelectorText(targetNode), "#fixture > P > .foo");
+});
