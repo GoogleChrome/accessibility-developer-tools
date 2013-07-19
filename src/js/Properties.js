@@ -338,7 +338,7 @@ axs.properties.getTextFromAriaLabelledby = function(element, textAlternatives) {
 
 axs.properties.getTextFromHostLangaugeAttributes = function(element, textAlternatives, existingComputedname) {
     var computedName = existingComputedname;
-    if (element.webkitMatchesSelector('img')) {
+    if (axs.browserUtils.matchSelector(element, 'img')) {
         if (element.hasAttribute('alt')) {
             var altValue = {};
             altValue.type = 'string';
@@ -370,7 +370,7 @@ axs.properties.getTextFromHostLangaugeAttributes = function(element, textAlterna
                             'textarea:not([disabled])',
                             'button:not([disabled])',
                             'video:not([disabled])'].join(', ');
-    if (element.webkitMatchesSelector(controlsSelector)) {
+    if (axs.browserUtils.matchSelector(element, controlsSelector)) {
         if (element.hasAttribute('id')) {
             var labelForQuerySelector = 'label[for=' + element.id + ']';
             var labelsFor = document.querySelectorAll(labelForQuerySelector);
@@ -552,7 +552,7 @@ axs.properties.getGlobalAriaProperties = function(element) {
  */
 axs.properties.getVideoProperties = function(element) {
     var videoSelector = 'video';
-    if (!element.webkitMatchesSelector(videoSelector))
+    if (!axs.browserUtils.matchSelector(element, videoSelector))
         return null;
     var videoProperties = {};
     videoProperties['captionTracks'] = axs.properties.getTrackElements(element, 'captions');

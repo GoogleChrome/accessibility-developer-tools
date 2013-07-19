@@ -3,7 +3,7 @@ goog.provide('axs.browserUtils');
 /**
  * Use Firefox matcher when Webkit is not supported.
  * @param {Node} node
- * @param {String} selector
+ * @param {string} selector
  * @returns {Boolean}
  */
 axs.browserUtils.matchSelector = function(node, selector) {
