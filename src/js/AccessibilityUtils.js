@@ -164,7 +164,7 @@ axs.utils.overlappingElement = function(element) {
     }
 
     if (element_at_point != null && element_at_point != element &&
-        !isAncestor(element_at_point, element)) {
+        !isAncestor(element_at_point, element) && !isAncestor(element, element_at_point)) {
         return element_at_point;
     }
 
@@ -286,8 +286,9 @@ axs.utils.isLargeFont = function(style) {
 axs.utils.getBgColor = function(style, element) {
     var bgColorString = style.backgroundColor;
     var bgColor = axs.utils.parseColor(bgColorString);
-    if (!bgColor)
+    if (!bgColor) {
         return null;
+    }
 
     if (style.opacity < 1)
         bgColor.alpha = bgColor.alpha * style.opacity
