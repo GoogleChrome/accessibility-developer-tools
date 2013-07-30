@@ -292,7 +292,7 @@ axs.utils.getBgColor = function(style, element) {
     if (style.backgroundImage && style.backgroundImage != 'none')
         return null; // too hard
 
-    if (bgColor.alpha < 1) {
+    if (bgColor.alpha < 1 || style.opacity < 1) {
         var parent = element;
         var bgStack = [];
         bgStack.push(bgColor);
@@ -511,7 +511,7 @@ axs.utils.flattenColors = function(fgColor, bgColor) {
     var r = ((1 - alpha) * bgColor.red) + (alpha * fgColor.red);
     var g  = ((1 - alpha) * bgColor.green) + (alpha * fgColor.green);
     var b = ((1 - alpha) * bgColor.blue) + (alpha * fgColor.blue);
-    var a = 1;
+    var a = fgColor.alpha + (bgColor.alpha * (1 - fgColor.alpha));
 
     return new axs.utils.Color(r, g, b, a);
 };
@@ -1092,6 +1092,8 @@ axs.utils.isValidBoolean = function(value) {
  * @return {!Object}
  */
 axs.utils.isValidIDRefValue = function(value, element) {
+    if (value.length == 0)
+        return { 'valid': true, 'idref': value };
     if (!element.ownerDocument.getElementById(value))
         return { 'valid': false,
                  'idref': value,

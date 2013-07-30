@@ -391,49 +391,6 @@ axs.browserUtils = {};
 axs.browserUtils.matchSelector = function(a, b) {
   return a.webkitMatchesSelector ? a.webkitMatchesSelector(b) : a.mozMatchesSelector(b)
 };
-axs.content = {};
-axs.content.auditResultNodes || (axs.content.auditResultNodes = {});
-axs.content.lastNodeId || (axs.content.lastNodeId = 0);
-axs.content.convertNodeToResult = function(a) {
-  var b = "" + axs.content.lastNodeId++;
-  axs.content.auditResultNodes[b] = a;
-  return b
-};
-axs.content.getResultNode = function(a) {
-  var b = axs.content.auditResultNodes[a];
-  delete axs.content.auditResultNodes[a];
-  return b
-};
-axs.content.frameURIs = {};
-axs.content.frameURIs[document.documentURI] = !0;
-window.addEventListener("message", function(a) {
-  if("object" == typeof a.data && "request" in a.data) {
-    if("getUri" == a.data.request) {
-      var b = "*";
-      "returnOrigin" in a.data && (b = a.data.returnOrigin);
-      a.source.postMessage({request:"postUri", uri:document.documentURI}, b)
-    }else {
-      "postUri" == a.data.request && (window.parent != window ? window.parent.postMessage(a.data, "*") : (a = a.data.uri, 0 <= a.indexOf("#") ? axs.content.frameURIs[a.split("#", 1)[0]] = !0 : axs.content.frameURIs[a] = !0))
-    }
-  }
-}, !1);
-(function() {
-  function a(a) {
-    a = a.split("://", 2);
-    a[1] = a[1].split("/")[0];
-    return a.join("://")
-  }
-  for(var b = document.querySelectorAll("iframe"), c = 0;c < b.length;c++) {
-    var d = b[c], e = "*", f = d.src;
-    f && 0 < f.length && (e = a(f));
-    f = a(document.documentURI);
-    try {
-      d.contentWindow.postMessage({request:"getUri", returnOrigin:f}, e)
-    }catch(g) {
-      console.warn("got exception when trying to postMessage from " + f + " to " + e, g)
-    }
-  }
-})();
 axs.constants = {};
 axs.constants.ARIA_ROLES = {alert:{namefrom:["author"], parent:["region"]}, alertdialog:{namefrom:["author"], namerequired:!0, parent:["alert", "dialog"]}, application:{namefrom:["author"], namerequired:!0, parent:["landmark"]}, article:{namefrom:["author"], parent:["document", "region"]}, banner:{namefrom:["author"], parent:["landmark"]}, button:{childpresentational:!0, namefrom:["contents", "author"], namerequired:!0, parent:["command"], properties:["aria-expanded", "aria-pressed"]}, checkbox:{namefrom:["contents", 
 "author"], namerequired:!0, parent:["input"], requiredProperties:["aria-checked"], properties:["aria-checked"]}, columnheader:{namefrom:["contents", "author"], namerequired:!0, parent:["gridcell", "sectionhead", "widget"], properties:["aria-sort"]}, combobox:{mustcontain:["listbox", "textbox"], namefrom:["author"], namerequired:!0, parent:["select"], requiredProperties:["aria-expanded"], properties:["aria-expanded", "aria-autocomplete", "aria-required"]}, command:{"abstract":!0, namefrom:["author"], 
@@ -634,7 +591,7 @@ axs.utils.getBgColor = function(a, b) {
   if(!c || a.backgroundImage && "none" != a.backgroundImage) {
     return null
   }
-  if(1 > c.alpha) {
+  if(1 > c.alpha || 1 > a.opacity) {
     var d = b, e = [];
     e.push(c);
     for(c = null;d = d.parentElement;) {
@@ -713,7 +670,7 @@ axs.utils.suggestColors = function(a, b, c, d) {
 };
 axs.utils.flattenColors = function(a, b) {
   var c = a.alpha;
-  return new axs.utils.Color((1 - c) * b.red + c * a.red, (1 - c) * b.green + c * a.green, (1 - c) * b.blue + c * a.blue, 1)
+  return new axs.utils.Color((1 - c) * b.red + c * a.red, (1 - c) * b.green + c * a.green, (1 - c) * b.blue + c * a.blue, a.alpha + b.alpha * (1 - a.alpha))
 };
 axs.utils.calculateLuminance = function(a) {
   return axs.utils.toYCC(a)[0]
@@ -939,7 +896,7 @@ axs.utils.isValidBoolean = function(a) {
   return"boolean" != typeof b ? {valid:!1, value:a, reason:'"' + a + '" is not a true/false value'} : {valid:!0, value:b}
 };
 axs.utils.isValidIDRefValue = function(a, b) {
-  return!b.ownerDocument.getElementById(a) ? {valid:!1, idref:a, reason:'No element with ID "' + a + '"'} : {valid:!0, idref:a}
+  return 0 == a.length ? {valid:!0, idref:a} : !b.ownerDocument.getElementById(a) ? {valid:!1, idref:a, reason:'No element with ID "' + a + '"'} : {valid:!0, idref:a}
 };
 axs.utils.isValidNumber = function(a) {
   var b = JSON.parse(a);
