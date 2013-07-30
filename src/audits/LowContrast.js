@@ -27,7 +27,7 @@ axs.AuditRule.specs.lowContrastElements = {
     severity: axs.constants.Severity.WARNING,
     relevantNodesSelector: function(scope) {
       return document.evaluate(
-          '/html/body//text()[normalize-space(.)!=""]/parent::*[name()!="script"]',
+          './/text()[normalize-space(.)!=""]/parent::*[name()!="script"]',
           scope,
           null,
           XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,

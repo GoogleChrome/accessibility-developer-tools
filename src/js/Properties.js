@@ -67,7 +67,7 @@ axs.properties.getContrastRatioProperties = function(element) {
         return null;
 
     contrastRatioProperties['backgroundColor'] = axs.utils.colorToString(bgColor);
-    var fgColor = axs.utils.getFgColor(style, bgColor);
+    var fgColor = axs.utils.getFgColor(style, element, bgColor);
     contrastRatioProperties['foregroundColor'] = axs.utils.colorToString(fgColor);
     var value = axs.utils.getContrastRatioForElementWithComputedStyle(style, element);
     if (!value)

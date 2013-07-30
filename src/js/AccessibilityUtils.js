@@ -292,46 +292,65 @@ axs.utils.getBgColor = function(style, element) {
     if (style.backgroundImage && style.backgroundImage != 'none')
         return null; // too hard
 
-    if (bgColor.alpha < 1 || style.opacity < 1) {
-        var parent = element;
-        var bgStack = [];
-        bgStack.push(bgColor);
-        var foundSolidColor = null;
-        while (parent = parent.parentElement) {
-            var computedStyle = window.getComputedStyle(parent, null);
-            if (!computedStyle)
-                continue;
+    if (style.opacity < 1)
+        bgColor.alpha = bgColor.alpha * style.opacity
 
-            if (computedStyle.backgroundImage &&
-                computedStyle.backgroundImage != 'none')
-                return null; // too hard
+    if (bgColor.alpha < 1) {
+        var parentBg = axs.utils.getParentBgColor(element);
+        if (parentBg == null)
+            return null;
 
-            var parentBg = axs.utils.parseColor(computedStyle.backgroundColor);
-            if (!parentBg)
-                continue;
-            if (parentBg.alpha == 0)
-                continue;
-
-            bgStack.push(parentBg);
-
-            if (parentBg.alpha == 1) {
-                foundSolidColor = null;
-                break;
-            }
-        }
-
-        if (!foundSolidColor)
-            bgStack.push(new axs.utils.Color(255, 255, 255, 1));
-
-        var bg = bgStack.pop();
-        while (bgStack.length) {
-            var fg = bgStack.pop();
-            bg = axs.utils.flattenColors(fg, bg);
-        }
-        bgColor = bg;
+        bgColor = axs.utils.flattenColors(bgColor, parentBg);
     }
     return bgColor;
 };
+
+/**
+ * Gets the effective background color of the parent of |element|.
+ * @param {Element} element
+ * @return {?axs.utils.Color}
+ */
+axs.utils.getParentBgColor = function(element) {
+    var parent = element;
+    var bgStack = [];
+    var foundSolidColor = null;
+    while (parent = parent.parentElement) {
+        var computedStyle = window.getComputedStyle(parent, null);
+        if (!computedStyle)
+            continue;
+
+        if (computedStyle.backgroundImage &&
+            computedStyle.backgroundImage != 'none')
+            return null; // too hard
+
+        var parentBg = axs.utils.parseColor(computedStyle.backgroundColor);
+        if (!parentBg)
+            continue;
+
+        if (computedStyle.opacity < 1)
+            parentBg.alpha = parentBg.alpha * computedStyle.opacity;
+
+        if (parentBg.alpha == 0)
+            continue;
+
+        bgStack.push(parentBg);
+
+        if (parentBg.alpha == 1) {
+            foundSolidColor = true;
+            break;
+        }
+    }
+
+    if (!foundSolidColor)
+        bgStack.push(new axs.utils.Color(255, 255, 255, 1));
+
+    var bg = bgStack.pop();
+    while (bgStack.length) {
+        var fg = bgStack.pop();
+        bg = axs.utils.flattenColors(fg, bg);
+    }
+    return bg;
+}
 
 /**
  * @param {CSSStyleDeclaration} style
@@ -340,7 +359,7 @@ axs.utils.getBgColor = function(style, element) {
  *    foreground color.
  * @return {?axs.utils.Color}
  */
-axs.utils.getFgColor = function(style, bgColor) {
+axs.utils.getFgColor = function(style, element, bgColor) {
     var fgColorString = style.color;
     var fgColor = axs.utils.parseColor(fgColorString);
     if (!fgColor)
@@ -348,6 +367,13 @@ axs.utils.getFgColor = function(style, bgColor) {
 
     if (fgColor.alpha < 1)
         fgColor = axs.utils.flattenColors(fgColor, bgColor);
+
+    if (style.opacity < 1) {
+        var parentBg = axs.utils.getParentBgColor(element);
+        fgColor.alpha = fgColor.alpha * style.opacity;
+        fgColor = axs.utils.flattenColors(fgColor, parentBg);
+    }
+
     return fgColor;
 };
 
@@ -385,6 +411,7 @@ axs.utils.parseColor = function(colorString) {
  * @return {string}
  */
 axs.utils.colorChannelToString = function(value) {
+    value = Math.round(value);
     if (value <= 0xF)
         return '0' + value.toString(16);
     return value.toString(16);
@@ -744,14 +771,14 @@ axs.utils.getContrastRatioForElement = function(element) {
  * @return {?number}
  */
 axs.utils.getContrastRatioForElementWithComputedStyle = function(style, element) {
-    if (!axs.utils.elementIsVisible(element))
+    if (axs.utils.isElementHidden(element))
         return null;
 
     var bgColor = axs.utils.getBgColor(style, element);
     if (!bgColor)
         return null;
 
-    var fgColor = axs.utils.getFgColor(style, bgColor);
+    var fgColor = axs.utils.getFgColor(style, element, bgColor);
     if (!fgColor)
         return null;
 

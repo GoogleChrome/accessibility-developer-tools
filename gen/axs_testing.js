@@ -591,38 +591,46 @@ axs.utils.getBgColor = function(a, b) {
   if(!c || a.backgroundImage && "none" != a.backgroundImage) {
     return null
   }
-  if(1 > c.alpha || 1 > a.opacity) {
-    var d = b, e = [];
-    e.push(c);
-    for(c = null;d = d.parentElement;) {
-      var f = window.getComputedStyle(d, null);
-      if(f) {
-        if(f.backgroundImage && "none" != f.backgroundImage) {
-          return null
-        }
-        if((f = axs.utils.parseColor(f.backgroundColor)) && 0 != f.alpha) {
-          if(e.push(f), 1 == f.alpha) {
-            c = null;
-            break
-          }
-        }
-      }
+  1 > a.opacity && (c.alpha *= a.opacity);
+  if(1 > c.alpha) {
+    var d = axs.utils.getParentBgColor(b);
+    if(null == d) {
+      return null
     }
-    c || e.push(new axs.utils.Color(255, 255, 255, 1));
-    for(d = e.pop();e.length;) {
-      c = e.pop(), d = axs.utils.flattenColors(c, d)
-    }
-    c = d
+    c = axs.utils.flattenColors(c, d)
   }
   return c
 };
-axs.utils.getFgColor = function(a, b) {
-  var c = axs.utils.parseColor(a.color);
-  if(!c) {
+axs.utils.getParentBgColor = function(a) {
+  var b = a;
+  a = [];
+  for(var c = null;b = b.parentElement;) {
+    var d = window.getComputedStyle(b, null);
+    if(d) {
+      if(d.backgroundImage && "none" != d.backgroundImage) {
+        return null
+      }
+      var e = axs.utils.parseColor(d.backgroundColor);
+      if(e && (1 > d.opacity && (e.alpha *= d.opacity), 0 != e.alpha && (a.push(e), 1 == e.alpha))) {
+        c = !0;
+        break
+      }
+    }
+  }
+  c || a.push(new axs.utils.Color(255, 255, 255, 1));
+  for(b = a.pop();a.length;) {
+    c = a.pop(), b = axs.utils.flattenColors(c, b)
+  }
+  return b
+};
+axs.utils.getFgColor = function(a, b, c) {
+  var d = axs.utils.parseColor(a.color);
+  if(!d) {
     return null
   }
-  1 > c.alpha && (c = axs.utils.flattenColors(c, b));
-  return c
+  1 > d.alpha && (d = axs.utils.flattenColors(d, c));
+  1 > a.opacity && (b = axs.utils.getParentBgColor(b), d.alpha *= a.opacity, d = axs.utils.flattenColors(d, b));
+  return d
 };
 axs.utils.parseColor = function(a) {
   var b = a.match(/^rgb\((\d+), (\d+), (\d+)\)$/);
@@ -634,6 +642,7 @@ axs.utils.parseColor = function(a) {
   return(b = a.match(/^rgba\((\d+), (\d+), (\d+), (\d+(\.\d+)?)\)/)) ? (d = parseInt(b[4], 10), a = parseInt(b[1], 10), c = parseInt(b[2], 10), b = parseInt(b[3], 10), new axs.utils.Color(a, c, b, d)) : null
 };
 axs.utils.colorChannelToString = function(a) {
+  a = Math.round(a);
   return 15 >= a ? "0" + a.toString(16) : a.toString(16)
 };
 axs.utils.colorToString = function(a) {
@@ -748,14 +757,14 @@ axs.utils.getContrastRatioForElement = function(a) {
   return axs.utils.getContrastRatioForElementWithComputedStyle(b, a)
 };
 axs.utils.getContrastRatioForElementWithComputedStyle = function(a, b) {
-  if(!axs.utils.elementIsVisible(b)) {
+  if(axs.utils.isElementHidden(b)) {
     return null
   }
   var c = axs.utils.getBgColor(a, b);
   if(!c) {
     return null
   }
-  var d = axs.utils.getFgColor(a, c);
+  var d = axs.utils.getFgColor(a, b, c);
   return!d ? null : axs.utils.calculateContrastRatio(d, c)
 };
 axs.utils.isNativeTextElement = function(a) {
@@ -987,7 +996,7 @@ axs.properties.getContrastRatioProperties = function(a) {
     return null
   }
   b.backgroundColor = axs.utils.colorToString(d);
-  var e = axs.utils.getFgColor(c, d);
+  var e = axs.utils.getFgColor(c, a, d);
   b.foregroundColor = axs.utils.colorToString(e);
   a = axs.utils.getContrastRatioForElementWithComputedStyle(c, a);
   if(!a) {
@@ -1433,7 +1442,7 @@ axs.AuditRule.specs.pageWithoutTitle = {name:"pageWithoutTitle", heading:"The we
   return!a.length || !a[0].textContent
 }, code:"AX_TITLE_01"};
 axs.AuditRule.specs.lowContrastElements = {name:"lowContrastElements", heading:"Text elements should have a reasonable contrast ratio", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_COLOR_01:_Text_elements_should_have_a_reasonable_contrast_rat", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
-  return document.evaluate('/html/body//text()[normalize-space(.)!=""]/parent::*[name()!="script"]', a, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
+  return document.evaluate('.//text()[normalize-space(.)!=""]/parent::*[name()!="script"]', a, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
 }, test:function(a) {
   var b = window.getComputedStyle(a, null);
   return(a = axs.utils.getContrastRatioForElementWithComputedStyle(b, a)) && axs.utils.isLowContrast(a, b)
