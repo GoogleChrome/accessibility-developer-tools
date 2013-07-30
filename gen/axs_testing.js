@@ -391,51 +391,6 @@ axs.browserUtils = {};
 axs.browserUtils.matchSelector = function(a, b) {
   return a.webkitMatchesSelector ? a.webkitMatchesSelector(b) : a.mozMatchesSelector(b)
 };
-axs.content = {};
-axs.content.auditResultNodes || (axs.content.auditResultNodes = {});
-axs.content.lastNodeId || (axs.content.lastNodeId = 0);
-axs.content.convertNodeToResult = function(a) {
-  var b = "" + axs.content.lastNodeId++;
-  axs.content.auditResultNodes[b] = a;
-  return b
-};
-axs.content.getResultNode = function(a) {
-  var b = axs.content.auditResultNodes[a];
-  delete axs.content.auditResultNodes[a];
-  return b
-};
-axs.content.frameURIs = {};
-axs.content.frameURIs[document.documentURI] = !0;
-window.addEventListener("message", function(a) {
-  if("object" == typeof a.data && "request" in a.data) {
-    if("getUri" == a.data.request) {
-      var b = "*";
-      "returnOrigin" in a.data && (b = a.data.returnOrigin);
-      a.source.postMessage({request:"postUri", uri:document.documentURI}, b)
-    }else {
-      "postUri" == a.data.request && (window.parent != window ? window.parent.postMessage(a.data, "*") : (a = a.data.uri, 0 <= a.indexOf("#") ? axs.content.frameURIs[a.split("#", 1)[0]] = !0 : axs.content.frameURIs[a] = !0))
-    }
-  }
-}, !1);
-(function() {
-  function a(a) {
-    a = a.split("://");
-    2 != a.length && console.log("urlParts", a);
-    a[1] = a[1].split("/")[0];
-    return a.join("://")
-  }
-  for(var b = document.querySelectorAll("iframe"), c = 0;c < b.length;c++) {
-    var d = b[c], e = "*", f = d.src;
-    console.log("src", f);
-    f && 0 < f.length && (e = a(f));
-    f = a(document.documentURI);
-    try {
-      d.contentWindow.postMessage({request:"getUri", returnOrigin:f}, e)
-    }catch(g) {
-      console.warn("got exception when trying to postMessage from " + f + " to " + e, g)
-    }
-  }
-})();
 axs.constants = {};
 axs.constants.ARIA_ROLES = {alert:{namefrom:["author"], parent:["region"]}, alertdialog:{namefrom:["author"], namerequired:!0, parent:["alert", "dialog"]}, application:{namefrom:["author"], namerequired:!0, parent:["landmark"]}, article:{namefrom:["author"], parent:["document", "region"]}, banner:{namefrom:["author"], parent:["landmark"]}, button:{childpresentational:!0, namefrom:["contents", "author"], namerequired:!0, parent:["command"], properties:["aria-expanded", "aria-pressed"]}, checkbox:{namefrom:["contents", 
 "author"], namerequired:!0, parent:["input"], requiredProperties:["aria-checked"], properties:["aria-checked"]}, columnheader:{namefrom:["contents", "author"], namerequired:!0, parent:["gridcell", "sectionhead", "widget"], properties:["aria-sort"]}, combobox:{mustcontain:["listbox", "textbox"], namefrom:["author"], namerequired:!0, parent:["select"], requiredProperties:["aria-expanded"], properties:["aria-expanded", "aria-autocomplete", "aria-required"]}, command:{"abstract":!0, namefrom:["author"], 
