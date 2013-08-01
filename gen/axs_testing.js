@@ -1442,13 +1442,13 @@ axs.AuditRule.specs.pageWithoutTitle = {name:"pageWithoutTitle", heading:"The we
   a = a.querySelector("title");
   return!a.length || !a[0].textContent
 }, code:"AX_TITLE_01"};
-axs.AuditRule.specs.lowContrastElements = {name:"lowContrastElements", heading:"Text elements should have a reasonable contrast ratio", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_COLOR_01:_Text_elements_should_have_a_reasonable_contrast_rat", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+axs.AuditRule.specs.lowContrastElements = {name:"lowContrastElements", heading:"Text elements should have a reasonable contrast ratio", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_color_01--text-elements-should-have-a-reasonable-contrast-ratio", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
   return document.evaluate('.//text()[normalize-space(.)!=""]/parent::*[name()!="script"]', a, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
 }, test:function(a) {
   var b = window.getComputedStyle(a, null);
   return(a = axs.utils.getContrastRatioForElementWithComputedStyle(b, a)) && axs.utils.isLowContrast(a, b)
 }, code:"AX_COLOR_01"};
-axs.AuditRule.specs.nonExistentAriaLabelledbyElement = {name:"nonExistentAriaLabelledbyElement", heading:"aria-labelledby attributes should refer to an element which exists in the DOM", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_ARIA_02:__aria-labelledby_attributes_should_refer_to_an_eleme", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+axs.AuditRule.specs.nonExistentAriaLabelledbyElement = {name:"nonExistentAriaLabelledbyElement", heading:"aria-labelledby attributes should refer to an element which exists in the DOM", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_02--aria-labelledby-attributes-should-refer-to-an-element-which-exists-in-the-dom", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
   return a.querySelectorAll("[aria-labelledby]")
 }, test:function(a) {
   a = a.getAttribute("aria-labelledby").split(/\s+/);
@@ -1459,7 +1459,7 @@ axs.AuditRule.specs.nonExistentAriaLabelledbyElement = {name:"nonExistentAriaLab
   }
   return!1
 }, code:"AX_ARIA_02"};
-axs.AuditRule.specs.requiredAriaAttributeMissing = {name:"requiredAriaAttributeMissing", heading:"Elements with ARIA roles must have all required attributes for that role", url:"", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
+axs.AuditRule.specs.requiredAriaAttributeMissing = {name:"requiredAriaAttributeMissing", heading:"Elements with ARIA roles must have all required attributes for that role", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_03--elements-with-aria-roles-must-have-all-required-attributes-for-that-role", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
   return a.querySelectorAll("[role]")
 }, test:function(a) {
   var b = axs.utils.getRoles(a);
@@ -1475,7 +1475,7 @@ axs.AuditRule.specs.requiredAriaAttributeMissing = {name:"requiredAriaAttributeM
     }
   }
 }, code:"AX_ARIA_03"};
-axs.AuditRule.specs.focusableElementNotVisibleAndNotAriaHidden = {name:"focusableElementNotVisibleAndNotAriaHidden", heading:"These elements are focusable but either invisible or obscured by another element", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_FOCUS_01:_These_elements_are_focusable_but_either_invisible_o", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+axs.AuditRule.specs.focusableElementNotVisibleAndNotAriaHidden = {name:"focusableElementNotVisibleAndNotAriaHidden", heading:"These elements are focusable but either invisible or obscured by another element", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_focus_01--these-elements-are-focusable-but-either-invisible-or-obscured-by-another-element", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
   return a.querySelectorAll(axs.utils.FOCUSABLE_ELEMENTS_SELECTOR)
 }, test:function(a) {
   return axs.utils.isElementOrAncestorHidden(a) ? !1 : !axs.utils.elementIsVisible(a)
@@ -1487,7 +1487,7 @@ axs.AuditRule.specs.elementsWithMeaningfulBackgroundImage = {name:"elementsWithM
     axs.utils.isElementOrAncestorHidden(d) || b.push(d)
   }
   return b
-}, heading:"Meaningful images should not be used in element backgrounds", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules?ts=1368336558&updated=AuditRules#AX_IMAGE_01:_Meaningful_images_should_not_be_used_in_element_bac", test:function(a) {
+}, heading:"Meaningful images should not be used in element backgrounds", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_image_01--meaningful-images-should-not-be-used-in-element-backgrounds", test:function(a) {
   if(a.textContent && 0 < a.textContent.length) {
     return!1
   }
@@ -1505,12 +1505,12 @@ axs.AuditRule.specs.linkWithUnclearPurpose = {name:"linkWithUnclearPurpose", hea
 }, test:function(a) {
   return/^\s*click\s*here\s*[^a-z]?$/i.test(a.textContent)
 }, code:"AX_TITLE_01"};
-axs.AuditRule.specs.controlsWithoutLabel = {name:"controlsWithoutLabel", heading:"Controls and media elements should have labels", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_TEXT_01:_Controls_and_media_elements_should_have_labels", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
+axs.AuditRule.specs.controlsWithoutLabel = {name:"controlsWithoutLabel", heading:"Controls and media elements should have labels", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_01--controls-and-media-elements-should-have-labels", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
   return a.querySelectorAll('input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])')
 }, test:function(a) {
   return axs.utils.isElementOrAncestorHidden(a) || "input" == a.tagName.toLowerCase() && "button" == a.type && a.value.length || "button" == a.tagName.toLowerCase() && a.textContent.replace(/^\s+|\s+$/g, "").length ? !1 : !axs.utils.hasLabel(a) ? !0 : !1
 }, code:"AX_TEXT_01", ruleName:"Controls and media elements should have labels"};
-axs.AuditRule.specs.videoWithoutCaptions = {name:"videoWithoutCaptions", heading:"Video elements should use <track> elements to provide captions", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_VIDEO_01:_Video_elements_should_use_<track>_elements_to", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+axs.AuditRule.specs.videoWithoutCaptions = {name:"videoWithoutCaptions", heading:"Video elements should use <track> elements to provide captions", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_video_01--video-elements-should-use-track-elements-to-provide-captions", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
   return a.querySelectorAll("video")
 }, test:function(a) {
   return!a.querySelectorAll("track[kind=captions]").length
@@ -1534,12 +1534,12 @@ axs.AuditRule.specs.badAriaAttributeValue = {name:"badAriaAttributeValue", headi
   }
   return!1
 }, code:"AX_ARIA_04"};
-axs.AuditRule.specs.badAriaRole = {name:"badAriaRole", heading:"Elements with ARIA roles must use a valid, non-abstract ARIA role", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_ARIA_01:_Elements_with_ARIA_roles_must_use_a_valid,_non-abstr", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
+axs.AuditRule.specs.badAriaRole = {name:"badAriaRole", heading:"Elements with ARIA roles must use a valid, non-abstract ARIA role", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_01--elements-with-aria-roles-must-use-a-valid-non-abstract-aria-role", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
   return a.querySelectorAll("[role]")
 }, test:function(a) {
   return!axs.utils.getRoles(a).valid
 }, code:"AX_ARIA_01"};
-axs.AuditRule.specs.imagesWithoutAltText = {name:"imagesWithoutAltText", heading:"Images should have an alt attribute", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_TEXT_02:_Images_should_have_an_alt_attribute,_unless_they_hav", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+axs.AuditRule.specs.imagesWithoutAltText = {name:"imagesWithoutAltText", heading:"Images should have an alt attribute", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_02--images-should-have-an-alt-attribute-unless-they-have-an-aria-role-of-presentation", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
   a = a.querySelectorAll("img");
   for(var b = [], c = 0;c < a.length;c++) {
     var d = a[c];
@@ -1549,7 +1549,7 @@ axs.AuditRule.specs.imagesWithoutAltText = {name:"imagesWithoutAltText", heading
 }, test:function(a) {
   return!a.hasAttribute("alt") && "presentation" != a.getAttribute("role")
 }, code:"AX_TEXT_02"};
-axs.AuditRule.specs.unfocusableElementsWithOnClick = {name:"unfocusableElementsWithOnClick", heading:"Elements with onclick handlers must be focusable", url:"https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules#AX_FOCUS_02:_Elements_with_onclick_handlers_must_be_focusable", severity:axs.constants.Severity.WARNING, opt_requiresConsoleAPI:!0, relevantNodesSelector:function(a) {
+axs.AuditRule.specs.unfocusableElementsWithOnClick = {name:"unfocusableElementsWithOnClick", heading:"Elements with onclick handlers must be focusable", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_focus_02--elements-with-onclick-handlers-must-be-focusable", severity:axs.constants.Severity.WARNING, opt_requiresConsoleAPI:!0, relevantNodesSelector:function(a) {
   a = a.querySelectorAll("*");
   for(var b = [], c = 0;c < a.length;c++) {
     var d = a[c];
