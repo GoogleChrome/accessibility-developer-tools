@@ -20,7 +20,7 @@ goog.provide('axs.properties');
  * @const
  * @type {string}
  */
-axs.properties.TEXT_CONTENT_XPATH = 'text()[normalize-space(.)!=""]/parent::*[name()!="script"]'
+axs.properties.TEXT_CONTENT_XPATH = './/text()[normalize-space(.)!=""]/parent::*[name()!="script"]'
 
 /**
  * @param {Element} element
@@ -40,8 +40,9 @@ axs.properties.getFocusProperties = function(element) {
  */
 axs.properties.getColorProperties = function(element) {
     var colorProperties = {};
-    colorProperties['contrastRatio'] = axs.properties.getContrastRatioProperties(element);
-    if (!colorProperties['contrastRatio'])  // FIXME this is awful
+    colorProperties['contrastRatio'] =
+        axs.properties.getContrastRatioProperties(element);
+    if (Object.keys(colorProperties).length == 0)
         return null;
     return colorProperties;
 };
@@ -472,7 +473,6 @@ axs.properties.getTextProperties = function(node) {
  * @return {Object}
  */
 axs.properties.getAriaProperties = function(element) {
-    console.log('getAriaProperties', element);
     var ariaProperties = {};
     var statesAndProperties = axs.properties.getGlobalAriaProperties(element);
 
@@ -484,7 +484,6 @@ axs.properties.getAriaProperties = function(element) {
                 axs.utils.getAriaPropertyValue(attributeName, propertyValue, element);
         }
     }
-    console.log('statesAndProperties', statesAndProperties);
     if (Object.keys(statesAndProperties).length > 0)
         ariaProperties['properties'] = axs.utils.values(statesAndProperties);
 

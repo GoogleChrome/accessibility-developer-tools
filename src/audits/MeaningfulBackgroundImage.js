@@ -41,7 +41,8 @@ axs.AuditRule.specs.elementsWithMeaningfulBackgroundImage = {
         }
         var style = window.getComputedStyle(el, null);
         var bgImage = style.backgroundImage;
-        if (!bgImage || (bgImage === 'undefined' || bgImage === 'none')) {
+        if (!bgImage || bgImage === 'undefined' || bgImage === 'none' ||
+            bgImage.indexOf('url') != 0) {
           return false;
         }
         var width = parseInt(style.width, 10);

@@ -289,9 +289,6 @@ axs.utils.getBgColor = function(style, element) {
     if (!bgColor)
         return null;
 
-    if (style.backgroundImage && style.backgroundImage != 'none')
-        return null; // too hard
-
     if (style.opacity < 1)
         bgColor.alpha = bgColor.alpha * style.opacity
 
@@ -318,10 +315,6 @@ axs.utils.getParentBgColor = function(element) {
         var computedStyle = window.getComputedStyle(parent, null);
         if (!computedStyle)
             continue;
-
-        if (computedStyle.backgroundImage &&
-            computedStyle.backgroundImage != 'none')
-            return null; // too hard
 
         var parentBg = axs.utils.parseColor(computedStyle.backgroundColor);
         if (!parentBg)
