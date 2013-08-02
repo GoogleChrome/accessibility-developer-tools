@@ -41,3 +41,17 @@ test('Button element with empty inner text does need a label', function() {
     equal(rule.run([], fixture).result,
           axs.constants.AuditResult.FAIL);
 });
+
+test('Input type button with value needs no label', function() {
+    // Setup fixture
+    var fixture = document.getElementById('qunit-fixture');
+
+    var input = document.createElement('input');
+    input.type = 'button';
+    input.value = 'Click me!';
+    fixture.appendChild(input);
+
+    var rule = axs.AuditRules.getRule('controlsWithoutLabel');
+    equal(rule.run([], fixture).result,
+          axs.constants.AuditResult.PASS);
+});
