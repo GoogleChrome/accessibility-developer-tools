@@ -37,8 +37,8 @@ axs.AuditRule.specs.controlsWithoutLabel = {
         if (axs.utils.isElementOrAncestorHidden(control))
             return false;
         if (control.tagName.toLowerCase() == 'input' &&
-                control.type == 'button' &&
-                control.value.length) {
+            control.type == 'button' &&
+            control.value.length) {
             return false;
         }
         if (control.tagName.toLowerCase() == 'button') {
