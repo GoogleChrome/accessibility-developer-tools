@@ -533,7 +533,7 @@ axs.utils.overlappingElement = function(a) {
     return null
   }
   var c = a.getBoundingClientRect(), c = document.elementFromPoint((c.left + c.right) / 2, (c.top + c.bottom) / 2);
-  return null == c || c == a || b(c, a) ? null : c
+  return null == c || c == a || b(c, a) || b(a, c) ? null : c
 };
 axs.utils.elementIsHtmlControl = function(a) {
   var b = a.ownerDocument.defaultView;
@@ -852,6 +852,8 @@ axs.utils.getAriaPropertyValue = function(a, b, c) {
       }
       return d;
     case "integer":
+    ;
+    case "decimal":
       c = axs.utils.isValidNumber(b);
       if(!c.valid) {
         return d.valid = !1, d.reason = c.reason, d
@@ -899,7 +901,11 @@ axs.utils.isValidIDRefValue = function(a, b) {
   return 0 == a.length ? {valid:!0, idref:a} : b.ownerDocument.getElementById(a) ? {valid:!0, idref:a} : {valid:!1, idref:a, reason:'No element with ID "' + a + '"'}
 };
 axs.utils.isValidNumber = function(a) {
-  var b = JSON.parse(a);
+  try {
+    var b = JSON.parse(a)
+  }catch(c) {
+    return{valid:!1, value:a, reason:'"' + a + '" is not a number'}
+  }
   return"number" != typeof b ? {valid:!1, value:a, reason:'"' + a + '" is not a number'} : {valid:!0, value:b}
 };
 axs.utils.isElementImplicitlyFocusable = function(a) {

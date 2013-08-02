@@ -286,9 +286,8 @@ axs.utils.isLargeFont = function(style) {
 axs.utils.getBgColor = function(style, element) {
     var bgColorString = style.backgroundColor;
     var bgColor = axs.utils.parseColor(bgColorString);
-    if (!bgColor) {
+    if (!bgColor)
         return null;
-    }
 
     if (style.opacity < 1)
         bgColor.alpha = bgColor.alpha * style.opacity
@@ -978,6 +977,7 @@ axs.utils.getAriaPropertyValue = function(propertyName, value, element) {
         }
         return result;
     case "integer":
+    case "decimal":
         var validNumber = axs.utils.isValidNumber(value);
         if (!validNumber.valid) {
             result.valid = false;
@@ -1127,11 +1127,18 @@ axs.utils.isValidIDRefValue = function(value, element) {
  * @return {!Object}
  */
 axs.utils.isValidNumber = function(value) {
-    var parsedValue = JSON.parse(value);
-    if (typeof(parsedValue) != 'number')
+    try {
+        var parsedValue = JSON.parse(value);
+    } catch (ex) {
         return { 'valid': false,
                  'value': value,
                  'reason': '"' + value + '" is not a number' };
+    }
+    if (typeof(parsedValue) != 'number') {
+        return { 'valid': false,
+                 'value': value,
+                 'reason': '"' + value + '" is not a number' };
+    }
     return { 'valid': true, 'value': parsedValue };
 };
 
