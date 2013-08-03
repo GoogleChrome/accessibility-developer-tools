@@ -125,3 +125,10 @@ You can set a `scope` on the `AuditConfiguration` object like this:
     var configuration = new axs.AuditConfiguration();
     configuration.scope = document.querySelector('main');  // or however you wish to choose your scope element
     axs.Audit.run(configuration);
+
+## Contributing
+Once you've cloned the project, you'll need to add the Closure deoendencies:
+    $ cd /path/to/accessibility-developer-tools
+    $ git submodule update --init
+    $ cd lib/closure-compiler
+    $ ant jar
