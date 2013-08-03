@@ -126,9 +126,11 @@ You can set a `scope` on the `AuditConfiguration` object like this:
     configuration.scope = document.querySelector('main');  // or however you wish to choose your scope element
     axs.Audit.run(configuration);
 
-## Contributing
-Once you've cloned the project, you'll need to add the Closure deoendencies:
+## Developer Notes
+Once you've cloned the project, you'll need to add the Closure dependencies:
     $ cd /path/to/accessibility-developer-tools
     $ git submodule update --init
-    $ cd lib/closure-compiler
-    $ ant jar
+    $ cd lib/closure-compiler && ant && cd -
+
+Then run `make` in the project root to generate axs_testing.js:
+    $ make
