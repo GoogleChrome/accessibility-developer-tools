@@ -1,7 +1,7 @@
 AUDIT_RULES = $(shell find ./src/audits -name "*.js" | sed -e "s/^/--js /g")
 EXTERNS = ./src/js/externs/externs.js
 
-CLOSURE_JAR = ~/src/closure/compiler.jar
+CLOSURE_JAR = ./lib/closure-compiler/build/compiler.jar
 
 LIBRARY_CLOSURE_COMMAND = java -jar $(CLOSURE_JAR) --language_in ECMASCRIPT5 \
 --formatting PRETTY_PRINT --summary_detail_level 3 --compilation_level SIMPLE_OPTIMIZATIONS \
