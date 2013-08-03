@@ -1,4 +1,5 @@
 extension/generated_accessibility.js
+gen/*
 key.pem
 extension/Handlebar.js
 upload.py
