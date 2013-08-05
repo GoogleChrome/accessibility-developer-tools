@@ -40,8 +40,10 @@ axs.properties.getFocusProperties = function(element) {
  */
 axs.properties.getColorProperties = function(element) {
     var colorProperties = {};
-    colorProperties['contrastRatio'] =
+    var contrastRatioProperties =
         axs.properties.getContrastRatioProperties(element);
+    if (contrastRatioProperties)
+        colorProperties['contrastRatio'] = contrastRatioProperties;
     if (Object.keys(colorProperties).length == 0)
         return null;
     return colorProperties;
@@ -57,8 +59,17 @@ axs.properties.getContrastRatioProperties = function(element) {
                                             null,
                                             XPathResult.ANY_TYPE,
                                             null);
-    var resultElement = selectorResults.iterateNext();
-    if (!resultElement || resultElement != element)
+    var foundDirectTextDescendant = false;
+    for (var resultElement = selectorResults.iterateNext();
+         resultElement != null;
+         resultElement = selectorResults.iterateNext()) {
+        if (resultElement !== element)
+            continue;
+
+        foundDirectTextDescendant = true;
+        break;
+    }
+    if (!foundDirectTextDescendant)
         return null;
 
     var contrastRatioProperties = {};
