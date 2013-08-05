@@ -36,12 +36,12 @@ Work is underway to include the library in WebDriver and other automated testing
 Once you have included `axs_testing.js`, you can call call `axs.Audit.run()`. This returns an object in the following form:
 
     {
-      /** @type {axs.constants.AuditResult} */ 
+      /** @type {axs.constants.AuditResult} */
       result,  // one of PASS, FAIL or NA
-    
-      /** @type {Array.<Element>} */ 
+
+      /** @type {Array.<Element>} */
       elements,  // The elements which the rule fails on, if result == axs.constants.AuditResult.FAIL
-    
+
       /** @type {axs.AuditRule} */
       rule  // The rule which this result is for.
     }
@@ -61,7 +61,7 @@ The static, global `axs.Audit.createReport(results, opt_url)` may be used to cre
 
     *** Begin accessibility audit results ***
     An accessibility audit found 4 errors and 4 warnings on this page.
-    For more information, please see https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules
+    For more information, please see https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules
 
     Error: badAriaAttributeValue (AX_ARIA_04) failed on the following elements (1 - 3 of 3):
     DIV:nth-of-type(3) > INPUT
@@ -93,7 +93,7 @@ The static, global `axs.Audit.createReport(results, opt_url)` may be used to cre
     Warning: nonExistentAriaLabelledbyElement (AX_ARIA_02) failed on the following elements (1 - 2 of 2):
     DIV:nth-of-type(3) > INPUT
     DIV:nth-of-type(5) > INPUT
-    *** End accessibility audit results *** 
+    *** End accessibility audit results ***
 
 Each rule will have at most five elements listed as failures, in the form of a unique query selector for each element.
 
