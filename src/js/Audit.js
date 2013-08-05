@@ -189,9 +189,7 @@ goog.exportSymbol('axs.Audit.auditResults', axs.Audit.auditResults);
 /**
  * Create a report based on the results of an Audit.
  * @param {Array.<Object>} results The results returned from axs.Audit.run();
- * @param {?string} opt_url A URL to visit for more information. If not
- *     provided, this will default to
- *     https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules.
+ * @param {?string} opt_url A URL to visit for more information.
  * @return {string} A report of the audit results.
  */
 axs.Audit.createReport = function(results, opt_url) {
