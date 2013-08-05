@@ -34,7 +34,7 @@ axs.AuditRule.specs.elementsWithMeaningfulBackgroundImage = {
         return relevantNodes;
     },
     heading: 'Meaningful images should not be used in element backgrounds',
-    url: 'https://code.google.com/p/accessibility-developer-tools/wiki/AuditRules?ts=1368336558&updated=AuditRules#AX_IMAGE_01:_Meaningful_images_should_not_be_used_in_element_bac',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_image_01--meaningful-images-should-not-be-used-in-element-backgrounds',
     test: function(el) {
         if (el.textContent && el.textContent.length > 0) {
           return false;
