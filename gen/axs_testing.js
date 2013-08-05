@@ -526,15 +526,15 @@ axs.utils.elementIsOutsideScrollArea = function(a) {
   var b = document.body.scrollWidth, c = document.body.scrollTop, d = document.body.scrollLeft;
   return a.top >= document.body.scrollHeight || a.bottom <= -c || a.left >= b || a.right <= -d ? !0 : !1
 };
+axs.utils.isAncestor = function(a, b) {
+  return null == b ? !1 : b === a ? !0 : axs.utils.isAncestor(a, b.parentNode)
+};
 axs.utils.overlappingElement = function(a) {
-  function b(a, c) {
-    return null == c ? !1 : c === a ? !0 : b(a, c.parentNode)
-  }
   if(axs.utils.elementHasZeroArea(a)) {
     return null
   }
-  var c = a.getBoundingClientRect(), c = document.elementFromPoint((c.left + c.right) / 2, (c.top + c.bottom) / 2);
-  return null != c && c != a && !b(c, a) && !b(a, c) ? c : null
+  var b = a.getBoundingClientRect(), b = document.elementFromPoint((b.left + b.right) / 2, (b.top + b.bottom) / 2);
+  return null != b && b != a && !axs.utils.isAncestor(b, a) && !axs.utils.isAncestor(a, b) ? b : null
 };
 axs.utils.elementIsHtmlControl = function(a) {
   var b = a.ownerDocument.defaultView;
@@ -986,15 +986,22 @@ axs.properties.getFocusProperties = function(a) {
 };
 axs.properties.getColorProperties = function(a) {
   var b = {};
-  b.contrastRatio = axs.properties.getContrastRatioProperties(a);
+  (a = axs.properties.getContrastRatioProperties(a)) && (b.contrastRatio = a);
   return 0 == Object.keys(b).length ? null : b
 };
 axs.properties.getContrastRatioProperties = function(a) {
-  var b = document.evaluate(axs.properties.TEXT_CONTENT_XPATH, a, null, XPathResult.ANY_TYPE, null).iterateNext();
-  if(!b || b != a) {
+  for(var b = document.evaluate(axs.properties.TEXT_CONTENT_XPATH, a, null, XPathResult.ANY_TYPE, null), c = !1, d = b.iterateNext();null != d;d = b.iterateNext()) {
+    if(d === a) {
+      c = !0;
+      break
+    }
+  }
+  if(!c) {
     return null
   }
-  var b = {}, c = window.getComputedStyle(a, null), d = axs.utils.getBgColor(c, a);
+  b = {};
+  c = window.getComputedStyle(a, null);
+  d = axs.utils.getBgColor(c, a);
   if(!d) {
     return null
   }

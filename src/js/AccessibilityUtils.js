@@ -141,6 +141,22 @@ axs.utils.elementIsOutsideScrollArea = function(element) {
     return false;
 };
 
+
+/**
+ * @param {Node} ancestor A potential ancestor of |node|.
+ * @param {Node} node
+ * @return {boolean} true if |ancestor| is an ancestor of |node| (including
+ *     |ancestor| === |node|).
+ */
+axs.utils.isAncestor = function(ancestor, node) {
+    if (node == null)
+        return false;
+    if (node === ancestor)
+        return true;
+
+    return axs.utils.isAncestor(ancestor, node.parentNode);
+}
+
 /**
  * @param {Element} element
  * @return {?Element}
@@ -154,17 +170,9 @@ axs.utils.overlappingElement = function(element) {
     var center_y = (rect.top + rect.bottom) / 2;
     var element_at_point = document.elementFromPoint(center_x, center_y);
 
-    function isAncestor(ancestor, node) {
-        if (node == null)
-            return false;
-        if (node === ancestor)
-            return true;
-
-        return isAncestor(ancestor, node.parentNode);
-    }
-
     if (element_at_point != null && element_at_point != element &&
-        !isAncestor(element_at_point, element) && !isAncestor(element, element_at_point)) {
+        !axs.utils.isAncestor(element_at_point, element) &&
+        !axs.utils.isAncestor(element, element_at_point)) {
         return element_at_point;
     }
 
