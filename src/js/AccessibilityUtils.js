@@ -141,6 +141,22 @@ axs.utils.elementIsOutsideScrollArea = function(element) {
     return false;
 };
 
+
+/**
+ * @param {Node} ancestor A potential ancestor of |node|.
+ * @param {Node} node
+ * @return {boolean} true if |ancestor| is an ancestor of |node| (including
+ *     |ancestor| === |node|).
+ */
+axs.utils.isAncestor = function(ancestor, node) {
+    if (node == null)
+        return false;
+    if (node === ancestor)
+        return true;
+
+    return axs.utils.isAncestor(ancestor, node.parentNode);
+}
+
 /**
  * @param {Element} element
  * @return {?Element}
@@ -154,17 +170,9 @@ axs.utils.overlappingElement = function(element) {
     var center_y = (rect.top + rect.bottom) / 2;
     var element_at_point = document.elementFromPoint(center_x, center_y);
 
-    function isAncestor(ancestor, node) {
-        if (node == null)
-            return false;
-        if (node === ancestor)
-            return true;
-
-        return isAncestor(ancestor, node.parentNode);
-    }
-
     if (element_at_point != null && element_at_point != element &&
-        !isAncestor(element_at_point, element)) {
+        !axs.utils.isAncestor(element_at_point, element) &&
+        !axs.utils.isAncestor(element, element_at_point)) {
         return element_at_point;
     }
 
@@ -977,6 +985,7 @@ axs.utils.getAriaPropertyValue = function(propertyName, value, element) {
         }
         return result;
     case "integer":
+    case "decimal":
         var validNumber = axs.utils.isValidNumber(value);
         if (!validNumber.valid) {
             result.valid = false;
@@ -1126,11 +1135,18 @@ axs.utils.isValidIDRefValue = function(value, element) {
  * @return {!Object}
  */
 axs.utils.isValidNumber = function(value) {
-    var parsedValue = JSON.parse(value);
-    if (typeof(parsedValue) != 'number')
+    try {
+        var parsedValue = JSON.parse(value);
+    } catch (ex) {
         return { 'valid': false,
                  'value': value,
                  'reason': '"' + value + '" is not a number' };
+    }
+    if (typeof(parsedValue) != 'number') {
+        return { 'valid': false,
+                 'value': value,
+                 'reason': '"' + value + '" is not a number' };
+    }
     return { 'valid': true, 'value': parsedValue };
 };
 
