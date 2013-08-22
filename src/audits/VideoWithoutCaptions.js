@@ -23,8 +23,8 @@ axs.AuditRule.specs.videoWithoutCaptions = {
     heading: 'Video elements should use <track> elements to provide captions',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_video_01--video-elements-should-use-track-elements-to-provide-captions',
     severity: axs.constants.Severity.WARNING,
-    relevantNodesSelector: function(scope) {
-        return scope.querySelectorAll('video');
+    relevantElementMatcher: function(element) {
+        return axs.browserUtils.matchSelector(element, 'video');
     },
     test: function(video) {
         var captions = video.querySelectorAll('track[kind=captions]');

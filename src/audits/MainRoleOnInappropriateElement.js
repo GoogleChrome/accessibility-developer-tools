@@ -25,13 +25,13 @@ axs.AuditRule.specs.mainRoleOnInappropriateElement = {
     heading: 'role=main should only appear on significant elements',
     url: '',
     severity: axs.constants.Severity.WARNING,
-    relevantNodesSelector: function(scope) {
-        return scope.querySelectorAll('[role~=main]');
+    relevantElementMatcher: function(element) {
+        return axs.browserUtils.matchSelector(element, '[role~=main]');
     },
     test: function(element) {
         if (axs.utils.isInlineElement(element))
             return true;
-        var computedTextContent = axs.properties.getTextFromDescendantContent(element);
+        var computedTextContent = axs.properties.findTextAlternatives(element, {});
         if (!computedTextContent || computedTextContent.length < 50)
             return true;
 
