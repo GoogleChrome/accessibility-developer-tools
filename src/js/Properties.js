@@ -255,8 +255,17 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
 
     // 2C. Otherwise, if the attributes checked in rules A and B didn't provide results, text is
     // collected from descendant content if the current element's role allows "Name From: contents."
+    var hasRole = element.hasAttribute('role');
+    var canGetNameFromContents = true;
+    if (hasRole) {
+        var roleName = element.getAttribute('role');
+        // if element has a role, check that it allows "Name From: contents"
+        var role = axs.constants.ARIA_ROLES[roleName];
+        if (role && (!role.namefrom || role.namefrom.indexOf('contents') < 0))
+            canGetNameFromContents = false;
+    }
     var textFromContent = axs.properties.getTextFromDescendantContent(element);
-    if (textFromContent) {
+    if (textFromContent && canGetNameFromContents) {
         var textFromContentValue = {};
         textFromContentValue.type = 'text';
         textFromContentValue.text = textFromContent;
@@ -294,15 +303,6 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
  * @return {?string}
  */
 axs.properties.getTextFromDescendantContent = function(element) {
-    var hasRole = element.hasAttribute('role');
-    if (hasRole) {
-        var roleName = element.getAttribute('role');
-        // if element has a role, check that it allows "Name From: contents"
-        var role = axs.constants.ARIA_ROLES[roleName];
-        if (role && (!role.namefrom || role.namefrom.indexOf('contents') < 0))
-            return null;
-    }
-    // Also get text from descendant contents if there is no role - e.g. p, span or div
     var children = element.childNodes;
     var childrenTextContent = [];
     for (var i = 0; i < children.length; i++) {
