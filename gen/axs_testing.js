@@ -3,9 +3,9 @@ goog.global = this;
 goog.exportPath_ = function(a, b, c) {
   a = a.split(".");
   c = c || goog.global;
-  !(a[0] in c) && c.execScript && c.execScript("var " + a[0]);
+  a[0] in c || !c.execScript || c.execScript("var " + a[0]);
   for(var d;a.length && (d = a.shift());) {
-    !a.length && void 0 !== b ? c[d] = b : c = c[d] ? c[d] : c[d] = {}
+    a.length || void 0 === b ? c = c[d] ? c[d] : c[d] = {} : c[d] = b
   }
 };
 goog.define = function(a, b) {
@@ -425,8 +425,7 @@ axs.constants.addAllPropertiesToSet_ = function(a, b, c) {
     }
   }
   if(a.parent) {
-    a = a.parent;
-    for(d = 0;d < a.length;d++) {
+    for(a = a.parent, d = 0;d < a.length;d++) {
       axs.constants.addAllPropertiesToSet_(axs.constants.ARIA_ROLES[a[d]], b, c)
     }
   }
@@ -519,7 +518,7 @@ axs.utils.elementIsTransparent = function(a) {
 axs.utils.elementHasZeroArea = function(a) {
   a = a.getBoundingClientRect();
   var b = a.top - a.bottom;
-  return!(a.right - a.left) || !b ? !0 : !1
+  return a.right - a.left && b ? !1 : !0
 };
 axs.utils.elementIsOutsideScrollArea = function(a) {
   a = a.getBoundingClientRect();
@@ -534,19 +533,14 @@ axs.utils.overlappingElement = function(a) {
     return null
   }
   var b = a.getBoundingClientRect(), b = document.elementFromPoint((b.left + b.right) / 2, (b.top + b.bottom) / 2);
-  return null != b && b != a && !axs.utils.isAncestor(b, a) && !axs.utils.isAncestor(a, b) ? b : null
+  return null == b || b == a || axs.utils.isAncestor(b, a) || axs.utils.isAncestor(a, b) ? null : b
 };
 axs.utils.elementIsHtmlControl = function(a) {
   var b = a.ownerDocument.defaultView;
   return a instanceof b.HTMLButtonElement || a instanceof b.HTMLInputElement || a instanceof b.HTMLSelectElement || a instanceof b.HTMLTextAreaElement ? !0 : !1
 };
 axs.utils.elementIsAriaWidget = function(a) {
-  if(a.hasAttribute("role") && (a = a.getAttribute("role"))) {
-    if((a = axs.constants.ARIA_ROLES[a]) && "widget" in a.allParentRolesSet) {
-      return!0
-    }
-  }
-  return!1
+  return a.hasAttribute("role") && (a = a.getAttribute("role")) && (a = axs.constants.ARIA_ROLES[a]) && "widget" in a.allParentRolesSet ? !0 : !1
 };
 axs.utils.elementIsVisible = function(a) {
   if(axs.utils.elementIsTransparent(a) || axs.utils.elementHasZeroArea(a) || axs.utils.elementIsOutsideScrollArea(a)) {
@@ -762,7 +756,7 @@ axs.utils.getContrastRatioForElementWithComputedStyle = function(a, b) {
     return null
   }
   var d = axs.utils.getFgColor(a, b, c);
-  return!d ? null : axs.utils.calculateContrastRatio(d, c)
+  return d ? axs.utils.calculateContrastRatio(d, c) : null
 };
 axs.utils.isNativeTextElement = function(a) {
   var b = a.tagName.toLowerCase();
@@ -893,7 +887,7 @@ axs.utils.isValidTokenValue = function(a, b) {
   return axs.utils.isPossibleValue(b, axs.constants.ARIA_PROPERTIES[c].valuesSet, a)
 };
 axs.utils.isPossibleValue = function(a, b, c) {
-  return!b[a] ? {valid:!1, value:a, reason:'"' + a + '" is not a valid value for ' + c, possibleValues:Object.keys(b)} : {valid:!0, value:a}
+  return b[a] ? {valid:!0, value:a} : {valid:!1, value:a, reason:'"' + a + '" is not a valid value for ' + c, possibleValues:Object.keys(b)}
 };
 axs.utils.isValidBoolean = function(a) {
   try {
@@ -904,7 +898,7 @@ axs.utils.isValidBoolean = function(a) {
   return"boolean" != typeof b ? {valid:!1, value:a, reason:'"' + a + '" is not a true/false value'} : {valid:!0, value:b}
 };
 axs.utils.isValidIDRefValue = function(a, b) {
-  return 0 == a.length ? {valid:!0, idref:a} : !b.ownerDocument.getElementById(a) ? {valid:!1, idref:a, reason:'No element with ID "' + a + '"'} : {valid:!0, idref:a}
+  return 0 == a.length ? {valid:!0, idref:a} : b.ownerDocument.getElementById(a) ? {valid:!0, idref:a} : {valid:!1, idref:a, reason:'No element with ID "' + a + '"'}
 };
 axs.utils.isValidNumber = function(a) {
   try {
@@ -1032,18 +1026,10 @@ axs.properties.findTextAlternatives = function(a, b, c) {
     var e = {type:"text"};
     e.text = c.getAttribute("aria-label");
     e.lastWord = axs.properties.getLastWord(e.text);
-    if(a) {
-      e.unused = !0
-    }else {
-      if(!d || !axs.utils.elementIsHtmlControl(c)) {
-        a = e.text
-      }
-    }
+    a ? e.unused = !0 : d && axs.utils.elementIsHtmlControl(c) || (a = e.text);
     b.ariaLabel = e
   }
-  if(!c.hasAttribute("role") || "presentation" != c.getAttribute("role")) {
-    a = axs.properties.getTextFromHostLangaugeAttributes(c, b, a)
-  }
+  c.hasAttribute("role") && "presentation" == c.getAttribute("role") || (a = axs.properties.getTextFromHostLangaugeAttributes(c, b, a));
   if(d && axs.utils.elementIsHtmlControl(c)) {
     e = c.ownerDocument.defaultView;
     if(c instanceof e.HTMLInputElement) {
@@ -1077,19 +1063,13 @@ axs.properties.findTextAlternatives = function(a, b, c) {
     }
     b.controlValue && (f = b.controlValue, a ? f.unused = !0 : a = f.text)
   }
-  if(d = axs.properties.getTextFromDescendantContent(c)) {
-    f = {type:"text"}, f.text = d, f.lastWord = axs.properties.getLastWord(f.text), a ? f.unused = !0 : a = d, b.content = f
-  }
+  f = !0;
+  c.hasAttribute("role") && (d = c.getAttribute("role"), (d = axs.constants.ARIA_ROLES[d]) && (!d.namefrom || 0 > d.namefrom.indexOf("contents")) && (f = !1));
+  (d = axs.properties.getTextFromDescendantContent(c)) && f && (f = {type:"text"}, f.text = d, f.lastWord = axs.properties.getLastWord(f.text), a ? f.unused = !0 : a = d, b.content = f);
   c.hasAttribute("title") && (d = {type:"string", valid:!0}, d.text = c.getAttribute("title"), d.lastWord = axs.properties.getLastWord(d.lastWord), a ? d.unused = !0 : a = d.text, b.title = d);
   return 0 == Object.keys(b).length && null == a ? null : a
 };
 axs.properties.getTextFromDescendantContent = function(a) {
-  if(a.hasAttribute("role")) {
-    var b = a.getAttribute("role");
-    if((b = axs.constants.ARIA_ROLES[b]) && (!b.namefrom || 0 > b.namefrom.indexOf("contents"))) {
-      return null
-    }
-  }
   a = a.childNodes;
   for(var b = [], c = 0;c < a.length;c++) {
     var d = axs.properties.findTextAlternatives(a[c], {}, !0);
@@ -1429,99 +1409,11 @@ axs.Audit.accessibilityErrorMessage = function(a) {
   return b
 };
 goog.exportSymbol("axs.Audit.accessibilityErrorMessage", axs.Audit.accessibilityErrorMessage);
-axs.AuditRule.specs.mainRoleOnInappropriateElement = {name:"mainRoleOnInappropriateElement", heading:"role=main should only appear on significant elements", url:"", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
-  return a.querySelectorAll("[role~=main]")
-}, test:function(a) {
-  return axs.utils.isInlineElement(a) || 50 > axs.properties.findTextAlternatives(a, {}).length ? !0 : !1
-}, code:"AX_ARIA_04"};
 axs.AuditRule.specs.audioWithoutControls = {name:"audioWithoutControls", heading:"Audio elements should have controls", url:"", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
   return a.querySelectorAll("audio[autoplay]")
 }, test:function(a) {
   return!a.querySelectorAll("[controls]").length && 3 < a.duration
 }, code:"AX_AUDIO_01"};
-axs.AuditRule.specs.pageWithoutTitle = {name:"pageWithoutTitle", heading:"The web page should have a title that describes topic or purpose", url:"", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
-  return a
-}, test:function(a) {
-  a = a.querySelector("head");
-  if(!a) {
-    return!0
-  }
-  a = a.querySelector("title");
-  return!a.length || !a[0].textContent
-}, code:"AX_TITLE_01"};
-axs.AuditRule.specs.lowContrastElements = {name:"lowContrastElements", heading:"Text elements should have a reasonable contrast ratio", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_color_01--text-elements-should-have-a-reasonable-contrast-ratio", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
-  return document.evaluate('.//text()[normalize-space(.)!=""]/parent::*[name()!="script"]', a, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
-}, test:function(a) {
-  var b = window.getComputedStyle(a, null);
-  return(a = axs.utils.getContrastRatioForElementWithComputedStyle(b, a)) && axs.utils.isLowContrast(a, b)
-}, code:"AX_COLOR_01"};
-axs.AuditRule.specs.nonExistentAriaLabelledbyElement = {name:"nonExistentAriaLabelledbyElement", heading:"aria-labelledby attributes should refer to an element which exists in the DOM", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_02--aria-labelledby-attributes-should-refer-to-an-element-which-exists-in-the-dom", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
-  return a.querySelectorAll("[aria-labelledby]")
-}, test:function(a) {
-  a = a.getAttribute("aria-labelledby").split(/\s+/);
-  for(var b = 0;b < a.length;b++) {
-    if(!document.getElementById(a[b])) {
-      return!0
-    }
-  }
-  return!1
-}, code:"AX_ARIA_02"};
-axs.AuditRule.specs.requiredAriaAttributeMissing = {name:"requiredAriaAttributeMissing", heading:"Elements with ARIA roles must have all required attributes for that role", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_03--elements-with-aria-roles-must-have-all-required-attributes-for-that-role", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
-  return a.querySelectorAll("[role]")
-}, test:function(a) {
-  var b = axs.utils.getRoles(a);
-  if(!b.valid) {
-    return!1
-  }
-  for(var c = 0;c < b.roles.length;c++) {
-    var d = b.roles[c].details.requiredPropertiesSet, e;
-    for(e in d) {
-      if(d = e.replace(/^aria-/, ""), !("defaultValue" in axs.constants.ARIA_PROPERTIES[d]) && !a.hasAttribute(e)) {
-        return!0
-      }
-    }
-  }
-}, code:"AX_ARIA_03"};
-axs.AuditRule.specs.focusableElementNotVisibleAndNotAriaHidden = {name:"focusableElementNotVisibleAndNotAriaHidden", heading:"These elements are focusable but either invisible or obscured by another element", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_focus_01--these-elements-are-focusable-but-either-invisible-or-obscured-by-another-element", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
-  return a.querySelectorAll(axs.utils.FOCUSABLE_ELEMENTS_SELECTOR)
-}, test:function(a) {
-  return axs.utils.isElementOrAncestorHidden(a) ? !1 : !axs.utils.elementIsVisible(a)
-}, code:"AX_FOCUS_01"};
-axs.AuditRule.specs.elementsWithMeaningfulBackgroundImage = {name:"elementsWithMeaningfulBackgroundImage", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
-  a = a.querySelectorAll("*");
-  for(var b = [], c = 0;c < a.length;c++) {
-    var d = a[c];
-    axs.utils.isElementOrAncestorHidden(d) || b.push(d)
-  }
-  return b
-}, heading:"Meaningful images should not be used in element backgrounds", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_image_01--meaningful-images-should-not-be-used-in-element-backgrounds", test:function(a) {
-  if(a.textContent && 0 < a.textContent.length) {
-    return!1
-  }
-  a = window.getComputedStyle(a, null);
-  var b = a.backgroundImage;
-  if(!b || "undefined" === b || "none" === b || 0 != b.indexOf("url")) {
-    return!1
-  }
-  b = parseInt(a.width, 10);
-  a = parseInt(a.height, 10);
-  return 150 > b && 150 > a
-}, code:"AX_IMAGE_01"};
-axs.AuditRule.specs.linkWithUnclearPurpose = {name:"linkWithUnclearPurpose", heading:"The purpose of each link should be clear from the link text", url:"", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
-  return a.querySelectorAll("a")
-}, test:function(a) {
-  return/^\s*click\s*here\s*[^a-z]?$/i.test(a.textContent)
-}, code:"AX_TITLE_01"};
-axs.AuditRule.specs.controlsWithoutLabel = {name:"controlsWithoutLabel", heading:"Controls and media elements should have labels", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_01--controls-and-media-elements-should-have-labels", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
-  return a.querySelectorAll('input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])')
-}, test:function(a) {
-  return axs.utils.isElementOrAncestorHidden(a) || "input" == a.tagName.toLowerCase() && "button" == a.type && a.value.length || "button" == a.tagName.toLowerCase() && a.textContent.replace(/^\s+|\s+$/g, "").length ? !1 : !axs.utils.hasLabel(a) ? !0 : !1
-}, code:"AX_TEXT_01", ruleName:"Controls and media elements should have labels"};
-axs.AuditRule.specs.videoWithoutCaptions = {name:"videoWithoutCaptions", heading:"Video elements should use <track> elements to provide captions", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_video_01--video-elements-should-use-track-elements-to-provide-captions", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
-  return a.querySelectorAll("video")
-}, test:function(a) {
-  return!a.querySelectorAll("track[kind=captions]").length
-}, code:"AX_VIDEO_01"};
 axs.AuditRule.specs.badAriaAttributeValue = {name:"badAriaAttributeValue", heading:"ARIA state and property values must be valid", url:"", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
   var b = "", c;
   for(c in axs.constants.ARIA_PROPERTIES) {
@@ -1546,6 +1438,16 @@ axs.AuditRule.specs.badAriaRole = {name:"badAriaRole", heading:"Elements with AR
 }, test:function(a) {
   return!axs.utils.getRoles(a).valid
 }, code:"AX_ARIA_01"};
+axs.AuditRule.specs.controlsWithoutLabel = {name:"controlsWithoutLabel", heading:"Controls and media elements should have labels", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_01--controls-and-media-elements-should-have-labels", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
+  return a.querySelectorAll('input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])')
+}, test:function(a) {
+  return axs.utils.isElementOrAncestorHidden(a) || "input" == a.tagName.toLowerCase() && "button" == a.type && a.value.length || "button" == a.tagName.toLowerCase() && a.textContent.replace(/^\s+|\s+$/g, "").length ? !1 : axs.utils.hasLabel(a) ? !1 : !0
+}, code:"AX_TEXT_01", ruleName:"Controls and media elements should have labels"};
+axs.AuditRule.specs.focusableElementNotVisibleAndNotAriaHidden = {name:"focusableElementNotVisibleAndNotAriaHidden", heading:"These elements are focusable but either invisible or obscured by another element", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_focus_01--these-elements-are-focusable-but-either-invisible-or-obscured-by-another-element", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+  return a.querySelectorAll(axs.utils.FOCUSABLE_ELEMENTS_SELECTOR)
+}, test:function(a) {
+  return axs.utils.isElementOrAncestorHidden(a) ? !1 : !axs.utils.elementIsVisible(a)
+}, code:"AX_FOCUS_01"};
 axs.AuditRule.specs.imagesWithoutAltText = {name:"imagesWithoutAltText", heading:"Images should have an alt attribute", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_02--images-should-have-an-alt-attribute-unless-they-have-an-aria-role-of-presentation", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
   a = a.querySelectorAll("img");
   for(var b = [], c = 0;c < a.length;c++) {
@@ -1556,6 +1458,83 @@ axs.AuditRule.specs.imagesWithoutAltText = {name:"imagesWithoutAltText", heading
 }, test:function(a) {
   return!a.hasAttribute("alt") && "presentation" != a.getAttribute("role")
 }, code:"AX_TEXT_02"};
+axs.AuditRule.specs.linkWithUnclearPurpose = {name:"linkWithUnclearPurpose", heading:"The purpose of each link should be clear from the link text", url:"", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+  return a.querySelectorAll("a")
+}, test:function(a) {
+  return/^\s*click\s*here\s*[^a-z]?$/i.test(a.textContent)
+}, code:"AX_TITLE_01"};
+axs.AuditRule.specs.lowContrastElements = {name:"lowContrastElements", heading:"Text elements should have a reasonable contrast ratio", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_color_01--text-elements-should-have-a-reasonable-contrast-ratio", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+  return document.evaluate('.//text()[normalize-space(.)!=""]/parent::*[name()!="script"]', a, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
+}, test:function(a) {
+  var b = window.getComputedStyle(a, null);
+  return(a = axs.utils.getContrastRatioForElementWithComputedStyle(b, a)) && axs.utils.isLowContrast(a, b)
+}, code:"AX_COLOR_01"};
+axs.AuditRule.specs.mainRoleOnInappropriateElement = {name:"mainRoleOnInappropriateElement", heading:"role=main should only appear on significant elements", url:"", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+  return a.querySelectorAll("[role~=main]")
+}, test:function(a) {
+  if(axs.utils.isInlineElement(a)) {
+    return!0
+  }
+  a = axs.properties.getTextFromDescendantContent(a);
+  return!a || 50 > a.length ? !0 : !1
+}, code:"AX_ARIA_04"};
+axs.AuditRule.specs.elementsWithMeaningfulBackgroundImage = {name:"elementsWithMeaningfulBackgroundImage", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+  a = a.querySelectorAll("*");
+  for(var b = [], c = 0;c < a.length;c++) {
+    var d = a[c];
+    axs.utils.isElementOrAncestorHidden(d) || b.push(d)
+  }
+  return b
+}, heading:"Meaningful images should not be used in element backgrounds", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_image_01--meaningful-images-should-not-be-used-in-element-backgrounds", test:function(a) {
+  if(a.textContent && 0 < a.textContent.length) {
+    return!1
+  }
+  a = window.getComputedStyle(a, null);
+  var b = a.backgroundImage;
+  if(!b || "undefined" === b || "none" === b || 0 != b.indexOf("url")) {
+    return!1
+  }
+  b = parseInt(a.width, 10);
+  a = parseInt(a.height, 10);
+  return 150 > b && 150 > a
+}, code:"AX_IMAGE_01"};
+axs.AuditRule.specs.nonExistentAriaLabelledbyElement = {name:"nonExistentAriaLabelledbyElement", heading:"aria-labelledby attributes should refer to an element which exists in the DOM", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_02--aria-labelledby-attributes-should-refer-to-an-element-which-exists-in-the-dom", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+  return a.querySelectorAll("[aria-labelledby]")
+}, test:function(a) {
+  a = a.getAttribute("aria-labelledby").split(/\s+/);
+  for(var b = 0;b < a.length;b++) {
+    if(!document.getElementById(a[b])) {
+      return!0
+    }
+  }
+  return!1
+}, code:"AX_ARIA_02"};
+axs.AuditRule.specs.pageWithoutTitle = {name:"pageWithoutTitle", heading:"The web page should have a title that describes topic or purpose", url:"", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+  return a
+}, test:function(a) {
+  a = a.querySelector("head");
+  if(!a) {
+    return!0
+  }
+  a = a.querySelector("title");
+  return!a.length || !a[0].textContent
+}, code:"AX_TITLE_01"};
+axs.AuditRule.specs.requiredAriaAttributeMissing = {name:"requiredAriaAttributeMissing", heading:"Elements with ARIA roles must have all required attributes for that role", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_03--elements-with-aria-roles-must-have-all-required-attributes-for-that-role", severity:axs.constants.Severity.SEVERE, relevantNodesSelector:function(a) {
+  return a.querySelectorAll("[role]")
+}, test:function(a) {
+  var b = axs.utils.getRoles(a);
+  if(!b.valid) {
+    return!1
+  }
+  for(var c = 0;c < b.roles.length;c++) {
+    var d = b.roles[c].details.requiredPropertiesSet, e;
+    for(e in d) {
+      if(d = e.replace(/^aria-/, ""), !("defaultValue" in axs.constants.ARIA_PROPERTIES[d] || a.hasAttribute(e))) {
+        return!0
+      }
+    }
+  }
+}, code:"AX_ARIA_03"};
 axs.AuditRule.specs.unfocusableElementsWithOnClick = {name:"unfocusableElementsWithOnClick", heading:"Elements with onclick handlers must be focusable", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_focus_02--elements-with-onclick-handlers-must-be-focusable", severity:axs.constants.Severity.WARNING, opt_requiresConsoleAPI:!0, relevantNodesSelector:function(a) {
   a = a.querySelectorAll("*");
   for(var b = [], c = 0;c < a.length;c++) {
@@ -1566,4 +1545,9 @@ axs.AuditRule.specs.unfocusableElementsWithOnClick = {name:"unfocusableElementsW
 }, test:function(a) {
   return!a.hasAttribute("tabindex") && !axs.utils.isElementImplicitlyFocusable(a)
 }, code:"AX_FOCUS_02"};
+axs.AuditRule.specs.videoWithoutCaptions = {name:"videoWithoutCaptions", heading:"Video elements should use <track> elements to provide captions", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_video_01--video-elements-should-use-track-elements-to-provide-captions", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
+  return a.querySelectorAll("video")
+}, test:function(a) {
+  return!a.querySelectorAll("track[kind=captions]").length
+}, code:"AX_VIDEO_01"};
 
