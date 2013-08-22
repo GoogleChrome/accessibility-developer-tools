@@ -129,7 +129,7 @@ function handlekey(event) {
   <audio autoplay id="audioTest" src="005.ogg" type="audio/ogg; codecs=vorbis"></audio>
   <div id="ariahidden" aria-hidden="true" tabindex="0" style="height: 20px;">ARIA-hidden</div>
   <div id="notariahidden" tabindex="0">Not ARIA-hidden</div>
-  <div id="overlapping" style="position: relative; top: -40px; height: 40px; background: rgba(255, 255, 255, 0.5);">Overlapping div</div>
+  <div id="overlapping" style="font-size: 48px; position: relative; top: -40px; height: 40px; background: rgba(255, 255, 255, 0.5);">Overlapping div</div>
   <div id="aria-invalid" role="textbox" aria-invalid="flurble">Eat my shorts</div>
   <div id="menu-label-test">Using the
     <div role="menu">
@@ -141,6 +141,7 @@ function handlekey(event) {
   <div role="textbox" aria-labelledby="menu-label-test"/>
   <div role="menu list">An element with multiple ARIA roles</div>
   <div role="checkbox">Checkbox without aria-checked</div>
+  <div role="slider">Slider without aria-valuemin, aria-valuemax or aria-valuenow</div>
   <div>
     For Google,<a href="http://google.com/"> click here.</a>
   </div>

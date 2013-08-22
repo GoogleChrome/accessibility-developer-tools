@@ -24,8 +24,8 @@ axs.AuditRule.specs.badAriaRole = {
     heading: 'Elements with ARIA roles must use a valid, non-abstract ARIA role',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_01--elements-with-aria-roles-must-use-a-valid-non-abstract-aria-role',
     severity: axs.constants.Severity.SEVERE,
-    relevantNodesSelector: function(scope) {
-        return scope.querySelectorAll("[role]");
+    relevantElementMatcher: function(element) {
+        return axs.browserUtils.matchSelector(element, "[role]");
     },
     test: function(element) {
         var roles = axs.utils.getRoles(element)

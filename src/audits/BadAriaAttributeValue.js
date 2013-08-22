@@ -25,12 +25,12 @@ axs.AuditRule.specs.badAriaAttributeValue = {
     heading: 'ARIA state and property values must be valid',
     url: '',
     severity: axs.constants.Severity.SEVERE,
-    relevantNodesSelector: function(scope) {
+    relevantElementMatcher: function(element) {
         var selector = '';
         for (var property in axs.constants.ARIA_PROPERTIES)
             selector += '[aria-' + property + '],';
         selector = selector.substring(0, selector.length - 1);  // trailing comma
-        return scope.querySelectorAll(selector);
+        return axs.browserUtils.matchSelector(element, selector);
     },
     test: function(element) {
         for (var property in axs.constants.ARIA_PROPERTIES) {
