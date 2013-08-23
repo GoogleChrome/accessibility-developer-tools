@@ -14,6 +14,7 @@
 
 goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
+goog.require('axs.browserUtils');
 goog.require('axs.constants.Severity');
 goog.require('axs.utils');
 
@@ -25,8 +26,23 @@ axs.AuditRule.specs.focusableElementNotVisibleAndNotAriaHidden = {
     heading: 'These elements are focusable but either invisible or obscured by another element',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_focus_01--these-elements-are-focusable-but-either-invisible-or-obscured-by-another-element',
     severity: axs.constants.Severity.WARNING,
-    relevantNodesSelector: function(scope) {
-        return scope.querySelectorAll(axs.utils.FOCUSABLE_ELEMENTS_SELECTOR);
+    relevantElementMatcher: function(element) {
+        var isFocusable = axs.browserUtils.matchSelector(
+            element, axs.utils.FOCUSABLE_ELEMENTS_SELECTOR);
+        if (!isFocusable)
+            return false;
+        if (element.tabIndex >= 0)
+            return true;
+        // Ignore elements which have negative tabindex and an ancestor with a
+        // widget role, since they can be accessed neither with tab nor with
+        // a screen reader
+        for (var parent = element.parentElement; parent != null;
+             parent = parent.parentElement) {
+            if (axs.utils.elementIsAriaWidget(parent))
+                return false;
+        }
+        return true;
+
     },
     test: function(element) {
         if (axs.utils.isElementOrAncestorHidden(element))

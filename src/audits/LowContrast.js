@@ -15,6 +15,7 @@
 goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
+goog.require('axs.properties');
 goog.require('axs.utils');
 
 /**
@@ -25,13 +26,8 @@ axs.AuditRule.specs.lowContrastElements = {
     heading: 'Text elements should have a reasonable contrast ratio',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_color_01--text-elements-should-have-a-reasonable-contrast-ratio',
     severity: axs.constants.Severity.WARNING,
-    relevantNodesSelector: function(scope) {
-      return document.evaluate(
-          './/text()[normalize-space(.)!=""]/parent::*[name()!="script"]',
-          scope,
-          null,
-          XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-          null);
+    relevantElementMatcher: function(element) {
+        return axs.properties.hasDirectTextDescendant(element);
     },
     test: function(element) {
         var style = window.getComputedStyle(element, null);

@@ -24,8 +24,8 @@ axs.AuditRule.specs.requiredAriaAttributeMissing = {
     heading: 'Elements with ARIA roles must have all required attributes for that role',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_03--elements-with-aria-roles-must-have-all-required-attributes-for-that-role',
     severity: axs.constants.Severity.SEVERE,
-    relevantNodesSelector: function(scope) {
-        return scope.querySelectorAll('[role]');
+    relevantElementMatcher: function(element) {
+        return axs.browserUtils.matchSelector(element, '[role]');
     },
     test: function(element) {
         var roles = axs.utils.getRoles(element);

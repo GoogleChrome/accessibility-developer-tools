@@ -16,14 +16,14 @@ goog.provide('axs.browserUtils');
 
 /**
  * Use Firefox matcher when Webkit is not supported.
- * @param {Node} node
+ * @param {Element} element
  * @param {string} selector
- * @returns {Boolean}
+ * @returns {boolean}
  */
-axs.browserUtils.matchSelector = function(node, selector) {
-  if (node.webkitMatchesSelector) {
-    return node.webkitMatchesSelector(selector);
-  } else {
-    return node.mozMatchesSelector(selector);
-  }
+axs.browserUtils.matchSelector = function(element, selector) {
+    if (element.webkitMatchesSelector)
+        return element.webkitMatchesSelector(selector);
+    if (element.mozMatchesSelector)
+        return element.mozMatchesSelector(selector);
+    return false;
 }

@@ -24,8 +24,8 @@ axs.AuditRule.specs.nonExistentAriaLabelledbyElement = {
     heading: 'aria-labelledby attributes should refer to an element which exists in the DOM',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_02--aria-labelledby-attributes-should-refer-to-an-element-which-exists-in-the-dom',
     severity: axs.constants.Severity.WARNING,
-    relevantNodesSelector: function(scope) {
-        return scope.querySelectorAll('[aria-labelledby]');
+    relevantElementMatcher: function(element) {
+        return axs.browserUtils.matchSelector(element, '[aria-labelledby]');
     },
     test: function(element) {
         var labelledBy = element.getAttribute('aria-labelledby');

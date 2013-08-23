@@ -14,6 +14,7 @@
 
 goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
+goog.require('axs.browserUtils');
 goog.require('axs.constants.Severity');
 goog.require('axs.utils');
 
@@ -25,13 +26,26 @@ axs.AuditRule.specs.controlsWithoutLabel = {
     heading: 'Controls and media elements should have labels',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_01--controls-and-media-elements-should-have-labels',
     severity: axs.constants.Severity.SEVERE,
-    relevantNodesSelector: function(scope) {
+    relevantElementMatcher: function(element) {
         var controlsSelector = ['input:not([type="hidden"]):not([disabled])',
                                 'select:not([disabled])',
                                 'textarea:not([disabled])',
                                 'button:not([disabled])',
                                 'video:not([disabled])'].join(', ');
-        return scope.querySelectorAll(controlsSelector);
+        var isControl = axs.browserUtils.matchSelector(element, controlsSelector);
+        if (!isControl)
+            return false;
+        if (element.tabIndex >= 0)
+            return true;
+        // Ignore elements which have negative tabindex and an ancestor with a
+        // widget role, since they can be accessed neither with tab nor with
+        // a screen reader
+        for (var parent = element.parentElement; parent != null;
+             parent = parent.parentElement) {
+            if (axs.utils.elementIsAriaWidget(parent))
+                return false;
+        }
+        return true;
     },
     test: function(control) {
         if (axs.utils.isElementOrAncestorHidden(control))
