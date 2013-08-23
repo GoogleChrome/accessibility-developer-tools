@@ -38,7 +38,6 @@ axs.AuditRule.specs.unfocusableElementsWithOnClick = {
         if ('click' in eventListeners) {
             return true;
         }
-        if (element.tagName == "SPAN")
         return false;
     },
     test: function(element) {
