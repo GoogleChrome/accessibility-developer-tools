@@ -27,6 +27,7 @@ axs.AuditRule.specs.unfocusableElementsWithOnClick = {
     severity: axs.constants.Severity.WARNING,
     opt_requiresConsoleAPI: true,
     relevantElementMatcher: function(element) {
+        // element.ownerDocument may not be current document if it is in an iframe
         if (element instanceof element.ownerDocument.defaultView.HTMLBodyElement) {
             return false;
         }
