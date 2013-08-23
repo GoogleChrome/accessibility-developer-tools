@@ -23,8 +23,8 @@ axs.AuditRule.specs.audioWithoutControls = {
     heading: 'Audio elements should have controls',
     url: '',
     severity: axs.constants.Severity.WARNING,
-    relevantNodesSelector: function(scope) {
-        return scope.querySelectorAll('audio[autoplay]');
+    relevantElementMatcher: function(element) {
+        return axs.browserUtils.matchSelector(element, 'audio[autoplay]');
     },
     test: function(audio) {
         var controls = audio.querySelectorAll('[controls]');

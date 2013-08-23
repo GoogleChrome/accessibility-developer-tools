@@ -43,10 +43,10 @@ axs.AuditRule = function(spec) {
     /** @type {axs.constants.Severity} */
     this.severity = spec.severity;
 
-    /** @type {function(?Node): (Array.<Node>|NodeList|XPathResult)} */
-    this.relevantNodesSelector_ = spec.relevantNodesSelector;
+    /** @type {function(Element): boolean} */
+    this.relevantElementMatcher_ = spec.relevantElementMatcher;
 
-    /** @type {function(Node): boolean} */
+    /** @type {function(Element): boolean} */
     this.test_ = spec.test;
 
     /** @type {string} */
@@ -66,9 +66,8 @@ axs.AuditRule = function(spec) {
  *              heading: string,
  *              url: string,
  *              severity: axs.constants.Severity,
- *              relevantNodesSelector: function(?Node):
- *                  (Array.<Node>|NodeList|XPathResult),
- *              test: function(Node): boolean,
+ *              relevantElementMatcher: function(Element): boolean,
+ *              test: function(Element): boolean,
  *              code: string,
  *              opt_requiresConsoleAPI: boolean }} */
 axs.AuditRule.SpecWithConsoleAPI;
@@ -77,9 +76,8 @@ axs.AuditRule.SpecWithConsoleAPI;
  *              heading: string,
  *              url: string,
  *              severity: axs.constants.Severity,
- *              relevantNodesSelector: function(?Node):
- *                  (Array.<Node>|NodeList|XPathResult),
- *              test: function(Node): boolean,
+ *              relevantElementMatcher: function(Element): boolean,
+ *              test: function(Element): boolean,
  *              code: string }} */
 axs.AuditRule.SpecWithoutConsoleAPI;
 
@@ -90,7 +88,7 @@ axs.AuditRule.Spec;
  * @const
  */
 axs.AuditRule.requiredFields =
-    [ 'name', 'severity', 'relevantNodesSelector', 'test', 'code', 'heading' ];
+    [ 'name', 'severity', 'relevantElementMatcher', 'test', 'code', 'heading' ];
 
 
 /**
@@ -102,62 +100,71 @@ axs.AuditRule.requiredFields =
 axs.AuditRule.NOT_APPLICABLE = { result: axs.constants.AuditResult.NA };
 
 /**
- * Add the given node to the given array.  This is abstracted so that subclasses
- * can modify the node value as necessary.
- * @param {Array.<Node>} nodes
- * @param {Node} node
+ * Add the given element to the given array.  This is abstracted so that subclasses
+ * can modify the element value as necessary.
+ * @param {Array.<Element>} elements
+ * @param {Element} element
  */
-axs.AuditRule.prototype.addNode = function(nodes, node) {
-    nodes.push(node);
+axs.AuditRule.prototype.addElement = function(elements, element) {
+    elements.push(element);
 };
 
 /**
+ * Recursively collect elements which match |matcher| into |collection|,
+ * starting at |node|.
+ * @param {Node} node
+ * @param {function(Element): boolean} matcher
+ * @param {Array.<Element>} collection
+ */
+axs.AuditRule.collectMatchingElements = function(node, matcher, collection) {
+    if (node.nodeType == Node.ELEMENT_NODE)
+        var element = /** @type {Element} */ (node);
+
+    if (element && matcher.call(null, element))
+        collection.push(element);
+
+    var child = node.firstChild;
+    while (child != null) {
+        axs.AuditRule.collectMatchingElements(child,
+                                              matcher,
+                                              collection);
+        child = child.nextSibling;
+    }
+}
+
+/**
  * @param {Array.<string>=} opt_ignoreSelectors
- * @param {Element=} opt_scope The scope in which the node selector should run.
+ * @param {Element=} opt_scope The scope in which the element selector should run.
  *     Defaults to `document`.
- * @return {?Object.<string, (axs.constants.AuditResult|?Array.<Node>)>}
+ * @return {?Object.<string, (axs.constants.AuditResult|?Array.<Element>)>}
  */
 axs.AuditRule.prototype.run = function(opt_ignoreSelectors, opt_scope) {
     var ignoreSelectors = opt_ignoreSelectors || [];
     var scope = opt_scope || document;
 
-    var relevantNodes = this.relevantNodesSelector_(scope);
+    var relevantElements = [];
+    axs.AuditRule.collectMatchingElements(scope, this.relevantElementMatcher_, relevantElements);
 
-    var failingNodes = [];
+    var failingElements = [];
 
-    function ignored(node) {
+    function ignored(element) {
         for (var i = 0; i < ignoreSelectors.length; i++) {
-          if (axs.browserUtils.matchSelector(node, ignoreSelectors[i]))
+          if (axs.browserUtils.matchSelector(element, ignoreSelectors[i]))
             return true;
         }
         return false;
     }
 
-    if (relevantNodes instanceof XPathResult) {
-        if (relevantNodes.resultType == XPathResult.ORDERED_NODE_SNAPSHOT_TYPE) {
-            if (!relevantNodes.snapshotLength)
-                return axs.AuditRule.NOT_APPLICABLE;
-
-            for (var i = 0; i < relevantNodes.snapshotLength; i++) {
-                var node = relevantNodes.snapshotItem(i);
-                if (this.test_(node) && !ignored(node))
-                    this.addNode(failingNodes, node);
-            }
-        } else {
-            console.warn('Unknown XPath result type', relevantNodes);
-            return null;
-        }
-    } else {
-        if (!relevantNodes.length)
-            return { result: axs.constants.AuditResult.NA };
-        for (var i = 0; i < relevantNodes.length; i++) {
-            var node = relevantNodes[i];
-            if (this.test_(node) && !ignored(node))
-                this.addNode(failingNodes, node);
-        }
+    if (!relevantElements.length)
+        return { result: axs.constants.AuditResult.NA };
+    for (var i = 0; i < relevantElements.length; i++) {
+        var element = relevantElements[i];
+        if (!ignored(element) && this.test_(element))
+            this.addElement(failingElements, element);
     }
-    var result = failingNodes.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS;
-    return { result: result, elements: failingNodes };
+
+    var result = failingElements.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS;
+    return { result: result, elements: failingElements };
 };
 
 axs.AuditRule.specs = {};

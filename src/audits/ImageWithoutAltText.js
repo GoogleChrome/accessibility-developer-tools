@@ -25,15 +25,9 @@ axs.AuditRule.specs.imagesWithoutAltText = {
     heading: 'Images should have an alt attribute',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_02--images-should-have-an-alt-attribute-unless-they-have-an-aria-role-of-presentation',
     severity: axs.constants.Severity.WARNING,
-    relevantNodesSelector: function(scope) {
-        var imgElements = scope.querySelectorAll('img');
-        var relevantNodes = [];
-        for (var i = 0; i < imgElements.length; i++) {
-            var img = imgElements[i];
-            if (!axs.utils.isElementOrAncestorHidden(img))
-                relevantNodes.push(img);
-        }
-        return relevantNodes;
+    relevantElementMatcher: function(element) {
+        return axs.browserUtils.matchSelector(element, 'img') &&
+            !axs.utils.isElementOrAncestorHidden(element);
     },
     test: function(image) {
         return (!image.hasAttribute('alt') && image.getAttribute('role') != 'presentation');

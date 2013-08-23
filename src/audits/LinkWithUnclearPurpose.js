@@ -23,8 +23,8 @@ axs.AuditRule.specs.linkWithUnclearPurpose = {
     heading: 'The purpose of each link should be clear from the link text',
     url: '',
     severity: axs.constants.Severity.WARNING,
-    relevantNodesSelector: function(scope) {
-        return scope.querySelectorAll('a');
+    relevantElementMatcher: function(element) {
+        return axs.browserUtils.matchSelector(element, 'a');
     },
     test: function(anchor) {
         // This only looks for "click here" in a link's content. Not
