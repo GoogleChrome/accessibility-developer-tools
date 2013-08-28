@@ -26,12 +26,21 @@ axs.AuditRule.specs.lowContrastElements = {
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_color_01--text-elements-should-have-a-reasonable-contrast-ratio',
     severity: axs.constants.Severity.WARNING,
     relevantNodesSelector: function(scope) {
-      return scope.ownerDocument.evaluate(
-          './/text()[normalize-space(.)!=""]/parent::*[name()!="script"]',
-          scope,
-          null,
-          XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-          null);
+      if (scope.nodeType == Node.DOCUMENT_NODE) {
+        return scope.evaluate(
+            './/text()[normalize-space(.)!=""]/parent::*[name()!="script"]',
+            scope,
+            null,
+            XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+            null);
+      } else {
+        return scope.ownerDocument.evaluate(
+            './/text()[normalize-space(.)!=""]/parent::*[name()!="script"]',
+            scope,
+            null,
+            XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+            null);
+      }
     },
     test: function(element) {
         var style = window.getComputedStyle(element, null);

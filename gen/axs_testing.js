@@ -1496,7 +1496,7 @@ axs.AuditRule.specs.imagesWithoutAltText = {name:"imagesWithoutAltText", heading
   return!a.hasAttribute("alt") && "presentation" != a.getAttribute("role")
 }, code:"AX_TEXT_02"};
 axs.AuditRule.specs.lowContrastElements = {name:"lowContrastElements", heading:"Text elements should have a reasonable contrast ratio", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_color_01--text-elements-should-have-a-reasonable-contrast-ratio", severity:axs.constants.Severity.WARNING, relevantNodesSelector:function(a) {
-  return document.evaluate('.//text()[normalize-space(.)!=""]/parent::*[name()!="script"]', a, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
+  return a.ownerDocument.evaluate('.//text()[normalize-space(.)!=""]/parent::*[name()!="script"]', a, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
 }, test:function(a) {
   var b = window.getComputedStyle(a, null);
   return(a = axs.utils.getContrastRatioForElementWithComputedStyle(b, a)) && axs.utils.isLowContrast(a, b)

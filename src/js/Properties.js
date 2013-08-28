@@ -54,12 +54,21 @@ axs.properties.getColorProperties = function(element) {
  * @return {Object.<string, Object>}
  */
 axs.properties.getContrastRatioProperties = function(element) {
-    var selectorResults =
-        element.ownerDocument.evaluate(axs.properties.TEXT_CONTENT_XPATH,
-                                       element,
-                                       null,
-                                       XPathResult.ANY_TYPE,
-                                       null);
+    var selectorResults;
+    if (element.nodeType == node.DOCUMENT_NODE) {
+      selectorResults = element.evaluate(axs.properties.TEXT_CONTENT_XPATH,
+                                         element,
+                                         null,
+                                         XPathResult.ANY_TYPE,
+                                         null);
+    } else {
+      selectorResults =
+          element.ownerDocument.evaluate(axs.properties.TEXT_CONTENT_XPATH,
+                                         element,
+                                         null,
+                                         XPathResult.ANY_TYPE,
+                                         null);
+    }
     var foundDirectTextDescendant = false;
     for (var resultElement = selectorResults.iterateNext();
          resultElement != null;
