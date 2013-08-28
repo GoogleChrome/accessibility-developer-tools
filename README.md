@@ -27,13 +27,15 @@ There is also a collection of accessibility-related utility code, including but 
 
 You will need `node` and `grunt-cli` to build.
 
-1. Install [NodeJS](http://nodejs.org/)
+1. Install [Node.js](http://nodejs.org/) and `npm` - useful instructions here: [https://gist.github.com/isaacs/579814](https://gist.github.com/isaacs/579814)
 
-2. Use `node` to install `grunt-cli`
+    Make sure you have Node.js v 0.8 or higher.
 
-        % npm install -g grunt-cli
+2. Use `npm` to install `grunt-cli`
 
-3. Install dependencies for this project (run from project root)
+        % npm install -g grunt-cli  # May need to be run as root
+
+3. Install dependencies (including `grunt`) for this project (run from project root)
 
         % npm install
 
