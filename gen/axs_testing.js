@@ -1425,8 +1425,6 @@ axs.AuditRule.specs.audioWithoutControls = {name:"audioWithoutControls", heading
 }, test:function(a) {
   return!a.querySelectorAll("[controls]").length && 3 < a.duration
 }, code:"AX_AUDIO_01"};
-goog.exportSymbol("axs.AuditRule.specs.audioWithoutControls.relevantElementMatcher", axs.AuditRule.specs.audioWithoutControls.relevantElementMatcher);
-goog.exportSymbol("axs.AuditRule.specs.audioWithoutControls.test", axs.AuditRule.specs.audioWithoutControls.test);
 axs.AuditRule.specs.badAriaAttributeValue = {name:"badAriaAttributeValue", heading:"ARIA state and property values must be valid", url:"", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
   var b = "", c;
   for(c in axs.constants.ARIA_PROPERTIES) {
@@ -1446,15 +1444,11 @@ axs.AuditRule.specs.badAriaAttributeValue = {name:"badAriaAttributeValue", headi
   }
   return!1
 }, code:"AX_ARIA_04"};
-goog.exportSymbol("axs.AuditRule.specs.badAriaAttributeValue.relevantElementMatcher", axs.AuditRule.specs.badAriaAttributeValue.relevantElementMatcher);
-goog.exportSymbol("axs.AuditRule.specs.badAriaAttributeValue.test", axs.AuditRule.specs.badAriaAttributeValue.test);
 axs.AuditRule.specs.badAriaRole = {name:"badAriaRole", heading:"Elements with ARIA roles must use a valid, non-abstract ARIA role", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_01--elements-with-aria-roles-must-use-a-valid-non-abstract-aria-role", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
   return axs.browserUtils.matchSelector(a, "[role]")
 }, test:function(a) {
   return!axs.utils.getRoles(a).valid
 }, code:"AX_ARIA_01"};
-goog.exportSymbol("axs.AuditRule.specs.badAriaRole.relevantElementMatcher", axs.AuditRule.specs.badAriaRole.relevantElementMatcher);
-goog.exportSymbol("axs.AuditRule.specs.badAriaRole.test", axs.AuditRule.specs.badAriaRole.test);
 axs.AuditRule.specs.controlsWithoutLabel = {name:"controlsWithoutLabel", heading:"Controls and media elements should have labels", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_01--controls-and-media-elements-should-have-labels", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
   if(!axs.browserUtils.matchSelector(a, 'input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])')) {
     return!1
@@ -1492,23 +1486,17 @@ axs.AuditRule.specs.imagesWithoutAltText = {name:"imagesWithoutAltText", heading
 }, test:function(a) {
   return!a.hasAttribute("alt") && "presentation" != a.getAttribute("role")
 }, code:"AX_TEXT_02"};
-goog.exportSymbol("axs.AuditRule.specs.imagesWithoutAltText.relevantElementMatcher", axs.AuditRule.specs.imagesWithoutAltText.relevantElementMatcher);
-goog.exportSymbol("axs.AuditRule.specs.imagesWithoutAltText.test", axs.AuditRule.specs.imagesWithoutAltText.test);
 axs.AuditRule.specs.linkWithUnclearPurpose = {name:"linkWithUnclearPurpose", heading:"The purpose of each link should be clear from the link text", url:"", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
   return axs.browserUtils.matchSelector(a, "a")
 }, test:function(a) {
   return/^\s*click\s*here\s*[^a-z]?$/i.test(a.textContent)
 }, code:"AX_TITLE_01"};
-goog.exportSymbol("axs.AuditRule.specs.linkWithUnclearPurpose.relevantElementMatcher", axs.AuditRule.specs.linkWithUnclearPurpose.relevantElementMatcher);
-goog.exportSymbol("axs.AuditRule.specs.linkWithUnclearPurpose.test", axs.AuditRule.specs.linkWithUnclearPurpose.test);
 axs.AuditRule.specs.lowContrastElements = {name:"lowContrastElements", heading:"Text elements should have a reasonable contrast ratio", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_color_01--text-elements-should-have-a-reasonable-contrast-ratio", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
   return axs.properties.hasDirectTextDescendant(a)
 }, test:function(a) {
   var b = window.getComputedStyle(a, null);
   return(a = axs.utils.getContrastRatioForElementWithComputedStyle(b, a)) && axs.utils.isLowContrast(a, b)
 }, code:"AX_COLOR_01"};
-goog.exportSymbol("axs.AuditRule.specs.lowContrastElements.relevantElementMatcher", axs.AuditRule.specs.lowContrastElements.relevantElementMatcher);
-goog.exportSymbol("axs.AuditRule.specs.lowContrastElements.test", axs.AuditRule.specs.lowContrastElements.test);
 axs.AuditRule.specs.mainRoleOnInappropriateElement = {name:"mainRoleOnInappropriateElement", heading:"role=main should only appear on significant elements", url:"", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
   return axs.browserUtils.matchSelector(a, "[role~=main]")
 }, test:function(a) {
@@ -1544,8 +1532,6 @@ axs.AuditRule.specs.nonExistentAriaLabelledbyElement = {name:"nonExistentAriaLab
   }
   return!1
 }, code:"AX_ARIA_02"};
-goog.exportSymbol("axs.AuditRule.specs.nonExistentAriaLabelledbyElement.relevantElementMatcher", axs.AuditRule.specs.nonExistentAriaLabelledbyElement.relevantElementMatcher);
-goog.exportSymbol("axs.AuditRule.specs.nonExistentAriaLabelledbyElement.test", axs.AuditRule.specs.nonExistentAriaLabelledbyElement.test);
 axs.AuditRule.specs.pageWithoutTitle = {name:"pageWithoutTitle", heading:"The web page should have a title that describes topic or purpose", url:"", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
   return"html" == a.tagName.toLowerCase()
 }, test:function(a) {
@@ -1568,8 +1554,6 @@ axs.AuditRule.specs.requiredAriaAttributeMissing = {name:"requiredAriaAttributeM
     }
   }
 }, code:"AX_ARIA_03"};
-goog.exportSymbol("axs.AuditRule.specs.requiredAriaAttributeMissing.relevantElementMatcher", axs.AuditRule.specs.requiredAriaAttributeMissing.relevantElementMatcher);
-goog.exportSymbol("axs.AuditRule.specs.requiredAriaAttributeMissing.test", axs.AuditRule.specs.requiredAriaAttributeMissing.test);
 axs.AuditRule.specs.unfocusableElementsWithOnClick = {name:"unfocusableElementsWithOnClick", heading:"Elements with onclick handlers must be focusable", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_focus_02--elements-with-onclick-handlers-must-be-focusable", severity:axs.constants.Severity.WARNING, opt_requiresConsoleAPI:!0, relevantElementMatcher:function(a) {
   return a instanceof a.ownerDocument.defaultView.HTMLBodyElement || axs.utils.isElementOrAncestorHidden(a) && "selected" == a.className ? !1 : "click" in getEventListeners(a) ? !0 : !1
 }, test:function(a) {
@@ -1580,6 +1564,4 @@ axs.AuditRule.specs.videoWithoutCaptions = {name:"videoWithoutCaptions", heading
 }, test:function(a) {
   return!a.querySelectorAll("track[kind=captions]").length
 }, code:"AX_VIDEO_01"};
-goog.exportSymbol("axs.AuditRule.specs.videoWithoutCaptions.relevantElementMatcher", axs.AuditRule.specs.videoWithoutCaptions.relevantElementMatcher);
-goog.exportSymbol("axs.AuditRule.specs.videoWithoutCaptions.test", axs.AuditRule.specs.videoWithoutCaptions.test);
 
