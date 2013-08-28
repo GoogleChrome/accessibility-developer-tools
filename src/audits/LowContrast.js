@@ -26,7 +26,7 @@ axs.AuditRule.specs.lowContrastElements = {
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_color_01--text-elements-should-have-a-reasonable-contrast-ratio',
     severity: axs.constants.Severity.WARNING,
     relevantNodesSelector: function(scope) {
-      return document.evaluate(
+      return scope.ownerDocument.evaluate(
           './/text()[normalize-space(.)!=""]/parent::*[name()!="script"]',
           scope,
           null,
