@@ -39,7 +39,3 @@ axs.AuditRule.specs.nonExistentAriaLabelledbyElement = {
     },
     code: 'AX_ARIA_02'
 };
-goog.exportSymbol('axs.AuditRule.specs.nonExistentAriaLabelledbyElement.relevantElementMatcher',
-                  axs.AuditRule.specs.nonExistentAriaLabelledbyElement.relevantElementMatcher);
-goog.exportSymbol('axs.AuditRule.specs.nonExistentAriaLabelledbyElement.test',
-                  axs.AuditRule.specs.nonExistentAriaLabelledbyElement.test);

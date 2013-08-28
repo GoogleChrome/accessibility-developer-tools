@@ -33,7 +33,3 @@ axs.AuditRule.specs.linkWithUnclearPurpose = {
     },
     code: 'AX_TITLE_01'
 };
-goog.exportSymbol('axs.AuditRule.specs.linkWithUnclearPurpose.relevantElementMatcher',
-                  axs.AuditRule.specs.linkWithUnclearPurpose.relevantElementMatcher);
-goog.exportSymbol('axs.AuditRule.specs.linkWithUnclearPurpose.test',
-                  axs.AuditRule.specs.linkWithUnclearPurpose.test);

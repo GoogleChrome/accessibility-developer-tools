@@ -32,7 +32,3 @@ axs.AuditRule.specs.videoWithoutCaptions = {
     },
     code: 'AX_VIDEO_01'
 };
-goog.exportSymbol('axs.AuditRule.specs.videoWithoutCaptions.relevantElementMatcher',
-                  axs.AuditRule.specs.videoWithoutCaptions.relevantElementMatcher);
-goog.exportSymbol('axs.AuditRule.specs.videoWithoutCaptions.test',
-                  axs.AuditRule.specs.videoWithoutCaptions.test);
