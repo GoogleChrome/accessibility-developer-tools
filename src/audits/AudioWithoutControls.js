@@ -32,3 +32,7 @@ axs.AuditRule.specs.audioWithoutControls = {
     },
     code: 'AX_AUDIO_01'
 };
+goog.exportSymbol('axs.AuditRule.specs.audioWithoutControls.relevantElementMatcher',
+                  axs.AuditRule.specs.audioWithoutControls.relevantElementMatcher);
+goog.exportSymbol('axs.AuditRule.specs.audioWithoutControls.test',
+                  axs.AuditRule.specs.audioWithoutControls.test);

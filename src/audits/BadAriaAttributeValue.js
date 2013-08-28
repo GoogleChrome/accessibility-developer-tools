@@ -46,3 +46,7 @@ axs.AuditRule.specs.badAriaAttributeValue = {
     },
     code: 'AX_ARIA_04'
 };
+goog.exportSymbol('axs.AuditRule.specs.badAriaAttributeValue.relevantElementMatcher',
+                  axs.AuditRule.specs.badAriaAttributeValue.relevantElementMatcher);
+goog.exportSymbol('axs.AuditRule.specs.badAriaAttributeValue.test',
+                  axs.AuditRule.specs.badAriaAttributeValue.test);

@@ -46,3 +46,7 @@ axs.AuditRule.specs.requiredAriaAttributeMissing = {
     },
     code: 'AX_ARIA_03'
 };
+goog.exportSymbol('axs.AuditRule.specs.requiredAriaAttributeMissing.relevantElementMatcher',
+                  axs.AuditRule.specs.requiredAriaAttributeMissing.relevantElementMatcher);
+goog.exportSymbol('axs.AuditRule.specs.requiredAriaAttributeMissing.test',
+                  axs.AuditRule.specs.requiredAriaAttributeMissing.test);
