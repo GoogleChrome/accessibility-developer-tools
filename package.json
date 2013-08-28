@@ -1,0 +1,12 @@
+{
+  "name": "accessibility-developer-tools",
+  "version": "2.6.0",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/GoogleChrome/accessibility-developer-tools"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-closurecompiler": "~0.9.5"
+  }
+}

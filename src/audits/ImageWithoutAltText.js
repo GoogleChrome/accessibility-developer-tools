@@ -34,3 +34,7 @@ axs.AuditRule.specs.imagesWithoutAltText = {
     },
     code: 'AX_TEXT_02'
 };
+goog.exportSymbol('axs.AuditRule.specs.imagesWithoutAltText.relevantElementMatcher',
+                  axs.AuditRule.specs.imagesWithoutAltText.relevantElementMatcher);
+goog.exportSymbol('axs.AuditRule.specs.imagesWithoutAltText.test',
+                  axs.AuditRule.specs.imagesWithoutAltText.test);

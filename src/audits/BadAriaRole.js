@@ -33,3 +33,7 @@ axs.AuditRule.specs.badAriaRole = {
     },
     code: 'AX_ARIA_01'
 };
+goog.exportSymbol('axs.AuditRule.specs.badAriaRole.relevantElementMatcher',
+                  axs.AuditRule.specs.badAriaRole.relevantElementMatcher);
+goog.exportSymbol('axs.AuditRule.specs.badAriaRole.test',
+                  axs.AuditRule.specs.badAriaRole.test);

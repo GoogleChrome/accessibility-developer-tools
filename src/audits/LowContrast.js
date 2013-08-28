@@ -37,3 +37,7 @@ axs.AuditRule.specs.lowContrastElements = {
     },
     code: 'AX_COLOR_01'
 };
+goog.exportSymbol('axs.AuditRule.specs.lowContrastElements.relevantElementMatcher',
+                  axs.AuditRule.specs.lowContrastElements.relevantElementMatcher);
+goog.exportSymbol('axs.AuditRule.specs.lowContrastElements.test',
+                  axs.AuditRule.specs.lowContrastElements.test);
