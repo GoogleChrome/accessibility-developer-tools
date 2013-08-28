@@ -55,7 +55,7 @@ axs.properties.getColorProperties = function(element) {
  */
 axs.properties.getContrastRatioProperties = function(element) {
     var selectorResults;
-    if (element.nodeType == node.DOCUMENT_NODE) {
+    if (element.nodeType == Node.DOCUMENT_NODE) {
       selectorResults = element.evaluate(axs.properties.TEXT_CONTENT_XPATH,
                                          element,
                                          null,
