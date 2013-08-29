@@ -23,16 +23,17 @@ axs.AuditRule.specs.pageWithoutTitle = {
     heading: 'The web page should have a title that describes topic or purpose',
     url: '',
     severity: axs.constants.Severity.WARNING,
-    relevantNodesSelector: function(scope) {
-        return scope;
+    relevantElementMatcher: function(element) {
+        return element.tagName.toLowerCase() == "html";
     },
     test: function(scope) {
         var head = scope.querySelector('head');
-        if (!head) {
+        if (!head)
           return true;
-        }
         var title = head.querySelectorAll('title');
-        return !title.length || !title[0].textContent;
+        if (!title)
+            return true;
+        return !title.length && !title[0].textContent;
     },
     code: 'AX_TITLE_01'
 };

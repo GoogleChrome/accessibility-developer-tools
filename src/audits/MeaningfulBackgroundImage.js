@@ -23,15 +23,8 @@ goog.require('axs.utils');
 axs.AuditRule.specs.elementsWithMeaningfulBackgroundImage = {
     name: 'elementsWithMeaningfulBackgroundImage',
     severity: axs.constants.Severity.WARNING,
-    relevantNodesSelector: function(scope) {
-        var elements = scope.querySelectorAll('*');
-        var relevantNodes = [];
-        for (var i = 0; i < elements.length; i++) {
-            var el = elements[i];
-            if (!axs.utils.isElementOrAncestorHidden(el))
-                relevantNodes.push(el);
-        }
-        return relevantNodes;
+    relevantElementMatcher: function(element) {
+        return !axs.utils.isElementOrAncestorHidden(element);
     },
     heading: 'Meaningful images should not be used in element backgrounds',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_image_01--meaningful-images-should-not-be-used-in-element-backgrounds',

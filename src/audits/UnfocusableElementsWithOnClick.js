@@ -26,21 +26,20 @@ axs.AuditRule.specs.unfocusableElementsWithOnClick = {
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_focus_02--elements-with-onclick-handlers-must-be-focusable',
     severity: axs.constants.Severity.WARNING,
     opt_requiresConsoleAPI: true,
-    relevantNodesSelector: function(scope) {
-        var potentialOnclickElements = scope.querySelectorAll('*');
-
-        var unfocusableClickableElements = [];
-        for (var i = 0; i < potentialOnclickElements.length; i++) {
-            var element = potentialOnclickElements[i];
-            if (element instanceof element.ownerDocument.defaultView.HTMLBodyElement)
-                continue;
-            if (axs.utils.isElementOrAncestorHidden(element))
-                continue;
-            var eventListeners = getEventListeners(element);
-            if ('click' in eventListeners)
-                unfocusableClickableElements.push(element);
+    relevantElementMatcher: function(element) {
+        // element.ownerDocument may not be current document if it is in an iframe
+        if (element instanceof element.ownerDocument.defaultView.HTMLBodyElement) {
+            return false;
         }
-        return unfocusableClickableElements;
+        if (axs.utils.isElementOrAncestorHidden(element)) {
+            if (element.className == 'selected')
+            return false;
+        }
+        var eventListeners = getEventListeners(element);
+        if ('click' in eventListeners) {
+            return true;
+        }
+        return false;
     },
     test: function(element) {
         return !element.hasAttribute('tabindex') &&

@@ -50,25 +50,23 @@ axs.properties.getColorProperties = function(element) {
 };
 
 /**
+ * Determines whether the given element has a text node as a direct descendant.
  * @param {Element} element
- * @return {Object.<string, Object>}
+ * @return {boolean}
  */
-axs.properties.getContrastRatioProperties = function(element) {
-    var selectorResults;
+axs.properties.hasDirectTextDescendant = function(element) {
+    var ownerDocument;
     if (element.nodeType == Node.DOCUMENT_NODE) {
-      selectorResults = element.evaluate(axs.properties.TEXT_CONTENT_XPATH,
-                                         element,
-                                         null,
-                                         XPathResult.ANY_TYPE,
-                                         null);
+      ownerDocument = element;
     } else {
-      selectorResults =
-          element.ownerDocument.evaluate(axs.properties.TEXT_CONTENT_XPATH,
-                                         element,
-                                         null,
-                                         XPathResult.ANY_TYPE,
-                                         null);
+      ownerDocument = element.ownerDocument;
     }
+
+    var selectorResults = ownerDocument.evaluate(axs.properties.TEXT_CONTENT_XPATH,
+                                                 element,
+                                                 null,
+                                                 XPathResult.ANY_TYPE,
+                                                 null);
     var foundDirectTextDescendant = false;
     for (var resultElement = selectorResults.iterateNext();
          resultElement != null;
@@ -79,7 +77,15 @@ axs.properties.getContrastRatioProperties = function(element) {
         foundDirectTextDescendant = true;
         break;
     }
-    if (!foundDirectTextDescendant)
+    return foundDirectTextDescendant;
+}
+
+/**
+ * @param {Element} element
+ * @return {Object.<string, Object>}
+ */
+axs.properties.getContrastRatioProperties = function(element) {
+    if (!axs.properties.hasDirectTextDescendant(element))
         return null;
 
     var contrastRatioProperties = {};
