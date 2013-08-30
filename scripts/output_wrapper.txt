@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/commit/<%= grunt.config.get('git-revision') %>
+ * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/<%= grunt.config.get('git-revision') %>
  *
  * See project README for build steps.
  */
+// AUTO-GENERATED CONTENT BELOW: DO NOT EDIT! See above for details.
 %output%

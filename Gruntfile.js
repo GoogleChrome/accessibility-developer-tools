@@ -49,7 +49,7 @@ module.exports = function(grunt) {
 
     _spawn({
       "cmd" : "git",
-      "args" : [ "describe", "--always" ],
+      "args" : [ "rev-parse", "HEAD" ],
       "opts" : {
         "cwd" : "."
       }
