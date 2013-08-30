@@ -56,11 +56,10 @@ axs.properties.getColorProperties = function(element) {
  */
 axs.properties.hasDirectTextDescendant = function(element) {
     var ownerDocument;
-    if (element.nodeType == Node.DOCUMENT_NODE) {
-      ownerDocument = element;
-    } else {
-      ownerDocument = element.ownerDocument;
-    }
+    if (element.nodeType == Node.DOCUMENT_NODE)
+        ownerDocument = element;
+    else
+        ownerDocument = element.ownerDocument;
 
     var selectorResults = ownerDocument.evaluate(axs.properties.TEXT_CONTENT_XPATH,
                                                  element,
