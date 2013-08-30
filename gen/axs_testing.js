@@ -1532,7 +1532,7 @@ axs.AuditRule.specs.pageWithoutTitle = {name:"pageWithoutTitle", heading:"The we
   return"html" == a.tagName.toLowerCase()
 }, test:function(a) {
   a = a.querySelector("head");
-  return a ? (a = a.querySelectorAll("title")) ? !a.length && !a[0].textContent : !0 : !0
+  return a ? (a = a.querySelector("title")) ? !a.textContent : !0 : !0
 }, code:"AX_TITLE_01"};
 axs.AuditRule.specs.badAriaRole = {name:"badAriaRole", heading:"Elements with ARIA roles must use a valid, non-abstract ARIA role", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_01--elements-with-aria-roles-must-use-a-valid-non-abstract-aria-role", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
   return axs.browserUtils.matchSelector(a, "[role]")
