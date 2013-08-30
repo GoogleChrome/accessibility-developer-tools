@@ -23,6 +23,26 @@ There is also a collection of accessibility-related utility code, including but 
 * retrieving and validating ARIA attributes and states
 * accessible name calculation using the algorithm at [http://www.w3.org/TR/wai-aria/roles#textalternativecomputation](http://www.w3.org/TR/wai-aria/roles#textalternativecomputation)
 
+# Building
+
+You will need `node` and `grunt-cli` to build.
+
+1. Install [Node.js](http://nodejs.org/) and `npm` - useful instructions here: [https://gist.github.com/isaacs/579814](https://gist.github.com/isaacs/579814)
+
+    Make sure you have Node.js v 0.8 or higher.
+
+2. Use `npm` to install `grunt-cli`
+
+        % npm install -g grunt-cli  # May need to be run as root
+
+3. Install dependencies (including `grunt`) for this project (run from project root)
+
+        % npm install
+
+4. Build using `grunt` (run from project root)
+
+        % grunt
+
 # Using the Audit API
 
 ## Including the library
