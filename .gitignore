@@ -3,3 +3,4 @@ key.pem
 extension/Handlebar.js
 upload.py
 gen/
+node_modules/
