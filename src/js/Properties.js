@@ -55,11 +55,17 @@ axs.properties.getColorProperties = function(element) {
  * @return {boolean}
  */
 axs.properties.hasDirectTextDescendant = function(element) {
-    var selectorResults = document.evaluate(axs.properties.TEXT_CONTENT_XPATH,
-                                            element,
-                                            null,
-                                            XPathResult.ANY_TYPE,
-                                            null);
+    var ownerDocument;
+    if (element.nodeType == Node.DOCUMENT_NODE)
+        ownerDocument = element;
+    else
+        ownerDocument = element.ownerDocument;
+
+    var selectorResults = ownerDocument.evaluate(axs.properties.TEXT_CONTENT_XPATH,
+                                                 element,
+                                                 null,
+                                                 XPathResult.ANY_TYPE,
+                                                 null);
     var foundDirectTextDescendant = false;
     for (var resultElement = selectorResults.iterateNext();
          resultElement != null;

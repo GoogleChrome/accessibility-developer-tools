@@ -33,7 +33,7 @@ axs.AuditRule.specs.pageWithoutTitle = {
         var title = head.querySelector('title');
         if (!title)
             return true;
-        return !title.length && !title[0].textContent;
+        return !title.textContent;
     },
     code: 'AX_TITLE_01'
 };
