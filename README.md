@@ -66,6 +66,14 @@ Once you have included `axs_testing.js`, you can call call `axs.Audit.run()`. Th
       rule  // The rule which this result is for.
     }
 
+### Command Line Runner
+
+The Accessibility Developer Tools project includes a command line runner for the audit. To use the runner, [install phantomjs](http://phantomjs.org/download.html) then run the following command from the project root directory.
+
+    $ phantomjs tools/runner/audit.js <url-or-filepath>
+
+The runner will load the specified file or URL in a headless browser, inject axs_testing.js, run the audit and output the report text.
+
 ## Using the results
 
 ### Interpreting the result
