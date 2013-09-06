@@ -23,6 +23,11 @@ There is also a collection of accessibility-related utility code, including but 
 * retrieving and validating ARIA attributes and states
 * accessible name calculation using the algorithm at [http://www.w3.org/TR/wai-aria/roles#textalternativecomputation](http://www.w3.org/TR/wai-aria/roles#textalternativecomputation)
 
+# Getting the code
+
+    % git clone https://github.com/GoogleChrome/accessibility-developer-tools.git
+    % git submodule init; git submodule update
+
 # Building
 
 You will need `node` and `grunt-cli` to build.
