@@ -13,7 +13,7 @@ module.exports = function(grunt) {
         requiresConfig: 'git-revision',
         files: {
           "gen/axs_testing.js": [
-              "./lib/closure-library/closure/goog/base.js",
+              "./lib/closure/base.js",
               "./src/js/axs.js",
               "./src/js/BrowserUtils.js",
               "./src/js/Constants.js",
