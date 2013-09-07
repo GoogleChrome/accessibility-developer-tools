@@ -9,6 +9,7 @@
     "grunt": "~0.4.1",
     "grunt-closurecompiler": "~0.9.5",
     "grunt-util-spawn": "0.0.2",
+    "closure-library": "~1.43629075.2",
     "grunt-contrib-qunit": "~0.2.2"
   }
 }

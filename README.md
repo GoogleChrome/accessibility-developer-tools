@@ -26,7 +26,6 @@ There is also a collection of accessibility-related utility code, including but 
 # Getting the code
 
     % git clone https://github.com/GoogleChrome/accessibility-developer-tools.git
-    % git submodule init; git submodule update
 
 # Building
 
