@@ -23,19 +23,24 @@ There is also a collection of accessibility-related utility code, including but 
 * retrieving and validating ARIA attributes and states
 * accessible name calculation using the algorithm at [http://www.w3.org/TR/wai-aria/roles#textalternativecomputation](http://www.w3.org/TR/wai-aria/roles#textalternativecomputation)
 
+# Getting the code
+
+    % git clone https://github.com/GoogleChrome/accessibility-developer-tools.git
+    % git submodule init; git submodule update
+
 # Building
 
 You will need `node` and `grunt-cli` to build.
 
-1. Install [Node.js](http://nodejs.org/) and `npm` - useful instructions here: [https://gist.github.com/isaacs/579814](https://gist.github.com/isaacs/579814)
+1. (Once only) Install [Node.js](http://nodejs.org/) and `npm` - useful instructions here: [https://gist.github.com/isaacs/579814](https://gist.github.com/isaacs/579814)
 
     Make sure you have Node.js v 0.8 or higher.
 
-2. Use `npm` to install `grunt-cli`
+2. (Once only) Use `npm` to install `grunt-cli`
 
         % npm install -g grunt-cli  # May need to be run as root
 
-3. Install dependencies (including `grunt`) for this project (run from project root)
+3. (Every time you make a fresh checkout) Install dependencies (including `grunt`) for this project (run from project root)
 
         % npm install
 
@@ -65,6 +70,14 @@ Once you have included `axs_testing.js`, you can call call `axs.Audit.run()`. Th
       /** @type {axs.AuditRule} */
       rule  // The rule which this result is for.
     }
+
+### Command Line Runner
+
+The Accessibility Developer Tools project includes a command line runner for the audit. To use the runner, [install phantomjs](http://phantomjs.org/download.html) then run the following command from the project root directory.
+
+    $ phantomjs tools/runner/audit.js <url-or-filepath>
+
+The runner will load the specified file or URL in a headless browser, inject axs_testing.js, run the audit and output the report text.
 
 ## Using the results
 
