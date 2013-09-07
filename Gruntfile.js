@@ -36,10 +36,14 @@ module.exports = function(grunt) {
           "externs": "./src/js/externs/externs.js"
         }
       }
+    },
+    qunit: {
+      all: ['test/index.html']
     }
   });
 
   grunt.loadNpmTasks('grunt-closurecompiler');
+  grunt.loadNpmTasks('grunt-contrib-qunit');
 
   grunt.registerTask('git-describe', function() {
     var _spawn = require("grunt-util-spawn")(grunt);
@@ -73,6 +77,6 @@ module.exports = function(grunt) {
     grunt.task.run('git-describe');
   });
 
-  grunt.registerTask('default', ['save-revision', 'closurecompiler:minify']);
+  grunt.registerTask('default', ['save-revision', 'closurecompiler:minify', 'qunit']);
 };
 
