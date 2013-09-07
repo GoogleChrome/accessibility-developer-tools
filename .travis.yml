@@ -1,1 +1,1 @@
-#script: grunt qunit --verbose --force
+script: grunt --verbose --force
