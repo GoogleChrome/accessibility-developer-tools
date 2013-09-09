@@ -25,7 +25,14 @@ There is also a collection of accessibility-related utility code, including but 
 
 # Getting the code
 
+  `git 1.6.5` or later: 
+
+    % git clone --recursive https://github.com/GoogleChrome/accessibility-developer-tools.git
+    
+  Before `git 1.6.5`:
+
     % git clone https://github.com/GoogleChrome/accessibility-developer-tools.git
+    % cd accessibility-developer-tools
     % git submodule init; git submodule update
 
 # Building
