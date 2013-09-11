@@ -37,3 +37,16 @@ test("Good role === no problems.", function() {
     { elements: [], result: axs.constants.AuditResult.PASS }
   );
 });
+
+test("Bad role == problem", function() {
+  // Setup fixture
+  var fixtures = document.getElementById('qunit-fixture');
+  var div = document.createElement('div');
+  div.setAttribute('role', 'not-an-aria-role');
+  fixtures.appendChild(div);
+  deepEqual(
+    axs.AuditRules.getRule('badAriaRole').run([], fixtures),
+    { elements: [div], result: axs.constants.AuditResult.FAIL }
+  );
+
+});

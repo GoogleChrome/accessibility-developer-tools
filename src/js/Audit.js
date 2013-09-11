@@ -24,81 +24,101 @@ goog.provide('axs.AuditConfiguration');
  * @constructor
  */
 axs.AuditConfiguration = function() {
-  /**
-   * Dictionary of { audit rule name : { rules } } where rules is a dictionary
-   * of { rule type : value }.
-   * Possible rule types:
-   * - ignore: value is a list of CSS selectors representing parts of the page
-   *           which can be ignored for this audit rule.
-   * @type {Object}
-   * @private
-   */
-  this.rules_ = {};
+    /**
+     * Dictionary of { audit rule name : { rules } } where rules is a dictionary
+     * of { rule type : value }.
+     * Possible rule types:
+     * - ignore: value is a list of CSS selectors representing parts of the page
+     *           which can be ignored for this audit rule.
+     * @type {Object}
+     * @private
+     */
+    this.rules_ = {};
 
-  /**
-   * The "start point" for the audit: the element which contains the portion of
-   * the page which should be audited.
-   * If null, the document will be used as the scope.
-   * @type {?Element}
-   */
-  this.scope = null;
+    /**
+     * The "start point" for the audit: the element which contains the portion of
+     * the page which should be audited.
+     * If null, the document will be used as the scope.
+     * @type {?Element}
+     */
+    this.scope = null;
 
-  /**
-   * A list of rule names representing the audit rules to be run. If this is
-   * empty or |null|, all audit rules will be run.
-   * @type {Array.<String>}
-   */
-  this.auditRulesToRun = null;
+    /**
+     * A list of rule names representing the audit rules to be run. If this is
+     * empty or |null|, all audit rules will be run.
+     * @type {Array.<String>}
+     */
+    this.auditRulesToRun = null;
 
-  /**
-   * A list of rule names representing the audit rules which should not be run.
-   * If this is empty or |null|, all audit rules will be run.
-   * @type {Array.<String>}
-   */
-  this.auditRulesToIgnore = null;
+    /**
+     * A list of rule names representing the audit rules which should not be run.
+     * If this is empty or |null|, all audit rules will be run.
+     * @type {Array.<String>}
+     */
+    this.auditRulesToIgnore = null;
 
-  /**
-   * Whether this audit run can use the console API.
-   * @type {boolean}
-   */
-  this.withConsoleApi = false;
+    /**
+     * Whether this audit run can use the console API.
+     * @type {boolean}
+     */
+    this.withConsoleApi = false;
 
-  goog.exportProperty(this, 'scope', this.scope);
-  goog.exportProperty(this, 'auditRulesToRun', this.auditRulesToRun);
-  goog.exportProperty(this, 'auditRulesToIgnore', this.auditRulesToIgnore);
-  goog.exportProperty(this, 'withConsoleApi', this.withConsoleApi);
+    goog.exportProperty(this, 'scope', this.scope);
+    goog.exportProperty(this, 'auditRulesToRun', this.auditRulesToRun);
+    goog.exportProperty(this, 'auditRulesToIgnore', this.auditRulesToIgnore);
+    goog.exportProperty(this, 'withConsoleApi', this.withConsoleApi);
 };
 goog.exportSymbol('axs.AuditConfiguration', axs.AuditConfiguration);
 
 axs.AuditConfiguration.prototype = {
-  /**
-   * Add the given selectors to the ignore list for the given audit rule.
-   * @param {string} auditRuleName The name of the audit rule
-   * @param {Array.<string>} selectors Query selectors to match nodes to
-   *     ignore
-   */
-  ignoreSelectors: function(auditRuleName, selectors) {
-    if (!(auditRuleName in this.rules_))
-        this.rules_[auditRuleName] = {};
-    if (!('ignore' in this.rules_[auditRuleName]))
-        this.rules_[auditRuleName].ignore = [];
-    Array.prototype.push.call(this.rules_[auditRuleName].ignore, selectors);
-  },
+    /**
+     * Add the given selectors to the ignore list for the given audit rule.
+     * @param {string} auditRuleName The name of the audit rule
+     * @param {Array.<string>} selectors Query selectors to match nodes to
+     *     ignore
+     */
+    ignoreSelectors: function(auditRuleName, selectors) {
+        if (!(auditRuleName in this.rules_))
+            this.rules_[auditRuleName] = {};
+        if (!('ignore' in this.rules_[auditRuleName]))
+            this.rules_[auditRuleName].ignore = [];
+        Array.prototype.push.call(this.rules_[auditRuleName].ignore, selectors);
+    },
 
-  /**
-   * Gets the selectors which have been added to the ignore list for the given
-   * audit rule.
-   * @param {string} auditRuleName The name of the audit rule
-   * @return {Array.<string>} A list of query selector strings which match nodes
-   * to be ignored for the given rule.
-   */
-  getIgnoreSelectors: function(auditRuleName) {
-    if ((auditRuleName in this.rules_) &&
-        ('ignore' in this.rules_[auditRuleName])) {
-        return this.rules_[auditRuleName].ignore;
+    /**
+     * Gets the selectors which have been added to the ignore list for the given
+     * audit rule.
+     * @param {string} auditRuleName The name of the audit rule
+     * @return {Array.<string>} A list of query selector strings which match nodes
+     * to be ignored for the given rule.
+     */
+    getIgnoreSelectors: function(auditRuleName) {
+        if ((auditRuleName in this.rules_) &&
+            ('ignore' in this.rules_[auditRuleName])) {
+            return this.rules_[auditRuleName].ignore;
+        }
+        return [];
+    },
+
+    /**
+     * Sets the user-specified severity for the given audit rule. This will
+     * replace the default severity for that audit rule in the audit results.
+     * @param {string} auditRuleName
+     * @param {axs.constants.Severity} severity
+     */
+    setSeverity: function(auditRuleName, severity) {
+        if (!(auditRuleName in this.rules_))
+            this.rules_[auditRuleName] = {};
+        this.rules_[auditRuleName].severity = severity;
+    },
+
+    getSeverity: function(auditRuleName) {
+        if (!(auditRuleName in this.rules_))
+            return null;
+        if (!('severity' in this.rules_[auditRuleName]))
+            return null
+        return this.rules_[auditRuleName].severity;
     }
-    return [];
-  }
 };
 goog.exportProperty(axs.AuditConfiguration.prototype, 'ignoreSelectors',
                     axs.AuditConfiguration.prototype.ignoreSelectors);
@@ -153,7 +173,10 @@ axs.Audit.run = function(opt_configuration) {
         if (configuration.scope)
             args.push(configuration.scope);
         var result = auditRule.run.apply(auditRule, args);
-        result.rule = axs.utils.namedValues(auditRule);
+        var ruleValues = axs.utils.namedValues(auditRule);
+        ruleValues.severity = configuration.getSeverity(auditRuleName) ||
+                              ruleValues.severity;
+        result.rule = ruleValues;
         results.push(result);
     }
 
