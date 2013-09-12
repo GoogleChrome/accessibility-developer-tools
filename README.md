@@ -25,6 +25,10 @@ There is also a collection of accessibility-related utility code, including but 
 
 # Getting the code
 
+To include just the javascript rules, require the following file:
+
+    https://raw.github.com/GoogleChrome/accessibility-developer-tools/stable/dist/js/axs_testing.js
+
   `git 1.6.5` or later: 
 
     % git clone --recursive https://github.com/GoogleChrome/accessibility-developer-tools.git
