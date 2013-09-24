@@ -78,5 +78,6 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('default', ['save-revision', 'closurecompiler:minify', 'qunit']);
+  grunt.registerTask('travis', ['closurecompiler:minify', 'qunit']);
 };
 
