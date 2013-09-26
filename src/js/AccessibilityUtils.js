@@ -279,7 +279,7 @@ axs.utils.isLargeFont = function(style) {
     matches = fontSize.match(/(\d+)pt/);
     if (matches) {
         var fontSizePt = parseInt(matches[1], 10);
-        if (bold && fontSizePt >= 14 || fontSizePt >= 14)
+        if (bold && fontSizePt >= 14 || fontSizePt >= 18)
             return true;
         return false;
     }
