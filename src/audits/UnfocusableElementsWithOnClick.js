@@ -32,7 +32,6 @@ axs.AuditRule.specs.unfocusableElementsWithOnClick = {
             return false;
         }
         if (axs.utils.isElementOrAncestorHidden(element)) {
-            if (element.className == 'selected')
             return false;
         }
         var eventListeners = getEventListeners(element);
