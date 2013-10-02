@@ -7,7 +7,7 @@ test("No text = no relevant elements", function() {
   div.style.color = 'white';
   fixture.appendChild(div);
   deepEqual(
-    axs.AuditRules.getRule('lowContrastElements').run([], fixture),
+    axs.AuditRules.getRule('lowContrastElements').run({ scope: fixture }),
     { result: axs.constants.AuditResult.NA }
   );
 });
@@ -20,7 +20,7 @@ test("Black on white = no problem", function() {
   div.textContent = 'Some text';
   fixture.appendChild(div);
   deepEqual(
-    axs.AuditRules.getRule('lowContrastElements').run([], fixture),
+    axs.AuditRules.getRule('lowContrastElements').run({ scope: fixture }),
     { elements: [], result: axs.constants.AuditResult.PASS }
   );
 });
@@ -33,20 +33,20 @@ test("Low contrast = fail", function() {
   div.textContent = 'Some text';
   fixture.appendChild(div);
   deepEqual(
-    axs.AuditRules.getRule('lowContrastElements').run([], fixture),
+    axs.AuditRules.getRule('lowContrastElements').run({ scope: fixture }),
     { elements: [div], result: axs.constants.AuditResult.FAIL }
   );
 });
 
 test("Opacity is handled", function() {
   // Setup fixture
-  var fixtures = document.getElementById('qunit-fixture');
+  var fixture = document.getElementById('qunit-fixture');
   var elementWithOpacity = document.createElement('div');
   elementWithOpacity.style.opacity = '0.4';
   elementWithOpacity.textContent = 'Some text';
-  fixtures.appendChild(elementWithOpacity);
+  fixture.appendChild(elementWithOpacity);
   deepEqual(
-    axs.AuditRules.getRule('lowContrastElements').run([], fixtures),
+    axs.AuditRules.getRule('lowContrastElements').run({ scope: fixture }),
     { elements: [elementWithOpacity], result: axs.constants.AuditResult.FAIL }
   );
 });
@@ -59,7 +59,7 @@ test("Uses tolerance value", function() {
   div.textContent = 'Some text';
   fixture.appendChild(div);
   deepEqual(
-    axs.AuditRules.getRule('lowContrastElements').run([], fixture),
+    axs.AuditRules.getRule('lowContrastElements').run({ scope: fixture }),
     { elements: [], result: axs.constants.AuditResult.PASS }
   );
 });

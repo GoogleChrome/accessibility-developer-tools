@@ -58,6 +58,13 @@ axs.AuditConfiguration = function() {
     this.auditRulesToIgnore = null;
 
     /**
+     * The maximum number of results to collect for each audit rule. If more
+     * than this number of results is found, 'resultsTruncated' is set to true
+     * in the result object. If this is null, all results will be returned.
+     */
+    this.maxResults = null;
+
+    /**
      * Whether this audit run can use the console API.
      * @type {boolean}
      */
@@ -166,13 +173,15 @@ axs.Audit.run = function(opt_configuration) {
         if (!withConsoleApi && auditRule.requiresConsoleAPI)
             continue;
 
-        var args = [];
+        var options = {};
         var ignoreSelectors = configuration.getIgnoreSelectors(auditRule.name);
         if (ignoreSelectors.length > 0 || configuration.scope)
-            args.push(ignoreSelectors);
+            options['ignoreSelectors'] = ignoreSelectors;
         if (configuration.scope)
-            args.push(configuration.scope);
-        var result = auditRule.run.apply(auditRule, args);
+            options['scope'] = configuration.scope;
+        if (configuration.maxResults)
+            options['maxResults'] = configuration.maxResults;
+        var result = auditRule.run.call(auditRule, options);
         var ruleValues = axs.utils.namedValues(auditRule);
         ruleValues.severity = configuration.getSeverity(auditRuleName) ||
                               ruleValues.severity;

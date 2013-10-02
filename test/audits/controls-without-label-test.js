@@ -12,7 +12,7 @@ test('Button with type="submit" or type="reset" has label', function() {
     fixture.appendChild(resetInput);
 
     var rule = axs.AuditRules.getRule('controlsWithoutLabel');
-    equal(rule.run([], fixture).result,
+    equal(rule.run({scope: fixture}).result,
           axs.constants.AuditResult.PASS);
 });
 
@@ -25,7 +25,7 @@ test('Button element with inner text needs no label', function() {
     fixture.appendChild(button);
 
     var rule = axs.AuditRules.getRule('controlsWithoutLabel');
-    equal(rule.run([], fixture).result,
+    equal(rule.run({ scope: fixture }).result,
           axs.constants.AuditResult.PASS);
 });
 
@@ -38,7 +38,7 @@ test('Button element with empty inner text does need a label', function() {
     fixture.appendChild(button);
 
     var rule = axs.AuditRules.getRule('controlsWithoutLabel');
-    equal(rule.run([], fixture).result,
+    equal(rule.run({ scope: fixture }).result,
           axs.constants.AuditResult.FAIL);
 });
 
@@ -52,6 +52,6 @@ test('Input type button with value needs no label', function() {
     fixture.appendChild(input);
 
     var rule = axs.AuditRules.getRule('controlsWithoutLabel');
-    equal(rule.run([], fixture).result,
+    equal(rule.run({ scope: fixture }).result,
           axs.constants.AuditResult.PASS);
 });
