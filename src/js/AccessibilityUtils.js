@@ -817,18 +817,17 @@ axs.utils.isNativeTextElement = function(element) {
  * @param {number} contrastRatio
  * @param {CSSStyleDeclaration} style
  * @param {boolean=} opt_strict Whether to use AA (false) or AAA (true) level
- * @param {number=} opt_tolerance The amount by which the contrast ratio can
- *      acceptably be less than the recommended values.
  * @return {boolean}
  */
-axs.utils.isLowContrast = function(contrastRatio, style, opt_strict, opt_tolerance) {
-    var tolerance = opt_tolerance || 0;
+axs.utils.isLowContrast = function(contrastRatio, style, opt_strict) {
+    // Round to nearest 0.1
+    var roundedContrastRatio = (Math.round(contrastRatio * 10) / 10);
     if (!opt_strict) {
-        return contrastRatio + tolerance < 3.0 ||
-            (!axs.utils.isLargeFont(style) && contrastRatio + tolerance < 4.5);
+        return roundedContrastRatio < 3.0 ||
+            (!axs.utils.isLargeFont(style) && roundedContrastRatio < 4.5);
     } else {
-        return contrastRatio + tolerance < 4.5 ||
-            (!axs.utils.isLargeFont(style) && contrastRatio + tolerance < 7.0);
+        return roundedContrastRatio < 4.5 ||
+            (!axs.utils.isLargeFont(style) && roundedContrastRatio < 7.0);
     }
 };
 
