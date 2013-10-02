@@ -1,6 +1,8 @@
 module("Contrast Ratio", {
   setup: function () {
-    this.fixture_ = document.getElementById('fixture');
+    var fixture = document.createElement('div');
+    document.getElementById('qunit-fixture').appendChild(fixture);
+    this.fixture_ = fixture;
     this.black_ = {"red": 0, "green": 0, "blue": 0, "alpha": 1};
     this.white_ = {"red": 255, "green": 255, "blue": 255, "alpha": 1};
   }
@@ -19,7 +21,9 @@ test("Transparent foreground === no contrast.", function () {
 
 module("Zero Area", {
   setup: function () {
-    this.fixture_ = document.getElementById('fixture');
+    var fixture = document.createElement('div');
+    document.getElementById('qunit-fixture').appendChild(fixture);
+    this.fixture_ = fixture;
   }
 });
 test("Large element has non-zero area.", function () {
@@ -45,7 +49,9 @@ test("Inline element has non-zero area.", function () {
 
 module("Transparency", {
   setup: function () {
-    this.fixture_ = document.getElementById('fixture');
+    var fixture = document.createElement('div');
+    document.getElementById('qunit-fixture').appendChild(fixture);
+    this.fixture_ = fixture;
   }
 });
 test("Transparent elements are transparent.", function () {
@@ -96,7 +102,7 @@ test("A placeholder counts a label.", function() {
 
 module("getQuerySelectorText", {
   setup: function () {
-    this.fixture_ = document.getElementById('fixture');
+    this.fixture_ = document.getElementById('qunit-fixture');
   }
 });
 test("returns the selector text for a nested object with a class attribute", function() {
@@ -106,5 +112,5 @@ test("returns the selector text for a nested object with a class attribute", fun
   targetParentNode.appendChild(targetNode);
   this.fixture_.appendChild(targetParentNode);
 
-  equal(axs.utils.getQuerySelectorText(targetNode), "#fixture > P > .foo");
+  equal(axs.utils.getQuerySelectorText(targetNode), "#qunit-fixture > P > .foo");
 });

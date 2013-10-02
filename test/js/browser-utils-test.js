@@ -1,7 +1,7 @@
 module("matchSelector", {
   setup: function () {
-    this.fixture_ = document.getElementById('fixture');
-    this.matching_selector_ = '#fixture';
+    this.fixture_ = document.getElementById('qunit-fixture');
+    this.matching_selector_ = '#qunit-fixture';
     this.mismatching_selector_ = '#not-fixture';
   }
 });
