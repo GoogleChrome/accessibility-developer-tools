@@ -33,7 +33,7 @@ axs.AuditRule.specs.lowContrastElements = {
         var style = window.getComputedStyle(element, null);
         var contrastRatio =
             axs.utils.getContrastRatioForElementWithComputedStyle(style, element);
-        return (contrastRatio && axs.utils.isLowContrast(contrastRatio, style));
+        return (contrastRatio && axs.utils.isLowContrast(contrastRatio, style, false, 0.02));
     },
     code: 'AX_COLOR_01'
 };
