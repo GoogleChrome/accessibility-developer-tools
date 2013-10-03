@@ -46,3 +46,26 @@ test("Configure severity of an audit rule", function() {
     return;
   }
 });
+
+test("Configure the number of results returned", function() {
+  var fixture = document.getElementById('qunit-fixture');
+  var div = document.createElement('div');
+  div.setAttribute('role', 'not-an-aria-role');
+  fixture.appendChild(div);
+  var div2 = document.createElement('div');
+  div2.setAttribute('role', 'also-not-an-aria-role');
+  fixture.appendChild(div2);
+  console.log('fixture', fixture.outerHTML);
+  var auditConfig = new axs.AuditConfiguration();
+  auditConfig.auditRulesToRun = ['badAriaRole'];
+  auditConfig.scope = fixture;  // limit scope to just fixture element
+
+  var results = axs.Audit.run(auditConfig);
+  equal(results.length, 1);
+  equal(results[0].elements.length, 2)
+
+  auditConfig.maxResults = 1;
+  results = axs.Audit.run(auditConfig);
+  equal(results.length, 1);
+  equal(results[0].elements.length, 1)
+});

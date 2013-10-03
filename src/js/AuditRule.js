@@ -133,14 +133,22 @@ axs.AuditRule.collectMatchingElements = function(node, matcher, collection) {
 }
 
 /**
- * @param {Array.<string>=} opt_ignoreSelectors
- * @param {Element=} opt_scope The scope in which the element selector should run.
- *     Defaults to `document`.
- * @return {?Object.<string, (axs.constants.AuditResult|?Array.<Element>)>}
+ * @param {Object} options
+ *     Optional named parameters:
+ *     ignoreSelectors: Selectors for parts of the page to ignore for this rule.
+ *     scope: The scope in which the element selector should run.
+ *         Defaults to `document`.
+ *     maxResults: The maximum number of results to collect. If more than this
+ *         number of results is found, 'resultsTruncated' is set to true in the
+ *         returned object. If this is null or undefined, all results will be
+ *         returned.
+ * @return {?Object.<string, (axs.constants.AuditResult|?Array.<Element>|boolean)>}
  */
-axs.AuditRule.prototype.run = function(opt_ignoreSelectors, opt_scope) {
-    var ignoreSelectors = opt_ignoreSelectors || [];
-    var scope = opt_scope || document;
+axs.AuditRule.prototype.run = function(options) {
+    var options = options || {};
+    var ignoreSelectors = 'ignoreSelectors' in options ? options['ignoreSelectors'] : [];
+    var scope = 'scope' in options ? options['scope'] : document;
+    var maxResults = 'maxResults' in options ? options['maxResults'] : null;
 
     var relevantElements = [];
     axs.AuditRule.collectMatchingElements(scope, this.relevantElementMatcher_, relevantElements);
@@ -158,13 +166,18 @@ axs.AuditRule.prototype.run = function(opt_ignoreSelectors, opt_scope) {
     if (!relevantElements.length)
         return { result: axs.constants.AuditResult.NA };
     for (var i = 0; i < relevantElements.length; i++) {
+        if (maxResults != null && failingElements.length >= maxResults)
+            break;
         var element = relevantElements[i];
         if (!ignored(element) && this.test_(element))
             this.addElement(failingElements, element);
     }
-
     var result = failingElements.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS;
-    return { result: result, elements: failingElements };
+    var results = { result: result, elements: failingElements};
+    if (i < relevantElements.length)
+        results['resultsTruncated'] = true;
+
+    return results;
 };
 
 axs.AuditRule.specs = {};

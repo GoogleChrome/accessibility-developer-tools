@@ -820,10 +820,15 @@ axs.utils.isNativeTextElement = function(element) {
  * @return {boolean}
  */
 axs.utils.isLowContrast = function(contrastRatio, style, opt_strict) {
-    if (!opt_strict)
-        return contrastRatio < 3.0 || (!axs.utils.isLargeFont(style) && contrastRatio < 4.5);
-    else
-        return contrastRatio < 4.5 || (!axs.utils.isLargeFont(style) && contrastRatio < 7.0);
+    // Round to nearest 0.1
+    var roundedContrastRatio = (Math.round(contrastRatio * 10) / 10);
+    if (!opt_strict) {
+        return roundedContrastRatio < 3.0 ||
+            (!axs.utils.isLargeFont(style) && roundedContrastRatio < 4.5);
+    } else {
+        return roundedContrastRatio < 4.5 ||
+            (!axs.utils.isLargeFont(style) && roundedContrastRatio < 7.0);
+    }
 };
 
 /**
