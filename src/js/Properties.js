@@ -190,6 +190,7 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
         // If the embedded control is a menu, use the text alternative of the chosen menu item.
         // If the embedded control is a select or combobox, use the chosen option.
         if (element instanceof defaultView.HTMLSelectElement) {
+            var inputElement = /** @type {HTMLSelectElement} */ (element);
             textAlternatives['controlValue'] = { 'text': inputElement.value };
         }
 
