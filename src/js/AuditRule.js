@@ -145,7 +145,7 @@ axs.AuditRule.collectMatchingElements = function(node, matcher, collection) {
  * @return {?Object.<string, (axs.constants.AuditResult|?Array.<Element>|boolean)>}
  */
 axs.AuditRule.prototype.run = function(options) {
-    var options = options || {};
+    options = options || {};
     var ignoreSelectors = 'ignoreSelectors' in options ? options['ignoreSelectors'] : [];
     var scope = 'scope' in options ? options['scope'] : document;
     var maxResults = 'maxResults' in options ? options['maxResults'] : null;
