@@ -16,3 +16,19 @@ test("Find text descendants in an iframe.", function() {
 
     equal(axs.properties.hasDirectTextDescendant(foo), true);
 });
+
+module('findTextAlternatives', {
+    setup: function () {
+        this.fixture_ = document.getElementById('qunit-fixture');
+    }
+});
+test('returns the calculated text alternative for the given element', function() {
+    var targetNode = document.createElement('select');
+    this.fixture_.appendChild(targetNode);
+
+    try {
+        equal(axs.properties.findTextAlternatives(targetNode, {}, true), '');
+    } catch(e) {
+        ok(false, 'Threw exception');
+    }
+});
