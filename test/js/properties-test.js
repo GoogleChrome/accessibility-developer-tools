@@ -17,19 +17,18 @@ test("Find text descendants in an iframe.", function() {
     equal(axs.properties.hasDirectTextDescendant(foo), true);
 });
 
-module("findTextAlternatives", {
-  setup: function () {
-    this.fixture_ = document.getElementById('qunit-fixture');
-  }
+module('findTextAlternatives', {
+    setup: function () {
+        this.fixture_ = document.getElementById('qunit-fixture');
+    }
 });
-test("returns the selector text for a nested object with a class attribute", function() {
-  var targetNode = document.createElement('select');
-  this.fixture_.appendChild(targetNode);
+test('returns the calculated text alternative for the given element', function() {
+    var targetNode = document.createElement('select');
+    this.fixture_.appendChild(targetNode);
 
-  try {
-    equal(axs.properties.findTextAlternatives(targetNode, {}, true), "");
-    return ok(true);
-  } catch( e ) {
-    return ok(false, "Threw exception");
-  }
+    try {
+        equal(axs.properties.findTextAlternatives(targetNode, {}, true), '');
+    } catch(e) {
+        ok(false, 'Threw exception');
+    }
 });
