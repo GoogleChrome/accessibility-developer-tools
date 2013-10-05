@@ -17,6 +17,7 @@ test("Find text descendants in an iframe.", function() {
     equal(axs.properties.hasDirectTextDescendant(foo), true);
 });
 
+
 module('findTextAlternatives', {
     setup: function () {
         this.fixture_ = document.getElementById('qunit-fixture');
@@ -49,3 +50,37 @@ test('does not crash when targetNode has a numeric id attribute', function() {
         ok(false, 'Threw exception: ' + e);
     }
 });
+
+test('Get focus properties', function() {
+    // Setup fixture
+    var fixture = document.getElementById('qunit-fixture');
+    fixture.style.top = 0;
+    fixture.style.left = 0;
+
+    var html = '<div id="overlapped" tabindex="0">Overlapped element</div>' +
+               '<div id="overlapping" style="font-size: 48px; ' +
+               'position: relative; top: -40px; height: 40px; ' +
+               'background: rgba(255, 255, 255, 0.5);">Overlapping div</div>';
+    fixture.innerHTML = html;
+
+    var overlapped = document.getElementById('overlapped');
+    var overlapping = document.getElementById('overlapping');
+
+    var rect = overlapped.getBoundingClientRect();
+    var center_x = (rect.left + rect.right) / 2;
+    var center_y = (rect.top + rect.bottom) / 2;
+    var elementAtPoint = document.elementFromPoint(center_x, center_y);
+
+    var focusProperties = axs.properties.getFocusProperties(overlapped);
+    if (elementAtPoint != null) {
+        deepEqual(focusProperties,
+                  { tabindex: { value: "0", valid: true },
+                    visible: { value: false, valid: false, overlappingElement: overlapping } });
+    } else {
+        deepEqual(focusProperties,
+                  { tabindex: { value: "0", valid: true },
+                    visible: { value: true, valid: true } });
+
+    }
+});
+
