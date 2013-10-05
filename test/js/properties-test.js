@@ -17,7 +17,6 @@ test("Find text descendants in an iframe.", function() {
     equal(axs.properties.hasDirectTextDescendant(foo), true);
 });
 
-
 module('findTextAlternatives', {
     setup: function () {
         this.fixture_ = document.getElementById('qunit-fixture');
