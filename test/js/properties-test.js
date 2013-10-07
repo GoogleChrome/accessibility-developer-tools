@@ -33,7 +33,7 @@ test('returns the calculated text alternative for the given element', function()
     }
 });
 
-module('getTextFromHostLangaugeAttributes', {
+module('getTextFromHostLanguageAttributes', {
     setup: function () {
         this.fixture_ = document.getElementById('qunit-fixture');
     }
@@ -44,7 +44,7 @@ test('does not crash when targetNode has a numeric id attribute', function() {
     this.fixture_.appendChild(targetNode);
 
     try {
-        equal(axs.properties.getTextFromHostLangaugeAttributes(targetNode, {}, null), null);
+        equal(axs.properties.getTextFromHostLanguageAttributes(targetNode, {}, null), null);
     } catch(e) {
         ok(false, 'Threw exception: ' + e);
     }
