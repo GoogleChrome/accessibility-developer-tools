@@ -38,7 +38,7 @@ module('getTextFromHostLangaugeAttributes', {
         this.fixture_ = document.getElementById('qunit-fixture');
     }
 });
-test('check presence of an equivalent host language attribute or element for associating a label', function() {
+test('does not crash when targetNode has a numeric id attribute', function() {
     var targetNode = document.createElement('input');
     targetNode.setAttribute('id', '123_user');
     this.fixture_.appendChild(targetNode);
