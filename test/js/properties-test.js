@@ -32,3 +32,20 @@ test('returns the calculated text alternative for the given element', function()
         ok(false, 'Threw exception');
     }
 });
+
+module('getTextFromHostLanguageAttributes', {
+    setup: function () {
+        this.fixture_ = document.getElementById('qunit-fixture');
+    }
+});
+test('does not crash when targetNode has a numeric id attribute', function() {
+    var targetNode = document.createElement('input');
+    targetNode.setAttribute('id', '123_user');
+    this.fixture_.appendChild(targetNode);
+
+    try {
+        equal(axs.properties.getTextFromHostLanguageAttributes(targetNode, {}, null), null);
+    } catch(e) {
+        ok(false, 'Threw exception: ' + e);
+    }
+});

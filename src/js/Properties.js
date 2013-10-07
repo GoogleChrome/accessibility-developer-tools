@@ -165,7 +165,7 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
     // language attribute or element for associating a label, and use those mechanisms to determine
     // a text alternative.
     if (!element.hasAttribute('role') || element.getAttribute('role') != 'presentation') {
-        computedName = axs.properties.getTextFromHostLangaugeAttributes(element, textAlternatives, computedName);
+        computedName = axs.properties.getTextFromHostLanguageAttributes(element, textAlternatives, computedName);
     }
 
     // 2B (HTML version).
@@ -364,7 +364,7 @@ axs.properties.getTextFromAriaLabelledby = function(element, textAlternatives) {
     return computedName;
 };
 
-axs.properties.getTextFromHostLangaugeAttributes = function(element, textAlternatives, existingComputedname) {
+axs.properties.getTextFromHostLanguageAttributes = function(element, textAlternatives, existingComputedname) {
     var computedName = existingComputedname;
     if (axs.browserUtils.matchSelector(element, 'img')) {
         if (element.hasAttribute('alt')) {
@@ -400,7 +400,7 @@ axs.properties.getTextFromHostLangaugeAttributes = function(element, textAlterna
                             'video:not([disabled])'].join(', ');
     if (axs.browserUtils.matchSelector(element, controlsSelector)) {
         if (element.hasAttribute('id')) {
-            var labelForQuerySelector = 'label[for=' + element.id + ']';
+            var labelForQuerySelector = 'label[for="' + element.id + '"]';
             var labelsFor = document.querySelectorAll(labelForQuerySelector);
             var labelForValue = {};
             var labelForValues = [];
