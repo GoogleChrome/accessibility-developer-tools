@@ -99,6 +99,16 @@ test("A placeholder counts a label.", function() {
   element3.placeholder = "Add me to your mailing list";
   equal(axs.utils.hasLabel(element3), false);
 });
+test('Input with an id', function() {
+    var element = document.createElement('input');
+    element.setAttribute('id', '123_user');
+
+    try {
+        equal(axs.utils.hasLabel(element), false);
+    } catch(e) {
+        ok(false, 'Threw exception: ' + e);
+    }
+});
 
 module("getQuerySelectorText", {
   setup: function () {

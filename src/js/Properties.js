@@ -400,7 +400,7 @@ axs.properties.getTextFromHostLangaugeAttributes = function(element, textAlterna
                             'video:not([disabled])'].join(', ');
     if (axs.browserUtils.matchSelector(element, controlsSelector)) {
         if (element.hasAttribute('id')) {
-            var labelForQuerySelector = 'label[for=' + element.id + ']';
+            var labelForQuerySelector = 'label[for="' + element.id + '"]';
             var labelsFor = document.querySelectorAll(labelForQuerySelector);
             var labelForValue = {};
             var labelForValues = [];

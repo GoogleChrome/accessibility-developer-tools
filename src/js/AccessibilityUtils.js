@@ -858,7 +858,7 @@ axs.utils.hasLabel = function(element) {
         return true;
 
     if (element.hasAttribute('id')) {
-        var labelsFor = document.querySelectorAll('label[for=' + element.id + ']');
+        var labelsFor = document.querySelectorAll('label[for="' + element.id + '"]');
         if (labelsFor.length > 0)
             return true;
     }
