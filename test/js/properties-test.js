@@ -77,10 +77,10 @@ test('Get focus properties', function() {
                   { tabindex: { value: "0", valid: true },
                     visible: { value: false, valid: false, overlappingElement: overlapping } });
     } else {
+        // This will occur if running in phantomjs.
         deepEqual(focusProperties,
                   { tabindex: { value: "0", valid: true },
                     visible: { value: true, valid: true } });
-
     }
 });
 
