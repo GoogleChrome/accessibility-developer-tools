@@ -22,7 +22,6 @@ test("Element doesn't exist, single aria-labelledby value", function() {
     var labelledByElement = document.createElement('div');
     labelledByElement.setAttribute('aria-labelledby', 'notALabel');
     fixture.appendChild(labelledByElement);
-    console.log('fixture', fixture);
     var rule = axs.AuditRules.getRule('nonExistentAriaLabelledbyElement');
     var result = rule.run({ scope: fixture });
     equal(result.result, axs.constants.AuditResult.FAIL);
