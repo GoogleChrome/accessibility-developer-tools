@@ -30,8 +30,39 @@ axs.properties.getFocusProperties = function(element) {
     var focusProperties = {};
     var tabindex = element.getAttribute('tabindex');
     if (tabindex != undefined)
-        return { tabindex: { value: tabindex, valid: true }};
-    return null;
+        focusProperties['tabindex'] = { value: tabindex, valid: true };
+    else
+        return null;
+    var transparent = axs.utils.elementIsTransparent(element);
+    var zeroArea = axs.utils.elementHasZeroArea(element);
+    var outsideScrollArea = axs.utils.elementIsOutsideScrollArea(element);
+    var overlappingElement = axs.utils.overlappingElement(element);
+    if (overlappingElement) {
+        var overlappingElementStyle = window.getComputedStyle(overlappingElement, null);
+        if (overlappingElementStyle) {
+            var overlappingElementBg = axs.utils.getBgColor(overlappingElementStyle, overlappingElement);
+            if (overlappingElementBg && overlappingElementBg.alpha == 0)
+                overlappingElement = null;
+        }
+    }
+    if (transparent || zeroArea || outsideScrollArea || overlappingElement) {
+        var visibleProperties = { value: false,
+                                  valid: false }
+        if (transparent)
+            visibleProperties['transparent'] = true;
+        if (zeroArea)
+            visibleProperties['zeroArea'] = true;
+        if (outsideScrollArea)
+            visibleProperties['outsideScrollArea'] = true;
+        if (overlappingElement)
+            visibleProperties['overlappingElement'] = overlappingElement;
+
+        focusProperties['visible'] = visibleProperties;
+    } else {
+        focusProperties['visible'] = { value: true, valid: true };
+    }
+
+    return focusProperties;
 }
 
 /**
