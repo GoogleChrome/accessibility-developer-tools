@@ -159,24 +159,40 @@ axs.utils.isAncestor = function(ancestor, node) {
 
 /**
  * @param {Element} element
- * @return {?Element}
+ * @return {Array.<Element>} An array of any non-transparent elements which
+ *     overlap the given element.
  */
-axs.utils.overlappingElement = function(element) {
+axs.utils.overlappingElements = function(element) {
     if (axs.utils.elementHasZeroArea(element))
         return null;
 
-    var rect = element.getBoundingClientRect();
-    var center_x = (rect.left + rect.right) / 2;
-    var center_y = (rect.top + rect.bottom) / 2;
-    var element_at_point = document.elementFromPoint(center_x, center_y);
+    var overlappingElements = [];
+    var clientRects = element.getClientRects();
+    for (var i = 0; i < clientRects.length; i++) {
+        var rect = clientRects[i];
+        var center_x = (rect.left + rect.right) / 2;
+        var center_y = (rect.top + rect.bottom) / 2;
+        var elementAtPoint = document.elementFromPoint(center_x, center_y);
 
-    if (element_at_point != null && element_at_point != element &&
-        !axs.utils.isAncestor(element_at_point, element) &&
-        !axs.utils.isAncestor(element, element_at_point)) {
-        return element_at_point;
+        if (elementAtPoint == null || elementAtPoint == element ||
+            axs.utils.isAncestor(elementAtPoint, element) ||
+            axs.utils.isAncestor(element, elementAtPoint)) {
+            continue;
+        }
+
+        var overlappingElementStyle = window.getComputedStyle(elementAtPoint, null);
+        if (!overlappingElementStyle)
+            continue;
+
+        var overlappingElementBg = axs.utils.getBgColor(overlappingElementStyle,
+                                                        elementAtPoint);
+        if (overlappingElementBg && overlappingElementBg.alpha > 0 &&
+            overlappingElements.indexOf(elementAtPoint) < 0) {
+            overlappingElements.push(elementAtPoint);
+        }
     }
 
-    return null;
+    return overlappingElements;
 };
 
 /**
@@ -227,15 +243,11 @@ axs.utils.elementIsVisible = function(element) {
         return false;
     if (axs.utils.elementIsOutsideScrollArea(element))
         return false;
-    var overlappingElement = axs.utils.overlappingElement(element);
-    if (overlappingElement) {
-        var overlappingElementStyle = window.getComputedStyle(overlappingElement, null);
-        if (overlappingElementStyle) {
-            var overlappingElementBg = axs.utils.getBgColor(overlappingElementStyle, overlappingElement);
-            if (overlappingElementBg && overlappingElementBg.alpha > 0)
-                return false;
-        }
-    }
+
+    var overlappingElements = axs.utils.overlappingElements(element);
+    if (overlappingElements.length)
+        return false;
+
     return true;
 };
 

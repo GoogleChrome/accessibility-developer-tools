@@ -29,34 +29,33 @@ axs.properties.TEXT_CONTENT_XPATH = './/text()[normalize-space(.)!=""]/parent::*
 axs.properties.getFocusProperties = function(element) {
     var focusProperties = {};
     var tabindex = element.getAttribute('tabindex');
-    if (tabindex != undefined)
+    if (tabindex != undefined) {
         focusProperties['tabindex'] = { value: tabindex, valid: true };
-    else
+    } else {
+        if (axs.utils.isElementImplicitlyFocusable(element))
+            focusProperties['implicitlyFocusable'] = { value: true, valid: true };
+    }
+    if (Object.keys(focusProperties).length == 0)
         return null;
     var transparent = axs.utils.elementIsTransparent(element);
     var zeroArea = axs.utils.elementHasZeroArea(element);
     var outsideScrollArea = axs.utils.elementIsOutsideScrollArea(element);
-    var overlappingElement = axs.utils.overlappingElement(element);
-    if (overlappingElement) {
-        var overlappingElementStyle = window.getComputedStyle(overlappingElement, null);
-        if (overlappingElementStyle) {
-            var overlappingElementBg = axs.utils.getBgColor(overlappingElementStyle, overlappingElement);
-            if (overlappingElementBg && overlappingElementBg.alpha == 0)
-                overlappingElement = null;
-        }
-    }
-    if (transparent || zeroArea || outsideScrollArea || overlappingElement) {
+    var overlappingElements = axs.utils.overlappingElements(element);
+    if (transparent || zeroArea || outsideScrollArea || overlappingElements.length > 0) {
+        var hidden = axs.utils.isElementOrAncestorHidden(element);
         var visibleProperties = { value: false,
-                                  valid: false }
+                                  valid: hidden }
         if (transparent)
             visibleProperties['transparent'] = true;
         if (zeroArea)
             visibleProperties['zeroArea'] = true;
         if (outsideScrollArea)
             visibleProperties['outsideScrollArea'] = true;
-        if (overlappingElement)
-            visibleProperties['overlappingElement'] = overlappingElement;
-
+        if (overlappingElements.length > 0)
+            visibleProperties['overlappingElements'] = overlappingElements;
+        visibleProperties['hidden'] = { value: hidden,
+                                        reason: axs.properties.getHiddenReason(element),
+                                        valid: hidden };
         focusProperties['visible'] = visibleProperties;
     } else {
         focusProperties['visible'] = { value: true, valid: true };
@@ -64,6 +63,33 @@ axs.properties.getFocusProperties = function(element) {
 
     return focusProperties;
 }
+
+axs.properties.getHiddenReason = function(element) {
+    if (!element || !(element instanceof element.ownerDocument.defaultView.HTMLElement))
+      return null;
+
+    if (element.hasAttribute('chromevoxignoreariahidden'))
+        var chromevoxignoreariahidden = true;
+
+    var style = window.getComputedStyle(element, null);
+    if (style.display == 'none')
+        return { 'property': 'display: none',
+                 'on': element };
+
+    if (style.visibility == 'hidden')
+        return { 'property': 'visibility: hidden',
+                 'on': element };
+
+    if (element.hasAttribute('aria-hidden') &&
+        element.getAttribute('aria-hidden').toLowerCase() == 'true') {
+        if (!chromevoxignoreariahidden)
+            return { 'property': 'aria-hidden',
+                     'on': element };
+    }
+
+    return axs.properties.getHiddenReason(element.parentElement);
+}
+
 
 /**
  * @param {Element} element
