@@ -53,9 +53,10 @@ axs.properties.getFocusProperties = function(element) {
             visibleProperties['outsideScrollArea'] = true;
         if (overlappingElements.length > 0)
             visibleProperties['overlappingElements'] = overlappingElements;
-        visibleProperties['hidden'] = { value: hidden,
-                                        reason: axs.properties.getHiddenReason(element),
-                                        valid: hidden };
+        var hiddenProperties = { value: hidden, valid: hidden };
+        if (hidden)
+            hiddenProperties['reason'] = axs.properties.getHiddenReason(element);
+        visibleProperties['hidden'] = hiddenProperties;
         focusProperties['visible'] = visibleProperties;
     } else {
         focusProperties['visible'] = { value: true, valid: true };

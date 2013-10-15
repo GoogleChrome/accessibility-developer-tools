@@ -50,6 +50,7 @@ test('does not crash when targetNode has a numeric id attribute', function() {
     }
 });
 
+module('getFocusProperties', {});
 test('Get focus properties', function() {
     // Setup fixture
     var fixture = document.getElementById('qunit-fixture');
@@ -74,7 +75,13 @@ test('Get focus properties', function() {
     if (elementAtPoint != null) {
         deepEqual(focusProperties,
                   { tabindex: { value: "0", valid: true },
-                    visible: { value: false, valid: false, overlappingElement: overlapping } });
+                    visible: { value: false,
+                               hidden: {
+                                   value: false,
+                                   valid: false
+                               },
+                               valid: false,
+                               overlappingElements: [overlapping] } });
     } else {
         // This will occur if running in phantomjs.
         deepEqual(focusProperties,
@@ -82,4 +89,3 @@ test('Get focus properties', function() {
                     visible: { value: true, valid: true } });
     }
 });
-
