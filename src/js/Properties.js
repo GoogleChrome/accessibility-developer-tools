@@ -223,7 +223,10 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
     // language attribute or element for associating a label, and use those mechanisms to determine
     // a text alternative.
     if (!element.hasAttribute('role') || element.getAttribute('role') != 'presentation') {
-        computedName = axs.properties.getTextFromHostLanguageAttributes(element, textAlternatives, computedName);
+        computedName = axs.properties.getTextFromHostLanguageAttributes(element,
+                                                                        textAlternatives,
+                                                                        computedName,
+                                                                        recursive);
     }
 
     // 2B (HTML version).
@@ -366,12 +369,16 @@ axs.properties.getTextFromDescendantContent = function(element) {
     var childrenTextContent = [];
     for (var i = 0; i < children.length; i++) {
         var childTextContent = axs.properties.findTextAlternatives(children[i], {}, true);
-        if (childTextContent && childTextContent.trim().length > 0)
+        if (childTextContent)
             childrenTextContent.push(childTextContent.trim());
     }
-    if (childrenTextContent.length)
-        return childrenTextContent.join(' ');
-
+    if (childrenTextContent.length) {
+        var result = '';
+        // Empty children are allowed, but collapse all of them
+        for (var i = 0; i < childrenTextContent.length; i++)
+            result = [result, childrenTextContent[i]].join(' ').trim();
+        return result;
+    }
     return null;
 };
 
@@ -422,7 +429,10 @@ axs.properties.getTextFromAriaLabelledby = function(element, textAlternatives) {
     return computedName;
 };
 
-axs.properties.getTextFromHostLanguageAttributes = function(element, textAlternatives, existingComputedname) {
+axs.properties.getTextFromHostLanguageAttributes = function(element,
+                                                            textAlternatives,
+                                                            existingComputedname,
+                                                            recursive) {
     var computedName = existingComputedname;
     if (axs.browserUtils.matchSelector(element, 'img')) {
         if (element.hasAttribute('alt')) {
@@ -456,7 +466,7 @@ axs.properties.getTextFromHostLanguageAttributes = function(element, textAlterna
                             'textarea:not([disabled])',
                             'button:not([disabled])',
                             'video:not([disabled])'].join(', ');
-    if (axs.browserUtils.matchSelector(element, controlsSelector)) {
+    if (axs.browserUtils.matchSelector(element, controlsSelector) && !recursive) {
         if (element.hasAttribute('id')) {
             var labelForQuerySelector = 'label[for="' + element.id + '"]';
             var labelsFor = document.querySelectorAll(labelForQuerySelector);
