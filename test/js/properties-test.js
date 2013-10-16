@@ -89,3 +89,23 @@ test('Get focus properties', function() {
                     visible: { value: true, valid: true } });
     }
 });
+
+module("getTextFromDescendantContent", {
+  setup: function () {
+    this.fixture_ = document.getElementById('qunit-fixture');
+  }
+});
+test("returns text from the descendants of the element", function() {
+  var html = '<label>\n' +
+             '  <input type="radio" id="reason_Screenshot" name="reason" value="screenshot"></input>\n' +
+             '</label>'
+  this.fixture_.innerHTML = html;
+  var targetNode = this.fixture_.querySelector('label');
+
+  try {
+    equal(axs.properties.getTextFromDescendantContent(targetNode), "");
+    return ok(true);
+  } catch( e ) {
+    return ok(false, "Threw exception: " + e);
+  }
+});
