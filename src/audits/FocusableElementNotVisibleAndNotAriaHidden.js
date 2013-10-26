@@ -47,6 +47,7 @@ axs.AuditRule.specs.focusableElementNotVisibleAndNotAriaHidden = {
     test: function(element) {
         if (axs.utils.isElementOrAncestorHidden(element))
             return false;
+        element.focus();
         return !axs.utils.elementIsVisible(element)
     },
     code: 'AX_FOCUS_01'
