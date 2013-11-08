@@ -44,14 +44,14 @@ axs.properties.getFocusProperties = function(element) {
     if (transparent || zeroArea || outsideScrollArea || overlappingElements.length > 0) {
         var hidden = axs.utils.isElementOrAncestorHidden(element);
         var visibleProperties = { value: false,
-                                  valid: hidden }
+                                  valid: hidden };
         if (transparent)
             visibleProperties['transparent'] = true;
         if (zeroArea)
             visibleProperties['zeroArea'] = true;
         if (outsideScrollArea)
             visibleProperties['outsideScrollArea'] = true;
-        if (overlappingElements.length > 0)
+        if (overlappingElements && overlappingElements.length > 0)
             visibleProperties['overlappingElements'] = overlappingElements;
         var hiddenProperties = { value: hidden, valid: hidden };
         if (hidden)
@@ -170,9 +170,11 @@ axs.properties.getContrastRatioProperties = function(element) {
  * @param {Node} node
  * @param {!Object} textAlternatives The properties object to fill in
  * @param {boolean=} opt_recursive Whether this is a recursive call or not
+ * @param {boolean=} opt_force Whether to return text alternatives for this
+ *     element regardless of its hidden state.
  * @return {?string} The calculated text alternative for the given element
  */
-axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recursive) {
+axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recursive, opt_force) {
     var recursive = opt_recursive || false;
 
     /** @type {Element} */ var element = axs.utils.asElement(node);
@@ -181,7 +183,7 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
 
     // 1. Skip hidden elements unless the author specifies to use them via an aria-labelledby or
     // aria-describedby being used in the current computation.
-    if (!recursive && axs.utils.isElementOrAncestorHidden(element))
+    if (!recursive && !opt_force && axs.utils.isElementOrAncestorHidden(element))
         return null;
 
     // if this is a text node, just return text content.
@@ -548,7 +550,7 @@ axs.properties.getLastWord = function(text) {
  */
 axs.properties.getTextProperties = function(node) {
     var textProperties = {};
-    var computedName = axs.properties.findTextAlternatives(node, textProperties);
+    var computedName = axs.properties.findTextAlternatives(node, textProperties, false, true);
 
     if (Object.keys(textProperties).length == 0) {
         if (!computedName)
