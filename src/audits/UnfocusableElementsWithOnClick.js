@@ -42,7 +42,8 @@ axs.AuditRule.specs.unfocusableElementsWithOnClick = {
     },
     test: function(element) {
         return !element.hasAttribute('tabindex') &&
-               !axs.utils.isElementImplicitlyFocusable(element);
+               !axs.utils.isElementImplicitlyFocusable(element) &&
+               !element.disabled;
     },
     code: 'AX_FOCUS_02'
 };

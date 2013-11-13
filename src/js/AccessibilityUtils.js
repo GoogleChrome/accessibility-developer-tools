@@ -130,17 +130,44 @@ axs.utils.elementHasZeroArea = function(element) {
  */
 axs.utils.elementIsOutsideScrollArea = function(element) {
     var rect = element.getBoundingClientRect();
-    var scroll_height = document.body.scrollHeight;
-    var scroll_width = document.body.scrollWidth;
-    var scroll_top = document.body.scrollTop;
-    var scroll_left = document.body.scrollLeft;
+    var scrollHeight = document.body.scrollHeight;
+    var scrollWidth = document.body.scrollWidth;
+    var scrollTop = document.body.scrollTop;
+    var scrollLeft = document.body.scrollLeft;
 
-    if (rect.top >= scroll_height || rect.bottom <= -scroll_top ||
-        rect.left >= scroll_width || rect.right <= -scroll_left)
-        return true;
-    return false;
+    var scrollArea = { top: -scrollTop, bottom: scrollHeight - scrollTop,
+                       left: -scrollLeft, right: scrollWidth - scrollLeft }
+    if (rect.top < scrollArea.bottom && rect.bottom > scrollArea.top &&
+        rect.left < scrollArea.right && rect.right > scrollArea.left) {
+        return false;
+    }
+
+    var parent = element.parentElement;
+    var defaultView = element.ownerDocument.defaultView;
+    while (parent != null) {
+        var style = defaultView.getComputedStyle(parent);
+        if (style.overflow == 'auto' && parent.scrollHeight > scrollHeight) {
+            if (axs.utils.elementIsOutsideScrollArea(parent)) {
+                parent = parent.parentElement;
+                continue;
+            }
+            var parentRect = parent.getBoundingClientRect();
+            var parentTop = parentRect.top;
+            var parentLeft = parentRect.left;
+            var parentScrollArea = { top: parentTop - parent.scrollTop,
+                                     bottom: parentTop - parent.scrollTop + parent.scrollHeight,
+                                     left: parentLeft - parent.scrollLeft,
+                                     right: parentLeft - parent.scrollLeft + parent.scrollWidth };
+            if (rect.top < parentScrollArea.bottom && rect.bottom > parentScrollArea.top &&
+                rect.left < parentScrollArea.right && rect.right > parentScrollArea.left) {
+                return false;
+            }
+        }
+        parent = parent.parentElement;
+    }
+
+    return true;
 };
-
 
 /**
  * @param {Node} ancestor A potential ancestor of |node|.
