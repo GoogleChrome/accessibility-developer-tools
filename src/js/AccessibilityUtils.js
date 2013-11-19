@@ -146,7 +146,8 @@ axs.utils.elementIsOutsideScrollArea = function(element) {
     var defaultView = element.ownerDocument.defaultView;
     while (parent != null) {
         var style = defaultView.getComputedStyle(parent);
-        if (style.overflow == 'auto' && parent.scrollHeight > scrollHeight) {
+        if ((style.overflow == 'auto' || style.overflow == 'hidden' || style.overflow == 'scroll')
+            && (parent.scrollHeight > scrollHeight || parent.scrollWidth > scrollWidth)) {
             if (axs.utils.elementIsOutsideScrollArea(parent)) {
                 parent = parent.parentElement;
                 continue;
