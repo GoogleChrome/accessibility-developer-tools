@@ -18,6 +18,7 @@ module('Scroll area', {
 
     fixture.style.top = '0';
     fixture.style.left = '0';
+    fixture.style.overflow = 'scroll';
 
     document.getElementById('qunit-fixture').appendChild(fixture);
     this.fixture_ = fixture;
@@ -44,7 +45,7 @@ test('Outside scroll area = bad', function() {
   input.style.position = 'absolute';
   equal(axs.utils.elementIsOutsideScrollArea(input), true);
 });
-test('In scroll area for element with overflow:auto = ok', function() {
+test('In scroll area for element with overflow:auto or overflow:scroll = ok', function() {
   var longDiv = document.createElement('div');
   this.fixture_.appendChild(longDiv);
   longDiv.style.overflow = 'auto';
@@ -60,22 +61,8 @@ test('In scroll area for element with overflow:auto = ok', function() {
   var input = document.createElement('input');
   longDiv.appendChild(input);
   equal(axs.utils.elementIsOutsideScrollArea(input), false);
-});
-test('In scroll area for element with overflow:auto = ok', function() {
-  var longDiv = document.createElement('div');
-  this.fixture_.appendChild(longDiv);
-  longDiv.style.overflow = 'auto';
-  longDiv.style.position = 'absolute';
-  longDiv.style.left = '0';
-  longDiv.style.top = '0';
-  longDiv.style.height = '1000px';
-  for (var i = 0; i < 1000; i++) {
-    var filler = document.createElement('div');
-    filler.innerText = 'spam';
-    longDiv.appendChild(filler);
-  }
-  var input = document.createElement('input');
-  longDiv.appendChild(input);
+
+  longDiv.style.overflow = 'scroll';
   equal(axs.utils.elementIsOutsideScrollArea(input), false);
 });
 test('In scroll area for element but that element is not inside scroll area = bad', function() {
@@ -95,4 +82,44 @@ test('In scroll area for element but that element is not inside scroll area = ba
   var input = document.createElement('input');
   longDiv.appendChild(input);
   equal(axs.utils.elementIsOutsideScrollArea(input), true);
+});
+test('Clipped by element = bad even if inside scroll area', function() {
+  this.fixture_.innerHTML =
+    '<style>\n' +
+    'div {\n' +
+    '    border: 1px solid #009;\n' +
+    '    padding: 20px;\n' +
+    '}\n' +
+    'button {\n' +
+    '    margin: 20px;\n' +
+    '    display: block;\n' +
+    '}\n' +
+    '.container {\n' +
+    '    overflow: hidden;\n' +
+    '    position: relative;\n' +
+    '    left: 400px;\n' +
+    '}\n' +
+    '.b2 {\n' +
+    '    position: relative;\n' +
+    '    left: -400px;\n' +
+    '}\n' +
+    '</style>\n' +
+    '<div class="container">\n' +
+    '    <button class="b1">This button is offscreen</button>\n' +
+    '    <button class="b2">This button is onscreen but clipped.</button>\n' +
+    '</div>';
+  var button = document.querySelector('.b2');
+  equal(axs.utils.elementIsOutsideScrollArea(button), true);
+
+  var container = document.querySelector('.container');
+  container.style.overflow = 'scroll';
+  equal(axs.utils.elementIsOutsideScrollArea(button), true);
+
+  var container = document.querySelector('.container');
+  container.style.overflow = 'auto';
+  equal(axs.utils.elementIsOutsideScrollArea(button), true);
+
+  var container = document.querySelector('.container');
+  container.style.overflow = 'visible';
+  equal(axs.utils.elementIsOutsideScrollArea(button), false);
 });

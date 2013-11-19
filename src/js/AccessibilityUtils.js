@@ -129,45 +129,87 @@ axs.utils.elementHasZeroArea = function(element) {
  * @return {boolean}
  */
 axs.utils.elementIsOutsideScrollArea = function(element) {
-    var rect = element.getBoundingClientRect();
-    var scrollHeight = document.body.scrollHeight;
-    var scrollWidth = document.body.scrollWidth;
-    var scrollTop = document.body.scrollTop;
-    var scrollLeft = document.body.scrollLeft;
-
-    var scrollArea = { top: -scrollTop, bottom: scrollHeight - scrollTop,
-                       left: -scrollLeft, right: scrollWidth - scrollLeft }
-    if (rect.top < scrollArea.bottom && rect.bottom > scrollArea.top &&
-        rect.left < scrollArea.right && rect.right > scrollArea.left) {
-        return false;
-    }
-
     var parent = element.parentElement;
+
     var defaultView = element.ownerDocument.defaultView;
-    while (parent != null) {
-        var style = defaultView.getComputedStyle(parent);
-        if ((style.overflow == 'auto' || style.overflow == 'hidden' || style.overflow == 'scroll')
-            && (parent.scrollHeight > scrollHeight || parent.scrollWidth > scrollWidth)) {
-            if (axs.utils.elementIsOutsideScrollArea(parent)) {
-                parent = parent.parentElement;
-                continue;
-            }
-            var parentRect = parent.getBoundingClientRect();
-            var parentTop = parentRect.top;
-            var parentLeft = parentRect.left;
-            var parentScrollArea = { top: parentTop - parent.scrollTop,
-                                     bottom: parentTop - parent.scrollTop + parent.scrollHeight,
-                                     left: parentLeft - parent.scrollLeft,
-                                     right: parentLeft - parent.scrollLeft + parent.scrollWidth };
-            if (rect.top < parentScrollArea.bottom && rect.bottom > parentScrollArea.top &&
-                rect.left < parentScrollArea.right && rect.right > parentScrollArea.left) {
-                return false;
-            }
-        }
+    while (parent != defaultView.document.body) {
+        if (axs.utils.isClippedBy(element, parent))
+            return true;
+
+        if (axs.utils.canScrollTo(element, parent) && !axs.utils.elementIsOutsideScrollArea(parent))
+            return false;
+
         parent = parent.parentElement;
     }
 
+    return !axs.utils.canScrollTo(element, defaultView.document.body);
+};
+
+/**
+ * Checks whether it's possible to scroll to the given element within the given container.
+ * Assumes that |container| is an ancestor of |element|.
+ * If |container| cannot be scrolled, returns True if the element is within its bounding client
+ * rect.
+ * @param {Element} element
+ * @param {Element} container
+ * @return {boolean} True iff it's possible to scroll to |element| within |container|.
+ */
+axs.utils.canScrollTo = function(element, container) {
+    var rect = element.getBoundingClientRect();
+    var containerRect = container.getBoundingClientRect();
+    var containerTop = containerRect.top;
+    var containerLeft = containerRect.left;
+    var containerScrollArea =
+        { top: containerTop - container.scrollTop,
+          bottom: containerTop - container.scrollTop + container.scrollHeight,
+          left: containerLeft - container.scrollLeft,
+          right: containerLeft - container.scrollLeft + container.scrollWidth };
+
+    if (rect.right < containerScrollArea.left || rect.bottom < containerScrollArea.top ||
+            rect.left > containerScrollArea.right || rect.top > containerScrollArea.bottom) {
+        return false;
+    }
+
+    var defaultView = element.ownerDocument.defaultView;
+    var style = defaultView.getComputedStyle(container);
+
+    if (rect.left > containerRect.right || rect.top > containerRect.bottom)
+        return (style.overflow == 'scroll' || style.overflow == 'auto');
+
     return true;
+};
+
+/**
+ * Checks whether the given element is clipped by the given container.
+ * Assumes that |container| is an ancestor of |element|.
+ * @param {Element} element
+ * @param {Element} container
+ * @return {boolean} True iff |element| is clipped by |container|.
+ */
+axs.utils.isClippedBy = function(element, container) {
+    var rect = element.getBoundingClientRect();
+    var containerRect = container.getBoundingClientRect();
+    var containerTop = containerRect.top;
+    var containerLeft = containerRect.left;
+    var containerScrollArea =
+        { top: containerTop - container.scrollTop,
+          bottom: containerTop - container.scrollTop + container.scrollHeight,
+          left: containerLeft - container.scrollLeft,
+          right: containerLeft - container.scrollLeft + container.scrollWidth };
+
+    var defaultView = element.ownerDocument.defaultView;
+    var style = defaultView.getComputedStyle(container);
+
+    if ((rect.right < containerRect.left || rect.bottom < containerRect.top ||
+             rect.left > containerRect.right || rect.top > containerRect.bottom) &&
+             style.overflow == 'hidden') {
+        return true;
+    }
+
+    if (rect.right < containerScrollArea.left || rect.bottom < containerScrollArea.top)
+        return (style.overflow != 'visible');
+
+    return false;
 };
 
 /**
