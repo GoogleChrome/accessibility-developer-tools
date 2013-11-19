@@ -12,40 +12,46 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module('FocusableElementNotVisibleAndNotAriaHidden');
+module('FocusableElementNotVisibleAndNotAriaHidden', {
+  setup: function() {
+    var fixture = document.createElement('div');
+    document.getElementById('qunit-fixture').appendChild(fixture);
+
+    this.fixture_ = fixture;
+    document.getElementById('qunit-fixture').style.top = 0;
+    document.getElementById('qunit-fixture').style.left = 0;
+  },
+  teardown: function() {
+    document.getElementById('qunit-fixture').style.removeProperty('top');
+    document.getElementById('qunit-fixture').style.removeProperty('left');
+  }
+});
+
 test('a focusable element that is visible passes the audit', function() {
-  var fixture = document.getElementById('qunit-fixture');
   var input = document.createElement('input');
 
-  fixture.style.top = '0';
-  fixture.style.left = '0';
-  fixture.appendChild(input);
-
+  this.fixture_.appendChild(input);
   var rule = axs.AuditRules.getRule('focusableElementNotVisibleAndNotAriaHidden');
   deepEqual(
-    rule.run({scope: fixture}),
+    rule.run({scope: this.fixture_}),
     { elements: [], result: axs.constants.AuditResult.PASS }
   );
 });
 
 test('a focusable element that is hidden fails the audit', function() {
-  var fixture = document.getElementById('qunit-fixture');
   var input = document.createElement('input');
   input.style.opacity = '0';
 
-  fixture.style.top = '0';
-  fixture.style.left = '0';
-  fixture.appendChild(input);
+  this.fixture_.appendChild(input);
 
   var rule = axs.AuditRules.getRule('focusableElementNotVisibleAndNotAriaHidden');
   deepEqual(
-    rule.run({scope: fixture}),
+    rule.run({scope: this.fixture_}),
     { elements: [input], result: axs.constants.AuditResult.FAIL }
   );
 });
 
 test('a focusable element that is hidden but shown on focus passes the audit', function() {
-  var fixture = document.getElementById('qunit-fixture');
   var style = document.createElement('style');
   var skipLink = document.createElement('a');
 
@@ -53,16 +59,14 @@ test('a focusable element that is hidden but shown on focus passes the audit', f
   skipLink.id = 'skip';
   skipLink.textContent = 'Skip to content';
 
-  fixture.style.top = '0';
-  fixture.style.left = '0';
 
   style.appendChild(document.createTextNode("a#skip { position:fixed; top: -1000px; left: -1000px }" +
                                             "a#skip:focus, a#skip:active { top: 10px; left: 10px }"));
-  fixture.appendChild(style);
-  fixture.appendChild(skipLink);
+  this.fixture_.appendChild(style);
+  this.fixture_.appendChild(skipLink);
 
   var rule = axs.AuditRules.getRule('focusableElementNotVisibleAndNotAriaHidden');
   deepEqual(
-    rule.run({scope: fixture}),
+    rule.run({scope: this.fixture_}),
     { elements: [], result: axs.constants.AuditResult.PASS });
 });
