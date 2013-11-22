@@ -173,8 +173,10 @@ axs.utils.canScrollTo = function(element, container) {
     var defaultView = element.ownerDocument.defaultView;
     var style = defaultView.getComputedStyle(container);
 
-    if (rect.left > containerRect.right || rect.top > containerRect.bottom)
-        return (style.overflow == 'scroll' || style.overflow == 'auto');
+    if (rect.left > containerRect.right || rect.top > containerRect.bottom) {
+        return (style.overflow == 'scroll' || style.overflow == 'auto' ||
+                container.tagName.toLowerCase() == 'body');
+    }
 
     return true;
 };
