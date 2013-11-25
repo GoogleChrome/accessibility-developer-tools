@@ -175,7 +175,7 @@ axs.utils.canScrollTo = function(element, container) {
 
     if (rect.left > containerRect.right || rect.top > containerRect.bottom) {
         return (style.overflow == 'scroll' || style.overflow == 'auto' ||
-                container.tagName.toLowerCase() == 'body');
+                container instanceof defaultView.HTMLBodyElement);
     }
 
     return true;
