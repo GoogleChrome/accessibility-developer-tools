@@ -78,7 +78,7 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('copy-dist', function() {
-    grunt.file.copy('gen/axs_testing.js', 'dist/axs_testing.js');
+    grunt.file.copy('gen/axs_testing.js', 'dist/js/axs_testing.js');
   });
 
   grunt.registerTask('default', ['save-revision', 'closurecompiler:minify', 'qunit']);
