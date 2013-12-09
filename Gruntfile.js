@@ -77,7 +77,12 @@ module.exports = function(grunt) {
     grunt.task.run('git-describe');
   });
 
+  grunt.registerTask('copy-dist', function() {
+    grunt.file.copy('gen/axs_testing.js', 'dist/js/axs_testing.js');
+  });
+
   grunt.registerTask('default', ['save-revision', 'closurecompiler:minify', 'qunit']);
+  grunt.registerTask('build', ['default', 'copy-dist']);
   grunt.registerTask('travis', ['closurecompiler:minify', 'qunit']);
 };
 
