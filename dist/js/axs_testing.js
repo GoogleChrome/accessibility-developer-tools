@@ -10,13 +10,12 @@ goog.exportPath_ = function(a, b, c) {
 };
 goog.define = function(a, b) {
   var c = b;
-  COMPILED || (goog.global.CLOSURE_UNCOMPILED_DEFINES && Object.prototype.hasOwnProperty.call(goog.global.CLOSURE_UNCOMPILED_DEFINES, a) ? c = goog.global.CLOSURE_UNCOMPILED_DEFINES[a] : goog.global.CLOSURE_DEFINES && Object.prototype.hasOwnProperty.call(goog.global.CLOSURE_DEFINES, a) && (c = goog.global.CLOSURE_DEFINES[a]));
+  COMPILED || goog.global.CLOSURE_DEFINES && Object.prototype.hasOwnProperty.call(goog.global.CLOSURE_DEFINES, a) && (c = goog.global.CLOSURE_DEFINES[a]);
   goog.exportPath_(a, c);
 };
 goog.DEBUG = !0;
 goog.LOCALE = "en";
 goog.TRUSTED_SITE = !0;
-goog.STRICT_MODE_COMPATIBLE = !1;
 goog.provide = function(a) {
   if (!COMPILED) {
     if (goog.isProvided_(a)) {
@@ -34,10 +33,8 @@ goog.setTestOnly = function(a) {
     throw a = a || "", Error("Importing test-only code into non-debug environment" + a ? ": " + a : ".");
   }
 };
-goog.forwardDeclare = function(a) {
-};
 COMPILED || (goog.isProvided_ = function(a) {
-  return!goog.implicitNamespaces_[a] && goog.isDefAndNotNull(goog.getObjectByName(a));
+  return!goog.implicitNamespaces_[a] && !!goog.getObjectByName(a);
 }, goog.implicitNamespaces_ = {});
 goog.getObjectByName = function(a, b) {
   for (var c = a.split("."), d = b || goog.global, e;e = c.shift();) {
@@ -235,9 +232,6 @@ goog.isObject = function(a) {
 goog.getUid = function(a) {
   return a[goog.UID_PROPERTY_] || (a[goog.UID_PROPERTY_] = ++goog.uidCounter_);
 };
-goog.hasUid = function(a) {
-  return!!a[goog.UID_PROPERTY_];
-};
 goog.removeUid = function(a) {
   "removeAttribute" in a && a.removeAttribute(goog.UID_PROPERTY_);
   try {
@@ -289,8 +283,8 @@ goog.bind = function(a, b, c) {
 goog.partial = function(a, b) {
   var c = Array.prototype.slice.call(arguments, 1);
   return function() {
-    var b = c.slice();
-    b.push.apply(b, arguments);
+    var b = Array.prototype.slice.call(arguments);
+    b.unshift.apply(b, c);
     return a.apply(this, b);
   };
 };
@@ -366,15 +360,11 @@ goog.inherits = function(a, b) {
   a.superClass_ = b.prototype;
   a.prototype = new c;
   a.prototype.constructor = a;
-  a.base = function(a, c, f) {
-    var g = Array.prototype.slice.call(arguments, 2);
-    return b.prototype[c].apply(a, g);
-  };
 };
 goog.base = function(a, b, c) {
   var d = arguments.callee.caller;
-  if (goog.STRICT_MODE_COMPATIBLE || goog.DEBUG && !d) {
-    throw Error("arguments.caller not defined.  goog.base() cannot be used with strict mode code. See http://www.ecma-international.org/ecma-262/5.1/#sec-C");
+  if (goog.DEBUG && !d) {
+    throw Error("arguments.caller not defined.  goog.base() expects not to be running in strict mode. See http://www.ecma-international.org/ecma-262/5.1/#sec-C");
   }
   if (d.superClass_) {
     return d.superClass_.constructor.apply(a, Array.prototype.slice.call(arguments, 1));
