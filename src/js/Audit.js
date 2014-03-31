@@ -70,10 +70,17 @@ axs.AuditConfiguration = function() {
      */
     this.withConsoleApi = false;
 
+    /**
+     * Whether we want to display a warning that there are unsupported rules.
+     * @type {boolean}
+     */
+    this.warnUnsupportedRules = true;
+
     goog.exportProperty(this, 'scope', this.scope);
     goog.exportProperty(this, 'auditRulesToRun', this.auditRulesToRun);
     goog.exportProperty(this, 'auditRulesToIgnore', this.auditRulesToIgnore);
     goog.exportProperty(this, 'withConsoleApi', this.withConsoleApi);
+    goog.exportProperty(this, 'warnUnsupportedRules', this.warnUnsupportedRules);
 };
 goog.exportSymbol('axs.AuditConfiguration', axs.AuditConfiguration);
 
@@ -132,6 +139,26 @@ goog.exportProperty(axs.AuditConfiguration.prototype, 'ignoreSelectors',
 goog.exportProperty(axs.AuditConfiguration.prototype, 'getIgnoreSelectors',
                     axs.AuditConfiguration.prototype.getIgnoreSelectors);
 
+axs.Audit.warnUnsupportedRules = true;
+goog.exportSymbol('axs.Audit.warnUnsupportedRules', axs.Audit.warnUnsupportedRules);
+
+
+/**
+ * Returns the rules that cannot run.
+ * These are the rules that require the console API and we do not support the console API.
+ * @param {axs.AuditConfiguration=} opt_configuration
+ * @return {Array.<String>}  A list of rules that cannot be run
+ */
+axs.Audit.getRulesCannotRun = function(opt_configuration) {
+    return Object.keys(axs.AuditRule.specs)
+        .filter(function(key) {
+            return axs.AuditRules.getRule(key).requiresConsoleAPI; 
+        })
+        .map(function(key) { 
+            return axs.AuditRules.getRule(key).code;
+        });
+}
+
 /**
  * Runs an audit with all of the audit rules.
  * @param {axs.AuditConfiguration=} opt_configuration
@@ -141,6 +168,7 @@ goog.exportProperty(axs.AuditConfiguration.prototype, 'getIgnoreSelectors',
  *       elements,  // @type {Array.<Element>}
  *       rule       // @type {axs.AuditRule} - data only (name, severity, code)
  *     }
+ * @suppress {checkTypes}
  */
 axs.Audit.run = function(opt_configuration) {
     var configuration = opt_configuration || new axs.AuditConfiguration();
@@ -161,6 +189,16 @@ axs.Audit.run = function(opt_configuration) {
                 continue;
             auditRules.splice(auditRules.indexOf(auditRuleToIgnore), 1);
         }
+    }
+
+    if(axs.Audit.warnUnsupportedRules && opt_configuration.warnUnsupportedRules) {
+        var unsupportedRules = axs.Audit.getRulesCannotRun(configuration);
+        if(unsupportedRules.length > 0) {
+            console.warn("Some rules cannot be checked using the axs.Audit.run() method call. Use the Chrome plugin to check these rules: " + unsupportedRules.join(", "));
+            console.warn("To remove this message, pass an AuditConfiguration object to axs.Audit.run() and set configuration.warnUnsupportedRules = false.");
+        }
+        
+        axs.Audit.warnUnsupportedRules = false;
     }
 
     for (var i = 0; i < auditRules.length; i++) {
