@@ -1433,38 +1433,40 @@ goog.exportProperty(axs.AuditConfiguration.prototype, "getIgnoreSelectors", axs.
 axs.Audit.warnUnsupportedRules = !0;
 goog.exportSymbol("axs.Audit.warnUnsupportedRules", axs.Audit.warnUnsupportedRules);
 axs.Audit.getRulesCannotRun = function(a) {
-  return Object.keys(axs.AuditRule.specs).filter(function(a) {
+  return a.withConsoleApi ? [] : Object.keys(axs.AuditRule.specs).filter(function(a) {
     return axs.AuditRules.getRule(a).requiresConsoleAPI;
   }).map(function(a) {
     return axs.AuditRules.getRule(a).code;
   });
 };
 axs.Audit.run = function(a) {
-  var b = a || new axs.AuditConfiguration, c = b.withConsoleApi, d = [], e;
-  e = b.auditRulesToRun && 0 < b.auditRulesToRun.length ? b.auditRulesToRun : Object.keys(axs.AuditRule.specs);
-  if (b.auditRulesToIgnore) {
-    for (var f = 0;f < b.auditRulesToIgnore.length;f++) {
-      var g = b.auditRulesToIgnore[f];
-      0 > e.indexOf(g) || e.splice(e.indexOf(g), 1);
+  a = a || new axs.AuditConfiguration;
+  var b = a.withConsoleApi, c = [], d;
+  d = a.auditRulesToRun && 0 < a.auditRulesToRun.length ? a.auditRulesToRun : Object.keys(axs.AuditRule.specs);
+  if (a.auditRulesToIgnore) {
+    for (var e = 0;e < a.auditRulesToIgnore.length;e++) {
+      var f = a.auditRulesToIgnore[e];
+      0 > d.indexOf(f) || d.splice(d.indexOf(f), 1);
     }
   }
-  axs.Audit.warnUnsupportedRules && a.warnUnsupportedRules && (f = axs.Audit.getRulesCannotRun(b), 0 < f.length && (console.warn("Some rules cannot be checked using the axs.Audit.run() method call. Use the Chrome plugin to check these rules: " + f.join(", ")), console.warn("To remove this message, pass an AuditConfiguration object to axs.Audit.run() and set configuration.warnUnsupportedRules = false.")), axs.Audit.warnUnsupportedRules = !1);
-  for (f = 0;f < e.length;f++) {
-    if (a = e[f], (g = axs.AuditRules.getRule(a)) && !g.disabled && (c || !g.requiresConsoleAPI)) {
-      var h = {}, k = b.getIgnoreSelectors(g.name);
-      if (0 < k.length || b.scope) {
+  axs.Audit.warnUnsupportedRules && a.warnUnsupportedRules && (e = axs.Audit.getRulesCannotRun(a), 0 < e.length && (console.warn("Some rules cannot be checked using the axs.Audit.run() method call. Use the Chrome plugin to check these rules: " + e.join(", ")), console.warn("To remove this message, pass an AuditConfiguration object to axs.Audit.run() and set configuration.warnUnsupportedRules = false.")), axs.Audit.warnUnsupportedRules = !1);
+  for (e = 0;e < d.length;e++) {
+    var f = d[e], g = axs.AuditRules.getRule(f);
+    if (g && !g.disabled && (b || !g.requiresConsoleAPI)) {
+      var h = {}, k = a.getIgnoreSelectors(g.name);
+      if (0 < k.length || a.scope) {
         h.ignoreSelectors = k;
       }
-      b.scope && (h.scope = b.scope);
-      b.maxResults && (h.maxResults = b.maxResults);
+      a.scope && (h.scope = a.scope);
+      a.maxResults && (h.maxResults = a.maxResults);
       h = g.run.call(g, h);
       g = axs.utils.namedValues(g);
-      g.severity = b.getSeverity(a) || g.severity;
+      g.severity = a.getSeverity(f) || g.severity;
       h.rule = g;
-      d.push(h);
+      c.push(h);
     }
   }
-  return d;
+  return c;
 };
 goog.exportSymbol("axs.Audit.run", axs.Audit.run);
 axs.Audit.auditResults = function(a) {

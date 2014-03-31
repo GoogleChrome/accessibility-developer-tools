@@ -150,6 +150,9 @@ goog.exportSymbol('axs.Audit.warnUnsupportedRules', axs.Audit.warnUnsupportedRul
  * @return {Array.<String>}  A list of rules that cannot be run
  */
 axs.Audit.getRulesCannotRun = function(opt_configuration) {
+    if(opt_configuration.withConsoleApi) {
+        return [];
+    }
     return Object.keys(axs.AuditRule.specs)
         .filter(function(key) {
             return axs.AuditRules.getRule(key).requiresConsoleAPI; 
@@ -191,7 +194,7 @@ axs.Audit.run = function(opt_configuration) {
         }
     }
 
-    if(axs.Audit.warnUnsupportedRules && opt_configuration.warnUnsupportedRules) {
+    if(axs.Audit.warnUnsupportedRules && configuration.warnUnsupportedRules) {
         var unsupportedRules = axs.Audit.getRulesCannotRun(configuration);
         if(unsupportedRules.length > 0) {
             console.warn("Some rules cannot be checked using the axs.Audit.run() method call. Use the Chrome plugin to check these rules: " + unsupportedRules.join(", "));
