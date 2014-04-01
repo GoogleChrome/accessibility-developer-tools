@@ -74,13 +74,13 @@ axs.AuditConfiguration = function() {
      * Whether we want to display a warning that there are unsupported rules.
      * @type {boolean}
      */
-    this.warnUnsupportedRules = true;
+    this.unsupportedRulesWarningShown = true;
 
     goog.exportProperty(this, 'scope', this.scope);
     goog.exportProperty(this, 'auditRulesToRun', this.auditRulesToRun);
     goog.exportProperty(this, 'auditRulesToIgnore', this.auditRulesToIgnore);
     goog.exportProperty(this, 'withConsoleApi', this.withConsoleApi);
-    goog.exportProperty(this, 'warnUnsupportedRules', this.warnUnsupportedRules);
+    goog.exportProperty(this, 'unsupportedRulesWarningShown', this.unsupportedRulesWarningShown);
 };
 goog.exportSymbol('axs.AuditConfiguration', axs.AuditConfiguration);
 
@@ -139,8 +139,8 @@ goog.exportProperty(axs.AuditConfiguration.prototype, 'ignoreSelectors',
 goog.exportProperty(axs.AuditConfiguration.prototype, 'getIgnoreSelectors',
                     axs.AuditConfiguration.prototype.getIgnoreSelectors);
 
-axs.Audit.warnUnsupportedRules = true;
-goog.exportSymbol('axs.Audit.warnUnsupportedRules', axs.Audit.warnUnsupportedRules);
+axs.Audit.unsupportedRulesWarningShown = true;
+goog.exportSymbol('axs.Audit.unsupportedRulesWarningShown', axs.Audit.unsupportedRulesWarningShown);
 
 
 /**
@@ -193,14 +193,14 @@ axs.Audit.run = function(opt_configuration) {
         }
     }
 
-    if(axs.Audit.warnUnsupportedRules && configuration.warnUnsupportedRules) {
+    if(axs.Audit.unsupportedRulesWarningShown && configuration.unsupportedRulesWarningShown) {
         var unsupportedRules = axs.Audit.getRulesCannotRun(configuration);
         if(unsupportedRules.length > 0) {
             console.warn("Some rules cannot be checked using the axs.Audit.run() method call. Use the Chrome plugin to check these rules: " + unsupportedRules.join(", "));
-            console.warn("To remove this message, pass an AuditConfiguration object to axs.Audit.run() and set configuration.warnUnsupportedRules = false.");
+            console.warn("To remove this message, pass an AuditConfiguration object to axs.Audit.run() and set configuration.unsupportedRulesWarningShown = false.");
         }
         
-        axs.Audit.warnUnsupportedRules = false;
+        axs.Audit.unsupportedRulesWarningShown = false;
     }
 
     for (var i = 0; i < auditRules.length; i++) {
