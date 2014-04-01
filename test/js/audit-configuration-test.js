@@ -91,3 +91,47 @@ test('Configure audit rules to ignore', function() {
   }));
 
 });
+
+/*
+ *
+ * Doesn't seem to stub console.warn reliably.
+ * In addition the withConsoleAPI test throws the Can't find variable error inside
+var __warnings = [];
+console.warn = function(msg) {
+  __warnings.push(msg);
+}
+
+test("Unsupported Rules Warning shown first and only first time audit ran", function() {
+  var auditConfig = new axs.AuditConfiguration();
+  __warnings = [];
+  axs.Audit.run();
+
+  equal(2, __warnings.length);
+  axs.Audit.run();
+  equal(2, __warnings.length);
+});
+
+
+test("Unsupported Rules Warning not shown if unsupportedRulesWarningShown set to false on configuration", function() {
+  var auditConfig = new axs.AuditConfiguration();
+  auditConfig.unsupportedRulesWarningShown = true;
+  __warnings = [];
+  axs.Audit.run(auditConfig);
+
+  equal(0, __warnings.length);
+  axs.Audit.run(auditConfig);
+  equal(0, __warnings.length);
+});
+
+
+test("Unsupported Rules Warning not shown if with console API on configuration set", function() {
+  var auditConfig = new axs.AuditConfiguration();
+  auditConfig.withConsoleApi = true;
+  __warnings = [];
+  axs.Audit.run(auditConfig);
+
+  equal(0, __warnings.length);
+  axs.Audit.run(auditConfig);
+  equal(0, __warnings.length);
+});
+*/
