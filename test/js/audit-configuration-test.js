@@ -92,10 +92,6 @@ test('Configure audit rules to ignore', function() {
 
 });
 
-/*
- *
- * Doesn't seem to stub console.warn reliably.
- * In addition the withConsoleAPI test throws the Can't find variable error inside
 var __warnings = [];
 console.warn = function(msg) {
   __warnings.push(msg);
@@ -103,6 +99,10 @@ console.warn = function(msg) {
 
 test("Unsupported Rules Warning shown first and only first time audit ran", function() {
   var auditConfig = new axs.AuditConfiguration();
+
+  //This should not be touched by an end-user, but needs to be set here,
+  //because the unit tests run multiple times Audit.run()
+  axs.Audit.unsupportedRulesWarningShown = true;   
   __warnings = [];
   axs.Audit.run();
 
@@ -114,7 +114,10 @@ test("Unsupported Rules Warning shown first and only first time audit ran", func
 
 test("Unsupported Rules Warning not shown if unsupportedRulesWarningShown set to false on configuration", function() {
   var auditConfig = new axs.AuditConfiguration();
-  auditConfig.unsupportedRulesWarningShown = true;
+  auditConfig.unsupportedRulesWarningShown = false;
+  //This should not be touched by an end-user, but needs to be set here,
+  //because the unit tests run multiple times Audit.run()
+  axs.Audit.unsupportedRulesWarningShown = true; 
   __warnings = [];
   axs.Audit.run(auditConfig);
 
@@ -123,15 +126,27 @@ test("Unsupported Rules Warning not shown if unsupportedRulesWarningShown set to
   equal(0, __warnings.length);
 });
 
+/*
+ *TODO: Fix getEventListners stub
 
 test("Unsupported Rules Warning not shown if with console API on configuration set", function() {
   var auditConfig = new axs.AuditConfiguration();
   auditConfig.withConsoleApi = true;
+  //This should not be touched by an end-user, but needs to be set here,
+  //because the unit tests run multiple times Audit.run()
+  axs.Audit.unsupportedRulesWarningShown = true; 
   __warnings = [];
+
+  getEventListeners = function() { return {}; }  //Stub function only in consoleAPI
+
   axs.Audit.run(auditConfig);
+
+  getEventListeners = null;
+
 
   equal(0, __warnings.length);
   axs.Audit.run(auditConfig);
   equal(0, __warnings.length);
 });
+
 */
