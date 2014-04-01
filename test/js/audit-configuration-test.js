@@ -126,8 +126,6 @@ test("Unsupported Rules Warning not shown if unsupportedRulesWarningShown set to
   equal(0, __warnings.length);
 });
 
-/*
- *TODO: Fix getEventListners stub
 
 test("Unsupported Rules Warning not shown if with console API on configuration set", function() {
   var auditConfig = new axs.AuditConfiguration();
@@ -137,11 +135,12 @@ test("Unsupported Rules Warning not shown if with console API on configuration s
   axs.Audit.unsupportedRulesWarningShown = true; 
   __warnings = [];
 
-  getEventListeners = function() { return {}; }  //Stub function only in consoleAPI
+  getEventListeners = function() { return {"click" : function() { }}; }  //Stub function only in consoleAPI
 
   axs.Audit.run(auditConfig);
 
-  getEventListeners = null;
+  //Line below would be nice to cleanup, but then the test fails.
+  //getEventListeners = null;
 
 
   equal(0, __warnings.length);
@@ -149,4 +148,4 @@ test("Unsupported Rules Warning not shown if with console API on configuration s
   equal(0, __warnings.length);
 });
 
-*/
+
