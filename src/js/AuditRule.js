@@ -137,8 +137,9 @@ axs.AuditRule.collectMatchingElements = function(node, matcher, collection,
         return;
     }
 
-    // If it is a <content> element, descend into distributed elements - these
-    // are the children of the parent of the ShadowRoot.
+    // If it is a <content> element, descend into distributed elements - descend
+    // into distributed elements - these are elements from outside the shadow
+    // root which are rendered inside the shadow DOM.
     if (element && element.localName == 'content') {
         var content = /** @type {HTMLContentElement} */ (element);
         var distributedNodes = content.getDistributedNodes();
