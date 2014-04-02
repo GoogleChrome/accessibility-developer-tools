@@ -59,3 +59,14 @@ function HTMLShadowElement() {}
  * @type {ShadowRoot}
  */
 HTMLShadowElement.prototype.olderShadowRoot;
+
+/**
+ * @type {HTMLShadowElement}
+ */
+HTMLElement.prototype.shadowRoot;
+
+/**
+ * Note: will be deprecated at some point; prefer shadowRoot if it exists.
+ * @type {HTMLShadowElement}
+ */
+HTMLElement.prototype.webkitShadowRoot;

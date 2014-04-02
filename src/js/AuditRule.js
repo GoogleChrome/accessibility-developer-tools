@@ -129,12 +129,15 @@ axs.AuditRule.collectMatchingElements = function(node, matcher, collection,
     // If it has a ShadowRoot, ignore all child elements - these will be picked
     // up by the <content> or <shadow> elements. Descend straight into the
     // ShadowRoot.
-    if (node.webkitShadowRoot) {
-        axs.AuditRule.collectMatchingElements(node.webkitShadowRoot,
-                                              matcher,
-                                              collection,
-                                              node.webkitShadowRoot);
-        return;
+    if (element) {
+        var shadowRoot = element.shadowRoot || element.webkitShadowRoot;
+        if (shadowRoot) {
+            axs.AuditRule.collectMatchingElements(node.webkitShadowRoot,
+                                                  matcher,
+                                                  collection,
+                                                  shadowRoot);
+            return;
+        }
     }
 
     // If it is a <content> element, descend into distributed elements - descend
