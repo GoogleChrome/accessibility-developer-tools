@@ -25,3 +25,48 @@ var getEventListeners = function(element) { };
  * @type {Element}
  */
 HTMLLabelElement.prototype.control;
+
+/**
+ * @constructor
+ * @extends {DocumentFragment}
+ */
+function ShadowRoot() {}
+
+/**
+ * @type {ShadowRoot}
+ */
+ShadowRoot.prototype.olderShadowRoot;
+
+/**
+ * @constructor
+ * @extends {HTMLElement}
+ */
+function HTMLContentElement() {}
+
+/**
+ * @return {Array.<Node>}
+ */
+HTMLContentElement.prototype.getDistributedNodes = function() {};
+
+/**
+ * @constructor
+ * @extends {HTMLElement}
+ */
+function HTMLShadowElement() {}
+
+/**
+ * Note: this is an out of date model, but still used in practice sometimes.
+ * @type {ShadowRoot}
+ */
+HTMLShadowElement.prototype.olderShadowRoot;
+
+/**
+ * @type {HTMLShadowElement}
+ */
+HTMLElement.prototype.shadowRoot;
+
+/**
+ * Note: will be deprecated at some point; prefer shadowRoot if it exists.
+ * @type {HTMLShadowElement}
+ */
+HTMLElement.prototype.webkitShadowRoot;
