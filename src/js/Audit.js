@@ -71,7 +71,7 @@ axs.AuditConfiguration = function() {
     this.withConsoleApi = false;
 
     /**
-     * Whether we want to display a warning that there are unsupported rules.
+     * If true, show a warning when there are rules that we cannot support.
      * @type {boolean}
      */
     this.unsupportedRulesWarningShown = true;
@@ -140,7 +140,6 @@ goog.exportProperty(axs.AuditConfiguration.prototype, 'getIgnoreSelectors',
                     axs.AuditConfiguration.prototype.getIgnoreSelectors);
 
 axs.Audit.unsupportedRulesWarningShown = true;
-goog.exportSymbol('axs.Audit.unsupportedRulesWarningShown', axs.Audit.unsupportedRulesWarningShown);
 
 
 /**
