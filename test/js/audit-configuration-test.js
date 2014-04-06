@@ -102,7 +102,7 @@ test("Unsupported Rules Warning shown first and only first time audit ran", func
 
   //This should not be touched by an end-user, but needs to be set here,
   //because the unit tests run multiple times Audit.run()
-  axs.Audit.unsupportedRulesWarningShown = true;   
+  axs.Audit.unsupportedRulesWarningShown = false;   
   __warnings = [];
   axs.Audit.run();
 
@@ -112,12 +112,12 @@ test("Unsupported Rules Warning shown first and only first time audit ran", func
 });
 
 
-test("Unsupported Rules Warning not shown if unsupportedRulesWarningShown set to false on configuration", function() {
+test("Unsupported Rules Warning not shown if unsupportedRulesWarningShown set to true on configuration", function() {
   var auditConfig = new axs.AuditConfiguration();
-  auditConfig.unsupportedRulesWarningShown = false;
+  auditConfig.unsupportedRulesWarningShown = true;
   //This should not be touched by an end-user, but needs to be set here,
   //because the unit tests run multiple times Audit.run()
-  axs.Audit.unsupportedRulesWarningShown = true; 
+  axs.Audit.unsupportedRulesWarningShown = false; 
   __warnings = [];
   axs.Audit.run(auditConfig);
 
@@ -132,7 +132,7 @@ test("Unsupported Rules Warning not shown if with console API on configuration s
   auditConfig.withConsoleApi = true;
   //This should not be touched by an end-user, but needs to be set here,
   //because the unit tests run multiple times Audit.run()
-  axs.Audit.unsupportedRulesWarningShown = true; 
+  axs.Audit.unsupportedRulesWarningShown = false; 
   __warnings = [];
 
   getEventListeners = function() { return {"click" : function() { }}; }  //Stub function only in consoleAPI
