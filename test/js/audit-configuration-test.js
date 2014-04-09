@@ -100,8 +100,8 @@ console.warn = function(msg) {
 test("Unsupported Rules Warning shown first and only first time audit ran", function() {
   var auditConfig = new axs.AuditConfiguration();
 
-  //This should not be touched by an end-user, but needs to be set here,
-  //because the unit tests run multiple times Audit.run()
+  // This should not be touched by an end-user, but needs to be set here,
+  // because the unit tests run multiple times Audit.run()
   axs.Audit.unsupportedRulesWarningShown = false;   
   __warnings = [];
   axs.Audit.run();
@@ -112,11 +112,11 @@ test("Unsupported Rules Warning shown first and only first time audit ran", func
 });
 
 
-test("Unsupported Rules Warning not shown if unsupportedRulesWarningShown set to true on configuration", function() {
+test("Unsupported Rules Warning not shown if showUnsupportedRulesWarning set to false on configuration", function() {
   var auditConfig = new axs.AuditConfiguration();
-  auditConfig.unsupportedRulesWarningShown = true;
-  //This should not be touched by an end-user, but needs to be set here,
-  //because the unit tests run multiple times Audit.run()
+  auditConfig.showUnsupportedRulesWarning = false;
+  // This should not be touched by an end-user, but needs to be set here,
+  // because the unit tests run multiple times Audit.run()
   axs.Audit.unsupportedRulesWarningShown = false; 
   __warnings = [];
   axs.Audit.run(auditConfig);
@@ -130,17 +130,17 @@ test("Unsupported Rules Warning not shown if unsupportedRulesWarningShown set to
 test("Unsupported Rules Warning not shown if with console API on configuration set", function() {
   var auditConfig = new axs.AuditConfiguration();
   auditConfig.withConsoleApi = true;
-  //This should not be touched by an end-user, but needs to be set here,
-  //because the unit tests run multiple times Audit.run()
+  // This should not be touched by an end-user, but needs to be set here,
+  // because the unit tests run multiple times Audit.run()
   axs.Audit.unsupportedRulesWarningShown = false; 
   __warnings = [];
 
-  getEventListeners = function() { return {"click" : function() { }}; }  //Stub function only in consoleAPI
+  getEventListeners = function() { return {"click" : function() { }}; }  // Stub function only in consoleAPI
 
   axs.Audit.run(auditConfig);
 
-  //Line below would be nice to cleanup, but then the test fails.
-  //getEventListeners = null;
+  // Line below would be nice to cleanup, but then the test fails.
+  // getEventListeners = null;
 
 
   equal(0, __warnings.length);
