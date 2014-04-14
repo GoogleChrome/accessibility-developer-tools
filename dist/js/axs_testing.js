@@ -1646,4 +1646,3 @@ axs.AuditRule.specs.videoWithoutCaptions = {name:"videoWithoutCaptions", heading
   return!a.querySelectorAll("track[kind=captions]").length
 }, code:"AX_VIDEO_01"};
 
-
