@@ -12,12 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-var console = { };
-/** @param {...*} vararg */
-console.log = function(vararg) { };
-/** @param {...*} vararg */
-console.warn = function(vararg) { };
-
 /** @param {Element} element */
 var getEventListeners = function(element) { };
 
@@ -25,12 +19,6 @@ var getEventListeners = function(element) { };
  * @type {Element}
  */
 HTMLLabelElement.prototype.control;
-
-/**
- * @constructor
- * @extends {DocumentFragment}
- */
-function ShadowRoot() {}
 
 /**
  * @type {ShadowRoot}
@@ -59,11 +47,6 @@ function HTMLShadowElement() {}
  * @type {ShadowRoot}
  */
 HTMLShadowElement.prototype.olderShadowRoot;
-
-/**
- * @type {HTMLShadowElement}
- */
-HTMLElement.prototype.shadowRoot;
 
 /**
  * Note: will be deprecated at some point; prefer shadowRoot if it exists.
