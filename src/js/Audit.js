@@ -71,7 +71,7 @@ axs.AuditConfiguration = function() {
     this.withConsoleApi = false;
 
     /**
-     * Do we want to show a warning that there are audit rules which are not supported in this configuration?"
+     * Do we want to show a warning that there are audit rules which are not supported in this configuration?
      * @type {boolean}
      */
     this.showUnsupportedRulesWarning = true;
@@ -141,10 +141,10 @@ goog.exportProperty(axs.AuditConfiguration.prototype, 'getIgnoreSelectors',
 
 axs.Audit.unsupportedRulesWarningShown = false;
 
-
 /**
  * Returns the rules that cannot run.
- * These are the rules that require the console API and we do not support the console API.
+ * For example, if the current configuration requires the console API, these
+ * consist of the rules that require it.
  * @param {axs.AuditConfiguration=} opt_configuration
  * @return {Array.<String>}  A list of rules that cannot be run
  */
