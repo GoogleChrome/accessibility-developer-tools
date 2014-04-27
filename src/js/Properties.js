@@ -88,7 +88,7 @@ axs.properties.getHiddenReason = function(element) {
                      'on': element };
     }
 
-    return axs.properties.getHiddenReason(element.parentElement);
+    return axs.properties.getHiddenReason(axs.utils.parentElement(element));
 }
 
 
@@ -500,7 +500,7 @@ axs.properties.getTextFromHostLanguageAttributes = function(element,
             }
         }
 
-        var parent = element.parentElement;
+        var parent = axs.utils.parentElement(element);
         var labelWrappedValue = {};
         while (parent) {
             if (parent.tagName.toLowerCase() == 'label') {
@@ -513,7 +513,7 @@ axs.properties.getTextFromHostLanguageAttributes = function(element,
                     break;
                 }
             }
-            parent = parent.parentElement;
+            parent = axs.utils.parentElement(parent);
         }
         if (labelWrappedValue.text) {
             if (computedName)
