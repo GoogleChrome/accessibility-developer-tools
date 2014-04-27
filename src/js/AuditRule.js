@@ -132,7 +132,7 @@ axs.AuditRule.collectMatchingElements = function(node, matcher, collection,
     if (element) {
         var shadowRoot = element.shadowRoot || element.webkitShadowRoot;
         if (shadowRoot) {
-            axs.AuditRule.collectMatchingElements(node.webkitShadowRoot,
+            axs.AuditRule.collectMatchingElements(shadowRoot,
                                                   matcher,
                                                   collection,
                                                   shadowRoot);
