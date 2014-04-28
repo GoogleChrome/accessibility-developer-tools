@@ -36,8 +36,8 @@ axs.AuditRule.specs.focusableElementNotVisibleAndNotAriaHidden = {
         // Ignore elements which have negative tabindex and an ancestor with a
         // widget role, since they can be accessed neither with tab nor with
         // a screen reader
-        for (var parent = element.parentElement; parent != null;
-             parent = parent.parentElement) {
+        for (var parent = axs.utils.parentElement(element); parent != null;
+             parent = axs.utils.parentElement(parent)) {
             if (axs.utils.elementIsAriaWidget(parent))
                 return false;
         }
