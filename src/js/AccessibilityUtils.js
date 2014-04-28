@@ -83,9 +83,19 @@ axs.utils.luminanceRatio = function(luminance1, luminance2) {
  * @return {Element}
  */
 axs.utils.parentElement = function(node) {
+    if (!node)
+        return null;
+    if (node.nodeType == Node.DOCUMENT_FRAGMENT_NODE)
+        return node.host;
+
+    var parentElement = node.parentElement;
+    if (parentElement)
+        return parentElement;
+
     var parentNode = node.parentNode;
     if (!parentNode)
         return null;
+
     switch (parentNode.nodeType) {
     case Node.ELEMENT_NODE:
         return /** @type {Element} */ (parentNode);
