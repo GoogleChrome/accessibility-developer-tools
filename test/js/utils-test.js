@@ -138,3 +138,13 @@ test("returns the selector text for a nested object with a class attribute", fun
 
   equal(axs.utils.getQuerySelectorText(targetNode), "#qunit-fixture > P > .foo");
 });
+test("nth-of-type does not refer to a selector but a tagName", function() {
+  var html = '<ul><li>One</li><li class="thing">Two</li><li class="thing">Three</li></ul>';
+  this.fixture_.innerHTML = html;
+
+  var lis = document.querySelectorAll('li');
+  var lastLi = lis[lis.length - 1];
+  var selector = axs.utils.getQuerySelectorText(lastLi);
+  equal(lastLi, document.querySelector(selector),
+        'selector "' + selector + '" does not match element');
+});
