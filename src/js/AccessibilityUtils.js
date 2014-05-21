@@ -1354,9 +1354,6 @@ axs.utils.getQuerySelectorText = function(obj) {
       if (total == 1) {
         return axs.utils.getQuerySelectorText(obj.parentNode) +
                ' > ' + selector;
-      } else {
-        return axs.utils.getQuerySelectorText(obj.parentNode) +
-               ' > ' + selector + ':nth-of-type(' + total + ')';
       }
     }
 
