@@ -507,13 +507,13 @@ axs.utils.parseColor = function(colorString) {
         return new axs.utils.Color(r, g, b, a);
     }
 
-    var rgbaRegex = /^rgba\((\d+), (\d+), (\d+), (\d+(\.\d+)?)\)/;
+    var rgbaRegex = /^rgba\((\d+), (\d+), (\d+), (\d*(\.\d+)?)\)/;
     match = colorString.match(rgbaRegex);
     if (match) {
-        var a = parseInt(match[4], 10);
         var r = parseInt(match[1], 10);
         var g = parseInt(match[2], 10);
         var b = parseInt(match[3] ,10);
+        var a = parseFloat(match[4]);
         return new axs.utils.Color(r, g, b, a);
     }
 

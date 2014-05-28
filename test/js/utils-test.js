@@ -148,3 +148,13 @@ test("nth-of-type does not refer to a selector but a tagName", function() {
   equal(lastLi, document.querySelector(selector),
         'selector "' + selector + '" does not match element');
 });
+
+module("parseColor");
+test("parses alpha values correctly", function() {
+  var colorString = 'rgba(255, 255, 255, .47)';
+  var color = axs.utils.parseColor(colorString);
+  equal(color.red, 255);
+  equal(color.blue, 255);
+  equal(color.green, 255);
+  equal(color.alpha, .47);
+});
