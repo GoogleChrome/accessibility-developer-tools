@@ -59,7 +59,6 @@ test('a focusable element that is hidden but shown on focus passes the audit', f
   skipLink.id = 'skip';
   skipLink.textContent = 'Skip to content';
 
-
   style.appendChild(document.createTextNode("a#skip { position:fixed; top: -1000px; left: -1000px }" +
                                             "a#skip:focus, a#skip:active { top: 10px; left: 10px }"));
   this.fixture_.appendChild(style);
@@ -69,4 +68,15 @@ test('a focusable element that is hidden but shown on focus passes the audit', f
   deepEqual(
     rule.run({scope: this.fixture_}),
     { elements: [], result: axs.constants.AuditResult.PASS });
+});
+
+test('an element with negative tabindex and empty computed text is ignored', function() {
+  var emptyDiv = document.createElement('div');
+  emptyDiv.tabIndex = '-1';
+  this.fixture_.appendChild(emptyDiv);
+
+  var rule = axs.AuditRules.getRule('focusableElementNotVisibleAndNotAriaHidden');
+  deepEqual(
+    rule.run({scope: this.fixture_}),
+    { elements: [], result: axs.constants.AuditResult.NA });
 });
