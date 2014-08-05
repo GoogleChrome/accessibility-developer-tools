@@ -37,22 +37,24 @@ axs.AuditRule.specs.linkWithUnclearPurpose = {
      */
     test: function(anchor, opt_config) {
         var config = opt_config || {};
-        var blacklistPhrases = config['blacklistPhrases'] || ['click here', 'learn more'];
+        var blacklistPhrases = config['blacklistPhrases'] || [];
         var whitespaceRE = /\s+/
         for (var i = 0; i < blacklistPhrases.length; i++) {
             var phraseREString =
                 '^\\s*' + blacklistPhrases[i].trim().replace(whitespaceRE, '\\s*') + '\s*[^a-z]$';
             var phraseRE = new RegExp(phraseREString, 'i');
+            console.log('testing', anchor.textContent, 'against', phraseRE);
             if (phraseRE.test(anchor.textContent))
                 return true;
         }
 
         var stopwords = config['stopwords'] ||
-            ['click', 'tap', 'go', 'here', 'learn', 'more', 'this', 'page', 'link'];
+            ['click', 'tap', 'go', 'here', 'learn', 'more', 'this', 'page', 'link', 'about'];
         var filteredText = anchor.textContent;
-        filteredText = filteredText.replace(/[^a-zA-Z]/g, '');
+        filteredText = filteredText.replace(/[^a-zA-Z ]/g, '');
         for (var i = 0; i < stopwords.length; i++) {
-            var stopwordRE = new RegExp(stopwords[i], 'ig');
+            var stopwordRE = new RegExp('\\b' + stopwords[i] + '\\b', 'ig');
+            console.log('replacing', stopwordRE, 'with "" in', filteredText);
             filteredText = filteredText.replace(stopwordRE, '');
             if (filteredText.trim() == '')
                 return true;

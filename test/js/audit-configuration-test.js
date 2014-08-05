@@ -163,6 +163,14 @@ test("Configure LinkWithUnclearPurpose", function() {
            result.result == 'PASS';
   }), true);
 
+  a.textContent = "Click here."
+  var results = axs.Audit.run(auditConfig);
+  equal(results.some(function(result) {
+    return result.rule.name == 'linkWithUnclearPurpose' &&
+           result.result == 'FAIL';
+  }), true);
+
+  a.textContent = "Generic text."
   auditConfig.setRuleConfig('linkWithUnclearPurpose',
                             { blacklistPhrases: ['generic text'] });
   var results = axs.Audit.run(auditConfig);
@@ -171,6 +179,7 @@ test("Configure LinkWithUnclearPurpose", function() {
            result.result == 'FAIL';
   }), true);
 
+  a.textContent = "Generic text."
   var auditConfig = new axs.AuditConfiguration();
   auditConfig.scope = fixture;
   auditConfig.setRuleConfig('linkWithUnclearPurpose',
@@ -181,4 +190,10 @@ test("Configure LinkWithUnclearPurpose", function() {
            result.result == 'FAIL';
   }), true);
 
+  a.textContent = "Click here."
+  var results = axs.Audit.run(auditConfig);
+  equal(results.some(function(result) {
+    return result.rule.name == 'linkWithUnclearPurpose' &&
+           result.result == 'PASS';
+  }), true);
 });
