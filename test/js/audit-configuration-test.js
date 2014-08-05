@@ -102,7 +102,7 @@ test("Unsupported Rules Warning shown first and only first time audit ran", func
 
   // This should not be touched by an end-user, but needs to be set here,
   // because the unit tests run multiple times Audit.run()
-  axs.Audit.unsupportedRulesWarningShown = false;   
+  axs.Audit.unsupportedRulesWarningShown = false;
   __warnings = [];
   axs.Audit.run();
 
@@ -117,7 +117,7 @@ test("Unsupported Rules Warning not shown if showUnsupportedRulesWarning set to 
   auditConfig.showUnsupportedRulesWarning = false;
   // This should not be touched by an end-user, but needs to be set here,
   // because the unit tests run multiple times Audit.run()
-  axs.Audit.unsupportedRulesWarningShown = false; 
+  axs.Audit.unsupportedRulesWarningShown = false;
   __warnings = [];
   axs.Audit.run(auditConfig);
 
@@ -132,7 +132,7 @@ test("Unsupported Rules Warning not shown if with console API on configuration s
   auditConfig.withConsoleApi = true;
   // This should not be touched by an end-user, but needs to be set here,
   // because the unit tests run multiple times Audit.run()
-  axs.Audit.unsupportedRulesWarningShown = false; 
+  axs.Audit.unsupportedRulesWarningShown = false;
   __warnings = [];
 
   getEventListeners = function() { return {"click" : function() { }}; }  // Stub function only in consoleAPI
@@ -148,4 +148,37 @@ test("Unsupported Rules Warning not shown if with console API on configuration s
   equal(0, __warnings.length);
 });
 
+test("Configure LinkWithUnclearPurpose", function() {
+  var fixture = document.getElementById('qunit-fixture');
+  var a = document.createElement('a');
+  a.href = '#main';
+  a.textContent = 'Generic text.';
+  fixture.appendChild(a);
 
+  var auditConfig = new axs.AuditConfiguration();
+  auditConfig.scope = fixture;
+  var results = axs.Audit.run(auditConfig);
+  equal(results.some(function(result) {
+    return result.rule.name == 'linkWithUnclearPurpose' &&
+           result.result == 'PASS';
+  }), true);
+
+  auditConfig.setRuleConfig('linkWithUnclearPurpose',
+                            { blacklistPhrases: ['generic text'] });
+  var results = axs.Audit.run(auditConfig);
+  equal(results.some(function(result) {
+    return result.rule.name == 'linkWithUnclearPurpose' &&
+           result.result == 'FAIL';
+  }), true);
+
+  var auditConfig = new axs.AuditConfiguration();
+  auditConfig.scope = fixture;
+  auditConfig.setRuleConfig('linkWithUnclearPurpose',
+                            { stopwords: [ 'generic', 'text' ] });
+  var results = axs.Audit.run(auditConfig);
+  equal(results.some(function(result) {
+    return result.rule.name == 'linkWithUnclearPurpose' &&
+           result.result == 'FAIL';
+  }), true);
+
+});

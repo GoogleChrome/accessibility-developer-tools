@@ -23,13 +23,41 @@ axs.AuditRule.specs.linkWithUnclearPurpose = {
     heading: 'The purpose of each link should be clear from the link text',
     url: '',
     severity: axs.constants.Severity.WARNING,
+    /**
+     * @param {Element} element
+     * @return {boolean}
+     */
     relevantElementMatcher: function(element) {
         return axs.browserUtils.matchSelector(element, 'a');
     },
-    test: function(anchor) {
-        // This only looks for "click here" in a link's content. Not
-        // comprehensive, but should catch the worst case.
-        return (/^\s*click\s*here\s*[^a-z]?$/i).test(anchor.textContent);
+    /**
+     * @param {Element} anchor
+     * @param {Object=} opt_config
+     * @return {boolean}
+     */
+    test: function(anchor, opt_config) {
+        var config = opt_config || {};
+        var blacklistPhrases = config['blacklistPhrases'] || ['click here', 'learn more'];
+        var whitespaceRE = /\s+/
+        for (var i = 0; i < blacklistPhrases.length; i++) {
+            var phraseREString =
+                '^\\s*' + blacklistPhrases[i].trim().replace(whitespaceRE, '\\s*') + '\s*[^a-z]$';
+            var phraseRE = new RegExp(phraseREString, 'i');
+            if (phraseRE.test(anchor.textContent))
+                return true;
+        }
+
+        var stopwords = config['stopwords'] ||
+            ['click', 'tap', 'go', 'here', 'learn', 'more', 'this', 'page', 'link'];
+        var filteredText = anchor.textContent;
+        filteredText = filteredText.replace(/[^a-zA-Z]/g, '');
+        for (var i = 0; i < stopwords.length; i++) {
+            var stopwordRE = new RegExp(stopwords[i], 'ig');
+            filteredText = filteredText.replace(stopwordRE, '');
+            if (filteredText.trim() == '')
+                return true;
+        }
+        return false;
     },
     code: 'AX_TITLE_01'
 };

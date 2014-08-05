@@ -1571,7 +1571,12 @@ QUnit.jsDump = (function() {
 							ret += " " + a + "=" + QUnit.jsDump.parse( val, "attribute" );
 						}
 					}
-					return ret + close + open + "/" + tag + close;
+                                        var textContent = node.textContent;
+                                        var maxLength = 25;
+                                        if (textContent.length > maxLength) {
+                                            textContent = textContent.substr(0, (maxLength - 3)) + '...';
+                                        }
+					return ret + close + textContent + open + "/" + tag + close;
 				},
 				functionArgs: function( fn ) {//function calls it internally, it's the arguments part of the function
 					var args,
