@@ -40,21 +40,25 @@ axs.AuditRule.specs.linkWithUnclearPurpose = {
         var blacklistPhrases = config['blacklistPhrases'] || [];
         var whitespaceRE = /\s+/
         for (var i = 0; i < blacklistPhrases.length; i++) {
+            // Match the blacklist phrase, case insensitively, as the whole string (allowing for
+            // punctuation at the end).
+            // For example, a blacklist phrase of "click here" will match "Click here." and
+            // "click here..." but not "Click here to learn more about trout fishing".
             var phraseREString =
                 '^\\s*' + blacklistPhrases[i].trim().replace(whitespaceRE, '\\s*') + '\s*[^a-z]$';
             var phraseRE = new RegExp(phraseREString, 'i');
-            console.log('testing', anchor.textContent, 'against', phraseRE);
             if (phraseRE.test(anchor.textContent))
                 return true;
         }
 
+        // Remove punctuation from phrase, then strip out all stopwords. Fail if remaining text is
+        // all whitespace.
         var stopwords = config['stopwords'] ||
             ['click', 'tap', 'go', 'here', 'learn', 'more', 'this', 'page', 'link', 'about'];
         var filteredText = anchor.textContent;
         filteredText = filteredText.replace(/[^a-zA-Z ]/g, '');
         for (var i = 0; i < stopwords.length; i++) {
             var stopwordRE = new RegExp('\\b' + stopwords[i] + '\\b', 'ig');
-            console.log('replacing', stopwordRE, 'with "" in', filteredText);
             filteredText = filteredText.replace(stopwordRE, '');
             if (filteredText.trim() == '')
                 return true;
