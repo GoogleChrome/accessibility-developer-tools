@@ -75,7 +75,7 @@ axs.utils.calculateContrastRatio = function(fgColor, bgColor) {
 axs.utils.luminanceRatio = function(luminance1, luminance2) {
     return (Math.max(luminance1, luminance2) + 0.05) /
         (Math.min(luminance1, luminance2) + 0.05);
-}
+};
 
 /**
  * Returns the nearest ancestor which is an Element.
@@ -130,7 +130,7 @@ axs.utils.asElement = function(node) {
         return null;
     }
     return element;
-}
+};
 
 /**
  * @param {Element} element
@@ -256,7 +256,7 @@ axs.utils.isAncestor = function(ancestor, node) {
         return true;
 
     return axs.utils.isAncestor(ancestor, node.parentNode);
-}
+};
 
 /**
  * @param {Element} element
@@ -331,7 +331,7 @@ axs.utils.elementIsAriaWidget = function(element) {
         }
     }
     return false;
-}
+};
 
 /**
  * @param {Element} element
@@ -464,7 +464,7 @@ axs.utils.getParentBgColor = function(element) {
         bg = axs.utils.flattenColors(fg, bg);
     }
     return bg;
-}
+};
 
 /**
  * @param {CSSStyleDeclaration} style
@@ -639,7 +639,7 @@ axs.utils.suggestColors = function(bgColor, fgColor, contrastRatio, style) {
         colors['AAA'] = suggestedColorsAAA;
     }
     return colors;
-}
+};
 
 /**
  * Combine the two given color according to alpha blending.
@@ -700,7 +700,7 @@ axs.utils.RGBToYCCMatrix = function(kR, kB) {
             -kB/(2 - 2*kR)
         ]
     ];
-}
+};
 
 /**
  * Return the inverse of the given 3x3 matrix.
@@ -751,7 +751,7 @@ axs.utils.scalarMultiplyMatrix = function(matrix, scalar) {
     }
 
     return result;
-}
+};
 
 axs.utils.kR = 0.2126;
 axs.utils.kB = 0.0722;
@@ -800,7 +800,7 @@ axs.utils.multiplyMatrices = function(matrix1, matrix2) {
         }
     }
     return result;
-}
+};
 
 /**
  * Convert a given RGB color to YCC.
@@ -852,7 +852,7 @@ axs.utils.scalarMultiplyMatrix = function(matrix, scalar) {
     }
 
     return result;
-}
+};
 
 axs.utils.multiplyMatrices = function(matrix1, matrix2) {
     var result = [];
@@ -868,7 +868,7 @@ axs.utils.multiplyMatrices = function(matrix1, matrix2) {
         }
     }
     return result;
-}
+};
 
 /**
  * @param {Element} element
@@ -1034,7 +1034,7 @@ axs.utils.isElementOrAncestorHidden = function(element) {
 axs.utils.isInlineElement = function(element) {
     var tagName = element.tagName.toUpperCase();
     return axs.constants.InlineElements[tagName];
-}
+};
 
 /**
  * @param {Element} element
@@ -1185,7 +1185,7 @@ axs.utils.getAriaPropertyValue = function(propertyName, value, element) {
         }
         return result;
     }
-    result.valid = false
+    result.valid = false;
     result.reason = 'Not a valid ARIA property';
     return result;
 };
@@ -1314,7 +1314,7 @@ axs.utils.namedValues = function(obj) {
         if (obj.hasOwnProperty(key) && typeof obj[key] != 'function')
             values[key] = obj[key];
     }
-    return values
+    return values;
 };
 
 /** Gets a CSS selector text for a DOM object.
@@ -1389,4 +1389,28 @@ axs.utils.getQuerySelectorText = function(obj) {
   }
 
   return '';
+};
+
+
+/**
+ * Gets elements that refer to this element in an ARIA attribute that takes an ID reference list or single ID reference.
+ * @param {!string} attributeName The name of the ARIA attribute, for example 'aria-owns'.
+ * @param {!Element} element a potential referent.
+ * @return {NodeList|null} The elements that refer to this element or null if none found.
+ */
+axs.utils.getIdReferrers = function(attributeName, element){
+    var propertyType, referrerQuery, result, id = element.id,
+        propertyKey = attributeName.replace(/^aria-/, ''),
+        property = axs.constants.ARIA_PROPERTIES[propertyKey];
+    if(id && property)
+    {
+        propertyType = property.valueType;
+        if(propertyType === "idref_list" || propertyType === "idref")
+        {
+            id = id.replace(/'/g, "\\'");
+            referrerQuery = "[" + attributeName + "~='" + id  + "']";
+            result = element.ownerDocument.querySelectorAll(referrerQuery);
+        }
+    }
+    return result || null;
 };
