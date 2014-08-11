@@ -1414,3 +1414,36 @@ axs.utils.getIdReferrers = function(attributeName, element){
     }
     return result || null;
 };
+
+/**
+ * Gets a subset of 'axs.constants.ARIA_PROPERTIES' filtered by their 'valueType' property.
+ * @param {!Array.<string>} valueType The types that we want to match, for example ['idref', 'idref_list'].
+ * @return {Object.<string, Object>} References to properties of axs.constants.ARIA_PROPERTIES which match the valueType.
+ */
+axs.utils.getAriaPropertiesByValueType = function(valueType){
+    var result = {};
+    for(var propertyName in axs.constants.ARIA_PROPERTIES)
+    {
+        var property = axs.constants.ARIA_PROPERTIES[propertyName];
+        if(property && valueType.indexOf(property.valueType) >= 0)
+        {
+            result[propertyName] = property;
+        }
+    }
+    return result;
+};
+
+/**
+ * Builds a selector that will match an element with any of these ARIA properties.
+ * @param {Object.<string, Object>} ariaProperties axs.constants.ARIA_PROPERTIES or a subset of it.
+ * @return {!string} The selector.
+ */
+axs.utils.getSelectorForAriaProperties = function(ariaProperties){
+    var propertyNames = Object.keys(/** @type {!Object} */(ariaProperties));
+    var result = propertyNames.map(function(propertyName){
+        return "[aria-" + propertyName + "]"
+    });
+    result.sort();//this is not strictly necessary but makes it easier to read long selectors (and makes unit testing easier)
+    result = result.join(",");
+    return result;
+};

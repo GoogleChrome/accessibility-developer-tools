@@ -19,23 +19,37 @@ goog.require('axs.constants.Severity');
 /**
  * @type {axs.AuditRule.Spec}
  */
-axs.AuditRule.specs.nonExistentAriaLabelledbyElement = {
-    name: 'nonExistentAriaLabelledbyElement',
-    heading: 'aria-labelledby attributes should refer to an element which exists in the DOM',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_02--aria-labelledby-attributes-should-refer-to-an-element-which-exists-in-the-dom',
+axs.AuditRule.specs.nonExistentAriaRelatedElement = {
+    name: 'nonExistentAriaRelatedElement',
+    heading: 'aria attributes which refer to other elements by ID should refer to elements which exist in the DOM',
+    url: '',//TODO
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
-        return axs.browserUtils.matchSelector(element, '[aria-labelledby]');
+        var idRefProperties = axs.utils.getAriaPropertiesByValueType(["idref", "idref_list"]);
+        var selector = axs.utils.getSelectorForAriaProperties(idRefProperties);//Cache this once computed for performance reasons?
+        return axs.browserUtils.matchSelector(element, selector);
     },
     test: function(element) {
-        var labelledBy = element.getAttribute('aria-labelledby');
-        var labelledByValues = labelledBy.split(/\s+/);
-        for (var i = 0; i < labelledByValues.length; i++) {
-            var labelElement = document.getElementById(labelledByValues[i]);
-            if (!labelElement)
-                return true;
+        var result = false;
+        var idRefProperties = axs.utils.getAriaPropertiesByValueType(["idref", "idref_list"]);
+        var selector = axs.utils.getSelectorForAriaProperties(idRefProperties);
+        var selectors = selector.split(",");
+        for(var i = 0; i < selectors.length; i++)
+        {
+            var nextSelector = selectors[i];
+            if(axs.browserUtils.matchSelector(element, nextSelector))
+            {
+                var propertyName = nextSelector.match(/aria-[^\]]+/)[0];
+                var propertyValueText = element.getAttribute(propertyName);
+                var propertyValue = axs.utils.getAriaPropertyValue(propertyName, propertyValueText, element);
+                if(!propertyValue.valid)
+                {
+                    result = true;
+                    break;
+                }
+            }
         }
-        return false;
+        return result;
     },
     code: 'AX_ARIA_02'
 };

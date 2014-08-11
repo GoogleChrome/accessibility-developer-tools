@@ -206,3 +206,43 @@ test("returns the elements this element labels", function() {
   });
   equal(allFound, true);
 });
+module("getAriaPropertiesByValueType", {
+  setup: function () {
+
+  }
+});
+test("Returns idref and idref_list types.", function() {
+  var expected = ["activedescendant", "controls", "describedby", "flowto", "labelledby", "owns"];
+  var actual = axs.utils.getAriaPropertiesByValueType(["idref", "idref_list"]);
+  actual = Object.keys(actual);
+  actual.sort();
+  deepEqual(actual, expected);
+});
+test("Returns idref types.", function() {
+  var expected = ["activedescendant"];
+  var actual = axs.utils.getAriaPropertiesByValueType(["idref"]);
+  actual = Object.keys(actual);
+  actual.sort();
+  deepEqual(actual, expected);
+});
+
+module("getSelectorForAriaProperties", {
+  setup: function () {
+
+  }
+});
+test("Returns a selector to match all aria properties.", function() {
+  var expected = "[aria-activedescendant],[aria-atomic],[aria-autocomplete],[aria-busy],[aria-checked],[aria-controls],";
+  expected += "[aria-describedby],[aria-disabled],[aria-dropeffect],[aria-expanded],[aria-flowto],[aria-grabbed],";
+  expected += "[aria-haspopup],[aria-hidden],[aria-invalid],[aria-label],[aria-labelledby],[aria-level],[aria-live],";
+  expected += "[aria-multiline],[aria-multiselectable],[aria-orientation],[aria-owns],[aria-posinset],[aria-pressed],";
+  expected += "[aria-readonly],[aria-relevant],[aria-required],[aria-selected],[aria-setsize],[aria-sort],[aria-valuemax],";
+  expected += "[aria-valuemin],[aria-valuenow],[aria-valuetext]";
+  var actual = axs.utils.getSelectorForAriaProperties(axs.constants.ARIA_PROPERTIES);
+  deepEqual(actual, expected);
+});
+test("Returns a selector to match all aria idref properties.", function() {
+  var expected = "[aria-activedescendant]";
+  var actual = axs.utils.getSelectorForAriaProperties(axs.utils.getAriaPropertiesByValueType(["idref"]));
+  deepEqual(actual, expected);
+});
