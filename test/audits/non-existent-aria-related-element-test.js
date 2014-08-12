@@ -1,12 +1,12 @@
-module("NonExistentAriaRelatedElement");
+module('NonExistentAriaRelatedElement');
 [
-  "aria-activedescendant",//strictly speaking some of the tests do not apply to this one
-  "aria-controls",
-  "aria-describedby",
-  "aria-flowto",
-  "aria-labelledby",
-  "aria-owns"].forEach(function(ariaPropUnderTest){
-    test("Element exists, single " + ariaPropUnderTest + " value", function() {
+  'aria-activedescendant',//strictly speaking some of the tests do not apply to this one
+  'aria-controls',
+  'aria-describedby',
+  'aria-flowto',
+  'aria-labelledby',
+  'aria-owns'].forEach(function(ariaPropUnderTest){
+    test('Element exists, single ' + ariaPropUnderTest + ' value', function() {
         var fixture = document.getElementById('qunit-fixture');
         var referentElement = document.createElement('div');
         referentElement.textContent = 'label';
@@ -22,7 +22,7 @@ module("NonExistentAriaRelatedElement");
                   { elements: [], result: axs.constants.AuditResult.PASS });
     });
 
-    test("Element doesn't exist, single " + ariaPropUnderTest + " value", function() {
+    test('Element doesn\'t exist, single ' + ariaPropUnderTest + ' value', function() {
         var fixture = document.getElementById('qunit-fixture');
 
         var refererElement = document.createElement('div');
@@ -34,7 +34,7 @@ module("NonExistentAriaRelatedElement");
         equal(result.elements.length, 1);
     });
 
-    test("Multiple referent elements exist with " + ariaPropUnderTest, function() {
+    test('Multiple referent elements exist with ' + ariaPropUnderTest, function() {
         var fixture = document.getElementById('qunit-fixture');
         var referentElement = document.createElement('div');
         referentElement.textContent = 'label';
@@ -56,7 +56,7 @@ module("NonExistentAriaRelatedElement");
 
     });
 
-    test("One element doesn't exist, multiple "  + ariaPropUnderTest +  " value", function() {
+    test('One element doesn\'t exist, multiple '  + ariaPropUnderTest +  ' value', function() {
         var fixture = document.getElementById('qunit-fixture');
 
         var referentElement = document.createElement('div');
@@ -73,7 +73,7 @@ module("NonExistentAriaRelatedElement");
         equal(result.elements.length, 1);
     });
 
-    test("Using ignoreSelectors with " + ariaPropUnderTest, function() {
+    test('Using ignoreSelectors with ' + ariaPropUnderTest, function() {
         var fixture = document.getElementById('qunit-fixture');
 
         var referentElement = document.createElement('div');

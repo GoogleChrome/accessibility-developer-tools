@@ -20,7 +20,7 @@ goog.provide('axs.properties');
  * @const
  * @type {string}
  */
-axs.properties.TEXT_CONTENT_XPATH = './/text()[normalize-space(.)!=""]/parent::*[name()!="script"]'
+axs.properties.TEXT_CONTENT_XPATH = './/text()[normalize-space(.)!=""]/parent::*[name()!="script"]';
 
 /**
  * @param {Element} element
@@ -63,7 +63,7 @@ axs.properties.getFocusProperties = function(element) {
     }
 
     return focusProperties;
-}
+};
 
 axs.properties.getHiddenReason = function(element) {
     if (!element || !(element instanceof element.ownerDocument.defaultView.HTMLElement))
@@ -89,7 +89,7 @@ axs.properties.getHiddenReason = function(element) {
     }
 
     return axs.properties.getHiddenReason(axs.utils.parentElement(element));
-}
+};
 
 
 /**
@@ -113,29 +113,70 @@ axs.properties.getColorProperties = function(element) {
  * @return {boolean}
  */
 axs.properties.hasDirectTextDescendant = function(element) {
-    var ownerDocument;
+    var result, ownerDocument;
     if (element.nodeType == Node.DOCUMENT_NODE)
         ownerDocument = element;
     else
         ownerDocument = element.ownerDocument;
-
-    var selectorResults = ownerDocument.evaluate(axs.properties.TEXT_CONTENT_XPATH,
-                                                 element,
-                                                 null,
-                                                 XPathResult.ANY_TYPE,
-                                                 null);
-    var foundDirectTextDescendant = false;
-    for (var resultElement = selectorResults.iterateNext();
-         resultElement != null;
-         resultElement = selectorResults.iterateNext()) {
-        if (resultElement !== element)
-            continue;
-
-        foundDirectTextDescendant = true;
-        break;
+    if (ownerDocument.evaluate)
+    {
+        result = hasDirectTextDescendantXpath();
     }
-    return foundDirectTextDescendant;
-}
+    else//IE
+    {
+        result = hasDirectTextDescendantTreeWalker();
+    }
+
+    /**
+     * Determines whether element has a text node as a direct descendant.
+     * This method uses XPath on HTML DOM which is not universally supported.
+     */
+    function hasDirectTextDescendantXpath()
+    {
+        var selectorResults = ownerDocument.evaluate(axs.properties.TEXT_CONTENT_XPATH,
+                                                     element,
+                                                     null,
+                                                     XPathResult.ANY_TYPE,
+                                                     null);
+        var foundDirectTextDescendant = false;
+        for (var resultElement = selectorResults.iterateNext();
+             resultElement != null;
+             resultElement = selectorResults.iterateNext()) {
+            if (resultElement !== element)
+                continue;
+
+            foundDirectTextDescendant = true;
+            break;
+        }
+        return foundDirectTextDescendant;
+    }
+
+    /**
+     * Determines whether element has a text node as a direct descendant.
+     * This method uses TreeWalker as a fallback (at time of writing no version
+     * of IE (including IE11) supports XPath in the HTML DOM).
+     */
+    function hasDirectTextDescendantTreeWalker()
+    {
+        var foundDirectTextDescendant = false,
+            treeWalker = ownerDocument.createTreeWalker(element,
+                                                        NodeFilter.SHOW_TEXT,
+                                                        null,
+                                                        false);
+        while (treeWalker.nextNode()) {
+            var resultElement = treeWalker.currentNode,
+                parent = resultElement.parentNode,
+                tagName = parent.tagName.toLowerCase(),
+                value = resultElement.nodeValue.trim();
+            if (value && tagName !== 'script' && element !== resultElement) {
+                foundDirectTextDescendant = true;
+                break;
+            }
+        }
+        return foundDirectTextDescendant;
+    }
+    return result;
+};
 
 /**
  * @param {Element} element

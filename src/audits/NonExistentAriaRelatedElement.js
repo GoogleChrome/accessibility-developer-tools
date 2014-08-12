@@ -25,25 +25,27 @@ axs.AuditRule.specs.nonExistentAriaRelatedElement = {
     url: '',//TODO
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
-        var idRefProperties = axs.utils.getAriaPropertiesByValueType(["idref", "idref_list"]);
-        var selector = axs.utils.getSelectorForAriaProperties(idRefProperties);//Cache this once computed for performance reasons?
+        var idrefTypes = ['idref', 'idref_list'];
+        var idRefProps = axs.utils.getAriaPropertiesByValueType(idrefTypes);
+        //Cache selector once computed for performance reasons?
+        var selector = axs.utils.getSelectorForAriaProperties(idRefProps);
         return axs.browserUtils.matchSelector(element, selector);
     },
     test: function(element) {
         var result = false;
-        var idRefProperties = axs.utils.getAriaPropertiesByValueType(["idref", "idref_list"]);
-        var selector = axs.utils.getSelectorForAriaProperties(idRefProperties);
-        var selectors = selector.split(",");
-        for(var i = 0; i < selectors.length; i++)
-        {
+        var idrefTypes = ['idref', 'idref_list'];
+        var idRefProps = axs.utils.getAriaPropertiesByValueType(idrefTypes);
+        var selector = axs.utils.getSelectorForAriaProperties(idRefProps);
+        var selectors = selector.split(',');
+        for (var i = 0, len = selectors.length; i < len; i++) {
             var nextSelector = selectors[i];
-            if(axs.browserUtils.matchSelector(element, nextSelector))
-            {
+            if (axs.browserUtils.matchSelector(element, nextSelector)) {
                 var propertyName = nextSelector.match(/aria-[^\]]+/)[0];
                 var propertyValueText = element.getAttribute(propertyName);
-                var propertyValue = axs.utils.getAriaPropertyValue(propertyName, propertyValueText, element);
-                if(!propertyValue.valid)
-                {
+                var propertyValue = axs.utils.getAriaPropertyValue(propertyName,
+                        propertyValueText,
+                        element);
+                if (!propertyValue.valid) {
                     result = true;
                     break;
                 }

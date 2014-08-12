@@ -411,7 +411,7 @@ axs.utils.getBgColor = function(style, element) {
         return null;
 
     if (style.opacity < 1)
-        bgColor.alpha = bgColor.alpha * style.opacity
+        bgColor.alpha = bgColor.alpha * style.opacity;
 
     if (bgColor.alpha < 1) {
         var parentBg = axs.utils.getParentBgColor(element);
@@ -468,6 +468,7 @@ axs.utils.getParentBgColor = function(element) {
 
 /**
  * @param {CSSStyleDeclaration} style
+ * @param {Element} element
  * @param {axs.utils.Color} bgColor The background color, which may come from
  *    another element (such as a parent element), for flattening into the
  *    foreground color.
@@ -503,7 +504,7 @@ axs.utils.parseColor = function(colorString) {
         var r = parseInt(match[1], 10);
         var g = parseInt(match[2], 10);
         var b = parseInt(match[3], 10);
-        var a = 1
+        var a = 1;
         return new axs.utils.Color(r, g, b, a);
     }
 
@@ -557,12 +558,12 @@ axs.utils.luminanceFromContrastRatio = function(luminance, contrast, higher) {
 axs.utils.translateColor = function(ycc, luminance) {
     var oldLuminance = ycc[0];
     if (oldLuminance > luminance)
-        var endpoint = 0
+        var endpoint = 0;
     else
         var endpoint = 1;
 
     var d = luminance - oldLuminance;
-    var scale = d / (endpoint - oldLuminance)
+    var scale = d / (endpoint - oldLuminance);
 
     /** @type {Array.<number>} */ var translatedColor = [ luminance,
                                                           ycc[1] - ycc[1] * scale,
@@ -596,8 +597,8 @@ axs.utils.suggestColors = function(bgColor, fgColor, contrastRatio, style) {
         desiredFgLuminanceAA <= 1 && desiredFgLuminanceAA >= 0) {
         var newFgColorAA = axs.utils.translateColor(fgYCC, desiredFgLuminanceAA);
         var newContrastRatioAA = axs.utils.calculateContrastRatio(newFgColorAA, bgColor);
-        var newLuminance = axs.utils.calculateLuminance(newFgColorAA);
-        var suggestedColorsAA = {}
+        //var newLuminance = axs.utils.calculateLuminance(newFgColorAA);
+        var suggestedColorsAA = {};
         suggestedColorsAA['fg'] = axs.utils.colorToString(newFgColorAA);
         suggestedColorsAA['bg'] = axs.utils.colorToString(bgColor);
         suggestedColorsAA['contrast'] = newContrastRatioAA.toFixed(2);
@@ -615,7 +616,7 @@ axs.utils.suggestColors = function(bgColor, fgColor, contrastRatio, style) {
     }
     var desiredBgLuminanceAA = axs.utils.luminanceFromContrastRatio(fgLuminance, levelAAContrast + 0.02, !fgLuminanceIsHigher);
     var desiredBgLuminanceAAA = axs.utils.luminanceFromContrastRatio(fgLuminance, levelAAAContrast + 0.02, !fgLuminanceIsHigher);
-    var bgLuminanceBoundary = fgLuminanceIsHigher ? 0 : 1;
+    //var bgLuminanceBoundary = fgLuminanceIsHigher ? 0 : 1;
     var bgYCC = axs.utils.toYCC(bgColor);
 
     if (!('AA' in colors) && axs.utils.isLowContrast(contrastRatio, style, false) &&
@@ -804,6 +805,7 @@ axs.utils.multiplyMatrices = function(matrix1, matrix2) {
 
 /**
  * Convert a given RGB color to YCC.
+ * @param {axs.utils.Color} color
  */
 axs.utils.toYCC = function(color) {
     var rSRGB = color.red / 255;
@@ -1045,7 +1047,7 @@ axs.utils.getRoles = function(element) {
         return false;
     var roleValue = element.getAttribute('role');
     var roleNames = roleValue.split(' ');
-    var roles = []
+    var roles = [];
     var valid = true;
     for (var i = 0; i < roleNames.length; i++) {
         var role = roleNames[i];
@@ -1205,6 +1207,7 @@ axs.utils.isValidTokenValue = function(propertyName, value) {
 /**
  * @param {string} value
  * @param {Object.<string, boolean>} possibleValues
+ * @param {string} propertyName The name of the property.
  * @return {!Object}
  */
 axs.utils.isPossibleValue = function(value, possibleValues, propertyName) {
@@ -1391,22 +1394,20 @@ axs.utils.getQuerySelectorText = function(obj) {
   return '';
 };
 
-
 /**
- * Gets elements that refer to this element in an ARIA attribute that takes an ID reference list or single ID reference.
- * @param {!string} attributeName The name of the ARIA attribute, for example 'aria-owns'.
+ * Gets elements that refer to this element in an ARIA attribute that takes an
+ * ID reference list or single ID reference.
+ * @param {!string} attributeName Name of an ARIA attribute, e.g. 'aria-owns'.
  * @param {!Element} element a potential referent.
- * @return {NodeList|null} The elements that refer to this element or null if none found.
+ * @return {NodeList} The elements that refer to this element.
  */
 axs.utils.getIdReferrers = function(attributeName, element){
     var propertyType, referrerQuery, result, id = element.id,
         propertyKey = attributeName.replace(/^aria-/, ''),
         property = axs.constants.ARIA_PROPERTIES[propertyKey];
-    if(id && property)
-    {
+    if(id && property){
         propertyType = property.valueType;
-        if(propertyType === "idref_list" || propertyType === "idref")
-        {
+        if(propertyType === "idref_list" || propertyType === "idref"){
             id = id.replace(/'/g, "\\'");
             referrerQuery = "[" + attributeName + "~='" + id  + "']";
             result = element.ownerDocument.querySelectorAll(referrerQuery);
@@ -1416,17 +1417,15 @@ axs.utils.getIdReferrers = function(attributeName, element){
 };
 
 /**
- * Gets a subset of 'axs.constants.ARIA_PROPERTIES' filtered by their 'valueType' property.
- * @param {!Array.<string>} valueType The types that we want to match, for example ['idref', 'idref_list'].
- * @return {Object.<string, Object>} References to properties of axs.constants.ARIA_PROPERTIES which match the valueType.
+ * Gets a subset of 'axs.constants.ARIA_PROPERTIES' filtered by 'valueType'.
+ * @param {!Array.<string>} valueType Types to match, e.g. ['idref_list'].
+ * @return {Object.<string, Object>} axs.constants.ARIA_PROPERTIES which match.
  */
 axs.utils.getAriaPropertiesByValueType = function(valueType){
     var result = {};
-    for(var propertyName in axs.constants.ARIA_PROPERTIES)
-    {
+    for (var propertyName in axs.constants.ARIA_PROPERTIES){
         var property = axs.constants.ARIA_PROPERTIES[propertyName];
-        if(property && valueType.indexOf(property.valueType) >= 0)
-        {
+        if (property && valueType.indexOf(property.valueType) >= 0) {
             result[propertyName] = property;
         }
     }
@@ -1434,16 +1433,16 @@ axs.utils.getAriaPropertiesByValueType = function(valueType){
 };
 
 /**
- * Builds a selector that will match an element with any of these ARIA properties.
- * @param {Object.<string, Object>} ariaProperties axs.constants.ARIA_PROPERTIES or a subset of it.
+ * Builds a selector that matches an element with any of these ARIA properties.
+ * @param {Object.<string, Object>} ariaProperties axs.constants.ARIA_PROPERTIES
  * @return {!string} The selector.
  */
-axs.utils.getSelectorForAriaProperties = function(ariaProperties){
+axs.utils.getSelectorForAriaProperties = function(ariaProperties) {
     var propertyNames = Object.keys(/** @type {!Object} */(ariaProperties));
-    var result = propertyNames.map(function(propertyName){
-        return "[aria-" + propertyName + "]"
+    var result = propertyNames.map(function(propertyName) {
+        return '[aria-' + propertyName + ']';
     });
-    result.sort();//this is not strictly necessary but makes it easier to read long selectors (and makes unit testing easier)
-    result = result.join(",");
+    result.sort();//facilitates reading long selectors and unit testing
+    result = result.join(',');
     return result;
 };

@@ -19,10 +19,12 @@ goog.require('axs.constants.Severity');
 /**
  * @type {axs.AuditRule.Spec}
  */
-axs.AuditRule.specs.multipleAriaOwners = {
-    name: 'multipleAriaOwners',
-    heading: 'an element\'s ID must not be present in more that one aria-owns attribute at any time',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_07--an-element-can-have-only-one-explicit-aria-owner',
+axs.AuditRule.specs.ariaOwnsDescendant = {
+    //TODO The spec doesn't mention this but it would be really weird to
+    //'aria-own' an ancestor right? Maybe we should check for that too?
+    name: 'ariaOwnsDescendant',
+    heading: 'aria-owns should not be used if ownership is implicit in the DOM',
+    url: '',//TODO
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher:
     /**
@@ -30,7 +32,6 @@ axs.AuditRule.specs.multipleAriaOwners = {
      * @return {boolean} true if this element is relevant to this audit.
      */
     function(element) {
-        //could instead match every element that has an ID attribute
         return axs.browserUtils.matchSelector(element, '[aria-owns]');
     },
     test:
@@ -39,22 +40,19 @@ axs.AuditRule.specs.multipleAriaOwners = {
      * @return {boolean} true if this audit finds a problem
      */
     function(element) {
-        var attr = 'aria-owns';
         var document = element.ownerDocument;
         var result = false;
-        var owns = element.getAttribute(attr);
-        var ownsValues = owns.split(/\s+/);
-        for (var i = 0, len = ownsValues.length; i < len; i++) {
-            var ownedElement = document.getElementById(ownsValues[i]);
-            if (ownedElement) {
-                var owners = axs.utils.getIdReferrers(attr, ownedElement);
-                if (owners.length > 1) {
+        var owns = element.getAttribute('aria-owns');
+        var ownedIds = owns.split(/\s+/);
+        for (var i = 0, len = ownedIds.length; i < len; i++) {
+            var ownedElement = document.getElementById(ownedIds[i]);
+            if (ownedElement && (element.compareDocumentPosition(ownedElement) &
+                Node.DOCUMENT_POSITION_CONTAINED_BY)) {
                     result = true;
                     break;
-                }
             }
         }
         return result;
     },
-    code: 'AX_ARIA_07'
+    code: 'AX_ARIA_06'
 };
