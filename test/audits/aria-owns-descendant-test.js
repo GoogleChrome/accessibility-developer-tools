@@ -1,4 +1,4 @@
-(function(){//scope to avoid leaking shared helpers and variables to global namespace
+(function() {//scope to avoid leaking helpers and variables to global namespace
     var RULE_NAME = 'ariaOwnsDescendant';
 
     module('AriaOwnsDescendant');
@@ -79,7 +79,9 @@
         owner.setAttribute('aria-owns', owned.id);
         var rule = axs.AuditRules.getRule(RULE_NAME);
         var ignoreSelectors = ['#' + (owner.id = 'ownerElement')];
-        var result = rule.run({ ignoreSelectors: ignoreSelectors, scope: fixture });
+        var result = rule.run({
+            ignoreSelectors: ignoreSelectors,
+            scope: fixture });
         equal(result.result, axs.constants.AuditResult.PASS);
     });
 })();

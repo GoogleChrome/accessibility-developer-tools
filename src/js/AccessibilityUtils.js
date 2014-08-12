@@ -573,8 +573,8 @@ axs.utils.translateColor = function(ycc, luminance) {
 };
 
 /**
- * @param {axs.utils.Color} fgColor
  * @param {axs.utils.Color} bgColor
+ * @param {axs.utils.Color} fgColor
  * @param {number} contrastRatio
  * @param {CSSStyleDeclaration} style
  * @return {Object}
@@ -1401,15 +1401,15 @@ axs.utils.getQuerySelectorText = function(obj) {
  * @param {!Element} element a potential referent.
  * @return {NodeList} The elements that refer to this element.
  */
-axs.utils.getIdReferrers = function(attributeName, element){
+axs.utils.getIdReferrers = function(attributeName, element) {
     var propertyType, referrerQuery, result, id = element.id,
         propertyKey = attributeName.replace(/^aria-/, ''),
         property = axs.constants.ARIA_PROPERTIES[propertyKey];
-    if(id && property){
+    if (id && property) {
         propertyType = property.valueType;
-        if(propertyType === "idref_list" || propertyType === "idref"){
+        if (propertyType === "idref_list" || propertyType === "idref") {
             id = id.replace(/'/g, "\\'");
-            referrerQuery = "[" + attributeName + "~='" + id  + "']";
+            referrerQuery = "[" + attributeName + "~='" + id + "']";
             result = element.ownerDocument.querySelectorAll(referrerQuery);
         }
     }
@@ -1421,9 +1421,9 @@ axs.utils.getIdReferrers = function(attributeName, element){
  * @param {!Array.<string>} valueType Types to match, e.g. ['idref_list'].
  * @return {Object.<string, Object>} axs.constants.ARIA_PROPERTIES which match.
  */
-axs.utils.getAriaPropertiesByValueType = function(valueType){
+axs.utils.getAriaPropertiesByValueType = function(valueType) {
     var result = {};
-    for (var propertyName in axs.constants.ARIA_PROPERTIES){
+    for (var propertyName in axs.constants.ARIA_PROPERTIES) {
         var property = axs.constants.ARIA_PROPERTIES[propertyName];
         if (property && valueType.indexOf(property.valueType) >= 0) {
             result[propertyName] = property;
