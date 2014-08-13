@@ -1,4 +1,4 @@
-(function() {//scope to avoid leaking helpers and variables to global namespace
+(function() {  // scope to avoid leaking helpers and variables to global namespace
     var RULE_NAME = 'ariaOwnsDescendant';
 
     module('AriaOwnsDescendant');

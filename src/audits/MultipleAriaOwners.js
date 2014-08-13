@@ -24,37 +24,24 @@ axs.AuditRule.specs.multipleAriaOwners = {
     heading: 'an element\'s ID must not be present in more that one aria-owns attribute at any time',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_07--an-element-can-have-only-one-explicit-aria-owner',
     severity: axs.constants.Severity.WARNING,
-    relevantElementMatcher:
-    /**
-     * @param {Element} element A potential audit candidate.
-     * @return {boolean} true if this element is relevant to this audit.
-     */
-    function(element) {
-        //could instead match every element that has an ID attribute
+    relevantElementMatcher: function(element) {
+        // could instead match every element that has an ID attribute
         return axs.browserUtils.matchSelector(element, '[aria-owns]');
     },
-    test:
-    /**
-     * @param {Element} element
-     * @return {boolean} true if this audit finds a problem
-     */
-    function(element) {
+    test: function(element) {
         var attr = 'aria-owns';
         var document = element.ownerDocument;
-        var result = false;
         var owns = element.getAttribute(attr);
         var ownsValues = owns.split(/\s+/);
         for (var i = 0, len = ownsValues.length; i < len; i++) {
             var ownedElement = document.getElementById(ownsValues[i]);
             if (ownedElement) {
                 var owners = axs.utils.getIdReferrers(attr, ownedElement);
-                if (owners.length > 1) {
-                    result = true;
-                    break;
-                }
+                if (owners.length > 1)
+                    return true;
             }
         }
-        return result;
+        return false;
     },
     code: 'AX_ARIA_07'
 };

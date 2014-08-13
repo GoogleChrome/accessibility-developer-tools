@@ -1,4 +1,4 @@
-(function() {//scope to avoid leaking helpers and variables to global namespace
+(function() {  // scope to avoid leaking helpers and variables to global namespace
     var RULE_NAME = 'multipleAriaOwners';
 
     module('MultipleAriaOwners');
@@ -89,7 +89,7 @@
         ownerIds = ownerIds || [''];
         ownerIds.forEach(function(id) {
             var element = document.createElement('div');
-            if (id) {//could be an empty string, that is legit here
+            if (id) {  // could be an empty string, that is legit here
                 element.id = id;
             }
             element.setAttribute('aria-owns', value);

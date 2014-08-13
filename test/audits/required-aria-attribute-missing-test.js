@@ -55,8 +55,8 @@
                 elements: [widget],
                 result: axs.constants.AuditResult.FAIL };
         widget.setAttribute('role', 'slider');
-        widget.setAttribute('aria-orientation', 'horizontal');//supported
-        widget.setAttribute('aria-haspopup', 'false');//global
+        widget.setAttribute('aria-orientation', 'horizontal');  // supported
+        widget.setAttribute('aria-haspopup', 'false');  // global
         actual = rule.run({ scope: fixture });
         deepEqual(actual, expected);
     });
@@ -128,7 +128,7 @@
             fixture = document.getElementById('qunit-fixture'),
             widget = fixture.appendChild(document.createElement('input')),
             expected = { elements: [], result: axs.constants.AuditResult.PASS };
-        widget.setAttribute('type', 'range');//role is slider
+        widget.setAttribute('type', 'range');  // role is slider
         actual = rule.run({ scope: fixture });
         deepEqual(actual, expected);
     });
@@ -138,8 +138,8 @@
             fixture = document.getElementById('qunit-fixture'),
             widget = fixture.appendChild(document.createElement('input')),
             expected = { elements: [], result: axs.constants.AuditResult.PASS };
-        widget.setAttribute('type', 'range');//role is slider
-        //below props shouldn't be provided explicitly, that's a different test.
+        widget.setAttribute('type', 'range');  // role is slider
+        // below props shouldn't be provided explicitly, that's a different test.
         widget.setAttribute('aria-valuemax', '79');
         widget.setAttribute('aria-valuemin', '10');
         widget.setAttribute('aria-valuenow', '50');
@@ -153,7 +153,7 @@
             widget = fixture.appendChild(document.createElement('input')),
             expected = { elements: [], result: axs.constants.AuditResult.PASS };
         widget.setAttribute('type', 'range');
-        //setting role is redundant but needs to be ignored by this audit
+        // setting role is redundant but needs to be ignored by this audit
         widget.setAttribute('role', 'slider');
         actual = rule.run({ scope: fixture });
         deepEqual(actual, expected);
@@ -168,7 +168,7 @@
                     elements: [],
                     result: axs.constants.AuditResult.PASS };
             widget.setAttribute('type', type);
-            //setting role is redundant but needs to be ignored by this audit
+            // setting role is redundant but needs to be ignored by this audit
             widget.setAttribute('role', 'spinbutton');
             actual = rule.run({ scope: fixture });
             deepEqual(actual, expected);

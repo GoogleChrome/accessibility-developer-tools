@@ -35,9 +35,8 @@ axs.AuditRule.specs.ariaOwnsDescendant = {
         for (var i = 0, len = ownedIds.length; i < len; i++) {
             var ownedElement = document.getElementById(ownedIds[i]);
             if (ownedElement &&
-                  (element.compareDocumentPosition(ownedElement) & Node.DOCUMENT_POSITION_CONTAINED_BY)) {
+                  (element.compareDocumentPosition(ownedElement) & Node.DOCUMENT_POSITION_CONTAINED_BY))
                     return true;
-            }
         }
         return false;
     },

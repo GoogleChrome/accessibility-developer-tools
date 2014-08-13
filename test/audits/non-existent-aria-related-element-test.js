@@ -1,6 +1,6 @@
 module('NonExistentAriaRelatedElement');
 [
-  'aria-activedescendant',//strictly speaking sometests do not apply to this
+  'aria-activedescendant',  // strictly speaking sometests do not apply to this
   'aria-controls',
   'aria-describedby',
   'aria-flowto',

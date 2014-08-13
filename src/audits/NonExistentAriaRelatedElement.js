@@ -22,17 +22,15 @@ goog.require('axs.constants.Severity');
 axs.AuditRule.specs.nonExistentAriaRelatedElement = {
     name: 'nonExistentAriaRelatedElement',
     heading: 'aria attributes which refer to other elements by ID should refer to elements which exist in the DOM',
-    url: '',//TODO
+    url: '',  // TODO
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
         var idrefTypes = ['idref', 'idref_list'];
         var idRefProps = axs.utils.getAriaPropertiesByValueType(idrefTypes);
-        //Cache selector once computed for performance reasons?
         var selector = axs.utils.getSelectorForAriaProperties(idRefProps);
         return axs.browserUtils.matchSelector(element, selector);
     },
     test: function(element) {
-        var result = false;
         var idrefTypes = ['idref', 'idref_list'];
         var idRefProps = axs.utils.getAriaPropertiesByValueType(idrefTypes);
         var selector = axs.utils.getSelectorForAriaProperties(idRefProps);
@@ -45,13 +43,11 @@ axs.AuditRule.specs.nonExistentAriaRelatedElement = {
                 var propertyValue = axs.utils.getAriaPropertyValue(propertyName,
                         propertyValueText,
                         element);
-                if (!propertyValue.valid) {
-                    result = true;
-                    break;
-                }
+                if (!propertyValue.valid)
+                    return true;
             }
         }
-        return result;
+        return false;
     },
     code: 'AX_ARIA_02'
 };
