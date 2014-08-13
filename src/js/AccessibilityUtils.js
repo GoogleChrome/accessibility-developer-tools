@@ -1407,7 +1407,7 @@ axs.utils.getIdReferrers = function(attributeName, element) {
         property = axs.constants.ARIA_PROPERTIES[propertyKey];
     if (id && property) {
         propertyType = property.valueType;
-        if (propertyType === "idref_list" || propertyType === "idref") {
+        if (propertyType === 'idref_list' || propertyType === 'idref') {
             id = id.replace(/'/g, "\\'");
             referrerQuery = "[" + attributeName + "~='" + id + "']";
             result = element.ownerDocument.querySelectorAll(referrerQuery);
