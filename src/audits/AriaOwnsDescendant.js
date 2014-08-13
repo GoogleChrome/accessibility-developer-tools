@@ -20,39 +20,26 @@ goog.require('axs.constants.Severity');
  * @type {axs.AuditRule.Spec}
  */
 axs.AuditRule.specs.ariaOwnsDescendant = {
-    //TODO The spec doesn't mention this but it would be really weird to
-    //'aria-own' an ancestor right? Maybe we should check for that too?
+    // TODO We should check for elements that try to 'aria-own' an ancestor.
     name: 'ariaOwnsDescendant',
     heading: 'aria-owns should not be used if ownership is implicit in the DOM',
-    url: '',//TODO
+    url: '',  // TODO
     severity: axs.constants.Severity.WARNING,
-    relevantElementMatcher:
-    /**
-     * @param {Element} element A potential audit candidate.
-     * @return {boolean} true if this element is relevant to this audit.
-     */
-    function(element) {
+    relevantElementMatcher: function(element) {
         return axs.browserUtils.matchSelector(element, '[aria-owns]');
     },
-    test:
-    /**
-     * @param {Element} element
-     * @return {boolean} true if this audit finds a problem
-     */
-    function(element) {
+    test: function(element) {
         var document = element.ownerDocument;
-        var result = false;
         var owns = element.getAttribute('aria-owns');
         var ownedIds = owns.split(/\s+/);
         for (var i = 0, len = ownedIds.length; i < len; i++) {
             var ownedElement = document.getElementById(ownedIds[i]);
-            if (ownedElement && (element.compareDocumentPosition(ownedElement) &
-                Node.DOCUMENT_POSITION_CONTAINED_BY)) {
-                    result = true;
-                    break;
+            if (ownedElement &&
+                  (element.compareDocumentPosition(ownedElement) & Node.DOCUMENT_POSITION_CONTAINED_BY)) {
+                    return true;
             }
         }
-        return result;
+        return false;
     },
     code: 'AX_ARIA_06'
 };

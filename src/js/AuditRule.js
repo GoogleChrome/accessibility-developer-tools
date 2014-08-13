@@ -43,10 +43,19 @@ axs.AuditRule = function(spec) {
     /** @type {axs.constants.Severity} */
     this.severity = spec.severity;
 
-    /** @type {function(Element): boolean} */
+    /**
+     * Is this element relevant to this audit?
+     * @param {Element} element A potential audit candidate.
+     * @return {boolean} true if this element is relevant to this audit.
+     */
     this.relevantElementMatcher_ = spec.relevantElementMatcher;
 
-    /** @type {function(Element, Object=): boolean} */
+    /**
+     * The actual audit function.
+     * @param {Element} element The element under test.
+     * @param {Object=} config
+     * @return {boolean} true if this audit finds a problem.
+     */
     this.test_ = spec.test;
 
     /** @type {string} */
