@@ -113,26 +113,25 @@ axs.properties.getColorProperties = function(element) {
  * @return {boolean}
  */
 axs.properties.hasDirectTextDescendant = function(element) {
-    var result, ownerDocument;
+    var ownerDocument;
     if (element.nodeType == Node.DOCUMENT_NODE)
         ownerDocument = element;
     else
         ownerDocument = element.ownerDocument;
     if (ownerDocument.evaluate)
     {
-        result = hasDirectTextDescendantXpath();
+        return hasDirectTextDescendantXpath();
     }
     else//IE
     {
-        result = hasDirectTextDescendantTreeWalker();
+        return hasDirectTextDescendantTreeWalker();
     }
 
     /**
      * Determines whether element has a text node as a direct descendant.
      * This method uses XPath on HTML DOM which is not universally supported.
      */
-    function hasDirectTextDescendantXpath()
-    {
+    function hasDirectTextDescendantXpath() {
         var selectorResults = ownerDocument.evaluate(axs.properties.TEXT_CONTENT_XPATH,
                                                      element,
                                                      null,
@@ -156,8 +155,7 @@ axs.properties.hasDirectTextDescendant = function(element) {
      * This method uses TreeWalker as a fallback (at time of writing no version
      * of IE (including IE11) supports XPath in the HTML DOM).
      */
-    function hasDirectTextDescendantTreeWalker()
-    {
+    function hasDirectTextDescendantTreeWalker() {
         var foundDirectTextDescendant = false,
             treeWalker = ownerDocument.createTreeWalker(element,
                                                         NodeFilter.SHOW_TEXT,
@@ -175,7 +173,6 @@ axs.properties.hasDirectTextDescendant = function(element) {
         }
         return foundDirectTextDescendant;
     }
-    return result;
 };
 
 /**

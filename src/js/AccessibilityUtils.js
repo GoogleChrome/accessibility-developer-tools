@@ -1402,7 +1402,7 @@ axs.utils.getQuerySelectorText = function(obj) {
  * @return {NodeList} The elements that refer to this element.
  */
 axs.utils.getIdReferrers = function(attributeName, element) {
-    var propertyType, referrerQuery, result, id = element.id,
+    var propertyType, referrerQuery, id = element.id,
         propertyKey = attributeName.replace(/^aria-/, ''),
         property = axs.constants.ARIA_PROPERTIES[propertyKey];
     if (id && property) {
@@ -1410,10 +1410,10 @@ axs.utils.getIdReferrers = function(attributeName, element) {
         if (propertyType === 'idref_list' || propertyType === 'idref') {
             id = id.replace(/'/g, "\\'");
             referrerQuery = "[" + attributeName + "~='" + id + "']";
-            result = element.ownerDocument.querySelectorAll(referrerQuery);
+            return element.ownerDocument.querySelectorAll(referrerQuery);
         }
     }
-    return result || null;
+    return null;
 };
 
 /**
