@@ -17,7 +17,7 @@ goog.provide('axs.utils');
 goog.provide('axs.utils.Color');
 
 /**
- * @constant
+ * @const
  * @type {string}
  */
 axs.utils.FOCUSABLE_ELEMENTS_SELECTOR =
@@ -298,7 +298,7 @@ axs.utils.overlappingElements = function(element) {
 
 /**
  * @param {Element} element
- * @return boolean
+ * @return {boolean}
  */
 axs.utils.elementIsHtmlControl = function(element) {
     var defaultView = element.ownerDocument.defaultView;
@@ -318,7 +318,7 @@ axs.utils.elementIsHtmlControl = function(element) {
 
 /**
  * @param {Element} element
- * @return boolean
+ * @return {boolean}
  */
 axs.utils.elementIsAriaWidget = function(element) {
     if (element.hasAttribute('role')) {
@@ -513,7 +513,7 @@ axs.utils.parseColor = function(colorString) {
     if (match) {
         var r = parseInt(match[1], 10);
         var g = parseInt(match[2], 10);
-        var b = parseInt(match[3] ,10);
+        var b = parseInt(match[3], 10);
         var a = parseFloat(match[4]);
         return new axs.utils.Color(r, g, b, a);
     }
@@ -649,7 +649,7 @@ axs.utils.suggestColors = function(bgColor, fgColor, contrastRatio, style) {
 axs.utils.flattenColors = function(fgColor, bgColor) {
     var alpha = fgColor.alpha;
     var r = ((1 - alpha) * bgColor.red) + (alpha * fgColor.red);
-    var g  = ((1 - alpha) * bgColor.green) + (alpha * fgColor.green);
+    var g = ((1 - alpha) * bgColor.green) + (alpha * fgColor.green);
     var b = ((1 - alpha) * bgColor.blue) + (alpha * fgColor.blue);
     var a = fgColor.alpha + (bgColor.alpha * (1 - fgColor.alpha));
 
