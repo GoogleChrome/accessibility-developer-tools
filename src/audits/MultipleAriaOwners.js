@@ -21,20 +21,25 @@ goog.require('axs.constants.Severity');
  */
 axs.AuditRule.specs.multipleAriaOwners = {
     name: 'multipleAriaOwners',
-    heading: 'an element\'s ID must not be present in more that one aria-owns attribute at any time',
+    heading: 'An element\'s ID must not be present in more that one aria-owns attribute at any time',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_07--an-element-can-have-only-one-explicit-aria-owner',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
-        // could instead match every element that has an ID attribute
+        /*
+         * While technically we could instead match elements with ID attribute
+         * if there are no [aria-owns] elements then this rule is not relevant.
+         * The fact that the element which will end up having an error is not
+         * one of these elements is OK.
+         */
         return axs.browserUtils.matchSelector(element, '[aria-owns]');
     },
     test: function(element) {
         var attr = 'aria-owns';
-        var document = element.ownerDocument;
+        var ownerDocument = element.ownerDocument;
         var owns = element.getAttribute(attr);
         var ownsValues = owns.split(/\s+/);
         for (var i = 0, len = ownsValues.length; i < len; i++) {
-            var ownedElement = document.getElementById(ownsValues[i]);
+            var ownedElement = ownerDocument.getElementById(ownsValues[i]);
             if (ownedElement) {
                 var owners = axs.utils.getIdReferrers(attr, ownedElement);
                 if (owners.length > 1)

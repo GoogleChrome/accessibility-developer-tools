@@ -21,9 +21,9 @@ goog.require('axs.constants.Severity');
  */
 axs.AuditRule.specs.nonExistentAriaRelatedElement = {
     name: 'nonExistentAriaRelatedElement',
-    heading: 'aria attributes which refer to other elements by ID should refer to elements which exist in the DOM',
-    url: '',  // TODO
-    severity: axs.constants.Severity.WARNING,
+    heading: 'ARIA attributes which refer to other elements by ID should refer to elements which exist in the DOM',
+    url: '',  // TODO(RickSBrown): talk to Alice about wiki for this (I don't think I can update?);
+    severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {
         var idrefTypes = ['idref', 'idref_list'];
         var idRefProps = axs.utils.getAriaPropertiesByValueType(idrefTypes);
@@ -41,8 +41,8 @@ axs.AuditRule.specs.nonExistentAriaRelatedElement = {
                 var propertyName = nextSelector.match(/aria-[^\]]+/)[0];
                 var propertyValueText = element.getAttribute(propertyName);
                 var propertyValue = axs.utils.getAriaPropertyValue(propertyName,
-                        propertyValueText,
-                        element);
+                                                                   propertyValueText,
+                                                                   element);
                 if (!propertyValue.valid)
                     return true;
             }

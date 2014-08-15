@@ -18,41 +18,51 @@
     });
 
     test('Element owned once only but not found in DOM', function() {
-        var id = 'theOwnedElement',
-            fixture = setup([id]),
-            element = document.getElementById(id);
-        element.parentNode.removeChild(element);
+        var id = 'theOwnedElement';
+        var fixture = setup([id]);
+        var element = document.getElementById(id);
         var rule = axs.AuditRules.getRule(RULE_NAME);
+        element.parentNode.removeChild(element);
         deepEqual(rule.run({ scope: fixture }),
                   { elements: [], result: axs.constants.AuditResult.PASS });
     });
 
     test('Element owned multiple times', function() {
-        var fixture = setup(['theOwned'], ['owner1', 'owner2']);
+        var ownerIds = ['owner1', 'owner2'];
+        var fixture = setup(['theOwned'], ownerIds);
+        var elements = ownerIds.map(function(id) {
+            return document.getElementById(id);
+        });
         var rule = axs.AuditRules.getRule(RULE_NAME);
         var result = rule.run({ scope: fixture });
         equal(result.result, axs.constants.AuditResult.FAIL);
-        equal(result.elements.length, 2);
+        deepEqual(result.elements, elements);
     });
 
     test('Multiple elements owned multiple times', function() {
-        var fixture = setup(['theOwnedElement', 'theOtherOwnedElement'],
-            ['owner1', 'owner2', 'owner3']);
+        var ownerIds = ['owner1', 'owner2', 'owner3'];
+        var fixture = setup(['theOwnedElement', 'theOtherOwnedElement'], ownerIds);
+        var elements = ownerIds.map(function(id) {
+            return document.getElementById(id);
+        });
         var rule = axs.AuditRules.getRule(RULE_NAME);
         var result = rule.run({ scope: fixture });
         equal(result.result, axs.constants.AuditResult.FAIL);
-        equal(result.elements.length, 3);
+        deepEqual(result.elements, elements);
     });
 
 
     test('Multiple elements one owned multiple times', function() {
+        var ownerIds = ['owner1', 'owner2'];
         var ownedElements = ['theOwnedElement', 'theOtherOwnedElement'];
-        var fixture = setup(ownedElements, ['owner1', 'owner2'],
-            ownedElements[0]);
+        var fixture = setup(ownedElements, ownerIds, ownedElements[0]);
+        var elements = ownerIds.map(function(id) {
+            return document.getElementById(id);
+        });
         var rule = axs.AuditRules.getRule(RULE_NAME);
         var result = rule.run({ scope: fixture });
         equal(result.result, axs.constants.AuditResult.FAIL);
-        equal(result.elements.length, 2);
+        deepEqual(result.elements, elements);
     });
 
     test('Using ignoreSelectors', function() {
@@ -63,6 +73,7 @@
             ignoreSelectors: ignoreSelectors,
             scope: fixture });
         equal(result.result, axs.constants.AuditResult.PASS);
+        deepEqual(result.elements, []);
     });
 
     /**

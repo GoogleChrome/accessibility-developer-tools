@@ -597,7 +597,6 @@ axs.utils.suggestColors = function(bgColor, fgColor, contrastRatio, style) {
         desiredFgLuminanceAA <= 1 && desiredFgLuminanceAA >= 0) {
         var newFgColorAA = axs.utils.translateColor(fgYCC, desiredFgLuminanceAA);
         var newContrastRatioAA = axs.utils.calculateContrastRatio(newFgColorAA, bgColor);
-        //var newLuminance = axs.utils.calculateLuminance(newFgColorAA);
         var suggestedColorsAA = {};
         suggestedColorsAA['fg'] = axs.utils.colorToString(newFgColorAA);
         suggestedColorsAA['bg'] = axs.utils.colorToString(bgColor);
@@ -616,7 +615,6 @@ axs.utils.suggestColors = function(bgColor, fgColor, contrastRatio, style) {
     }
     var desiredBgLuminanceAA = axs.utils.luminanceFromContrastRatio(fgLuminance, levelAAContrast + 0.02, !fgLuminanceIsHigher);
     var desiredBgLuminanceAAA = axs.utils.luminanceFromContrastRatio(fgLuminance, levelAAAContrast + 0.02, !fgLuminanceIsHigher);
-    //var bgLuminanceBoundary = fgLuminanceIsHigher ? 0 : 1;
     var bgYCC = axs.utils.toYCC(bgColor);
 
     if (!('AA' in colors) && axs.utils.isLowContrast(contrastRatio, style, false) &&
@@ -1402,30 +1400,30 @@ axs.utils.getQuerySelectorText = function(obj) {
  * @return {NodeList} The elements that refer to this element.
  */
 axs.utils.getIdReferrers = function(attributeName, element) {
-    var propertyType, referrerQuery, id = element.id,
-        propertyKey = attributeName.replace(/^aria-/, ''),
-        property = axs.constants.ARIA_PROPERTIES[propertyKey];
-    if (id && property) {
-        propertyType = property.valueType;
-        if (propertyType === 'idref_list' || propertyType === 'idref') {
-            id = id.replace(/'/g, "\\'");
-            referrerQuery = "[" + attributeName + "~='" + id + "']";
-            return element.ownerDocument.querySelectorAll(referrerQuery);
-        }
+    var id = element.id;
+    var propertyKey = attributeName.replace(/^aria-/, '');
+    var property = axs.constants.ARIA_PROPERTIES[propertyKey];
+    if (!id || !property)
+        return null;
+    var propertyType = property.valueType;
+    if (propertyType === 'idref_list' || propertyType === 'idref') {
+        id = id.replace(/'/g, "\\'");
+        var referrerQuery = "[" + attributeName + "~='" + id + "']";
+        return element.ownerDocument.querySelectorAll(referrerQuery);
     }
     return null;
 };
 
 /**
  * Gets a subset of 'axs.constants.ARIA_PROPERTIES' filtered by 'valueType'.
- * @param {!Array.<string>} valueType Types to match, e.g. ['idref_list'].
+ * @param {!Array.<string>} valueTypes Types to match, e.g. ['idref_list'].
  * @return {Object.<string, Object>} axs.constants.ARIA_PROPERTIES which match.
  */
-axs.utils.getAriaPropertiesByValueType = function(valueType) {
+axs.utils.getAriaPropertiesByValueType = function(valueTypes) {
     var result = {};
     for (var propertyName in axs.constants.ARIA_PROPERTIES) {
         var property = axs.constants.ARIA_PROPERTIES[propertyName];
-        if (property && valueType.indexOf(property.valueType) >= 0) {
+        if (property && valueTypes.indexOf(property.valueType) >= 0) {
             result[propertyName] = property;
         }
     }
@@ -1442,7 +1440,6 @@ axs.utils.getSelectorForAriaProperties = function(ariaProperties) {
     var result = propertyNames.map(function(propertyName) {
         return '[aria-' + propertyName + ']';
     });
-    result.sort();//facilitates reading long selectors and unit testing
-    result = result.join(',');
-    return result;
+    result.sort();  // facilitates reading long selectors and unit testing
+    return result.join(',');
 };

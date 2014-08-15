@@ -118,12 +118,10 @@ axs.properties.hasDirectTextDescendant = function(element) {
         ownerDocument = element;
     else
         ownerDocument = element.ownerDocument;
-    if (ownerDocument.evaluate)
-    {
+    if (ownerDocument.evaluate) {
         return hasDirectTextDescendantXpath();
     }
-    else//IE
-    {
+    else {  // IE
         return hasDirectTextDescendantTreeWalker();
     }
 
@@ -137,17 +135,14 @@ axs.properties.hasDirectTextDescendant = function(element) {
                                                      null,
                                                      XPathResult.ANY_TYPE,
                                                      null);
-        var foundDirectTextDescendant = false;
         for (var resultElement = selectorResults.iterateNext();
              resultElement != null;
              resultElement = selectorResults.iterateNext()) {
             if (resultElement !== element)
                 continue;
-
-            foundDirectTextDescendant = true;
-            break;
+            return true;
         }
-        return foundDirectTextDescendant;
+        return false;
     }
 
     /**
@@ -156,22 +151,19 @@ axs.properties.hasDirectTextDescendant = function(element) {
      * of IE (including IE11) supports XPath in the HTML DOM).
      */
     function hasDirectTextDescendantTreeWalker() {
-        var foundDirectTextDescendant = false,
-            treeWalker = ownerDocument.createTreeWalker(element,
+        var treeWalker = ownerDocument.createTreeWalker(element,
                                                         NodeFilter.SHOW_TEXT,
                                                         null,
                                                         false);
         while (treeWalker.nextNode()) {
-            var resultElement = treeWalker.currentNode,
-                parent = resultElement.parentNode,
-                tagName = parent.tagName.toLowerCase(),
-                value = resultElement.nodeValue.trim();
-            if (value && tagName !== 'script' && element !== resultElement) {
-                foundDirectTextDescendant = true;
-                break;
-            }
+            var resultElement = treeWalker.currentNode;
+            var parent = resultElement.parentNode;
+            var tagName = parent.tagName.toLowerCase();
+            var value = resultElement.nodeValue.trim();
+            if (value && tagName !== 'script' && element !== resultElement)
+                return true;
         }
-        return foundDirectTextDescendant;
+        return false;
     }
 };
 

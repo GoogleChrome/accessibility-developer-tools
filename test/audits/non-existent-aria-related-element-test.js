@@ -31,7 +31,33 @@ module('NonExistentAriaRelatedElement');
         var rule = axs.AuditRules.getRule('nonExistentAriaRelatedElement');
         var result = rule.run({ scope: fixture });
         equal(result.result, axs.constants.AuditResult.FAIL);
-        equal(result.elements.length, 1);
+        deepEqual(result.elements, [refererElement]);
+    });
+
+    test('Element doesn\'t exist, single ' + testProp + ' value with aria-busy', function() {
+        var fixture = document.getElementById('qunit-fixture');
+
+        var refererElement = document.createElement('div');
+        refererElement.setAttribute(testProp, 'notALabel');
+        refererElement.setAttribute('aria-busy', 'true');
+        fixture.appendChild(refererElement);
+        var rule = axs.AuditRules.getRule('nonExistentAriaRelatedElement');
+        var result = rule.run({ scope: fixture });
+        equal(result.result, axs.constants.AuditResult.FAIL);
+        deepEqual(result.elements, [refererElement]);
+    });
+
+    test('Element doesn\'t exist, single ' + testProp + ' value with aria-hidden', function() {
+        var fixture = document.getElementById('qunit-fixture');
+
+        var refererElement = document.createElement('div');
+        refererElement.setAttribute(testProp, 'notALabel');
+        refererElement.setAttribute('aria-hidden', 'true');
+        fixture.appendChild(refererElement);
+        var rule = axs.AuditRules.getRule('nonExistentAriaRelatedElement');
+        var result = rule.run({ scope: fixture });
+        equal(result.result, axs.constants.AuditResult.FAIL);
+        deepEqual(result.elements, [refererElement]);
     });
 
     test('Multiple referent elements exist with ' + testProp, function() {
@@ -70,7 +96,7 @@ module('NonExistentAriaRelatedElement');
         var rule = axs.AuditRules.getRule('nonExistentAriaRelatedElement');
         var result = rule.run({ scope: fixture });
         equal(result.result, axs.constants.AuditResult.FAIL);
-        equal(result.elements.length, 1);
+        deepEqual(result.elements, [refererElement]);
     });
 
     test('Using ignoreSelectors with ' + testProp, function() {
@@ -88,9 +114,7 @@ module('NonExistentAriaRelatedElement');
 
         var rule = axs.AuditRules.getRule('nonExistentAriaRelatedElement');
         var ignoreSelectors = ['#labelledbyElement2'];
-        var result = rule.run({
-            ignoreSelectors: ignoreSelectors,
-            scope: fixture });
+        var result = rule.run({ ignoreSelectors: ignoreSelectors, scope: fixture });
         equal(result.result, axs.constants.AuditResult.PASS);
     });
 });
