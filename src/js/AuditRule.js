@@ -46,7 +46,7 @@ axs.AuditRule = function(spec) {
     /** @type {function(Element): boolean} */
     this.relevantElementMatcher_ = spec.relevantElementMatcher;
 
-    /** @type {function(Element): boolean} */
+    /** @type {function(Element, Object=): boolean} */
     this.test_ = spec.test;
 
     /** @type {string} */
@@ -67,7 +67,7 @@ axs.AuditRule = function(spec) {
  *              url: string,
  *              severity: axs.constants.Severity,
  *              relevantElementMatcher: function(Element): boolean,
- *              test: function(Element): boolean,
+ *              test: function(Element, Object=): boolean,
  *              code: string,
  *              opt_requiresConsoleAPI: boolean }} */
 axs.AuditRule.SpecWithConsoleAPI;
@@ -77,7 +77,7 @@ axs.AuditRule.SpecWithConsoleAPI;
  *              url: string,
  *              severity: axs.constants.Severity,
  *              relevantElementMatcher: function(Element): boolean,
- *              test: function(Element): boolean,
+ *              test: function(Element, Object=): boolean,
  *              code: string }} */
 axs.AuditRule.SpecWithoutConsoleAPI;
 
@@ -196,6 +196,7 @@ axs.AuditRule.collectMatchingElements = function(node, matcher, collection,
  *         number of results is found, 'resultsTruncated' is set to true in the
  *         returned object. If this is null or undefined, all results will be
  *         returned.
+ *     config: Any per-rule configuration.
  * @return {?Object.<string, (axs.constants.AuditResult|?Array.<Element>|boolean)>}
  */
 axs.AuditRule.prototype.run = function(options) {
@@ -223,7 +224,7 @@ axs.AuditRule.prototype.run = function(options) {
         if (maxResults != null && failingElements.length >= maxResults)
             break;
         var element = relevantElements[i];
-        if (!ignored(element) && this.test_(element))
+        if (!ignored(element) && this.test_(element, options.config))
             this.addElement(failingElements, element);
     }
     var result = failingElements.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS;

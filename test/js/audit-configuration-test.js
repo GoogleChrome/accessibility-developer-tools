@@ -102,7 +102,7 @@ test("Unsupported Rules Warning shown first and only first time audit ran", func
 
   // This should not be touched by an end-user, but needs to be set here,
   // because the unit tests run multiple times Audit.run()
-  axs.Audit.unsupportedRulesWarningShown = false;   
+  axs.Audit.unsupportedRulesWarningShown = false;
   __warnings = [];
   axs.Audit.run();
 
@@ -117,7 +117,7 @@ test("Unsupported Rules Warning not shown if showUnsupportedRulesWarning set to 
   auditConfig.showUnsupportedRulesWarning = false;
   // This should not be touched by an end-user, but needs to be set here,
   // because the unit tests run multiple times Audit.run()
-  axs.Audit.unsupportedRulesWarningShown = false; 
+  axs.Audit.unsupportedRulesWarningShown = false;
   __warnings = [];
   axs.Audit.run(auditConfig);
 
@@ -132,7 +132,7 @@ test("Unsupported Rules Warning not shown if with console API on configuration s
   auditConfig.withConsoleApi = true;
   // This should not be touched by an end-user, but needs to be set here,
   // because the unit tests run multiple times Audit.run()
-  axs.Audit.unsupportedRulesWarningShown = false; 
+  axs.Audit.unsupportedRulesWarningShown = false;
   __warnings = [];
 
   getEventListeners = function() { return {"click" : function() { }}; }  // Stub function only in consoleAPI
@@ -148,4 +148,129 @@ test("Unsupported Rules Warning not shown if with console API on configuration s
   equal(0, __warnings.length);
 });
 
+test("Configure LinkWithUnclearPurpose: blacklist phrase", function() {
+  var fixture = document.getElementById('qunit-fixture');
+  var a = document.createElement('a');
+  a.href = '#main';
+  a.textContent = 'Generic text.';
+  fixture.appendChild(a);
 
+  var auditConfig = new axs.AuditConfiguration();
+  auditConfig.scope = fixture;
+
+  var results = axs.Audit.run(auditConfig);
+  equal(results.some(function(result) {
+    return result.rule.name == 'linkWithUnclearPurpose' &&
+           result.result == 'PASS';
+  }), true, 'Before configuration, "Generic text." is acceptable.');
+
+  a.textContent = "Click here."
+  var results = axs.Audit.run(auditConfig);
+  equal(results.some(function(result) {
+    return result.rule.name == 'linkWithUnclearPurpose' &&
+           result.result == 'FAIL';
+  }), true, '"Click here." should be blocked before configuration');
+
+  auditConfig.setRuleConfig('linkWithUnclearPurpose',
+                            { blacklistPhrases: ['generic text'] });
+
+  // Blacklist phrase is matched case-insensitively and ignoring punctuation at
+  // the end.
+  a.textContent = "Generic text."
+  var results = axs.Audit.run(auditConfig);
+  equal(results.some(function(result) {
+    return result.rule.name == 'linkWithUnclearPurpose' &&
+           result.result == 'FAIL';
+  }), true, '"Generic text." matches blacklist phrase and should fail');
+
+  // Blacklist phrase must match entire string.
+  a.textContent = "Phrase containing generic text";
+  var results = axs.Audit.run(auditConfig);
+  equal(results.some(function(result) {
+    return result.rule.name == 'linkWithUnclearPurpose' &&
+           result.result == 'PASS';
+  }), true, '"Phrase containing generic text" should pass');
+
+  // Demonstrating the difference between a blacklist phrase and stopwords: a
+  // blacklist phrase will only cause an audit failure if the entire string
+  // matches the phrase.
+  a.textContent = "Generic generic text";
+  var results = axs.Audit.run(auditConfig);
+  equal(results.some(function(result) {
+    return result.rule.name == 'linkWithUnclearPurpose' &&
+           result.result == 'PASS';
+  }), true,
+  '"Generic generic text" does not match blacklist phrase and should pass');
+
+  // After configuration, "Click here." is still blocked by stop words since we
+  // didn't configure them.
+  a.textContent = "Click here."
+  var results = axs.Audit.run(auditConfig);
+  equal(results.some(function(result) {
+    return result.rule.name == 'linkWithUnclearPurpose' &&
+           result.result == 'FAIL';
+  }), true, '"Click here" should still be blocked.');
+});
+
+test("Configure LinkWithUnclearPurpose: stopwords", function() {
+  var fixture = document.getElementById('qunit-fixture');
+  var a = document.createElement('a');
+  a.href = '#main';
+  a.textContent = 'Generic text.';
+  fixture.appendChild(a);
+
+  var auditConfig = new axs.AuditConfiguration();
+  auditConfig.scope = fixture;
+
+  var results = axs.Audit.run(auditConfig);
+  equal(results.some(function(result) {
+    return result.rule.name == 'linkWithUnclearPurpose' &&
+           result.result == 'PASS';
+  }), true, 'Before configuration, "Generic text." is acceptable.');
+
+  a.textContent = "Click here."
+  var results = axs.Audit.run(auditConfig);
+  equal(results.some(function(result) {
+    return result.rule.name == 'linkWithUnclearPurpose' &&
+           result.result == 'FAIL';
+  }), true, 'Before configuration, "Click here." is blocked by stop words.');
+
+  auditConfig.setRuleConfig('linkWithUnclearPurpose',
+                            { stopwords: [ 'generic', 'text' ] });
+
+  // Since this phrase now consists entirely of stop words and punctuation, the
+  // test will fail.
+  a.textContent = 'Generic text.';
+  var results = axs.Audit.run(auditConfig);
+  equal(results.some(function(result) {
+    return result.rule.name == 'linkWithUnclearPurpose' &&
+           result.result == 'FAIL';
+  }), true, '"Generic text." should be blocked by stopwords.');
+
+  // Stop words will be filtered out, but if any text remains the test will
+  // still pass.
+  a.textContent = "Phrase containing generic text";
+  var results = axs.Audit.run(auditConfig);
+  equal(results.some(function(result) {
+    return result.rule.name == 'linkWithUnclearPurpose' &&
+           result.result == 'PASS';
+  }), true, '"Phrase containing generic text" should not be blocked.');
+
+  // Demonstrating the difference between a blacklist phrase and stopwords:
+  // stopwords will be filtered out of the phrase, and if no text remains the
+  // test will fail.
+  a.textContent = "Generic generic text";
+  var results = axs.Audit.run(auditConfig);
+  equal(results.some(function(result) {
+    return result.rule.name == 'linkWithUnclearPurpose' &&
+           result.result == 'FAIL';
+  }), true, '"Generic generic text" should be blocked.');
+
+  // After configuration, "Click here." is no longer blocked by stop words.
+  a.textContent = "Click here."
+  var results = axs.Audit.run(auditConfig);
+  equal(results.some(function(result) {
+    return result.rule.name == 'linkWithUnclearPurpose' &&
+           result.result == 'PASS';
+  }), true, '"Click here" should no longer be blocked.');
+});
