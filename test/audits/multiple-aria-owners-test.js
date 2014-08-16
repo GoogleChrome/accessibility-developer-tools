@@ -3,6 +3,38 @@
 
     module('MultipleAriaOwners');
 
+    /**
+     * Helper for aria-owns testing:
+     *  - adds owned elements to the fixture
+     *  - creates owner element/s
+     *  - sets aria-owns on owners
+     *  - returns the fixture
+     * @param {!Array.<string>} ownedIds The ids that will be 'owned'.
+     * @param {Array.<string>} ownerIds An id for each 'owner' element.
+     * @param {string=} attributeValue The value of 'aria-owns'
+     *    otherwise the ownedIds will be used.
+     * @return {!Element} The test container (qunit fixture).
+     */
+    function setup(ownedIds, ownerIds, attributeValue) {
+        var fixture = document.getElementById('qunit-fixture');
+        var value = attributeValue || ownedIds.join(' ');
+        ownedIds.forEach(function(id) {
+            var element = document.createElement('div');
+            element.id = id;
+            fixture.appendChild(element);
+        });
+        ownerIds = ownerIds || [''];
+        ownerIds.forEach(function(id) {
+            var element = document.createElement('div');
+            if (id) {  // could be an empty string, that is legit here
+                element.id = id;
+            }
+            element.setAttribute('aria-owns', value);
+            fixture.appendChild(element);
+        });
+        return fixture;
+    }
+
     test('Element owned once only', function() {
         var fixture = setup(['theOwned']);
         var rule = axs.AuditRules.getRule(RULE_NAME);
@@ -75,37 +107,4 @@
         equal(result.result, axs.constants.AuditResult.PASS);
         deepEqual(result.elements, []);
     });
-
-    /**
-     * Helper for aria-owns testing:
-     *  - adds owned elements to the fixture
-     *  - creates owner element/s
-     *  - sets aria-owns on owners
-     *  - returns the fixture
-     * @param {!Array.<string>} ownedIds The ids that will be 'owned'.
-     * @param {Array.<string>} ownerIds An id for each 'owner' element.
-     * @param {string=} attributeValue The value of 'aria-owns'
-     * otherwise the ownedIds will be used.
-     * @return {!Element} The test container (qunit fixture).
-     */
-    function setup(ownedIds, ownerIds, attributeValue)
-    {
-        var fixture = document.getElementById('qunit-fixture');
-        var value = attributeValue || ownedIds.join(' ');
-        ownedIds.forEach(function(id) {
-            var element = document.createElement('div');
-            element.id = id;
-            fixture.appendChild(element);
-        });
-        ownerIds = ownerIds || [''];
-        ownerIds.forEach(function(id) {
-            var element = document.createElement('div');
-            if (id) {  // could be an empty string, that is legit here
-                element.id = id;
-            }
-            element.setAttribute('aria-owns', value);
-            fixture.appendChild(element);
-        });
-        return fixture;
-    }
 })();

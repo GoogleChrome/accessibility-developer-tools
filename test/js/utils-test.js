@@ -169,8 +169,7 @@ test("returns the aria owners for a given element", function() {
   var ownerCount = 5;
   owned.id = "theOwned";
   this.fixture_.appendChild(owned);
-  for(var i=0; i<ownerCount; i++)
-  {
+  for(var i = 0; i < ownerCount; i++) {
     var owner = document.createElement("div");
     owner.setAttribute("aria-owns", "theOwned");
     owner.setAttribute("class", "owner");
@@ -178,7 +177,7 @@ test("returns the aria owners for a given element", function() {
   }
   var expected = this.fixture_.querySelectorAll(".owner");
   var actual = axs.utils.getIdReferrers("aria-owns", owned);
-  equal(expected.length, ownerCount);//sanity check the test itself
+  equal(expected.length, ownerCount);  // sanity check the test itself
   equal(actual.length, ownerCount);
   var allFound = Array.prototype.every.call(expected, function(element){
       return (Array.prototype.indexOf.call(actual, element) >= 0);
@@ -190,8 +189,7 @@ test("returns the elements this element labels", function() {
   var labelledCount = 2;
   label.id = "theLabel";
   this.fixture_.appendChild(label);
-  for(var i=0; i<labelledCount; i++)
-  {
+  for(var i = 0; i < labelledCount; i++) {
     var labelled = document.createElement("div");
     labelled.setAttribute("aria-labelledby", "theLabel notPresentInDom");
     labelled.setAttribute("class", "labelled");
@@ -199,7 +197,7 @@ test("returns the elements this element labels", function() {
   }
   var expected = this.fixture_.querySelectorAll(".labelled");
   var actual = axs.utils.getIdReferrers("aria-labelledby", label);
-  equal(expected.length, labelledCount);//sanity check the test itself
+  equal(expected.length, labelledCount);  // sanity check the test itself
   equal(actual.length, labelledCount);
   var allFound = Array.prototype.every.call(expected, function(element){
       return (Array.prototype.indexOf.call(actual, element) >= 0);
