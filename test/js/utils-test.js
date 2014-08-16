@@ -130,7 +130,7 @@ module("getQuerySelectorText", {
   }
 });
 test("returns the selector text for a nested object with a class attribute", function() {
-  var targetNode = document.createElement('em')
+  var targetNode = document.createElement('em');
   targetNode.setAttribute('class', 'foo');
   var targetParentNode = document.createElement('p');
   targetParentNode.appendChild(targetNode);
