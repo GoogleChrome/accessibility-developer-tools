@@ -26,10 +26,7 @@ axs.AuditRule.specs.badAriaAttributeValue = {
     url: '',
     severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {
-        var selector = '';
-        for (var property in axs.constants.ARIA_PROPERTIES)
-            selector += '[aria-' + property + '],';
-        selector = selector.substring(0, selector.length - 1);  // trailing comma
+        var selector = axs.utils.getSelectorForAriaProperties(axs.constants.ARIA_PROPERTIES);
         return axs.browserUtils.matchSelector(element, selector);
     },
     test: function(element) {

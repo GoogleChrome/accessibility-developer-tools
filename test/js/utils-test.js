@@ -130,7 +130,7 @@ module("getQuerySelectorText", {
   }
 });
 test("returns the selector text for a nested object with a class attribute", function() {
-  var targetNode = document.createElement('em')
+  var targetNode = document.createElement('em');
   targetNode.setAttribute('class', 'foo');
   var targetParentNode = document.createElement('p');
   targetParentNode.appendChild(targetNode);
@@ -157,4 +157,90 @@ test("parses alpha values correctly", function() {
   equal(color.blue, 255);
   equal(color.green, 255);
   equal(color.alpha, .47);
+});
+
+module("getIdReferrers", {
+  setup: function () {
+    this.fixture_ = document.getElementById('qunit-fixture');
+  }
+});
+test("returns the aria owners for a given element", function() {
+  var owned = document.createElement("div");
+  var ownerCount = 5;
+  owned.id = "theOwned";
+  this.fixture_.appendChild(owned);
+  for(var i = 0; i < ownerCount; i++) {
+    var owner = document.createElement("div");
+    owner.setAttribute("aria-owns", "theOwned");
+    owner.setAttribute("class", "owner");
+    this.fixture_.appendChild(owner);
+  }
+  var expected = this.fixture_.querySelectorAll(".owner");
+  var actual = axs.utils.getIdReferrers("aria-owns", owned);
+  equal(expected.length, ownerCount);  // sanity check the test itself
+  equal(actual.length, ownerCount);
+  var allFound = Array.prototype.every.call(expected, function(element){
+      return (Array.prototype.indexOf.call(actual, element) >= 0);
+  });
+  equal(allFound, true);
+});
+test("returns the elements this element labels", function() {
+  var label = document.createElement("div");
+  var labelledCount = 2;
+  label.id = "theLabel";
+  this.fixture_.appendChild(label);
+  for(var i = 0; i < labelledCount; i++) {
+    var labelled = document.createElement("div");
+    labelled.setAttribute("aria-labelledby", "theLabel notPresentInDom");
+    labelled.setAttribute("class", "labelled");
+    this.fixture_.appendChild(labelled);
+  }
+  var expected = this.fixture_.querySelectorAll(".labelled");
+  var actual = axs.utils.getIdReferrers("aria-labelledby", label);
+  equal(expected.length, labelledCount);  // sanity check the test itself
+  equal(actual.length, labelledCount);
+  var allFound = Array.prototype.every.call(expected, function(element){
+      return (Array.prototype.indexOf.call(actual, element) >= 0);
+  });
+  equal(allFound, true);
+});
+module("getAriaPropertiesByValueType", {
+  setup: function () {
+
+  }
+});
+test("Returns idref and idref_list types.", function() {
+  var expected = ["activedescendant", "controls", "describedby", "flowto", "labelledby", "owns"];
+  var actual = axs.utils.getAriaPropertiesByValueType(["idref", "idref_list"]);
+  actual = Object.keys(actual);
+  actual.sort();
+  deepEqual(actual, expected);
+});
+test("Returns idref types.", function() {
+  var expected = ["activedescendant"];
+  var actual = axs.utils.getAriaPropertiesByValueType(["idref"]);
+  actual = Object.keys(actual);
+  actual.sort();
+  deepEqual(actual, expected);
+});
+
+module("getSelectorForAriaProperties", {
+  setup: function () {
+
+  }
+});
+test("Returns a selector to match all aria properties.", function() {
+  var expected = "[aria-activedescendant],[aria-atomic],[aria-autocomplete],[aria-busy],[aria-checked],[aria-controls],";
+  expected += "[aria-describedby],[aria-disabled],[aria-dropeffect],[aria-expanded],[aria-flowto],[aria-grabbed],";
+  expected += "[aria-haspopup],[aria-hidden],[aria-invalid],[aria-label],[aria-labelledby],[aria-level],[aria-live],";
+  expected += "[aria-multiline],[aria-multiselectable],[aria-orientation],[aria-owns],[aria-posinset],[aria-pressed],";
+  expected += "[aria-readonly],[aria-relevant],[aria-required],[aria-selected],[aria-setsize],[aria-sort],[aria-valuemax],";
+  expected += "[aria-valuemin],[aria-valuenow],[aria-valuetext]";
+  var actual = axs.utils.getSelectorForAriaProperties(axs.constants.ARIA_PROPERTIES);
+  deepEqual(actual, expected);
+});
+test("Returns a selector to match all aria idref properties.", function() {
+  var expected = "[aria-activedescendant]";
+  var actual = axs.utils.getSelectorForAriaProperties(axs.utils.getAriaPropertiesByValueType(["idref"]));
+  deepEqual(actual, expected);
 });
