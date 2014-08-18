@@ -137,7 +137,7 @@ test("get implicit role for input type=number", function() {
 test("get implicit role for li out of context", function() {
     var element = document.createElement('li');
     var actual = axs.properties.getImplicitRole(element);
-    equal(actual, '');
+    strictEqual(actual, '');
 });
 
 test("get implicit role for li child of ul", function() {
@@ -152,5 +152,5 @@ test("get implicit role for li descendant of ul", function() {
     element = element.appendChild(document.createElement('div'));  // bad html i know but good for test
     element = element.appendChild(document.createElement('li'));
     var actual = axs.properties.getImplicitRole(element);
-    equal(actual, '');
+    strictEqual(actual, '');
 });

@@ -791,5 +791,41 @@ axs.properties.getAllProperties = function(node) {
             return htmlInfo.role;
         return '';
     };
+})();
 
+(function () {
+    var roleToSelectorCache = {};  // performance optimization, cache results from getSelectorForRole
+    
+    /**
+     * Build a selecor that will match elements which implicity or explicitly have this role.
+     * Note that the selector will probably not look elegant but it will work.
+     * @param {string} role
+     * @return {string} selector
+     */
+    axs.properties.getSelectorForRole = function(role) {
+        if (!role)
+            return '';
+        if (roleToSelectorCache[role] && roleToSelectorCache.hasOwnProperty(role))
+            return roleToSelectorCache[role];
+        var selectors = ['[role="' + role + '"]'];
+        var tagNames = Object.keys(/** @type {!Object} */(axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO));
+        tagNames.forEach(function(tagName) {
+            var htmlInfos = axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO[tagName];
+            if (htmlInfos && htmlInfos.length) {
+                for (var i = 0; i < htmlInfos.length; i++) {
+                    var htmlInfo = htmlInfos[i];
+                    if (htmlInfo.role === role) {
+                        if (htmlInfo.selector) {
+                            selectors[selectors.length] = htmlInfo.selector;
+                        }
+                        else {
+                            selectors[selectors.length] = tagName;  // Selectors API is not case sensitive.
+                            break;  // No need to continue adding selectors since we will match the tag itself.
+                        }
+                    }
+                }
+            }
+        });
+        return (roleToSelectorCache[role] = selectors.join(','));
+    };
 })();

@@ -1057,20 +1057,22 @@ axs.constants.InlineElements = {
 
 /**
  * Holds information about implicit ARIA semantics for a given HTML element type.
- * Here is more detail about the properties on this object:
+ * This object has the following properties:
  * <ul>
  * <li>role will contain the implicit role if it exists, otherwise empty string.</li>
  * <li>allowed contains the roles that can reasonably be applied to this element.
  *    Note: if the implicit role is listed in the allowed array then it is OK (recommended?)
  *    to explictly set the role.
- *    Note2: A tag that can take any role is signified by a '*' wildcard in the array.
+ *    Note2: A tag that can take any role is signified by a '*' wildcard in the array. It is not
+ *    an error if the array contains other roles but currently this has no meaning. In future it may
+ *    be used to indicate recommended roles.
  * </li>
- * <li>selector Is present if this is a 'subclass' of the base HTML element, i.e. its semantics are
+ * <li>selector is present if this is a 'subclass' of the base HTML element, i.e. its semantics are
  *    modified by context or attributes. It can be used with the selectors API to find and/or match
  *    elements.
  * </li>
- * <li>reserved will be true if this is a semantically strong element that you an not modify with any
- *    ARIA attributes, including role and even global attributes.
+ * <li>reserved will be true if this is a semantically strong element that you may not modify with any
+ *    ARIA attributes, including role or global attributes.
  * </li>
  * </ul>
  *
