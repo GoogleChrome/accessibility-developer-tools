@@ -750,3 +750,46 @@ axs.properties.getAllProperties = function(node) {
     allProperties['videoProperties'] = axs.properties.getVideoProperties(element);
     return allProperties;
 };
+
+(function(){
+    /**
+     * Helper for implicit semantic functionality.
+     * @param {Element} element
+     * @return {axs.constants.HtmlInfo|null}
+     */
+    function getHtmlInfo(element) {
+        if (!element)
+            return null;
+        var tagName = element.tagName;
+        if (!tagName)
+            return null;
+        tagName = tagName.toUpperCase();
+        var infos = axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO[tagName];
+        if (!infos || !infos.length)
+            return null;
+        var defaultInfo = null;  // will contain the info with no specific selector if no others match
+        for (var i = 0, len = infos.length; i < len; i++) {
+            var htmlInfo = infos[i];
+            if (htmlInfo.selector) {
+                if (axs.browserUtils.matchSelector(element, htmlInfo.selector))
+                    return htmlInfo;
+            }
+            else {
+                defaultInfo = htmlInfo;
+            }
+        }
+        return defaultInfo;
+    }
+
+    /**
+     * @param {Element} element
+     * @return {string} role
+     */
+    axs.properties.getImplicitRole = function(element) {
+        var htmlInfo = getHtmlInfo(element);
+        if (htmlInfo)
+            return htmlInfo.role;
+        return '';
+    };
+
+})();

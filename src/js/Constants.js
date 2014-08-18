@@ -484,7 +484,7 @@ axs.constants.addAllParentRolesToSet_ = function(role, set) {
     axs.constants.addAllParentRolesToSet_(
         axs.constants.ARIA_ROLES[parentRoleName], set);
   }
-}
+};
 
 /**
  * Adds all properties and requiredProperties from parent hierarchy.
@@ -495,7 +495,7 @@ axs.constants.addAllParentRolesToSet_ = function(role, set) {
  */
 axs.constants.addAllPropertiesToSet_ = function(role, propertiesName,
     propertiesSet) {
-  var properties = role[propertiesName]
+  var properties = role[propertiesName];
   if (properties) {
     for (var i = 0; i < properties.length; i++)
       propertiesSet[properties[i]] = true;
@@ -509,7 +509,7 @@ axs.constants.addAllPropertiesToSet_ = function(role, propertiesName,
           propertiesSet);
     }
   }
-}
+};
 
 // TODO make a AriaRole object etc.
 for (var roleName in axs.constants.ARIA_ROLES) {
@@ -1052,4 +1052,692 @@ axs.constants.InlineElements = {
     'TEXTAREA': true,
     'LABEL': true,
     'BUTTON': true
- }
+ };
+
+
+/**
+ * Holds information about implicit ARIA semantics for a given HTML element type.
+ * Here is more detail about the properties on this object:
+ * <ul>
+ * <li>role will contain the implicit role if it exists, otherwise empty string.</li>
+ * <li>allowed contains the roles that can reasonably be applied to this element.
+ *    Note: if the implicit role is listed in the allowed array then it is OK (recommended?)
+ *    to explictly set the role.
+ *    Note2: A tag that can take any role is signified by a '*' wildcard in the array.
+ * </li>
+ * <li>selector Is present if this is a 'subclass' of the base HTML element, i.e. its semantics are
+ *    modified by context or attributes. It can be used with the selectors API to find and/or match
+ *    elements.
+ * </li>
+ * <li>reserved will be true if this is a semantically strong element that you an not modify with any
+ *    ARIA attributes, including role and even global attributes.
+ * </li>
+ * </ul>
+ *
+ *
+ * @typedef {{ role: string,
+ *             allowed: Array.<string>,
+ *             selector: string,
+ *             reserved:  boolean }}
+ */
+axs.constants.HtmlInfo;
+/**
+ * A lookup table which maps uppercase tagName to information about implicit ARIA semantics.
+ * This table is based on the document: http://w3c.github.io/aria-in-html/
+ * It is not complete and never can be. Complex scenarios require specific handling not provided here.
+ *
+ * Where there is any ambiguity this table will endeavor to provide for the most broad case (to avoid
+ *    false failures in conformance checking).
+ *
+ * For example 'table' can take any role however in practice it should only be given the role 'grid' when
+ *    being used as a data grid or 'presentation' when used for layout. This table ignores these nuances and
+ *    allows all roles.
+ * 
+ * @type {Object.<string, Array.<axs.constants.HtmlInfo>>}
+ */
+axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
+    'A': [{
+        role: 'link',
+        allowed: [
+            'button',
+            'checkbox',
+            'menuitem',
+            'menuitemcheckbox',
+            'menuitemradio',
+            'tab',
+            'treeitem'
+        ],
+        selector: 'a[href]'
+    }],
+    'ADDRESS': [{
+        role: '',
+        allowed: [
+            'contentinfo',
+            'presentation'
+        ]
+    }],
+    'AREA': [{
+        role: 'link',
+        allowed: [],
+        selector: 'area[href]'
+    }],
+    'ARTICLE': [{
+        role: 'article',
+        allowed: [
+            'presentation',
+            'article',
+            'document',
+            'application',
+            'main'
+        ]
+    }],
+    'ASIDE': [{
+        role: 'complementary',
+        allowed: [
+            'note',
+            'complementary',
+            'search',
+            'presentation'
+        ]
+    }],
+    'AUDIO': [{
+        role: '',
+        allowed: ['application', 'presentation']
+    }],
+    'BASE': [{
+        role: '',
+        allowed: [],
+        reserved: true
+    }],
+    'BODY': [{
+        role: 'document',
+        allowed: ['presentation']
+    }],
+    'BUTTON': [{
+        role: 'button',
+        allowed: [
+            'link',
+            'menuitem',
+            'menuitemcheckbox',
+            'menuitemradio',
+            'radio'
+        ],
+        selector: 'button:not([aria-pressed]):not([type="menu"])'
+    },
+    {
+        role: 'button',
+        allowed: ['button'],
+        selector: 'button[aria-pressed]'
+    },
+    {
+        role: 'button',
+        attributes: {'aria-haspopup': true},
+        allowed: [
+            'link',
+            'menuitem',
+            'menuitemcheckbox',
+            'menuitemradio',
+            'radio'
+        ],
+        selector: 'button[type="menu"]'
+    }],
+    'CAPTION': [{
+        role: '',
+        allowed: ['presentation']
+    }],
+    'COL': [{
+        role: '',
+        allowed: [],
+        reserved: true
+    }],
+    'COLGROUP': [{
+        role: '',
+        allowed: [],
+        reserved: true
+    }],
+    'DATALIST': [{
+        role: 'listbox',
+        attributes: {'aria-multiselectable': false},
+        allowed: ['presentation']
+    }],
+    'DEL': [{
+        role: '',
+        allowed: ['*']
+    }],
+    'DD': [{
+        role: '',
+        allowed: ['presentation']
+    }],
+    'DT': [{
+        role: '',
+        allowed: ['presentation']
+    }],
+    'DETAILS': [{
+        role: 'group',
+        allowed: [
+            'group',
+            'presentation'
+        ]
+    }],
+    'DIALOG': [{
+        role: 'dialog',
+        attributes: {'aria-hidden': true},
+        allowed: ['dialog'],
+        selector: 'dialog:not([open])'
+    }],
+    'DIV': [{
+        role: '',
+        allowed: ['*']
+    }],
+    'DL': [{
+        role: 'list',
+        allowed: ['presentation']
+    }],
+    'EMBED': [{
+        role: '',
+        allowed: [
+            'application',
+            'document',
+            'img',
+            'presentation'
+        ]
+    }],
+    'FIGURE': [{
+        role: '',
+        allowed: ['*']
+    }],
+    'FOOTER': [{
+        role: '',
+        allowed: ['contentinfo', 'presentation']
+    }],
+    'FORM': [{
+        role: 'form',
+        allowed: ['presentation']
+    }],
+    'P': [{
+        role: '',
+        allowed: ['*']
+    }],
+    'PRE': [{
+        role: '',
+        allowed: ['*']
+    }],
+    'BLOCKQUOTE': [{
+        role: '',
+        allowed: ['*']
+    }],
+    H1: [{
+        role: 'heading'  // also has implicit aria-level
+    }],
+    H2: [{
+        role: 'heading'  // also has implicit aria-level
+    }],
+    H3: [{
+        role: 'heading'  // also has implicit aria-level
+    }],
+    H4: [{
+        role: 'heading'  // also has implicit aria-level
+    }],
+    H5: [{
+        role: 'heading'  // also has implicit aria-level
+    }],
+    H6: [{
+        role: 'heading'  // also has implicit aria-level
+    }],
+    'HEAD': [{
+        role: '',
+        allowed: [],
+        reserved: true
+    }],
+    'HEADER': [{
+        role: '',
+        allowed: [
+            'banner',
+            'presentation'
+        ]
+    }],
+    'HR': [{
+        role: 'separator',
+        allowed: ['presentation']
+    }],
+    'HTML': [{
+        role: '',
+        allowed: [],
+        reserved: true
+    }],
+    'IFRAME': [{
+        role: '',
+        allowed: [
+            'application',
+            'document',
+            'img',
+            'presentation'
+        ],
+        selector: 'iframe:not([seamless])'
+    },
+    {
+        role: '',
+        allowed: [
+            'application',
+            'document',
+            'img',
+            'presentation',
+            'group'  // any general grouping role
+        ],
+        selector: 'iframe[seamless]'
+    }],
+    'IMG': [{
+        role: 'presentation',
+        allowed: [],
+        reserved: true,
+        selector: 'img[alt=""]'
+    },
+    {
+        role: 'img',
+        allowed: ['*'],
+        selector: 'img[alt]:not([alt=""])'
+    }],
+    'INPUT': [{
+        role: 'button',
+        allowed: [
+            'link',
+            'menuitem',
+            'menuitemcheckbox',
+            'menuitemradio',
+            'radio'
+        ],
+        selector: 'input[type="button"]:not([aria-pressed])'
+    },
+    {
+        role: 'button',
+        allowed: ['button'],
+        selector: 'input[type="button"][aria-pressed]'
+    },
+    {
+        role: 'checkbox',
+        allowed: ['checkbox'],
+        selector: 'input[type="checkbox"]'
+    },
+    {
+        role: '',
+        allowed: [],
+        selector: 'input[type="color"]'
+    },
+    {
+        role: '',
+        allowed: [],
+        selector: 'input[type="date"]'
+    },
+    {
+        role: '',
+        allowed: [],
+        selector: 'input[type="datetime"]'
+    },
+    {
+        role: 'textbox',
+        allowed: [],
+        selector: 'input[type="email"]:not([list])'
+    },
+    {
+        role: '',
+        allowed: [],
+        selector: 'input[type="file"]'
+    },
+    {
+        role: '',
+        allowed: [],
+        reserved: true,
+        selector: 'input[type="hidden"]'
+    },
+    {
+        role: 'button',
+        allowed: ['button'],
+        selector: 'input[type="image"][aria-pressed]'
+    },
+    {
+        role: 'button',
+        allowed: [
+            'link',
+            'menuitem',
+            'menuitemcheckbox',
+            'menuitemradio',
+            'radio'
+        ],
+        selector: 'input[type="image"]:not([aria-pressed])'
+    },
+    {
+        role: '',
+        allowed: [],
+        selector: 'input[type="month"]'
+    },
+    {
+        role: 'spinbutton',
+        allowed: [],
+        selector: 'input[type="number"]'
+    },
+    {
+        role: 'textbox',
+        allowed: [],
+        selector: 'input[type="password"]'
+    },
+    {
+        role: 'radio',
+        allowed: ['menuitemradio'],
+        selector: 'input[type="radio"]'
+    },
+    {
+        role: 'slider',
+        allowed: [],
+        selector: 'input[type="range"]'
+    },
+    {
+        role: 'button',
+        allowed: [],
+        selector: 'input[type="reset"]'
+    },
+    {
+        role: 'combobox',  // aria-owns is set to the same value as the list attribute
+        allowed: [],
+        selector: 'input[type="search"][list]'
+    },
+    {
+        role: 'textbox',
+        allowed: [],
+        selector: 'input[type="search"]:not([list])'
+    },
+    {
+        role: 'button',
+        allowed: [],
+        selector: 'input[type="submit"]'
+    },
+    {
+        role: 'combobox',  // aria-owns is set to the same value as the list attribute
+        allowed: [],
+        selector: 'input[type="tel"][list]'
+    },
+    {
+        role: 'textbox',
+        allowed: [],
+        selector: 'input[type="tel"]:not([list])'
+    },
+    {
+        role: 'combobox',  // aria-owns is set to the same value as the list attribute
+        allowed: [],
+        selector: 'input[type="text"][list]'
+    },
+    {
+        role: '',
+        allowed: [],
+        selector: 'input[type="text"]:not([list])'
+    },
+    {
+        role: '',
+        allowed: [],
+        selector: 'input[type="time"]'
+    },
+    {
+        role: 'combobox',  // aria-owns is set to the same value as the list attribute
+        allowed: [],
+        selector: 'input[type="url"][list]'
+    },
+    {
+        role: 'textbox',
+        allowed: [],
+        selector: 'input[type="url"]:not([list])'
+    },
+    {
+        role: '',
+        allowed: [],
+        selector: 'input[type="week"]'
+    }],
+    'INS': [{
+        role: '',
+        allowed: ['*']
+    }],
+    'KEYGEN': [{
+        role: '',
+        allowed: []
+    }],
+    'LABEL': [{
+        role: '',
+        allowed: ['presentation']
+    }],
+    'LI': [{
+        role: 'listitem',
+        allowed: [
+            'menuitem',
+            'menuitemcheckbox',
+            'menuitemradio',
+            'option',
+            'tab',
+            'treeitem',
+            'presentation'
+        ],
+        selector: 'ol:not([role="presentation"])>li, ul:not([role="presentation"])>li'
+    },
+    {
+        role: 'listitem',
+        allowed: [
+            'listitem',
+            'menuitem',
+            'menuitemcheckbox',
+            'menuitemradio',
+            'option',
+            'tab',
+            'treeitem',
+            'presentation'
+        ],
+        selector: 'ol[role="presentation"]>li, ul[role="presentation"]>li'
+    }],
+    'LINK': [{
+        role: 'link',
+        allowed: [],
+        reserved: true,
+        selector: 'link[href]'
+    }],
+    'MAIN': [{
+        role: '',
+        allowed: [
+            'main',
+            'presentation'
+        ]
+    }],
+    'MAP': [{
+        role: '',
+        allowed: [],
+        reserved: true
+    }],
+    'MATH': [{
+        role: '',
+        allowed: ['presentation']
+    }],
+    'MENU': [{
+        role: 'toolbar',
+        allowed: [],
+        selector: 'menu[type="toolbar"]'
+    }],
+    'MENUITEM': [{
+        role: 'menuitem',
+        allowed: [],
+        selector: 'menuitem[type="command"]'
+    },
+    {
+        role: 'menuitemcheckbox',
+        allowed: [],
+        selector: 'menuitem[type="checkbox"]'
+    },
+    {
+        role: 'menuitemradio',
+        allowed: [],
+        selector: 'menuitem[type="radio"]'
+    }],
+    'META': [{
+        role: '',
+        allowed: [],
+        reserved: true
+    }],
+    'METER': [{
+        role: 'progressbar',
+        allowed: ['presentation']
+    }],
+    'NAV': [{
+        role: 'navigation',
+        allowed: ['navigation', 'presentation']
+    }],
+    'NOSCRIPT': [{
+        role: '',
+        allowed: [],
+        reserved: true
+    }],
+    'OBJECT': [{
+        role: '',
+        allowed: ['application', 'document', 'img', 'presentation']
+    }],
+    'OL': [{
+        role: 'list',
+        allowed: ['directory', 'group', 'listbox', 'menu', 'menubar', 'tablist', 'toolbar', 'tree', 'presentation']
+    }],
+    'OPTGROUP': [{
+        role: '',
+        allowed: ['presentation']
+    }],
+    'OPTION': [{
+        role: 'option',
+        allowed: []
+    }],
+    'OUTPUT': [{
+        role: 'status',
+        allowed: ['*']
+    }],
+    'PARAM': [{
+        role: '',
+        allowed: [],
+        reserved: true
+    }],
+    'PICTURE': [{
+        role: '',
+        allowed: [],
+        reserved: true
+    }],
+    'PROGRESS': [{
+        role: 'progressbar',
+        allowed: ['presentation']
+    }],
+    'SCRIPT': [{
+        role: '',
+        allowed: [],
+        reserved: true
+    }],
+    'SECTION': [{
+        role: 'region',
+        allowed: [
+            'alert',
+            'alertdialog',
+            'application',
+            'contentinfo',
+            'dialog',
+            'document',
+            'log',
+            'marquee',
+            'search',
+            'status',
+            'presentation'
+        ]
+    }],
+    'SELECT': [{
+        role: 'listbox',
+        allowed: []
+    }],
+    'SOURCE': [{
+        role: '',
+        allowed: [],
+        reserved: true
+    }],
+    'SPAN': [{
+        role: '',
+        allowed: ['*']
+    }],
+    'STYLE': [{
+        role: '',
+        allowed: [],
+        reserved: true
+    }],
+    'SVG': [{
+        role: '',
+        allowed: [
+            'application',
+            'document',
+            'img',
+            'presentation'
+        ]
+    }],
+    'SUMMARY': [{
+        role: '',
+        allowed: ['presentation']
+    }],
+    'TABLE': [{
+        role: '',
+        allowed: ['*']
+    }],
+    'TEMPLATE': [{
+        role: '',
+        allowed: [],
+        reserved: true
+    }],
+    'TEXTAREA': [{
+        role: 'textbox',
+        allowed: []
+    }],
+    'TBODY': [{
+        role: 'rowgroup',
+        allowed: ['*']
+    }],
+    'THEAD': [{
+        role: 'rowgroup',
+        allowed: ['*']
+    }],
+    'TFOOT': [{
+        role: 'rowgroup',
+        allowed: ['*']
+    }],
+    'TITLE': [{
+        role: '',
+        allowed: [],
+        reserved: true
+    }],
+    'TD': [{
+        role: '',
+        allowed: ['*']
+    }],
+    'TH': [{
+        role: '',
+        allowed: ['*']
+    }],
+    'TR': [{
+        role: '',
+        allowed: ['*']
+    }],
+    'TRACK': [{
+        role: '',
+        allowed: [],
+        reserved: true
+    }],
+    'UL': [{
+        role: 'list',
+        allowed: [
+            'directory',
+            'group',
+            'listbox',
+            'menu',
+            'menubar',
+            'tablist',
+            'toolbar',
+            'tree',
+            'presentation'
+        ]
+    }],
+    'VIDEO': [{
+        role: '',
+        allowed: ['application', 'presentation']
+    }]
+};
