@@ -1340,158 +1340,159 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         selector: 'img[alt]:not([alt=""])'
     }],
     'INPUT': [{
-        role: 'button',
-        allowed: [
-            'link',
-            'menuitem',
-            'menuitemcheckbox',
-            'menuitemradio',
-            'radio'
-        ],
-        selector: 'input[type="button"]:not([aria-pressed])'
-    },
-    {
-        role: 'button',
-        allowed: ['button'],
-        selector: 'input[type="button"][aria-pressed]'
-    },
-    {
-        role: 'checkbox',
-        allowed: ['checkbox'],
-        selector: 'input[type="checkbox"]'
-    },
-    {
-        role: '',
-        allowed: [],
-        selector: 'input[type="color"]'
-    },
-    {
-        role: '',
-        allowed: [],
-        selector: 'input[type="date"]'
-    },
-    {
-        role: '',
-        allowed: [],
-        selector: 'input[type="datetime"]'
-    },
-    {
-        role: 'textbox',
-        allowed: [],
-        selector: 'input[type="email"]:not([list])'
-    },
-    {
-        role: '',
-        allowed: [],
-        selector: 'input[type="file"]'
-    },
-    {
-        role: '',
-        allowed: [],
-        reserved: true,
-        selector: 'input[type="hidden"]'
-    },
-    {
-        role: 'button',
-        allowed: ['button'],
-        selector: 'input[type="image"][aria-pressed]'
-    },
-    {
-        role: 'button',
-        allowed: [
-            'link',
-            'menuitem',
-            'menuitemcheckbox',
-            'menuitemradio',
-            'radio'
-        ],
-        selector: 'input[type="image"]:not([aria-pressed])'
-    },
-    {
-        role: '',
-        allowed: [],
-        selector: 'input[type="month"]'
-    },
-    {
-        role: 'spinbutton',
-        allowed: [],
-        selector: 'input[type="number"]'
-    },
-    {
-        role: 'textbox',
-        allowed: [],
-        selector: 'input[type="password"]'
-    },
-    {
-        role: 'radio',
-        allowed: ['menuitemradio'],
-        selector: 'input[type="radio"]'
-    },
-    {
-        role: 'slider',
-        allowed: [],
-        selector: 'input[type="range"]'
-    },
-    {
-        role: 'button',
-        allowed: [],
-        selector: 'input[type="reset"]'
-    },
-    {
-        role: 'combobox',  // aria-owns is set to the same value as the list attribute
-        allowed: [],
-        selector: 'input[type="search"][list]'
-    },
-    {
-        role: 'textbox',
-        allowed: [],
-        selector: 'input[type="search"]:not([list])'
-    },
-    {
-        role: 'button',
-        allowed: [],
-        selector: 'input[type="submit"]'
-    },
-    {
-        role: 'combobox',  // aria-owns is set to the same value as the list attribute
-        allowed: [],
-        selector: 'input[type="tel"][list]'
-    },
-    {
-        role: 'textbox',
-        allowed: [],
-        selector: 'input[type="tel"]:not([list])'
-    },
-    {
-        role: 'combobox',  // aria-owns is set to the same value as the list attribute
-        allowed: [],
-        selector: 'input[type="text"][list]'
-    },
-    {
-        role: '',
-        allowed: [],
-        selector: 'input[type="text"]:not([list])'
-    },
-    {
-        role: '',
-        allowed: [],
-        selector: 'input[type="time"]'
-    },
-    {
-        role: 'combobox',  // aria-owns is set to the same value as the list attribute
-        allowed: [],
-        selector: 'input[type="url"][list]'
-    },
-    {
-        role: 'textbox',
-        allowed: [],
-        selector: 'input[type="url"]:not([list])'
-    },
-    {
-        role: '',
-        allowed: [],
-        selector: 'input[type="week"]'
-    }],
+            role: 'button',
+            allowed: [
+                'link',
+                'menuitem',
+                'menuitemcheckbox',
+                'menuitemradio',
+                'radio'
+            ],
+            selector: 'input[type="button"]:not([aria-pressed])'
+        },
+        {
+            role: 'button',
+            allowed: ['button'],
+            selector: 'input[type="button"][aria-pressed]'
+        },
+        {
+            role: 'checkbox',
+            allowed: ['checkbox'],
+            selector: 'input[type="checkbox"]'
+        },
+        {
+            role: '',
+            allowed: [],
+            selector: 'input[type="color"]'
+        },
+        {
+            role: '',
+            allowed: [],
+            selector: 'input[type="date"]'
+        },
+        {
+            role: '',
+            allowed: [],
+            selector: 'input[type="datetime"]'
+        },
+        {
+            role: 'textbox',
+            allowed: [],
+            selector: 'input[type="email"]:not([list])'
+        },
+        {
+            role: '',
+            allowed: [],
+            selector: 'input[type="file"]'
+        },
+        {
+            role: '',
+            allowed: [],
+            reserved: true,
+            selector: 'input[type="hidden"]'
+        },
+        {
+            role: 'button',
+            allowed: ['button'],
+            selector: 'input[type="image"][aria-pressed]'
+        },
+        {
+            role: 'button',
+            allowed: [
+                'link',
+                'menuitem',
+                'menuitemcheckbox',
+                'menuitemradio',
+                'radio'
+            ],
+            selector: 'input[type="image"]:not([aria-pressed])'
+        },
+        {
+            role: '',
+            allowed: [],
+            selector: 'input[type="month"]'
+        },
+        {
+            role: 'spinbutton',
+            allowed: [],
+            selector: 'input[type="number"]'
+        },
+        {
+            role: 'textbox',
+            allowed: [],
+            selector: 'input[type="password"]'
+        },
+        {
+            role: 'radio',
+            allowed: ['menuitemradio'],
+            selector: 'input[type="radio"]'
+        },
+        {
+            role: 'slider',
+            allowed: [],
+            selector: 'input[type="range"]'
+        },
+        {
+            role: 'button',
+            allowed: [],
+            selector: 'input[type="reset"]'
+        },
+        {
+            role: 'combobox',  // aria-owns is set to the same value as the list attribute
+            allowed: [],
+            selector: 'input[type="search"][list]'
+        },
+        {
+            role: 'textbox',
+            allowed: [],
+            selector: 'input[type="search"]:not([list])'
+        },
+        {
+            role: 'button',
+            allowed: [],
+            selector: 'input[type="submit"]'
+        },
+        {
+            role: 'combobox',  // aria-owns is set to the same value as the list attribute
+            allowed: [],
+            selector: 'input[type="tel"][list]'
+        },
+        {
+            role: 'textbox',
+            allowed: [],
+            selector: 'input[type="tel"]:not([list])'
+        },
+        {
+            role: 'combobox',  // aria-owns is set to the same value as the list attribute
+            allowed: [],
+            selector: 'input[type="text"][list]'
+        },
+        {
+            role: '',
+            allowed: [],
+            selector: 'input[type="text"]:not([list])'
+        },
+        {
+            role: '',
+            allowed: [],
+            selector: 'input[type="time"]'
+        },
+        {
+            role: 'combobox',  // aria-owns is set to the same value as the list attribute
+            allowed: [],
+            selector: 'input[type="url"][list]'
+        },
+        {
+            role: 'textbox',
+            allowed: [],
+            selector: 'input[type="url"]:not([list])'
+        },
+        {
+            role: '',
+            allowed: [],
+            selector: 'input[type="week"]'
+        }
+    ],
     'INS': [{
         role: '',
         allowed: ['*']
@@ -1505,32 +1506,33 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         allowed: ['presentation']
     }],
     'LI': [{
-        role: 'listitem',
-        allowed: [
-            'menuitem',
-            'menuitemcheckbox',
-            'menuitemradio',
-            'option',
-            'tab',
-            'treeitem',
-            'presentation'
-        ],
-        selector: 'ol:not([role="presentation"])>li, ul:not([role="presentation"])>li'
-    },
-    {
-        role: 'listitem',
-        allowed: [
-            'listitem',
-            'menuitem',
-            'menuitemcheckbox',
-            'menuitemradio',
-            'option',
-            'tab',
-            'treeitem',
-            'presentation'
-        ],
-        selector: 'ol[role="presentation"]>li, ul[role="presentation"]>li'
-    }],
+            role: 'listitem',
+            allowed: [
+                'menuitem',
+                'menuitemcheckbox',
+                'menuitemradio',
+                'option',
+                'tab',
+                'treeitem',
+                'presentation'
+            ],
+            selector: 'ol:not([role="presentation"])>li, ul:not([role="presentation"])>li'
+        },
+        {
+            role: 'listitem',
+            allowed: [
+                'listitem',
+                'menuitem',
+                'menuitemcheckbox',
+                'menuitemradio',
+                'option',
+                'tab',
+                'treeitem',
+                'presentation'
+            ],
+            selector: 'ol[role="presentation"]>li, ul[role="presentation"]>li'
+        }
+    ],
     'LINK': [{
         role: 'link',
         allowed: [],

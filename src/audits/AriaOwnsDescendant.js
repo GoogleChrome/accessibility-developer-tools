@@ -29,17 +29,11 @@ axs.AuditRule.specs.ariaOwnsDescendant = {
         return axs.browserUtils.matchSelector(element, '[aria-owns]');
     },
     test: function(element) {
-        var document = element.ownerDocument;
-        var owns = element.getAttribute('aria-owns');
-        var ownedIds = owns.split(/\s+/);
-        for (var i = 0, len = ownedIds.length; i < len; i++) {
-            var ownedElement = document.getElementById(ownedIds[i]);
-            if (ownedElement &&
-                (element.compareDocumentPosition(ownedElement) & Node.DOCUMENT_POSITION_CONTAINED_BY)) {
-                return true;
-            }
-        }
-        return false;
+        var attr = 'aria-owns';
+        var ownedElements = axs.utils.getIdReferents(attr, element);
+        return ownedElements.some(function(ownedElement) {
+            return (element.compareDocumentPosition(ownedElement) & Node.DOCUMENT_POSITION_CONTAINED_BY);
+        });
     },
     code: 'AX_ARIA_06'
 };

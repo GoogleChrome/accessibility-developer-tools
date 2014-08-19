@@ -754,6 +754,7 @@ axs.properties.getAllProperties = function(node) {
 (function(){
     /**
      * Helper for implicit semantic functionality.
+     * Can be made part of the public API if need be.
      * @param {Element} element
      * @return {axs.constants.HtmlInfo|null}
      */

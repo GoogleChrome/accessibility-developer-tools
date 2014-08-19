@@ -35,18 +35,11 @@ axs.AuditRule.specs.multipleAriaOwners = {
     },
     test: function(element) {
         var attr = 'aria-owns';
-        var ownerDocument = element.ownerDocument;
-        var owns = element.getAttribute(attr);
-        var ownsValues = owns.split(/\s+/);
-        for (var i = 0, len = ownsValues.length; i < len; i++) {
-            var ownedElement = ownerDocument.getElementById(ownsValues[i]);
-            if (ownedElement) {
-                var owners = axs.utils.getIdReferrers(attr, ownedElement);
-                if (owners.length > 1)
-                    return true;
-            }
-        }
-        return false;
+        var ownedElements = axs.utils.getIdReferents(attr, element);
+        return ownedElements.some(function(ownedElement) {
+            var owners = axs.utils.getIdReferrers(attr, ownedElement);
+            return (owners.length > 1);
+        });
     },
     code: 'AX_ARIA_07'
 };
