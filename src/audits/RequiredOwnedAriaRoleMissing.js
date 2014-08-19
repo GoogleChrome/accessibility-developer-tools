@@ -1,4 +1,4 @@
-// Copyright 2012 Google Inc.
+// Copyright 2014 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ axs.AuditRule.specs.requiredOwnedAriaRoleMissing = {
                  }
              }
          }
-         return true;  // if we made it here then we did not found the necessary required owned elements in the DOM
+         return true;  // if we made it here then we did not find the required owned elements in the DOM
     },
     code: 'AX_ARIA_08'
 };
