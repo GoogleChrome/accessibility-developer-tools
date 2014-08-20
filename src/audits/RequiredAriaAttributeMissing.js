@@ -39,8 +39,12 @@ axs.AuditRule.specs.requiredAriaAttributeMissing = {
                 var propertyDetails = axs.constants.ARIA_PROPERTIES[propertyKey];
                 if ('defaultValue' in propertyDetails)
                     continue;
-                if (!element.hasAttribute(property))
-                    return true;
+                if (!element.hasAttribute(property)) {
+                    var nativelySupported = axs.properties.getNativelySupported(element);
+                    if (nativelySupported.indexOf(property) < 0) {
+                        return true;
+                    }
+                }
             }
         }
     },

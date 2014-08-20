@@ -24,4 +24,7 @@ test("Page titles must be present and non-empty", function() {
     equal(rule.run().result,
           axs.constants.AuditResult.PASS);
 
+    // Put it back the way it was...
+    blankTitle.parentNode.replaceChild(title, blankTitle);
+
 });

@@ -794,6 +794,35 @@ axs.properties.getAllProperties = function(node) {
     };
 })();
 
+/**
+ * This lists the ARIA attributes that are supported implicitly by native properties of this element.
+ *
+ * @param {Element} element The element to check.
+ * @return {!Array.<string>} An array of ARIA attributes.
+ *
+ * @example
+ *    var element = document.createElement("input");
+ *    element.setAttribute("type", "range");
+ *    var supported = axs.properties.getNativelySupported(element);  // an array of ARIA attributes
+ *    console.log(supported.indexOf("aria-valuemax") >=0);  // logs 'true'
+ */
+axs.properties.getNativelySupported = function(element) {
+    var result = [];
+    if (!element) {
+        return result;
+    }
+    var testElement = element.cloneNode(false);  // gets rid of expandos
+    var ariaAttributes = Object.keys(/** @type {!Object} */(axs.constants.ARIA_TO_HTML_ATTRIBUTE));
+    for (var i = 0; i < ariaAttributes.length; i++) {
+        var ariaAttribute = ariaAttributes[i];
+        var nativeAttribute = axs.constants.ARIA_TO_HTML_ATTRIBUTE[ariaAttribute];
+        if(nativeAttribute in testElement) {
+            result[result.length] = ariaAttribute;
+        }
+    }
+    return result;
+};
+
 (function () {
     var roleToSelectorCache = {};  // performance optimization, cache results from getSelectorForRole
     

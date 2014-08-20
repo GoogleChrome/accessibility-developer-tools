@@ -1054,6 +1054,22 @@ axs.constants.InlineElements = {
     'BUTTON': true
  };
 
+/**
+ * Maps ARIA attributes to their exactly equivalent HTML attributes.
+ * @type {Object.<string, string>}
+ */
+axs.constants.ARIA_TO_HTML_ATTRIBUTE = {
+  'aria-checked' : 'checked',
+  'aria-disabled' : 'disabled',
+  'aria-hidden' : 'hidden',
+  'aria-expanded' : 'open',
+  'aria-valuemax' : 'max',
+  'aria-valuemin' : 'min',
+  'aria-readonly' : 'readonly',
+  'aria-required' : 'required',
+  'aria-selected' : 'selected',
+  'aria-valuenow' : 'value'
+};
 
 /**
  * Holds information about implicit ARIA semantics for a given HTML element type.
@@ -1098,649 +1114,600 @@ axs.constants.HtmlInfo;
  * @type {Object.<string, Array.<axs.constants.HtmlInfo>>}
  */
 axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
-    'A': [{
+    'A':[ {
         role: 'link',
-        allowed: [
-            'button',
-            'checkbox',
-            'menuitem',
-            'menuitemcheckbox',
-            'menuitemradio',
-            'tab',
-            'treeitem'
-        ],
+        allowed:[
+        'button',
+        'checkbox',
+        'menuitem',
+        'menuitemcheckbox',
+        'menuitemradio',
+        'tab',
+        'treeitem'],
         selector: 'a[href]'
     }],
-    'ADDRESS': [{
+    'ADDRESS':[ {
         role: '',
-        allowed: [
-            'contentinfo',
-            'presentation'
-        ]
+        allowed:[
+        'contentinfo',
+        'presentation']
     }],
-    'AREA': [{
+    'AREA':[ {
         role: 'link',
-        allowed: [],
+        allowed:[],
         selector: 'area[href]'
     }],
-    'ARTICLE': [{
+    'ARTICLE':[ {
         role: 'article',
-        allowed: [
-            'presentation',
-            'article',
-            'document',
-            'application',
-            'main'
-        ]
+        allowed:[
+        'presentation',
+        'article',
+        'document',
+        'application',
+        'main']
     }],
-    'ASIDE': [{
+    'ASIDE':[ {
         role: 'complementary',
-        allowed: [
-            'note',
-            'complementary',
-            'search',
-            'presentation'
-        ]
+        allowed:[
+        'note',
+        'complementary',
+        'search',
+        'presentation']
     }],
-    'AUDIO': [{
+    'AUDIO':[ {
         role: '',
         allowed: ['application', 'presentation']
     }],
-    'BASE': [{
+    'BASE':[ {
         role: '',
-        allowed: [],
+        allowed:[],
         reserved: true
     }],
-    'BODY': [{
+    'BODY':[ {
         role: 'document',
         allowed: ['presentation']
     }],
-    'BUTTON': [{
+    'BUTTON':[ {
         role: 'button',
-        allowed: [
-            'link',
-            'menuitem',
-            'menuitemcheckbox',
-            'menuitemradio',
-            'radio'
-        ],
+        allowed:[
+        'link',
+        'menuitem',
+        'menuitemcheckbox',
+        'menuitemradio',
+        'radio'],
         selector: 'button:not([aria-pressed]):not([type="menu"])'
-    },
-    {
+    }, {
         role: 'button',
         allowed: ['button'],
         selector: 'button[aria-pressed]'
-    },
-    {
+    }, {
         role: 'button',
-        attributes: {'aria-haspopup': true},
-        allowed: [
-            'link',
-            'menuitem',
-            'menuitemcheckbox',
-            'menuitemradio',
-            'radio'
-        ],
+        attributes: {
+            'aria-haspopup': true
+        },
+        allowed:[
+        'link',
+        'menuitem',
+        'menuitemcheckbox',
+        'menuitemradio',
+        'radio'],
         selector: 'button[type="menu"]'
     }],
-    'CAPTION': [{
+    'CAPTION':[ {
         role: '',
         allowed: ['presentation']
     }],
-    'COL': [{
+    'COL':[ {
         role: '',
-        allowed: [],
+        allowed:[],
         reserved: true
     }],
-    'COLGROUP': [{
+    'COLGROUP':[ {
         role: '',
-        allowed: [],
+        allowed:[],
         reserved: true
     }],
-    'DATALIST': [{
+    'DATALIST':[ {
         role: 'listbox',
-        attributes: {'aria-multiselectable': false},
+        attributes: {
+            'aria-multiselectable': false
+        },
         allowed: ['presentation']
     }],
-    'DEL': [{
+    'DEL':[ {
         role: '',
         allowed: ['*']
     }],
-    'DD': [{
+    'DD':[ {
         role: '',
         allowed: ['presentation']
     }],
-    'DT': [{
+    'DT':[ {
         role: '',
         allowed: ['presentation']
     }],
-    'DETAILS': [{
+    'DETAILS':[ {
         role: 'group',
-        allowed: [
-            'group',
-            'presentation'
-        ]
+        allowed:[
+        'group',
+        'presentation']
     }],
-    'DIALOG': [{
+    'DIALOG':[ {
         role: 'dialog',
-        attributes: {'aria-hidden': true},
+        attributes: {
+            'aria-hidden': true
+        },
         allowed: ['dialog'],
         selector: 'dialog:not([open])'
     }],
-    'DIV': [{
+    'DIV':[ {
         role: '',
         allowed: ['*']
     }],
-    'DL': [{
+    'DL':[ {
         role: 'list',
         allowed: ['presentation']
     }],
-    'EMBED': [{
+    'EMBED':[ {
         role: '',
-        allowed: [
-            'application',
-            'document',
-            'img',
-            'presentation'
-        ]
+        allowed:[
+        'application',
+        'document',
+        'img',
+        'presentation']
     }],
-    'FIGURE': [{
+    'FIGURE':[ {
         role: '',
         allowed: ['*']
     }],
-    'FOOTER': [{
+    'FOOTER':[ {
         role: '',
         allowed: ['contentinfo', 'presentation']
     }],
-    'FORM': [{
+    'FORM':[ {
         role: 'form',
         allowed: ['presentation']
     }],
-    'P': [{
+    'P':[ {
         role: '',
         allowed: ['*']
     }],
-    'PRE': [{
+    'PRE':[ {
         role: '',
         allowed: ['*']
     }],
-    'BLOCKQUOTE': [{
+    'BLOCKQUOTE':[ {
         role: '',
         allowed: ['*']
     }],
-    H1: [{
-        role: 'heading'  // also has implicit aria-level
+    H1:[ {
+        role: 'heading'
     }],
-    H2: [{
-        role: 'heading'  // also has implicit aria-level
+    H2:[ {
+        role: 'heading'
     }],
-    H3: [{
-        role: 'heading'  // also has implicit aria-level
+    H3:[ {
+        role: 'heading'
     }],
-    H4: [{
-        role: 'heading'  // also has implicit aria-level
+    H4:[ {
+        role: 'heading'
     }],
-    H5: [{
-        role: 'heading'  // also has implicit aria-level
+    H5:[ {
+        role: 'heading'
     }],
-    H6: [{
-        role: 'heading'  // also has implicit aria-level
+    H6:[ {
+        role: 'heading'
     }],
-    'HEAD': [{
+    'HEAD':[ {
         role: '',
-        allowed: [],
+        allowed:[],
         reserved: true
     }],
-    'HEADER': [{
+    'HEADER':[ {
         role: '',
-        allowed: [
-            'banner',
-            'presentation'
-        ]
+        allowed:[
+        'banner',
+        'presentation']
     }],
-    'HR': [{
+    'HR':[ {
         role: 'separator',
         allowed: ['presentation']
     }],
-    'HTML': [{
+    'HTML':[ {
         role: '',
-        allowed: [],
+        allowed:[],
         reserved: true
     }],
-    'IFRAME': [{
+    'IFRAME':[ {
         role: '',
-        allowed: [
-            'application',
-            'document',
-            'img',
-            'presentation'
-        ],
+        allowed:[
+        'application',
+        'document',
+        'img',
+        'presentation'],
         selector: 'iframe:not([seamless])'
-    },
-    {
+    }, {
         role: '',
-        allowed: [
-            'application',
-            'document',
-            'img',
-            'presentation',
-            'group'  // any general grouping role
-        ],
+        allowed:[
+        'application',
+        'document',
+        'img',
+        'presentation',
+        'group'],
         selector: 'iframe[seamless]'
     }],
-    'IMG': [{
+    'IMG':[ {
         role: 'presentation',
-        allowed: [],
+        allowed:[],
         reserved: true,
         selector: 'img[alt=""]'
-    },
-    {
+    }, {
         role: 'img',
         allowed: ['*'],
         selector: 'img[alt]:not([alt=""])'
     }],
-    'INPUT': [{
-            role: 'button',
-            allowed: [
-                'link',
-                'menuitem',
-                'menuitemcheckbox',
-                'menuitemradio',
-                'radio'
-            ],
-            selector: 'input[type="button"]:not([aria-pressed])'
-        },
-        {
-            role: 'button',
-            allowed: ['button'],
-            selector: 'input[type="button"][aria-pressed]'
-        },
-        {
-            role: 'checkbox',
-            allowed: ['checkbox'],
-            selector: 'input[type="checkbox"]'
-        },
-        {
-            role: '',
-            allowed: [],
-            selector: 'input[type="color"]'
-        },
-        {
-            role: '',
-            allowed: [],
-            selector: 'input[type="date"]'
-        },
-        {
-            role: '',
-            allowed: [],
-            selector: 'input[type="datetime"]'
-        },
-        {
-            role: 'textbox',
-            allowed: [],
-            selector: 'input[type="email"]:not([list])'
-        },
-        {
-            role: '',
-            allowed: [],
-            selector: 'input[type="file"]'
-        },
-        {
-            role: '',
-            allowed: [],
-            reserved: true,
-            selector: 'input[type="hidden"]'
-        },
-        {
-            role: 'button',
-            allowed: ['button'],
-            selector: 'input[type="image"][aria-pressed]'
-        },
-        {
-            role: 'button',
-            allowed: [
-                'link',
-                'menuitem',
-                'menuitemcheckbox',
-                'menuitemradio',
-                'radio'
-            ],
-            selector: 'input[type="image"]:not([aria-pressed])'
-        },
-        {
-            role: '',
-            allowed: [],
-            selector: 'input[type="month"]'
-        },
-        {
-            role: 'spinbutton',
-            allowed: [],
-            selector: 'input[type="number"]'
-        },
-        {
-            role: 'textbox',
-            allowed: [],
-            selector: 'input[type="password"]'
-        },
-        {
-            role: 'radio',
-            allowed: ['menuitemradio'],
-            selector: 'input[type="radio"]'
-        },
-        {
-            role: 'slider',
-            allowed: [],
-            selector: 'input[type="range"]'
-        },
-        {
-            role: 'button',
-            allowed: [],
-            selector: 'input[type="reset"]'
-        },
-        {
-            role: 'combobox',  // aria-owns is set to the same value as the list attribute
-            allowed: [],
-            selector: 'input[type="search"][list]'
-        },
-        {
-            role: 'textbox',
-            allowed: [],
-            selector: 'input[type="search"]:not([list])'
-        },
-        {
-            role: 'button',
-            allowed: [],
-            selector: 'input[type="submit"]'
-        },
-        {
-            role: 'combobox',  // aria-owns is set to the same value as the list attribute
-            allowed: [],
-            selector: 'input[type="tel"][list]'
-        },
-        {
-            role: 'textbox',
-            allowed: [],
-            selector: 'input[type="tel"]:not([list])'
-        },
-        {
-            role: 'combobox',  // aria-owns is set to the same value as the list attribute
-            allowed: [],
-            selector: 'input[type="text"][list]'
-        },
-        {
-            role: '',
-            allowed: [],
-            selector: 'input[type="text"]:not([list])'
-        },
-        {
-            role: '',
-            allowed: [],
-            selector: 'input[type="time"]'
-        },
-        {
-            role: 'combobox',  // aria-owns is set to the same value as the list attribute
-            allowed: [],
-            selector: 'input[type="url"][list]'
-        },
-        {
-            role: 'textbox',
-            allowed: [],
-            selector: 'input[type="url"]:not([list])'
-        },
-        {
-            role: '',
-            allowed: [],
-            selector: 'input[type="week"]'
-        }
-    ],
-    'INS': [{
+    'INPUT':[ {
+        role: 'button',
+        allowed:[
+        'link',
+        'menuitem',
+        'menuitemcheckbox',
+        'menuitemradio',
+        'radio'],
+        selector: 'input[type="button"]:not([aria-pressed])'
+    }, {
+        role: 'button',
+        allowed: ['button'],
+        selector: 'input[type="button"][aria-pressed]'
+    }, {
+        role: 'checkbox',
+        allowed: ['checkbox'],
+        selector: 'input[type="checkbox"]'
+    }, {
+        role: '',
+        allowed:[],
+        selector: 'input[type="color"]'
+    }, {
+        role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
+        allowed:[],
+        selector: 'input[type="date"]'
+    }, {
+        role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
+        allowed:[],
+        selector: 'input[type="datetime"]'
+    }, {
+        role: 'textbox',
+        allowed:[],
+        selector: 'input[type="email"]:not([list])'
+    }, {
+        role: '',
+        allowed:[],
+        selector: 'input[type="file"]'
+    }, {
+        role: '',
+        allowed:[],
+        reserved: true,
+        selector: 'input[type="hidden"]'
+    }, {
+        role: 'button',
+        allowed: ['button'],
+        selector: 'input[type="image"][aria-pressed]'
+    }, {
+        role: 'button',
+        allowed:[
+        'link',
+        'menuitem',
+        'menuitemcheckbox',
+        'menuitemradio',
+        'radio'],
+        selector: 'input[type="image"]:not([aria-pressed])'
+    }, {
+        role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
+        allowed:[],
+        selector: 'input[type="month"]'
+    }, {
+        role: 'spinbutton',
+        allowed:[],
+        selector: 'input[type="number"]'
+    }, {
+        role: 'textbox',
+        allowed:[],
+        selector: 'input[type="password"]'
+    }, {
+        role: 'radio',
+        allowed: ['menuitemradio'],
+        selector: 'input[type="radio"]'
+    }, {
+        role: 'slider',
+        allowed:[],
+        selector: 'input[type="range"]'
+    }, {
+        role: 'button',
+        allowed:[],
+        selector: 'input[type="reset"]'
+    }, {
+        role: 'combobox',  // aria-owns is set to the same value as the list attribute
+        allowed:[],
+        selector: 'input[type="search"][list]'
+    }, {
+        role: 'textbox',
+        allowed:[],
+        selector: 'input[type="search"]:not([list])'
+    }, {
+        role: 'button',
+        allowed:[],
+        selector: 'input[type="submit"]'
+    }, {
+        role: 'combobox',  // aria-owns is set to the same value as the list attribute
+        allowed:[],
+        selector: 'input[type="tel"][list]'
+    }, {
+        role: 'textbox',
+        allowed:[],
+        selector: 'input[type="tel"]:not([list])'
+    }, {
+        role: 'combobox',  // aria-owns is set to the same value as the list attribute
+        allowed:[],
+        selector: 'input[type="text"][list]'
+    }, {
+        role: '',
+        allowed:[],
+        selector: 'input[type="text"]:not([list])'
+    }, {
+        role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
+        allowed:[],
+        selector: 'input[type="time"]'
+    }, {
+        role: 'combobox',  // aria-owns is set to the same value as the list attribute
+        allowed:[],
+        selector: 'input[type="url"][list]'
+    }, {
+        role: 'textbox',
+        allowed:[],
+        selector: 'input[type="url"]:not([list])'
+    }, {
+        role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
+        allowed:[],
+        selector: 'input[type="week"]'
+    }],
+    'INS':[ {
         role: '',
         allowed: ['*']
     }],
-    'KEYGEN': [{
+    'KEYGEN':[ {
         role: '',
-        allowed: []
+        allowed:[]
     }],
-    'LABEL': [{
+    'LABEL':[ {
         role: '',
         allowed: ['presentation']
     }],
-    'LI': [{
-            role: 'listitem',
-            allowed: [
-                'menuitem',
-                'menuitemcheckbox',
-                'menuitemradio',
-                'option',
-                'tab',
-                'treeitem',
-                'presentation'
-            ],
-            selector: 'ol:not([role="presentation"])>li, ul:not([role="presentation"])>li'
-        },
-        {
-            role: 'listitem',
-            allowed: [
-                'listitem',
-                'menuitem',
-                'menuitemcheckbox',
-                'menuitemradio',
-                'option',
-                'tab',
-                'treeitem',
-                'presentation'
-            ],
-            selector: 'ol[role="presentation"]>li, ul[role="presentation"]>li'
-        }
-    ],
-    'LINK': [{
+    'LI':[ {
+        role: 'listitem',
+        allowed:[
+        'menuitem',
+        'menuitemcheckbox',
+        'menuitemradio',
+        'option',
+        'tab',
+        'treeitem',
+        'presentation'],
+        selector: 'ol:not([role="presentation"])>li, ul:not([role="presentation"])>li'
+    }, {
+        role: 'listitem',
+        allowed:[
+        'listitem',
+        'menuitem',
+        'menuitemcheckbox',
+        'menuitemradio',
+        'option',
+        'tab',
+        'treeitem',
+        'presentation'],
+        selector: 'ol[role="presentation"]>li, ul[role="presentation"]>li'
+    }],
+    'LINK':[ {
         role: 'link',
-        allowed: [],
+        allowed:[],
         reserved: true,
         selector: 'link[href]'
     }],
-    'MAIN': [{
+    'MAIN':[ {
         role: '',
-        allowed: [
-            'main',
-            'presentation'
-        ]
+        allowed:[
+        'main',
+        'presentation']
     }],
-    'MAP': [{
+    'MAP':[ {
         role: '',
-        allowed: [],
+        allowed:[],
         reserved: true
     }],
-    'MATH': [{
+    'MATH':[ {
         role: '',
         allowed: ['presentation']
     }],
-    'MENU': [{
+    'MENU':[ {
         role: 'toolbar',
-        allowed: [],
+        allowed:[],
         selector: 'menu[type="toolbar"]'
     }],
-    'MENUITEM': [{
+    'MENUITEM':[ {
         role: 'menuitem',
-        allowed: [],
+        allowed:[],
         selector: 'menuitem[type="command"]'
-    },
-    {
+    }, {
         role: 'menuitemcheckbox',
-        allowed: [],
+        allowed:[],
         selector: 'menuitem[type="checkbox"]'
-    },
-    {
+    }, {
         role: 'menuitemradio',
-        allowed: [],
+        allowed:[],
         selector: 'menuitem[type="radio"]'
     }],
-    'META': [{
+    'META':[ {
         role: '',
-        allowed: [],
+        allowed:[],
         reserved: true
     }],
-    'METER': [{
+    'METER':[ {
         role: 'progressbar',
         allowed: ['presentation']
     }],
-    'NAV': [{
+    'NAV':[ {
         role: 'navigation',
         allowed: ['navigation', 'presentation']
     }],
-    'NOSCRIPT': [{
+    'NOSCRIPT':[ {
         role: '',
-        allowed: [],
+        allowed:[],
         reserved: true
     }],
-    'OBJECT': [{
+    'OBJECT':[ {
         role: '',
         allowed: ['application', 'document', 'img', 'presentation']
     }],
-    'OL': [{
+    'OL':[ {
         role: 'list',
         allowed: ['directory', 'group', 'listbox', 'menu', 'menubar', 'tablist', 'toolbar', 'tree', 'presentation']
     }],
-    'OPTGROUP': [{
+    'OPTGROUP':[ {
         role: '',
         allowed: ['presentation']
     }],
-    'OPTION': [{
+    'OPTION':[ {
         role: 'option',
-        allowed: []
+        allowed:[]
     }],
-    'OUTPUT': [{
+    'OUTPUT':[ {
         role: 'status',
         allowed: ['*']
     }],
-    'PARAM': [{
+    'PARAM':[ {
         role: '',
-        allowed: [],
+        allowed:[],
         reserved: true
     }],
-    'PICTURE': [{
+    'PICTURE':[ {
         role: '',
-        allowed: [],
+        allowed:[],
         reserved: true
     }],
-    'PROGRESS': [{
+    'PROGRESS':[ {
         role: 'progressbar',
         allowed: ['presentation']
     }],
-    'SCRIPT': [{
+    'SCRIPT':[ {
         role: '',
-        allowed: [],
+        allowed:[],
         reserved: true
     }],
-    'SECTION': [{
+    'SECTION':[ {
         role: 'region',
-        allowed: [
-            'alert',
-            'alertdialog',
-            'application',
-            'contentinfo',
-            'dialog',
-            'document',
-            'log',
-            'marquee',
-            'search',
-            'status',
-            'presentation'
-        ]
+        allowed:[
+        'alert',
+        'alertdialog',
+        'application',
+        'contentinfo',
+        'dialog',
+        'document',
+        'log',
+        'marquee',
+        'search',
+        'status',
+        'presentation']
     }],
-    'SELECT': [{
+    'SELECT':[ {
         role: 'listbox',
-        allowed: []
+        allowed:[]
     }],
-    'SOURCE': [{
+    'SOURCE':[ {
         role: '',
-        allowed: [],
+        allowed:[],
         reserved: true
     }],
-    'SPAN': [{
+    'SPAN':[ {
         role: '',
         allowed: ['*']
     }],
-    'STYLE': [{
+    'STYLE':[ {
         role: '',
-        allowed: [],
+        allowed:[],
         reserved: true
     }],
-    'SVG': [{
+    'SVG':[ {
         role: '',
-        allowed: [
-            'application',
-            'document',
-            'img',
-            'presentation'
-        ]
+        allowed:[
+        'application',
+        'document',
+        'img',
+        'presentation']
     }],
-    'SUMMARY': [{
+    'SUMMARY':[ {
         role: '',
         allowed: ['presentation']
     }],
-    'TABLE': [{
+    'TABLE':[ {
         role: '',
         allowed: ['*']
     }],
-    'TEMPLATE': [{
+    'TEMPLATE':[ {
         role: '',
-        allowed: [],
+        allowed:[],
         reserved: true
     }],
-    'TEXTAREA': [{
+    'TEXTAREA':[ {
         role: 'textbox',
-        allowed: []
+        allowed:[]
     }],
-    'TBODY': [{
+    'TBODY':[ {
         role: 'rowgroup',
         allowed: ['*']
     }],
-    'THEAD': [{
+    'THEAD':[ {
         role: 'rowgroup',
         allowed: ['*']
     }],
-    'TFOOT': [{
+    'TFOOT':[ {
         role: 'rowgroup',
         allowed: ['*']
     }],
-    'TITLE': [{
+    'TITLE':[ {
         role: '',
-        allowed: [],
+        allowed:[],
         reserved: true
     }],
-    'TD': [{
+    'TD':[ {
         role: '',
         allowed: ['*']
     }],
-    'TH': [{
+    'TH':[ {
         role: '',
         allowed: ['*']
     }],
-    'TR': [{
+    'TR':[ {
         role: '',
         allowed: ['*']
     }],
-    'TRACK': [{
+    'TRACK':[ {
         role: '',
-        allowed: [],
+        allowed:[],
         reserved: true
     }],
-    'UL': [{
+    'UL':[ {
         role: 'list',
-        allowed: [
-            'directory',
-            'group',
-            'listbox',
-            'menu',
-            'menubar',
-            'tablist',
-            'toolbar',
-            'tree',
-            'presentation'
-        ]
+        allowed:[
+        'directory',
+        'group',
+        'listbox',
+        'menu',
+        'menubar',
+        'tablist',
+        'toolbar',
+        'tree',
+        'presentation']
     }],
-    'VIDEO': [{
+    'VIDEO':[ {
         role: '',
         allowed: ['application', 'presentation']
     }]
