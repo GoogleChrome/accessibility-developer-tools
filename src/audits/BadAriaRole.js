@@ -28,7 +28,7 @@ axs.AuditRule.specs.badAriaRole = {
         return axs.browserUtils.matchSelector(element, "[role]");
     },
     test: function(element) {
-        var roles = axs.utils.getRoles(element)
+        var roles = axs.utils.getRoles(element);
         return !roles.valid;
     },
     code: 'AX_ARIA_01'

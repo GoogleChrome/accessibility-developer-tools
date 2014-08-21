@@ -24,8 +24,8 @@ test("No roles === no problems.", function() {
 test("Good role === no problems.", function() {
   // Setup fixture
   var fixture = document.getElementById('qunit-fixture');
-  for (r in axs.constants.ARIA_ROLES) {
-    if (axs.constants.ARIA_ROLES.hasOwnProperty(r)) {
+  for (var r in axs.constants.ARIA_ROLES) {
+    if (axs.constants.ARIA_ROLES.hasOwnProperty(r) && !axs.constants.ARIA_ROLES[r].abstract) {
       var div = document.createElement('div');
       div.setAttribute('role', r);
       fixture.appendChild(div);
@@ -43,6 +43,19 @@ test("Bad role == problem", function() {
   var fixture = document.getElementById('qunit-fixture');
   var div = document.createElement('div');
   div.setAttribute('role', 'not-an-aria-role');
+  fixture.appendChild(div);
+  deepEqual(
+    axs.AuditRules.getRule('badAriaRole').run({ scope: fixture }),
+    { elements: [div], result: axs.constants.AuditResult.FAIL }
+  );
+
+});
+
+test("Abstract role == problem", function() {
+  // Setup fixture
+  var fixture = document.getElementById('qunit-fixture');
+  var div = document.createElement('div');
+  div.setAttribute('role', 'input');
   fixture.appendChild(div);
   deepEqual(
     axs.AuditRules.getRule('badAriaRole').run({ scope: fixture }),

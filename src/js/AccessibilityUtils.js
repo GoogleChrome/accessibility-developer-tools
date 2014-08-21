@@ -1037,27 +1037,44 @@ axs.utils.isInlineElement = function(element) {
 };
 
 /**
- * @param {Element} element
+ *
+ * Gets role details from an element.
+ * @param {Element} element The DOM element whose role we want.
+ * @param {Object=} options
+ *
  * @return {Object|boolean}
  */
-axs.utils.getRoles = function(element) {
-    if (!element.hasAttribute('role'))
+axs.utils.getRoles = function(element, options) {
+    var implicit = options? !!options.implicit : false;
+    var first = options? !!options.first : false;  // If true only the first role will be returned
+    var validOnly = options? !!options.valid : false;  // If true only valid roles will be returned
+    if (!element || element.nodeType !== Node.ELEMENT_NODE || (!element.hasAttribute('role') && !implicit))
         return false;
     var roleValue = element.getAttribute('role');
+    if (!roleValue && implicit)
+        roleValue = axs.properties.getImplicitRole(element);
     var roleNames = roleValue.split(' ');
     var roles = [];
     var valid = true;
     for (var i = 0; i < roleNames.length; i++) {
         var role = roleNames[i];
-        if (axs.constants.ARIA_ROLES[role])
-            roles.push({'name': role, 'details': axs.constants.ARIA_ROLES[role], 'valid': true});
-        else {
-            roles.push({'name': role, 'valid': false});
+        var ariaRole = axs.constants.ARIA_ROLES[role];
+        if (ariaRole && !ariaRole.abstract) {
+            var roleObject = {'name': role, 'details': axs.constants.ARIA_ROLES[role], 'valid': true};
+            if (first)
+                return roleObject;
+            roles.push(roleObject);
+        }
+        else if (!validOnly) {
+            var roleObject = {'name': role, 'valid': false};
+            if (first)
+                return roleObject;
             valid = false;
+            roles.push(roleObject);
         }
     }
 
-    return { 'roles': roles, 'valid': valid };
+    return first? false : { 'roles': roles, 'valid': valid };
 };
 
 /**
@@ -1510,36 +1527,3 @@ axs.utils.findDescendantsWithRole = function(element, role) {
     return result;
 };
 
-/**
- * Gets the role from an element.
- * @param {Element} element The DOM element whose role we want.
- * @param {boolean=} implicit If true will also consider 'implicit' aria role.
- * 
- * @see: http://www.w3.org/TR/wai-aria/host_languages#implicit_semantics
- * @return {string|null} The role of this element, if found.
- *
- * @example
- *    var element = document.createElement("span");
- *    element.setAttribute("role", "checkbox");
- *    console.log(axs.utils.getAriaRole(element));  // logs checkbox
- *
- * @example
- *    var element = document.createElement("input");
- *    element.setAttribute("type", "checkbox");
- *    console.log(axs.utils.getAriaRole(element));  // logs null
- *
- * @example
- *    var element = document.createElement("input");
- *    element.setAttribute("type", "checkbox");
- *    console.log(axs.utils.getAriaRole(element, true));  // logs checkbox
- *
- */
-axs.utils.getAriaRole = function(element, implicit) {
-    if(element && element.hasAttribute && element.hasAttribute('role')) {
-        return element.getAttribute('role');
-    }
-    if(implicit) {
-        return axs.properties.getImplicitRole(element) || null;
-    }
-    return null;
-};

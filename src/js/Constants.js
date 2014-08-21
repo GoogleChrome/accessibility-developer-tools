@@ -58,7 +58,8 @@ axs.constants.ARIA_ROLES = {
         "namefrom": [ "contents", "author" ],
         "namerequired": true,
         "parent": [ "gridcell", "sectionhead", "widget" ],
-        "properties": [ "aria-sort" ]
+        "properties": [ "aria-sort" ],
+        "scope": [ "row" ]
     },
     "combobox": {
         "mustcontain": [ "listbox", "textbox" ],
@@ -122,7 +123,8 @@ axs.constants.ARIA_ROLES = {
         "namefrom": [ "contents", "author" ],
         "namerequired": true,
         "parent": [ "section", "widget" ],
-        "properties": [ "aria-readonly", "aria-required", "aria-selected" ]
+        "properties": [ "aria-readonly", "aria-required", "aria-selected" ],
+        "scope": [ "row" ]
     },
     "group": {
         "namefrom": [ " author" ],
@@ -173,7 +175,8 @@ axs.constants.ARIA_ROLES = {
         "namefrom": [ "contents", "author" ],
         "namerequired": true,
         "parent": [ "section" ],
-        "properties": [ "aria-level", "aria-posinset", "aria-setsize" ]
+        "properties": [ "aria-level", "aria-posinset", "aria-setsize" ],
+        "scope": [ "list" ]
     },
     "log": {
         "namefrom": [ " author" ],
@@ -211,17 +214,20 @@ axs.constants.ARIA_ROLES = {
     "menuitem": {
         "namefrom": [ "contents", "author" ],
         "namerequired": true,
-        "parent": [ "command" ]
+        "parent": [ "command" ],
+        "scope": [ "menu", "menubar" ]
     },
     "menuitemcheckbox": {
         "namefrom": [ "contents", "author" ],
         "namerequired": true,
-        "parent": [ "checkbox", "menuitem" ]
+        "parent": [ "checkbox", "menuitem" ],
+        "scope": [ "menu", "menubar" ]
     },
     "menuitemradio": {
         "namefrom": [ "contents", "author" ],
         "namerequired": true,
-        "parent": [ "menuitemcheckbox", "radio" ]
+        "parent": [ "menuitemcheckbox", "radio" ],
+        "scope": [ "menu", "menubar" ]
     },
     "navigation": {
         "namefrom": [ "author" ],
@@ -303,18 +309,21 @@ axs.constants.ARIA_ROLES = {
         "mustcontain": [ "columnheader", "gridcell", "rowheader" ],
         "namefrom": [ "contents", "author" ],
         "parent": [ "group", "widget" ],
-        "properties": [ "aria-level", "aria-selected" ]
+        "properties": [ "aria-level", "aria-selected" ],
+        "scope": [ "grid", "rowgroup", "treegrid" ]
     },
     "rowgroup": {
         "mustcontain": [ "row" ],
         "namefrom": [ "contents", "author" ],
-        "parent": [ "group" ]
+        "parent": [ "group" ],
+        "scope": [ "grid" ]
     },
     "rowheader": {
         "namefrom": [ "contents", "author" ],
         "namerequired": true,
         "parent": [ "gridcell", "sectionhead", "widget" ],
-        "properties": [ "aria-sort" ]
+        "properties": [ "aria-sort" ],
+        "scope": [ "row" ]
     },
     "search": {
         "namefrom": [ "author" ],
@@ -404,7 +413,8 @@ axs.constants.ARIA_ROLES = {
         "mustcontain": [ "tab" ],
         "namefrom": [ "author" ],
         "parent": [ "composite", "directory" ],
-        "properties": [ "aria-level" ]
+        "properties": [ "aria-level" ],
+        "scope": [ "tablist" ]
     },
     "tabpanel": {
         "namefrom": [ "author" ],
@@ -452,7 +462,8 @@ axs.constants.ARIA_ROLES = {
     "treeitem": {
         "namefrom": [ "contents", "author" ],
         "namerequired": true,
-        "parent": [ "listitem", "option" ]
+        "parent": [ "listitem", "option" ],
+        "scope": [ "group", "tree" ]
     },
     "widget": {
         "abstract": true,
@@ -767,24 +778,7 @@ axs.constants.ARIA_PROPERTIES = {
 /**
  * All of the states and properties which apply globally.
  */
-axs.constants.GLOBAL_PROPERTIES = [
-    "aria-atomic",
-    "aria-busy",  // (state)
-    "aria-controls",
-    "aria-describedby",
-    "aria-disabled",  // (state)
-    "aria-dropeffect",
-    "aria-flowto",
-    "aria-grabbed",  // (state)
-    "aria-haspopup",
-    "aria-hidden",  // (state)
-    "aria-invalid",  // (state)
-    "aria-label",
-    "aria-labelledby",
-    "aria-live",
-    "aria-owns",
-    "aria-relevant"
-];
+axs.constants.GLOBAL_PROPERTIES = axs.constants.ARIA_ROLES['roletype'].properties;
 
 /**
  * A constant indicating no role name.

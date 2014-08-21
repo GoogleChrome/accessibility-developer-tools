@@ -35,19 +35,15 @@ axs.AuditRule.specs.requiredOwnedAriaRoleMissing = {
          *    both menus will pass because they contain a menuitem but should the outer menu fail?
          *    Handling this would require a significant rewrite of this audit.
          */
-        var role = axs.utils.getAriaRole(element);
-        if (!role) {  // if it does not have a role (impossible) or the role is an empty string (possible)
+        var elementRole = axs.utils.getRoles(element, {first:true, valid:true});
+        if (!elementRole)
             return false;
-        }
-        var ariaRole = axs.constants.ARIA_ROLES[role];
-        if (!ariaRole) {  // if this is not a known ARIA role
-            return false;
-        }
+
         var busy = element.getAttribute('aria-busy');
-        if (busy === 'true') {  // In future this will lower the severity of the warning instead
+        if (busy === 'true')  // In future this will lower the severity of the warning instead
             return false;  // https://github.com/GoogleChrome/accessibility-developer-tools/issues/101
-        }
-        var required = ariaRole['mustcontain'];
+
+        var required = elementRole.details['mustcontain'];
         if (!required || required.length === 0) {  // if there are no 'required owned elements' for this role
             return false;
         }
@@ -61,11 +57,13 @@ axs.AuditRule.specs.requiredOwnedAriaRoleMissing = {
          var ownedElements = axs.utils.getIdReferents('aria-owns', element);
          for (var i = ownedElements.length - 1; i >= 0; i--) {
              var ownedElement = ownedElements[i];
-             var ownedElementRole = axs.utils.getAriaRole(ownedElement, true);
-             for (var j = required.length - 1; j >= 0; j--) {
-                 if(ownedElementRole === required[j]) {  // if this explicitly owned element has a required role
-                     return false;
-                 }
+             var ownedElementRole = axs.utils.getRoles(ownedElement, {first:true, valid:true, implicit:true});
+             if (ownedElementRole) {
+                 for (var j = required.length - 1; j >= 0; j--) {
+                    if (ownedElementRole.name === required[j]) {  // if this explicitly owned element has a required role
+                        return false;
+                    }
+                }
              }
          }
          return true;  // if we made it here then we did not find the required owned elements in the DOM
