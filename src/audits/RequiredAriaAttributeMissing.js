@@ -14,7 +14,9 @@
 
 goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
+goog.require('axs.browserUtils');
 goog.require('axs.constants');
+goog.require('axs.properties');
 
 /**
  * @type {axs.AuditRule.Spec}

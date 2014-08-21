@@ -35,7 +35,7 @@ axs.AuditRule.specs.requiredOwnedAriaRoleMissing = {
          *    both menus will pass because they contain a menuitem but should the outer menu fail?
          *    Handling this would require a significant rewrite of this audit.
          */
-        var elementRole = axs.utils.getRoles(element, {first:true, valid:true});
+        var elementRole = axs.utils.getRoles(element, {first:true});
         if (!elementRole)
             return false;
 
@@ -57,7 +57,7 @@ axs.AuditRule.specs.requiredOwnedAriaRoleMissing = {
          var ownedElements = axs.utils.getIdReferents('aria-owns', element);
          for (var i = ownedElements.length - 1; i >= 0; i--) {
              var ownedElement = ownedElements[i];
-             var ownedElementRole = axs.utils.getRoles(ownedElement, {first:true, valid:true, implicit:true});
+             var ownedElementRole = axs.utils.getRoles(ownedElement, {first:true, implicit:true});
              if (ownedElementRole) {
                  for (var j = required.length - 1; j >= 0; j--) {
                     if (ownedElementRole.name === required[j]) {  // if this explicitly owned element has a required role

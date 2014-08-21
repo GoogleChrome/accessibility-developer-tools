@@ -655,7 +655,7 @@ axs.properties.getAriaProperties = function(element) {
 };
 
 /**
- * Gets the ARIA properties which apply to all elements, not just elements with ARIA roles.
+ * Gets the ARIA properties found on this element which apply to all elements, not just elements with ARIA roles.
  * @param {Element} element
  * @return {!Object}
  */
@@ -791,6 +791,19 @@ axs.properties.getAllProperties = function(node) {
         if (htmlInfo)
             return htmlInfo.role;
         return '';
+    };
+
+    /**
+     * Determine if this element can take ANY ARIA attributes including roles, state and properties.
+     * If false then even global attributes should not be used.
+     * @param {Element} element
+     * @return {boolean}
+     */
+    axs.properties.canTakeAriaAttributes = function(element) {
+        var htmlInfo = getHtmlInfo(element);
+        if (htmlInfo)
+            return !htmlInfo.reserved;
+        return true;
     };
 })();
 

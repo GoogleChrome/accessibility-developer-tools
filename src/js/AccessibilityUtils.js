@@ -1041,13 +1041,15 @@ axs.utils.isInlineElement = function(element) {
  * Gets role details from an element.
  * @param {Element} element The DOM element whose role we want.
  * @param {Object=} options
+ *    If options.implicit is true then implicit semantics will be considered if there is no role attribute.
+ *    If options.first is true then only the first valid, concrete role will be returned (equivalent to result.roles[0]).
+ *    This is based on: http://www.w3.org/TR/wai-aria-implementation/#mapping_role
  *
  * @return {Object|boolean}
  */
 axs.utils.getRoles = function(element, options) {
     var implicit = options? !!options.implicit : false;
     var first = options? !!options.first : false;  // If true only the first role will be returned
-    var validOnly = options? !!options.valid : false;  // If true only valid roles will be returned
     if (!element || element.nodeType !== Node.ELEMENT_NODE || (!element.hasAttribute('role') && !implicit))
         return false;
     var roleValue = element.getAttribute('role');
@@ -1067,10 +1069,8 @@ axs.utils.getRoles = function(element, options) {
                 return roleObject;
             roles.push(roleObject);
         }
-        else if (!validOnly) {
+        else if (!first) {
             var roleObject = {'name': role, 'valid': false};
-            if (first)
-                return roleObject;
             valid = false;
             roles.push(roleObject);
         }

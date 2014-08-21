@@ -329,65 +329,29 @@ test("getRoles on element with valid role and options.first", function() {
 test("getRoles on element with abstract role and options.first", function() {
     for (var role in axs.constants.ARIA_ROLES) {
         if (axs.constants.ARIA_ROLES.hasOwnProperty(role) && axs.constants.ARIA_ROLES[role].abstract) {
-            var expected = { name: role, valid: false };
+            var expected = false;
             var element = document.createElement('div');
             element.setAttribute('role', role);
             var actual = axs.utils.getRoles(element, { first: true });
-            deepEqual(actual, expected);
+            strictEqual(actual, expected);
         }
     }
 });
 
-test("getRoles on element with valid role and options.valid", function() {
-    for (var role in axs.constants.ARIA_ROLES) {
-        if (axs.constants.ARIA_ROLES.hasOwnProperty(role) && !axs.constants.ARIA_ROLES[role].abstract) {
-            var expected = {
-                valid: true,
-                roles: [{ name: role, valid: true, details: axs.constants.ARIA_ROLES[role] }]
-            };
-            var element = document.createElement('div');
-            element.setAttribute('role', role);
-            var actual = axs.utils.getRoles(element, { valid: true });
-            deepEqual(actual, expected);
-        }
-    }
+test("getRoles on element with valid role and unknown role and options.first", function() {
+    var role = 'button';
+    var expected = { name: role, valid: true, details: axs.constants.ARIA_ROLES[role] };
+    var element = document.createElement('div');
+    element.setAttribute('role', 'rock ' + role);
+    var actual = axs.utils.getRoles(element, { first: true });
+    deepEqual(actual, expected);
 });
 
-test("getRoles on element with abstract role and options.valid", function() {
-    for (var role in axs.constants.ARIA_ROLES) {
-        if (axs.constants.ARIA_ROLES.hasOwnProperty(role) && axs.constants.ARIA_ROLES[role].abstract) {
-            var expected = {
-                valid: true,
-                roles: [{ name: 'button', valid: true, details: axs.constants.ARIA_ROLES['button'] }]
-            };
-            var element = document.createElement('div');
-            element.setAttribute('role', role + ' button');
-            var actual = axs.utils.getRoles(element, { valid: true });
-            deepEqual(actual, expected);
-        }
-    }
-});
-
-test("getRoles on element with valid role and options.first and options.valid", function() {
-    for (var role in axs.constants.ARIA_ROLES) {
-        if (axs.constants.ARIA_ROLES.hasOwnProperty(role) && !axs.constants.ARIA_ROLES[role].abstract) {
-            var expected = { name: role, valid: true, details: axs.constants.ARIA_ROLES[role] };
-            var element = document.createElement('div');
-            element.setAttribute('role', role);
-            var actual = axs.utils.getRoles(element, { first: true, valid: true });
-            deepEqual(actual, expected);
-        }
-    }
-});
-
-test("getRoles on element with abstract role and options.first and options.valid", function() {
-    for (var role in axs.constants.ARIA_ROLES) {
-        if (axs.constants.ARIA_ROLES.hasOwnProperty(role) && axs.constants.ARIA_ROLES[role].abstract) {
-            var expected = { name: 'button', valid: true, details: axs.constants.ARIA_ROLES['button'] };
-            var element = document.createElement('div');
-            element.setAttribute('role', role + ' button');
-            var actual = axs.utils.getRoles(element, { valid: true, first: true });
-            deepEqual(actual, expected);
-        }
-    }
+test("getRoles on element with valid role and abstract role and options.first", function() {
+    var role = 'button';
+    var expected = { name: role, valid: true, details: axs.constants.ARIA_ROLES[role] };
+    var element = document.createElement('div');
+    element.setAttribute('role', 'range ' + role);
+    var actual = axs.utils.getRoles(element, { first: true });
+    deepEqual(actual, expected);
 });
