@@ -18,7 +18,7 @@
 	This can be used to generate 'axs.constants.ARIA_ROLES' when run against the ARIA taxonomy RDF at
 	    http://www.w3.org/WAI/ARIA/schemata/aria-1.rdf.
 	
-	Note that the hard-coded version has properties not found in the taxonomy which appear not to be used:
+	Note that the hard-coded version has properties not found in the taxonomy:
 	    - childpresentational
 	    - namerequired
 	    - abstract

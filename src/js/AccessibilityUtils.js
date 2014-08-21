@@ -1053,6 +1053,8 @@ axs.utils.getRoles = function(element, options) {
     var roleValue = element.getAttribute('role');
     if (!roleValue && implicit)
         roleValue = axs.properties.getImplicitRole(element);
+    if (!roleValue)  // role='' or implicit role came up empty
+        return false;
     var roleNames = roleValue.split(' ');
     var roles = [];
     var valid = true;
