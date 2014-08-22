@@ -22,7 +22,7 @@ test('Scope role present', function() {
         var item = container.appendChild(document.createElement('span'));
         item.setAttribute('role', 'listitem');
     }
-    
+
     var actual = rule.run({ scope: fixture });
     equal(actual.result, axs.constants.AuditResult.PASS);
     deepEqual(actual.elements, []);
@@ -74,7 +74,7 @@ test('Scope role missing', function() {
         item.setAttribute('role', 'listitem');
         expected.push(item);
     }
-    
+
     var actual = rule.run({ scope: fixture });
     equal(actual.result, axs.constants.AuditResult.FAIL);
     deepEqual(actual.elements, expected);

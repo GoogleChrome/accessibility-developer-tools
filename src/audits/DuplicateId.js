@@ -36,7 +36,7 @@ axs.AuditRule.specs.duplicateId = {
          *    that woiuld be incomplete, because naturally many of these attributes change over time e.g.
          *    'aria-activedescendant' is likely to change over time and therefore safer to vet them all.
          */
-		var id = element.id;
+        var id = element.id;
         if (!id) {
             return false;  // Is an empty ID even an ID? I think not.
         }
@@ -44,5 +44,5 @@ axs.AuditRule.specs.duplicateId = {
         var elementsWithId = element.ownerDocument.querySelectorAll(selector);
         return (elementsWithId.length > 1);
     },
-    code: 'AX_ARIA_06'
+    code: 'AX_ARIA_13'
 };

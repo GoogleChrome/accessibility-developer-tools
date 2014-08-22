@@ -79,7 +79,7 @@
         var ignoreSelectors = ['#' + (widget.id = 'ignoreMe')];
         var expected = { elements: [], result: axs.constants.AuditResult.PASS };
         widget.setAttribute('aria-hidden', 'false');  // global
-        deepEqual(rule.run({ scope: fixture, ignoreSelectors:ignoreSelectors }), expected);
+        deepEqual(rule.run({ scope: fixture, ignoreSelectors: ignoreSelectors }), expected);
     });
 
     test('Reserved element with no ARIA attributes', function() {

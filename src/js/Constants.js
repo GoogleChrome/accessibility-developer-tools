@@ -13,8 +13,8 @@
 // limitations under the License.
 
 goog.provide('axs.constants');
-goog.provide('axs.constants.Severity');
 goog.provide('axs.constants.AuditResult');
+goog.provide('axs.constants.Severity');
 
 /** @type {Object.<string, Object>} */
 axs.constants.ARIA_ROLES = {
@@ -1086,7 +1086,6 @@ axs.constants.ARIA_TO_HTML_ATTRIBUTE = {
  * </li>
  * </ul>
  *
- *
  * @typedef {{ role: string,
  *             allowed: Array.<string>,
  *             selector: string,
@@ -1097,12 +1096,16 @@ axs.constants.HtmlInfo;
  * A lookup table which maps uppercase tagName to information about implicit ARIA semantics.
  * This table is based on the document: http://w3c.github.io/aria-in-html/
  * It is not complete and never can be. Complex scenarios require specific handling not provided here.
+ * Any element not listed here:
+ *    - has no implicit role
+ *    - can take any role
+ *    e.g. em,strong,small,s,cite,q,dfn,abbr,time,code,var,samp,kbd,sub and sup,i,b,u,mark ,ruby,rt,rp,bdi,bdo,br,wbr
  *
  * Where there is any ambiguity this table will endeavor to provide for the most broad case (to avoid
  *    false failures in conformance checking).
  *
  * For example 'table' can take any role however in practice it should only be given the role 'grid' when
- *    being used as a data grid or 'presentation' when used for layout. This table ignores these nuances and
+ *    being used as a data grid or 'presentation' when used for layout. This lookup ignores these nuances and
  *    allows all roles.
  *
  * @type {Object.<string, Array.<axs.constants.HtmlInfo>>}

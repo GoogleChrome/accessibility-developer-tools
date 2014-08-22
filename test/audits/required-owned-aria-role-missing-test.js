@@ -22,7 +22,7 @@ test('Explcit role on container and required elements all explicitly present', f
         var item = container.appendChild(document.createElement('span'));
         item.setAttribute('role', 'listitem');
     }
-    
+
     var actual = rule.run({ scope: fixture });
     equal(actual.result, axs.constants.AuditResult.PASS);
     deepEqual(actual.elements, []);
@@ -53,7 +53,7 @@ test('Explcit role on container and required elements missing', function() {
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('div'));
     container.setAttribute('role', 'list');
-    
+
     var actual = rule.run({ scope: fixture });
     equal(actual.result, axs.constants.AuditResult.FAIL);
     deepEqual(actual.elements, [container]);

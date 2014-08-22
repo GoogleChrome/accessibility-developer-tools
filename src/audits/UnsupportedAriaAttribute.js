@@ -16,8 +16,8 @@ goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.constants');
 
-(function(){
-    "use strict";
+(function() {
+    'use strict';
     // Over many iterations it makes a significant performance difference not to re-instantiate regex
     var ARIA_ATTR_RE = /^aria\-/;
     // No need to compute the selector for every element in the DOM.
@@ -43,7 +43,7 @@ goog.require('axs.constants');
             // Even though we may not need to look up role, supported etc it's better performance to do it here than in loop
             var role = axs.utils.getRoles(element, {first:true, implicit:true});
             // This test ignores the fact that some HTML elements should not take even global attributes.
-            var supported = role? role.details.propertiesSet : axs.constants.GLOBAL_PROPERTIES;
+            var supported = role ? role.details.propertiesSet : axs.constants.GLOBAL_PROPERTIES;
             var attributes = element.attributes;
             for (var i = attributes.length - 1; i >= 0; i--) {
                 var attributeName = attributes[i].name;

@@ -25,7 +25,7 @@ axs.AuditRule.specs.badAriaRole = {
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_01--elements-with-aria-roles-must-use-a-valid-non-abstract-aria-role',
     severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {
-        return axs.browserUtils.matchSelector(element, "[role]");
+        return axs.browserUtils.matchSelector(element, '[role]');
     },
     test: function(element) {
         var roles = axs.utils.getRoles(element);

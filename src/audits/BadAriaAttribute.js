@@ -16,18 +16,18 @@ goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.constants');
 
-(function(){
-    "use strict";
-    // Over many iterations it makes a significant performance difference not to re-instantiate regex
+(function() {
+    'use strict';
+    // Over many iterations significant performance gain not re-instantiating regex
     var ARIA_ATTR_RE = /^aria\-/;
 
     /**
      * This test basically looks for unknown attributes that start with 'aria-'.
-     * 
-     * It is a warning because it is probably not "illegal" for someone to use an expando that starts
+     *
+     * It is a warning because it is probably not "illegal" to use an expando that starts
      *    with 'aria-', just a generally bad idea. Right?
-     * 
-     * It will catch common typos like "aria-labeledby" and uncommon ones too, like "aria-helicopter" :)
+     *
+     * It will catch common typos like "aria-labeledby" and uncommon ones, like "aria-helicopter" :)
      *
      * @type {axs.AuditRule.Spec}
      */
