@@ -65,6 +65,20 @@ axs.properties.getFocusProperties = function(element) {
     return focusProperties;
 };
 
+/**
+ * @typedef {{ property: string,
+ *             on: Element }}
+ *
+ * property examples: 'display: none', 'visibility: hidden', 'aria-hidden'
+ */
+axs.properties.hiddenReason;
+
+/**
+ * Determine the reason an element is not visible.
+ * Will give the CSS rule or attribute and the element/ancestor it is set on.
+ * @param {Element} element
+ * @return {?axs.properties.hiddenReason}
+ */
 axs.properties.getHiddenReason = function(element) {
     if (!element || !(element instanceof element.ownerDocument.defaultView.HTMLElement))
       return null;
@@ -128,6 +142,7 @@ axs.properties.hasDirectTextDescendant = function(element) {
     /**
      * Determines whether element has a text node as a direct descendant.
      * This method uses XPath on HTML DOM which is not universally supported.
+     * @return {boolean}
      */
     function hasDirectTextDescendantXpath() {
         var selectorResults = ownerDocument.evaluate(axs.properties.TEXT_CONTENT_XPATH,
@@ -149,6 +164,7 @@ axs.properties.hasDirectTextDescendant = function(element) {
      * Determines whether element has a text node as a direct descendant.
      * This method uses TreeWalker as a fallback (at time of writing no version
      * of IE (including IE11) supports XPath in the HTML DOM).
+     * @return {boolean}
      */
     function hasDirectTextDescendantTreeWalker() {
         var treeWalker = ownerDocument.createTreeWalker(element,
@@ -461,6 +477,16 @@ axs.properties.getTextFromAriaLabelledby = function(element, textAlternatives) {
     return computedName;
 };
 
+
+/**
+ * Determine the text description/label for an element.
+ * For example will attempt to find the alt text for an image or label text for a form control.
+ * @param {!Element} element
+ * @param {!Object} textAlternatives An object that will be updated with information.
+ * @param {?string} existingComputedname
+ * @param {boolean} recursive
+ * @return {Object}
+ */
 axs.properties.getTextFromHostLanguageAttributes = function(element,
                                                             textAlternatives,
                                                             existingComputedname,
