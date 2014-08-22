@@ -377,7 +377,7 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
         var titleValue = {};
         titleValue.type = 'string';
         titleValue.valid = true;
-        titleValue.text =  element.getAttribute('title');
+        titleValue.text = element.getAttribute('title');
         titleValue.lastWord = axs.properties.getLastWord(titleValue.lastWord);
         if (computedName)
             titleValue.unused = true;
@@ -471,7 +471,7 @@ axs.properties.getTextFromHostLanguageAttributes = function(element,
             var altValue = {};
             altValue.type = 'string';
             altValue.valid = true;
-            altValue.text =  element.getAttribute('alt');
+            altValue.text = element.getAttribute('alt');
             if (computedName)
                 altValue.unused = true;
             else
@@ -486,7 +486,7 @@ axs.properties.getTextFromHostLanguageAttributes = function(element,
             if (typeof(src) == 'string') {
                 var parts = src.split('/');
                 var filename = parts.pop();
-                var filenameValue = { text: filename }
+                var filenameValue = { text: filename };
                 textAlternatives['filename'] = filenameValue;
                 computedName = filename;
             }
@@ -596,6 +596,7 @@ axs.properties.getTextProperties = function(node) {
 };
 
 /**
+ * Finds any ARIA attributes (roles, states and properties) explcitly set on this element.
  * @param {Element} element
  * @return {Object}
  */
@@ -751,12 +752,12 @@ axs.properties.getAllProperties = function(node) {
     return allProperties;
 };
 
-(function(){
+(function() {
     /**
      * Helper for implicit semantic functionality.
      * Can be made part of the public API if need be.
      * @param {Element} element
-     * @return {axs.constants.HtmlInfo|null}
+     * @return {?axs.constants.HtmlInfo}
      */
     function getHtmlInfo(element) {
         if (!element)
@@ -813,7 +814,7 @@ axs.properties.getAllProperties = function(node) {
  * @param {Element} element The element to check.
  * @return {!Array.<string>} An array of ARIA attributes.
  *
- * @example
+ * example:
  *    var element = document.createElement("input");
  *    element.setAttribute("type", "range");
  *    var supported = axs.properties.getNativelySupported(element);  // an array of ARIA attributes
@@ -829,16 +830,16 @@ axs.properties.getNativelySupported = function(element) {
     for (var i = 0; i < ariaAttributes.length; i++) {
         var ariaAttribute = ariaAttributes[i];
         var nativeAttribute = axs.constants.ARIA_TO_HTML_ATTRIBUTE[ariaAttribute];
-        if(nativeAttribute in testElement) {
+        if (nativeAttribute in testElement) {
             result[result.length] = ariaAttribute;
         }
     }
     return result;
 };
 
-(function () {
+(function() {
     var roleToSelectorCache = {};  // performance optimization, cache results from getSelectorForRole
-    
+
     /**
      * Build a selecor that will match elements which implicity or explicitly have this role.
      * Note that the selector will probably not look elegant but it will work.

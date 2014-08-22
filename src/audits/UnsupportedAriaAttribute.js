@@ -20,6 +20,8 @@ goog.require('axs.constants');
     "use strict";
     // Over many iterations it makes a significant performance difference not to re-instantiate regex
     var ARIA_ATTR_RE = /^aria\-/;
+    // No need to compute the selector for every element in the DOM.
+    var selector = axs.utils.getSelectorForAriaProperties(axs.constants.ARIA_PROPERTIES);
 
     /**
      * This test looks for known ARIA states and properties that have been used with a role that does
@@ -35,7 +37,6 @@ goog.require('axs.constants');
         url: '',
         severity: axs.constants.Severity.SEVERE,
         relevantElementMatcher: function(element) {
-            var selector = axs.utils.getSelectorForAriaProperties(axs.constants.ARIA_PROPERTIES);
             return axs.browserUtils.matchSelector(element, selector);
         },
         test: function(element) {

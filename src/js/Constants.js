@@ -993,7 +993,7 @@ for (var propertyName in axs.constants.ARIA_PROPERTIES) {
 })();
 
 /** @enum {string} */
-axs.constants.Severity =  {
+axs.constants.Severity = {
     INFO: 'Info',
     WARNING: 'Warning',
     SEVERE: 'Severe'
@@ -1104,13 +1104,13 @@ axs.constants.HtmlInfo;
  * For example 'table' can take any role however in practice it should only be given the role 'grid' when
  *    being used as a data grid or 'presentation' when used for layout. This table ignores these nuances and
  *    allows all roles.
- * 
+ *
  * @type {Object.<string, Array.<axs.constants.HtmlInfo>>}
  */
 axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
-    'A':[ {
+    'A': [{
         role: 'link',
-        allowed:[
+        allowed: [
         'button',
         'checkbox',
         'menuitem',
@@ -1120,50 +1120,50 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         'treeitem'],
         selector: 'a[href]'
     }],
-    'ADDRESS':[ {
+    'ADDRESS': [{
         role: '',
-        allowed:[
+        allowed: [
         'contentinfo',
         'presentation']
     }],
-    'AREA':[ {
+    'AREA': [{
         role: 'link',
-        allowed:[],
+        allowed: [],
         selector: 'area[href]'
     }],
-    'ARTICLE':[ {
+    'ARTICLE': [{
         role: 'article',
-        allowed:[
+        allowed: [
         'presentation',
         'article',
         'document',
         'application',
         'main']
     }],
-    'ASIDE':[ {
+    'ASIDE': [{
         role: 'complementary',
-        allowed:[
+        allowed: [
         'note',
         'complementary',
         'search',
         'presentation']
     }],
-    'AUDIO':[ {
+    'AUDIO': [{
         role: '',
         allowed: ['application', 'presentation']
     }],
-    'BASE':[ {
+    'BASE': [{
         role: '',
-        allowed:[],
+        allowed: [],
         reserved: true
     }],
-    'BODY':[ {
+    'BODY': [{
         role: 'document',
         allowed: ['presentation']
     }],
-    'BUTTON':[ {
+    'BUTTON': [{
         role: 'button',
-        allowed:[
+        allowed: [
         'link',
         'menuitem',
         'menuitemcheckbox',
@@ -1179,7 +1179,7 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         attributes: {
             'aria-haspopup': true
         },
-        allowed:[
+        allowed: [
         'link',
         'menuitem',
         'menuitemcheckbox',
@@ -1187,46 +1187,46 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         'radio'],
         selector: 'button[type="menu"]'
     }],
-    'CAPTION':[ {
+    'CAPTION': [{
         role: '',
         allowed: ['presentation']
     }],
-    'COL':[ {
+    'COL': [{
         role: '',
-        allowed:[],
+        allowed: [],
         reserved: true
     }],
-    'COLGROUP':[ {
+    'COLGROUP': [{
         role: '',
-        allowed:[],
+        allowed: [],
         reserved: true
     }],
-    'DATALIST':[ {
+    'DATALIST': [{
         role: 'listbox',
         attributes: {
             'aria-multiselectable': false
         },
         allowed: ['presentation']
     }],
-    'DEL':[ {
+    'DEL': [{
         role: '',
         allowed: ['*']
     }],
-    'DD':[ {
+    'DD': [{
         role: '',
         allowed: ['presentation']
     }],
-    'DT':[ {
+    'DT': [{
         role: '',
         allowed: ['presentation']
     }],
-    'DETAILS':[ {
+    'DETAILS': [{
         role: 'group',
-        allowed:[
+        allowed: [
         'group',
         'presentation']
     }],
-    'DIALOG':[ {
+    'DIALOG': [{
         role: 'dialog',
         attributes: {
             'aria-hidden': true
@@ -1234,87 +1234,87 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         allowed: ['dialog'],
         selector: 'dialog:not([open])'
     }],
-    'DIV':[ {
+    'DIV': [{
         role: '',
         allowed: ['*']
     }],
-    'DL':[ {
+    'DL': [{
         role: 'list',
         allowed: ['presentation']
     }],
-    'EMBED':[ {
+    'EMBED': [{
         role: '',
-        allowed:[
+        allowed: [
         'application',
         'document',
         'img',
         'presentation']
     }],
-    'FIGURE':[ {
+    'FIGURE': [{
         role: '',
         allowed: ['*']
     }],
-    'FOOTER':[ {
+    'FOOTER': [{
         role: '',
         allowed: ['contentinfo', 'presentation']
     }],
-    'FORM':[ {
+    'FORM': [{
         role: 'form',
         allowed: ['presentation']
     }],
-    'P':[ {
+    'P': [{
         role: '',
         allowed: ['*']
     }],
-    'PRE':[ {
+    'PRE': [{
         role: '',
         allowed: ['*']
     }],
-    'BLOCKQUOTE':[ {
+    'BLOCKQUOTE': [{
         role: '',
         allowed: ['*']
     }],
-    H1:[ {
+    H1: [{
         role: 'heading'
     }],
-    H2:[ {
+    H2: [{
         role: 'heading'
     }],
-    H3:[ {
+    H3: [{
         role: 'heading'
     }],
-    H4:[ {
+    H4: [{
         role: 'heading'
     }],
-    H5:[ {
+    H5: [{
         role: 'heading'
     }],
-    H6:[ {
+    H6: [{
         role: 'heading'
     }],
-    'HEAD':[ {
+    'HEAD': [{
         role: '',
-        allowed:[],
+        allowed: [],
         reserved: true
     }],
-    'HEADER':[ {
+    'HEADER': [{
         role: '',
-        allowed:[
+        allowed: [
         'banner',
         'presentation']
     }],
-    'HR':[ {
+    'HR': [{
         role: 'separator',
         allowed: ['presentation']
     }],
-    'HTML':[ {
+    'HTML': [{
         role: '',
-        allowed:[],
+        allowed: [],
         reserved: true
     }],
-    'IFRAME':[ {
+    'IFRAME': [{
         role: '',
-        allowed:[
+        allowed: [
         'application',
         'document',
         'img',
@@ -1322,7 +1322,7 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         selector: 'iframe:not([seamless])'
     }, {
         role: '',
-        allowed:[
+        allowed: [
         'application',
         'document',
         'img',
@@ -1330,9 +1330,9 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         'group'],
         selector: 'iframe[seamless]'
     }],
-    'IMG':[ {
+    'IMG': [{
         role: 'presentation',
-        allowed:[],
+        allowed: [],
         reserved: true,
         selector: 'img[alt=""]'
     }, {
@@ -1340,9 +1340,9 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         allowed: ['*'],
         selector: 'img[alt]:not([alt=""])'
     }],
-    'INPUT':[ {
+    'INPUT': [{
         role: 'button',
-        allowed:[
+        allowed: [
         'link',
         'menuitem',
         'menuitemcheckbox',
@@ -1359,27 +1359,27 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         selector: 'input[type="checkbox"]'
     }, {
         role: '',
-        allowed:[],
+        allowed: [],
         selector: 'input[type="color"]'
     }, {
         role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
-        allowed:[],
+        allowed: [],
         selector: 'input[type="date"]'
     }, {
         role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
-        allowed:[],
+        allowed: [],
         selector: 'input[type="datetime"]'
     }, {
         role: 'textbox',
-        allowed:[],
+        allowed: [],
         selector: 'input[type="email"]:not([list])'
     }, {
         role: '',
-        allowed:[],
+        allowed: [],
         selector: 'input[type="file"]'
     }, {
         role: '',
-        allowed:[],
+        allowed: [],
         reserved: true,
         selector: 'input[type="hidden"]'
     }, {
@@ -1388,7 +1388,7 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         selector: 'input[type="image"][aria-pressed]'
     }, {
         role: 'button',
-        allowed:[
+        allowed: [
         'link',
         'menuitem',
         'menuitemcheckbox',
@@ -1397,15 +1397,15 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         selector: 'input[type="image"]:not([aria-pressed])'
     }, {
         role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
-        allowed:[],
+        allowed: [],
         selector: 'input[type="month"]'
     }, {
         role: 'spinbutton',
-        allowed:[],
+        allowed: [],
         selector: 'input[type="number"]'
     }, {
         role: 'textbox',
-        allowed:[],
+        allowed: [],
         selector: 'input[type="password"]'
     }, {
         role: 'radio',
@@ -1413,72 +1413,72 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         selector: 'input[type="radio"]'
     }, {
         role: 'slider',
-        allowed:[],
+        allowed: [],
         selector: 'input[type="range"]'
     }, {
         role: 'button',
-        allowed:[],
+        allowed: [],
         selector: 'input[type="reset"]'
     }, {
         role: 'combobox',  // aria-owns is set to the same value as the list attribute
-        allowed:[],
+        allowed: [],
         selector: 'input[type="search"][list]'
     }, {
         role: 'textbox',
-        allowed:[],
+        allowed: [],
         selector: 'input[type="search"]:not([list])'
     }, {
         role: 'button',
-        allowed:[],
+        allowed: [],
         selector: 'input[type="submit"]'
     }, {
         role: 'combobox',  // aria-owns is set to the same value as the list attribute
-        allowed:[],
+        allowed: [],
         selector: 'input[type="tel"][list]'
     }, {
         role: 'textbox',
-        allowed:[],
+        allowed: [],
         selector: 'input[type="tel"]:not([list])'
     }, {
         role: 'combobox',  // aria-owns is set to the same value as the list attribute
-        allowed:[],
+        allowed: [],
         selector: 'input[type="text"][list]'
     }, {
         role: '',
-        allowed:[],
+        allowed: [],
         selector: 'input[type="text"]:not([list])'
     }, {
         role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
-        allowed:[],
+        allowed: [],
         selector: 'input[type="time"]'
     }, {
         role: 'combobox',  // aria-owns is set to the same value as the list attribute
-        allowed:[],
+        allowed: [],
         selector: 'input[type="url"][list]'
     }, {
         role: 'textbox',
-        allowed:[],
+        allowed: [],
         selector: 'input[type="url"]:not([list])'
     }, {
         role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
-        allowed:[],
+        allowed: [],
         selector: 'input[type="week"]'
     }],
-    'INS':[ {
+    'INS': [{
         role: '',
         allowed: ['*']
     }],
-    'KEYGEN':[ {
+    'KEYGEN': [{
         role: '',
-        allowed:[]
+        allowed: []
     }],
-    'LABEL':[ {
+    'LABEL': [{
         role: '',
         allowed: ['presentation']
     }],
-    'LI':[ {
+    'LI': [{
         role: 'listitem',
-        allowed:[
+        allowed: [
         'menuitem',
         'menuitemcheckbox',
         'menuitemradio',
@@ -1489,7 +1489,7 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         selector: 'ol:not([role="presentation"])>li, ul:not([role="presentation"])>li'
     }, {
         role: 'listitem',
-        allowed:[
+        allowed: [
         'listitem',
         'menuitem',
         'menuitemcheckbox',
@@ -1500,105 +1500,105 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         'presentation'],
         selector: 'ol[role="presentation"]>li, ul[role="presentation"]>li'
     }],
-    'LINK':[ {
+    'LINK': [{
         role: 'link',
-        allowed:[],
+        allowed: [],
         reserved: true,
         selector: 'link[href]'
     }],
-    'MAIN':[ {
+    'MAIN': [{
         role: '',
-        allowed:[
+        allowed: [
         'main',
         'presentation']
     }],
-    'MAP':[ {
+    'MAP': [{
         role: '',
-        allowed:[],
+        allowed: [],
         reserved: true
     }],
-    'MATH':[ {
+    'MATH': [{
         role: '',
         allowed: ['presentation']
     }],
-    'MENU':[ {
+    'MENU': [{
         role: 'toolbar',
-        allowed:[],
+        allowed: [],
         selector: 'menu[type="toolbar"]'
     }],
-    'MENUITEM':[ {
+    'MENUITEM': [{
         role: 'menuitem',
-        allowed:[],
+        allowed: [],
         selector: 'menuitem[type="command"]'
     }, {
         role: 'menuitemcheckbox',
-        allowed:[],
+        allowed: [],
         selector: 'menuitem[type="checkbox"]'
     }, {
         role: 'menuitemradio',
-        allowed:[],
+        allowed: [],
         selector: 'menuitem[type="radio"]'
     }],
-    'META':[ {
+    'META': [{
         role: '',
-        allowed:[],
+        allowed: [],
         reserved: true
     }],
-    'METER':[ {
+    'METER': [{
         role: 'progressbar',
         allowed: ['presentation']
     }],
-    'NAV':[ {
+    'NAV': [{
         role: 'navigation',
         allowed: ['navigation', 'presentation']
     }],
-    'NOSCRIPT':[ {
+    'NOSCRIPT': [{
         role: '',
-        allowed:[],
+        allowed: [],
         reserved: true
     }],
-    'OBJECT':[ {
+    'OBJECT': [{
         role: '',
         allowed: ['application', 'document', 'img', 'presentation']
     }],
-    'OL':[ {
+    'OL': [{
         role: 'list',
         allowed: ['directory', 'group', 'listbox', 'menu', 'menubar', 'tablist', 'toolbar', 'tree', 'presentation']
     }],
-    'OPTGROUP':[ {
+    'OPTGROUP': [{
         role: '',
         allowed: ['presentation']
     }],
-    'OPTION':[ {
+    'OPTION': [{
         role: 'option',
-        allowed:[]
+        allowed: []
     }],
-    'OUTPUT':[ {
+    'OUTPUT': [{
         role: 'status',
         allowed: ['*']
     }],
-    'PARAM':[ {
+    'PARAM': [{
         role: '',
-        allowed:[],
+        allowed: [],
         reserved: true
     }],
-    'PICTURE':[ {
+    'PICTURE': [{
         role: '',
-        allowed:[],
+        allowed: [],
         reserved: true
     }],
-    'PROGRESS':[ {
+    'PROGRESS': [{
         role: 'progressbar',
         allowed: ['presentation']
     }],
-    'SCRIPT':[ {
+    'SCRIPT': [{
         role: '',
-        allowed:[],
+        allowed: [],
         reserved: true
     }],
-    'SECTION':[ {
+    'SECTION': [{
         role: 'region',
-        allowed:[
+        allowed: [
         'alert',
         'alertdialog',
         'application',
@@ -1611,86 +1611,86 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         'status',
         'presentation']
     }],
-    'SELECT':[ {
+    'SELECT': [{
         role: 'listbox',
-        allowed:[]
+        allowed: []
     }],
-    'SOURCE':[ {
+    'SOURCE': [{
         role: '',
-        allowed:[],
+        allowed: [],
         reserved: true
     }],
-    'SPAN':[ {
+    'SPAN': [{
         role: '',
         allowed: ['*']
     }],
-    'STYLE':[ {
+    'STYLE': [{
         role: '',
-        allowed:[],
+        allowed: [],
         reserved: true
     }],
-    'SVG':[ {
+    'SVG': [{
         role: '',
-        allowed:[
+        allowed: [
         'application',
         'document',
         'img',
         'presentation']
     }],
-    'SUMMARY':[ {
+    'SUMMARY': [{
         role: '',
         allowed: ['presentation']
     }],
-    'TABLE':[ {
+    'TABLE': [{
         role: '',
         allowed: ['*']
     }],
-    'TEMPLATE':[ {
+    'TEMPLATE': [{
         role: '',
-        allowed:[],
+        allowed: [],
         reserved: true
     }],
-    'TEXTAREA':[ {
+    'TEXTAREA': [{
         role: 'textbox',
-        allowed:[]
+        allowed: []
     }],
-    'TBODY':[ {
+    'TBODY': [{
         role: 'rowgroup',
         allowed: ['*']
     }],
-    'THEAD':[ {
+    'THEAD': [{
         role: 'rowgroup',
         allowed: ['*']
     }],
-    'TFOOT':[ {
+    'TFOOT': [{
         role: 'rowgroup',
         allowed: ['*']
     }],
-    'TITLE':[ {
+    'TITLE': [{
         role: '',
-        allowed:[],
+        allowed: [],
         reserved: true
     }],
-    'TD':[ {
+    'TD': [{
         role: '',
         allowed: ['*']
     }],
-    'TH':[ {
+    'TH': [{
         role: '',
         allowed: ['*']
     }],
-    'TR':[ {
+    'TR': [{
         role: '',
         allowed: ['*']
     }],
-    'TRACK':[ {
+    'TRACK': [{
         role: '',
-        allowed:[],
+        allowed: [],
         reserved: true
     }],
-    'UL':[ {
+    'UL': [{
         role: 'list',
-        allowed:[
+        allowed: [
         'directory',
         'group',
         'listbox',
@@ -1701,7 +1701,7 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         'tree',
         'presentation']
     }],
-    'VIDEO':[ {
+    'VIDEO': [{
         role: '',
         allowed: ['application', 'presentation']
     }]

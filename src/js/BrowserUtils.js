@@ -19,7 +19,7 @@ goog.provide('axs.browserUtils');
  * Use IE matcher when neither webkit nor Firefox supported.
  * @param {Element} element
  * @param {string} selector
- * @returns {boolean} true if the element matches the selector
+ * @return {boolean} true if the element matches the selector
  */
 axs.browserUtils.matchSelector = function(element, selector) {
     if (element.webkitMatchesSelector)
