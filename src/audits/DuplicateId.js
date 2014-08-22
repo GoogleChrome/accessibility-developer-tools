@@ -33,7 +33,7 @@ axs.AuditRule.specs.duplicateId = {
          * This is not a pure a11y check however IDREF attributes in ARIA and HTML (label 'for', td 'headers)
          *    depend on IDs being correctly implemented.
          * While we could limit this audit to IDs which are actually referred to via any IDREF attribute
-         *    that woiuld be incomplete, because naturally many of these attributes change over time e.g.
+         *    that would be incomplete, because naturally many of these attributes change over time e.g.
          *    'aria-activedescendant' is likely to change over time and therefore safer to vet them all.
          */
         var id = element.id;
@@ -44,5 +44,5 @@ axs.AuditRule.specs.duplicateId = {
         var elementsWithId = element.ownerDocument.querySelectorAll(selector);
         return (elementsWithId.length > 1);
     },
-    code: 'AX_ARIA_13'
+    code: 'AX_ARIA_13'  // ARIA code appropriate?
 };

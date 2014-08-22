@@ -23,7 +23,7 @@ axs.AuditRule.specs.ariaOwnsDescendant = {
     // TODO(RickSBrown): check for elements that try to 'aria-own' an ancestor;
     // Also: own self does not make sense. Perhaps any IDREF pointing to itself is bad?
     // Perhaps even extend this beyond ARIA (e.g. label for itself). Have to change return code?
-    // Also: other "bad hierarchy" tests - e.g. active-descendant not owning a non-descendant...
+    // Also: other "bad hierarchy" tests - e.g. active-descendant owning a non-descendant...
     name: 'ariaOwnsDescendant',
     heading: 'aria-owns should not be used if ownership is implicit in the DOM',
     url: '',
