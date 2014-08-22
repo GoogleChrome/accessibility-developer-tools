@@ -1443,7 +1443,7 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         allowed: ['*']
     }],
     'KEYGEN': [{
-        role: '',
+        role: ''
     }],
     'LABEL': [{
         role: '',
@@ -1535,7 +1535,7 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         allowed: ['presentation']
     }],
     'OPTION': [{
-        role: 'option',
+        role: 'option'
     }],
     'OUTPUT': [{
         role: 'status',
@@ -1573,7 +1573,7 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         'presentation']
     }],
     'SELECT': [{
-        role: 'listbox',
+        role: 'listbox'
     }],
     'SOURCE': [{
         role: '',
@@ -1608,7 +1608,7 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         reserved: true
     }],
     'TEXTAREA': [{
-        role: 'textbox',
+        role: 'textbox'
     }],
     'TBODY': [{
         role: 'rowgroup',
