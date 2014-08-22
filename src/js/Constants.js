@@ -1131,7 +1131,6 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'AREA': [{
         role: 'link',
-        allowed: [],
         selector: 'area[href]'
     }],
     'ARTICLE': [{
@@ -1157,7 +1156,6 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'BASE': [{
         role: '',
-        allowed: [],
         reserved: true
     }],
     'BODY': [{
@@ -1196,12 +1194,10 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'COL': [{
         role: '',
-        allowed: [],
         reserved: true
     }],
     'COLGROUP': [{
         role: '',
-        allowed: [],
         reserved: true
     }],
     'DATALIST': [{
@@ -1297,7 +1293,6 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'HEAD': [{
         role: '',
-        allowed: [],
         reserved: true
     }],
     'HEADER': [{
@@ -1312,7 +1307,6 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'HTML': [{
         role: '',
-        allowed: [],
         reserved: true
     }],
     'IFRAME': [{
@@ -1335,7 +1329,6 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'IMG': [{
         role: 'presentation',
-        allowed: [],
         reserved: true,
         selector: 'img[alt=""]'
     }, {
@@ -1362,27 +1355,21 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         selector: 'input[type="checkbox"]'
     }, {
         role: '',
-        allowed: [],
         selector: 'input[type="color"]'
     }, {
         role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
-        allowed: [],
         selector: 'input[type="date"]'
     }, {
         role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
-        allowed: [],
         selector: 'input[type="datetime"]'
     }, {
         role: 'textbox',
-        allowed: [],
         selector: 'input[type="email"]:not([list])'
     }, {
         role: '',
-        allowed: [],
         selector: 'input[type="file"]'
     }, {
         role: '',
-        allowed: [],
         reserved: true,
         selector: 'input[type="hidden"]'
     }, {
@@ -1400,15 +1387,12 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         selector: 'input[type="image"]:not([aria-pressed])'
     }, {
         role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
-        allowed: [],
         selector: 'input[type="month"]'
     }, {
         role: 'spinbutton',
-        allowed: [],
         selector: 'input[type="number"]'
     }, {
         role: 'textbox',
-        allowed: [],
         selector: 'input[type="password"]'
     }, {
         role: 'radio',
@@ -1416,55 +1400,42 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         selector: 'input[type="radio"]'
     }, {
         role: 'slider',
-        allowed: [],
         selector: 'input[type="range"]'
     }, {
         role: 'button',
-        allowed: [],
         selector: 'input[type="reset"]'
     }, {
         role: 'combobox',  // aria-owns is set to the same value as the list attribute
-        allowed: [],
         selector: 'input[type="search"][list]'
     }, {
         role: 'textbox',
-        allowed: [],
         selector: 'input[type="search"]:not([list])'
     }, {
         role: 'button',
-        allowed: [],
         selector: 'input[type="submit"]'
     }, {
         role: 'combobox',  // aria-owns is set to the same value as the list attribute
-        allowed: [],
         selector: 'input[type="tel"][list]'
     }, {
         role: 'textbox',
-        allowed: [],
         selector: 'input[type="tel"]:not([list])'
     }, {
         role: 'combobox',  // aria-owns is set to the same value as the list attribute
-        allowed: [],
         selector: 'input[type="text"][list]'
     }, {
         role: '',
-        allowed: [],
         selector: 'input[type="text"]:not([list])'
     }, {
         role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
-        allowed: [],
         selector: 'input[type="time"]'
     }, {
         role: 'combobox',  // aria-owns is set to the same value as the list attribute
-        allowed: [],
         selector: 'input[type="url"][list]'
     }, {
         role: 'textbox',
-        allowed: [],
         selector: 'input[type="url"]:not([list])'
     }, {
         role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
-        allowed: [],
         selector: 'input[type="week"]'
     }],
     'INS': [{
@@ -1473,7 +1444,6 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'KEYGEN': [{
         role: '',
-        allowed: []
     }],
     'LABEL': [{
         role: '',
@@ -1505,7 +1475,6 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'LINK': [{
         role: 'link',
-        allowed: [],
         reserved: true,
         selector: 'link[href]'
     }],
@@ -1517,7 +1486,6 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'MAP': [{
         role: '',
-        allowed: [],
         reserved: true
     }],
     'MATH': [{
@@ -1526,25 +1494,20 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'MENU': [{
         role: 'toolbar',
-        allowed: [],
         selector: 'menu[type="toolbar"]'
     }],
     'MENUITEM': [{
         role: 'menuitem',
-        allowed: [],
         selector: 'menuitem[type="command"]'
     }, {
         role: 'menuitemcheckbox',
-        allowed: [],
         selector: 'menuitem[type="checkbox"]'
     }, {
         role: 'menuitemradio',
-        allowed: [],
         selector: 'menuitem[type="radio"]'
     }],
     'META': [{
         role: '',
-        allowed: [],
         reserved: true
     }],
     'METER': [{
@@ -1557,7 +1520,6 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'NOSCRIPT': [{
         role: '',
-        allowed: [],
         reserved: true
     }],
     'OBJECT': [{
@@ -1574,7 +1536,6 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'OPTION': [{
         role: 'option',
-        allowed: []
     }],
     'OUTPUT': [{
         role: 'status',
@@ -1582,12 +1543,10 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'PARAM': [{
         role: '',
-        allowed: [],
         reserved: true
     }],
     'PICTURE': [{
         role: '',
-        allowed: [],
         reserved: true
     }],
     'PROGRESS': [{
@@ -1596,7 +1555,6 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'SCRIPT': [{
         role: '',
-        allowed: [],
         reserved: true
     }],
     'SECTION': [{
@@ -1616,11 +1574,9 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'SELECT': [{
         role: 'listbox',
-        allowed: []
     }],
     'SOURCE': [{
         role: '',
-        allowed: [],
         reserved: true
     }],
     'SPAN': [{
@@ -1629,7 +1585,6 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'STYLE': [{
         role: '',
-        allowed: [],
         reserved: true
     }],
     'SVG': [{
@@ -1650,12 +1605,10 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'TEMPLATE': [{
         role: '',
-        allowed: [],
         reserved: true
     }],
     'TEXTAREA': [{
         role: 'textbox',
-        allowed: []
     }],
     'TBODY': [{
         role: 'rowgroup',
@@ -1671,7 +1624,6 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'TITLE': [{
         role: '',
-        allowed: [],
         reserved: true
     }],
     'TD': [{
@@ -1688,7 +1640,6 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
     }],
     'TRACK': [{
         role: '',
-        allowed: [],
         reserved: true
     }],
     'UL': [{
