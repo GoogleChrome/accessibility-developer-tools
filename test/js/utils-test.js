@@ -93,25 +93,19 @@ test("Input type=submit has a label.", function() {
   element.type = "submit";
   equal(axs.utils.hasLabel(element), true);
 });
-test("A placeholder counts a label.", function() {
+test("A placeholder does not count as a label.", function() {
   var element0 = document.createElement("textarea");
   element0.placeholder = "Your life story";
-  equal(axs.utils.hasLabel(element0), true);
+  equal(axs.utils.hasLabel(element0), false);
 
   var element1 = document.createElement("input");
   element1.placeholder = "First name";
-  equal(axs.utils.hasLabel(element1), true);
+  equal(axs.utils.hasLabel(element1), false);
 
   var element2 = document.createElement("input");
   element2.type = "url";
   element2.placeholder = "Homepage";
-  equal(axs.utils.hasLabel(element2), true);
-
-  // This one fails, a checkbox can't have a placeholder.
-  var element3 = document.createElement("input");
-  element3.type = "checkbox";
-  element3.placeholder = "Add me to your mailing list";
-  equal(axs.utils.hasLabel(element3), false);
+  equal(axs.utils.hasLabel(element2), false);
 });
 test('axs.utils.hasLabel() does not crash for element with numeric id attribute', function() {
     var element = document.createElement('input');
