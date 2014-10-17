@@ -55,3 +55,24 @@ test('Input type button with value needs no label', function() {
     equal(rule.run({ scope: fixture }).result,
           axs.constants.AuditResult.PASS);
 });
+
+test('Input with role="presentation" needs no label', function() {
+    var fixture = document.getElementById('qunit-fixture');
+
+    var input = document.createElement('input');
+    var select = document.createElement('select');
+    var textarea = document.createElement('textarea');
+    var button = document.createElement('button');
+    var video = document.createElement('video');
+
+    var controls = [input, select, textarea, button, video];
+
+    controls.forEach(function(control) {
+      control.setAttribute("role", "presentation");
+      fixture.appendChild(control);
+    });
+
+    var rule = axs.AuditRules.getRule('controlsWithoutLabel');
+    equal(rule.run({ scope: fixture }).result,
+          axs.constants.AuditResult.NA);
+});
