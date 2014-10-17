@@ -967,9 +967,6 @@ axs.utils.hasLabel = function(element) {
     if (element.hasAttribute('aria-labelledby'))
         return true;
 
-    if (axs.utils.isNativeTextElement(element) && element.hasAttribute('placeholder'))
-        return true;
-
     if (element.hasAttribute('id')) {
         var labelsFor = document.querySelectorAll('label[for="' + element.id + '"]');
         if (labelsFor.length > 0)
