@@ -33,7 +33,7 @@ axs.AuditRule.specs.controlsWithoutLabel = {
                                 'button:not([disabled])',
                                 'video:not([disabled])'].join(', ');
         var isControl = axs.browserUtils.matchSelector(element, controlsSelector);
-        if (!isControl)
+        if (!isControl || element.getAttribute('role') == 'presentation')
             return false;
         if (element.tabIndex >= 0)
             return true;
