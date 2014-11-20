@@ -6,12 +6,29 @@
     "url": "http://github.com/GoogleChrome/accessibility-developer-tools"
   },
   "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-closurecompiler": "~0.9.9",
-    "grunt-util-spawn": "0.0.2",
-    "grunt-contrib-qunit": "~0.2.2"
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
+    "grunt-closurecompiler": "^0.9.9",
+    "grunt-contrib-qunit": "^0.2.2",
+    "grunt-util-spawn": "^0.0.2"
   },
   "scripts": {
     "test": "grunt travis --verbose"
-  }
+  },
+  "description": "This is a library of accessibility-related testing and utility code.",
+  "bugs": {
+    "url": "https://github.com/GoogleChrome/accessibility-developer-tools/issues"
+  },
+  "homepage": "https://github.com/GoogleChrome/accessibility-developer-tools",
+  "main": "src/js/Audit.js",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [
+    "accessibility",
+    "testing",
+    "WCAG"
+  ],
+  "author": "Google",
+  "license": "Apache License 2.0"
 }
