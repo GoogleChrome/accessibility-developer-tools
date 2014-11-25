@@ -24,7 +24,7 @@ axs.AuditRule.specs.humanLangMissing = {
     url: '',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
-        return (element instanceof element.ownerDocument.defaultView.HTMLHtmlElement);
+        return element instanceof element.ownerDocument.defaultView.HTMLHtmlElement;
     },
     test: function(scope) {
         if (!scope.lang)
