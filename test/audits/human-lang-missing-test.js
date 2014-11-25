@@ -6,10 +6,8 @@ test("Test lang attribute must be present", function() {
     // Remove the humanLang attribute from the qunit test page.
     var htmlElement = document.querySelector('html');
     
-    if(htmlElement.lang != '') {
-        var htmlLang = htmlElement.lang;
-        htmlElement.lang = '';
-    }
+    var htmlLang = htmlElement.lang;
+    htmlElement.lang = '';
 
     equal(rule.run().result, 
         axs.constants.AuditResult.FAIL);
@@ -18,4 +16,6 @@ test("Test lang attribute must be present", function() {
 
     equal(rule.run().result, 
         axs.constants.AuditResult.PASS);
+
+    htmlElement.lang = htmlLang;
 });
