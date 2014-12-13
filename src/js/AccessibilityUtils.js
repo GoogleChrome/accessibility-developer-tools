@@ -362,39 +362,9 @@ axs.utils.isLargeFont = function(style) {
     var matches = fontSize.match(/(\d+)px/);
     if (matches) {
         var fontSizePx = parseInt(matches[1], 10);
-        var bodyStyle = window.getComputedStyle(document.body, null);
-        var bodyFontSize = bodyStyle.fontSize;
-        matches = bodyFontSize.match(/(\d+)px/);
-        if (matches) {
-            var bodyFontSizePx = parseInt(matches[1], 10);
-            var boldLarge = bodyFontSizePx * 1.2;
-            var large = bodyFontSizePx * 1.5;
-        } else {
-            var boldLarge = 19.2;
-            var large = 24;
-        }
+        var boldLarge = 14;
+        var large = 18;
         return (bold && fontSizePx >= boldLarge || fontSizePx >= large);
-    }
-    matches = fontSize.match(/(\d+)em/);
-    if (matches) {
-        var fontSizeEm = parseInt(matches[1], 10);
-        if (bold && fontSizeEm >= 1.2 || fontSizeEm >= 1.5)
-            return true;
-        return false;
-    }
-    matches = fontSize.match(/(\d+)%/);
-    if (matches) {
-        var fontSizePercent = parseInt(matches[1], 10);
-        if (bold && fontSizePercent >= 120 || fontSizePercent >= 150)
-            return true;
-        return false;
-    }
-    matches = fontSize.match(/(\d+)pt/);
-    if (matches) {
-        var fontSizePt = parseInt(matches[1], 10);
-        if (bold && fontSizePt >= 14 || fontSizePt >= 18)
-            return true;
-        return false;
     }
     return false;
 };
