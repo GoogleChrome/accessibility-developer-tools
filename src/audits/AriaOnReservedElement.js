@@ -30,7 +30,7 @@ axs.AuditRule.specs.ariaOnReservedElement = {
         return !axs.properties.canTakeAriaAttributes(element);
     },
     test: function(element) {
-        return !!axs.properties.getAriaProperties(element);
+        return axs.properties.getAriaProperties(element) !== null;
     },
     code: 'AX_ARIA_12'
 };
