@@ -1040,23 +1040,18 @@ axs.utils.isInlineElement = function(element) {
  *
  * Gets role details from an element.
  * @param {Element} element The DOM element whose role we want.
- * @param {Object=} options
- *    If options.implicit is true then implicit semantics will be considered if there is no role attribute.
- *    If options.first is true then only the first valid, concrete role will be returned (equivalent to result.roles[0]).
- *    This is based on: http://www.w3.org/TR/wai-aria-implementation/#mapping_role
+ * @param {boolean=} implicit if true then implicit semantics will be considered if there is no role attribute.
  *
- * @return {Object|boolean}
+ * @return {Object}
  */
-axs.utils.getRoles = function(element, options) {
-    var implicit = options? !!options.implicit : false;
-    var first = options? !!options.first : false;  // If true only the first role will be returned
+axs.utils.getRoles = function(element, implicit) {
     if (!element || element.nodeType !== Node.ELEMENT_NODE || (!element.hasAttribute('role') && !implicit))
-        return false;
+        return null;
     var roleValue = element.getAttribute('role');
     if (!roleValue && implicit)
         roleValue = axs.properties.getImplicitRole(element);
     if (!roleValue)  // role='' or implicit role came up empty
-        return false;
+        return null;
     var roleNames = roleValue.split(' ');
     var roles = [];
     var valid = true;
@@ -1065,19 +1060,33 @@ axs.utils.getRoles = function(element, options) {
         var ariaRole = axs.constants.ARIA_ROLES[role];
         if (ariaRole && !ariaRole.abstract) {
             var roleObject = {'name': role, 'details': axs.constants.ARIA_ROLES[role], 'valid': true};
-            if (first)
-                return roleObject;
             roles.push(roleObject);
-        }
-        else if (!first) {
+        } else {
             var roleObject = {'name': role, 'valid': false};
             valid = false;
             roles.push(roleObject);
         }
     }
 
-    return first? false : { 'roles': roles, 'valid': valid };
+    return { 'roles': roles, 'valid': valid };
 };
+
+RoleDetails.prototype.contains = function (role) {
+    var roles = this.roles;
+    if (roles.length) {
+        return (roles.indexOf(role) >= 0);
+    }
+    return false;
+};
+
+/**
+ * Represents 
+ * @constructor
+ */
+function RoleDetails(roles, valid) {
+    this.roles = roles;
+    this.valid = valid;
+}
 
 /**
  * @param {!string} propertyName
@@ -1522,8 +1531,7 @@ axs.utils.findDescendantsWithRole = function(element, role) {
     var result = element.querySelectorAll(selector);
     if (result) {  // Convert NodeList to Array; methinks 80/20 that's what callers want.
         result = Array.prototype.map.call(result, function(item) { return item; });
-    }
-    else {
+    } else {
         return [];
     }
     return result;

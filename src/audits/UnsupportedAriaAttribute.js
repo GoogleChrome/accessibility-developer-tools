@@ -41,11 +41,17 @@ goog.require('axs.constants');
         },
         test: function(element) {
             // Even though we may not need to look up role, supported etc it's better performance to do it here than in loop
-            var role = axs.utils.getRoles(element, {first:true, implicit:true});
-            // This test ignores the fact that some HTML elements should not take even global attributes.
-            var supported = role ? role.details.propertiesSet : axs.constants.GLOBAL_PROPERTIES;
+            var role = axs.utils.getRoles(element, true);
+            var supported;
+            if (role && role.roles.length) {
+                supported = role.roles[0].details.propertiesSet;
+            }
+            else {
+                // This test ignores the fact that some HTML elements should not take even global attributes.
+                supported = axs.constants.GLOBAL_PROPERTIES;
+            }
             var attributes = element.attributes;
-            for (var i = attributes.length - 1; i >= 0; i--) {
+            for (var i = 0, len = attributes.length; i < len; i++) {
                 var attributeName = attributes[i].name;
                 if (ARIA_ATTR_RE.test(attributeName)) {
                     var lookupName = attributeName.replace(ARIA_ATTR_RE, '');
@@ -55,6 +61,7 @@ goog.require('axs.constants');
                     }
                 }
             }
+            return false;
         },
         code: 'AX_ARIA_10'
     };

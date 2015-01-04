@@ -17,6 +17,10 @@ goog.require('axs.AuditRules');
 goog.require('axs.constants');
 
 /**
+ * This test checks ARIA roles which must be owned by another role.
+ *    For example a role of `tab` can only exist within a `tablist`.
+ *    This ownership can be represented implicitly by DOM hierarchy or explictly through the `aria-owns` attribute.
+ *
  * @type {axs.AuditRule.Spec}
  */
 axs.AuditRule.specs.ariaRoleNotScoped = {
@@ -31,10 +35,12 @@ axs.AuditRule.specs.ariaRoleNotScoped = {
         /*
          * Checks that this element is in the required scope for its role.
          */
-        var elementRole = axs.utils.getRoles(element, {first: true});
-        if (!elementRole)
+        var elementRole = axs.utils.getRoles(element);
+        if (!elementRole || !elementRole.roles.length)
             return false;
-
+        elementRole = elementRole.roles[0];
+        if (!elementRole || !elementRole.valid)
+            return false;
         var ariaRole = elementRole.details;
         var requiredScope = ariaRole['scope'];
         if (!requiredScope || requiredScope.length === 0) {
@@ -42,17 +48,21 @@ axs.AuditRule.specs.ariaRoleNotScoped = {
         }
         var parent = element;
         while ((parent = parent.parentNode)) {
-            var parentRole = axs.utils.getRoles(parent, {first: true, implicit: true});
-            if (parentRole && requiredScope.indexOf(parentRole.name) >= 0) {  // if this ancestor role is one of the required roles
-                return false;
+            var parentRole = axs.utils.getRoles(parent, true);
+            if (parentRole && parentRole.roles.length) {
+                parentRole = parentRole.roles[0];
+                if (requiredScope.indexOf(parentRole.name) >= 0)  // if this ancestor role is one of the required roles
+                    return false;
             }
         }
         // If we made it this far then no DOM ancestor has a required scope role.
         // Now we need to check if anything aria-owns this element.
         var owners = axs.utils.getIdReferrers('aria-owns', element);  // there can only be ONE explicit owner but that's a different test
         if (owners) {
-            for (var i = owners.length; i >= 0; i--) {
-                var ownerRole = axs.utils.getRoles(owners[i], {first: true, implicit: true});
+            for (var i = 0; i < owners.length; i++) {
+                var ownerRole = axs.utils.getRoles(owners[i], true);
+                if (ownerRole && ownerRole.roles.length)
+                    ownerRole = ownerRole.roles[0];
                 if (ownerRole && requiredScope.indexOf(ownerRole.name) >= 0) {  // if the owner role is one of the required roles
                     return false;
                 }

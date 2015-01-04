@@ -801,8 +801,7 @@ axs.properties.getAllProperties = function(node) {
             if (htmlInfo.selector) {
                 if (axs.browserUtils.matchSelector(element, htmlInfo.selector))
                     return htmlInfo;
-            }
-            else {
+            } else {
                 defaultInfo = htmlInfo;
             }
         }
@@ -843,10 +842,10 @@ axs.properties.getAllProperties = function(node) {
  * example:
  *    var element = document.createElement("input");
  *    element.setAttribute("type", "range");
- *    var supported = axs.properties.getNativelySupported(element);  // an array of ARIA attributes
+ *    var supported = axs.properties.getNativelySupportedAttributes(element);  // an array of ARIA attributes
  *    console.log(supported.indexOf("aria-valuemax") >=0);  // logs 'true'
  */
-axs.properties.getNativelySupported = function(element) {
+axs.properties.getNativelySupportedAttributes = function(element) {
     var result = [];
     if (!element) {
         return result;
@@ -867,7 +866,7 @@ axs.properties.getNativelySupported = function(element) {
     var roleToSelectorCache = {};  // performance optimization, cache results from getSelectorForRole
 
     /**
-     * Build a selecor that will match elements which implicity or explicitly have this role.
+     * Build a selector that will match elements which implicity or explicitly have this role.
      * Note that the selector will probably not look elegant but it will work.
      * @param {string} role
      * @return {string} selector

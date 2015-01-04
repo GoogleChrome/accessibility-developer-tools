@@ -42,7 +42,7 @@ axs.AuditRule.specs.requiredAriaAttributeMissing = {
                 if ('defaultValue' in propertyDetails)
                     continue;
                 if (!element.hasAttribute(property)) {
-                    var nativelySupported = axs.properties.getNativelySupported(element);
+                    var nativelySupported = axs.properties.getNativelySupportedAttributes(element);
                     if (nativelySupported.indexOf(property) < 0) {
                         return true;
                     }

@@ -1069,19 +1069,19 @@ axs.constants.ARIA_TO_HTML_ATTRIBUTE = {
  * Holds information about implicit ARIA semantics for a given HTML element type.
  * This object has the following properties:
  * <ul>
- * <li>role will contain the implicit role if it exists, otherwise empty string.</li>
- * <li>allowed contains the roles that can reasonably be applied to this element.
+ * <li>`role` will contain the implicit role if it exists, otherwise empty string.</li>
+ * <li>`allowed` contains the roles that can reasonably be applied to this element.
  *    Note: if the implicit role is listed in the allowed array then it is OK (recommended?)
  *    to explictly set the role.
  *    Note2: A tag that can take any role is signified by a '*' wildcard in the array. It is not
  *    an error if the array contains other roles but currently this has no meaning. In future it may
  *    be used to indicate recommended roles.
  * </li>
- * <li>selector is present if this is a 'subclass' of the base HTML element, i.e. its semantics are
+ * <li>`selector` is present if this is a 'subclass' of the base HTML element, i.e. its semantics are
  *    modified by context or attributes. It can be used with the selectors API to find and/or match
  *    elements.
  * </li>
- * <li>reserved will be true if this is a semantically strong element that you may not modify with any
+ * <li>`reserved` will be true if this is a semantically strong element that you may not modify with any
  *    ARIA attributes, including role or global attributes.
  * </li>
  * </ul>
@@ -1225,12 +1225,16 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         'group',
         'presentation']
     }],
-    'DIALOG': [{
+    'DIALOG': [{  // updated 'allowed' from: http://www.w3.org/html/wg/drafts/html/master/interactive-elements.html#the-dialog-element
+        role: 'dialog',
+        allowed: ['dialog', 'alert', 'alertdialog', 'application', 'log', 'marquee', 'status'],
+        selector: 'dialog[open]'
+    }, {
         role: 'dialog',
         attributes: {
             'aria-hidden': true
         },
-        allowed: ['dialog'],
+        allowed: ['dialog', 'alert', 'alertdialog', 'application', 'log', 'marquee', 'status'],
         selector: 'dialog:not([open])'
     }],
     'DIV': [{
@@ -1357,10 +1361,10 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         role: '',
         selector: 'input[type="color"]'
     }, {
-        role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
+        role: '',
         selector: 'input[type="date"]'
     }, {
-        role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
+        role: '',
         selector: 'input[type="datetime"]'
     }, {
         role: 'textbox',
@@ -1386,7 +1390,7 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         'radio'],
         selector: 'input[type="image"]:not([aria-pressed])'
     }, {
-        role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
+        role: '',
         selector: 'input[type="month"]'
     }, {
         role: 'spinbutton',
@@ -1426,7 +1430,7 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         role: '',
         selector: 'input[type="text"]:not([list])'
     }, {
-        role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
+        role: '',
         selector: 'input[type="time"]'
     }, {
         role: 'combobox',  // aria-owns is set to the same value as the list attribute
@@ -1435,7 +1439,7 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         role: 'textbox',
         selector: 'input[type="url"]:not([list])'
     }, {
-        role: 'spinbutton',  // deviates from 'Using ARIA in HTML'
+        role: '',
         selector: 'input[type="week"]'
     }],
     'INS': [{

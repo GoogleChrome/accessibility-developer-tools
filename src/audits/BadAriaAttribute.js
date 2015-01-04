@@ -38,7 +38,7 @@ goog.require('axs.constants');
         severity: axs.constants.Severity.WARNING,
         relevantElementMatcher: function(element) {
             var attributes = element.attributes;
-            for (var i = attributes.length - 1; i >= 0; i--) {
+            for (var i = 0, len = attributes.length; i < len; i++) {
                 if (ARIA_ATTR_RE.test(attributes[i].name)) {
                     return true;
                 }
@@ -47,7 +47,7 @@ goog.require('axs.constants');
         },
         test: function(element) {
             var attributes = element.attributes;
-            for (var i = attributes.length - 1; i >= 0; i--) {
+            for (var i = 0, len = attributes.length; i < len; i++) {
                 var attributeName = attributes[i].name;
                 if (ARIA_ATTR_RE.test(attributeName)) {
                     var lookupName = attributeName.replace(ARIA_ATTR_RE, '');
@@ -56,6 +56,7 @@ goog.require('axs.constants');
                     }
                 }
             }
+            return false;
         },
         code: 'AX_ARIA_11'
     };
