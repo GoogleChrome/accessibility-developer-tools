@@ -30,7 +30,7 @@ if (system.args.length !== 2) {
         );
       phantom.exit();
     } else {
-      page.injectJs('../../gen/axs_testing.js');
+      page.injectJs('../../dist/js/axs_testing.js');
       var report = page.evaluate(function() {
         var results = axs.Audit.run();
         return axs.Audit.createReport(results);
