@@ -134,55 +134,49 @@ axs.AuditRule.collectMatchingElements = function(node, matcher, collection,
     if (element && matcher.call(null, element))
         collection.push(element);
 
-    // Descend into node:
-    // If it has a ShadowRoot, ignore all child elements - these will be picked
-    // up by the <content> or <shadow> elements. Descend straight into the
-    // ShadowRoot.
+    // Descend into node
     if (element) {
-        var shadowRoot = element.shadowRoot || element.webkitShadowRoot;
-        if (shadowRoot) {
-            axs.AuditRule.collectMatchingElements(shadowRoot,
-                                                  matcher,
-                                                  collection,
-                                                  shadowRoot);
-            return;
-        }
-    }
-
-    // If it is a <content> element, descend into distributed elements - descend
-    // into distributed elements - these are elements from outside the shadow
-    // root which are rendered inside the shadow DOM.
-    if (element && element.localName == 'content') {
-        var content = /** @type {HTMLContentElement} */ (element);
-        var distributedNodes = content.getDistributedNodes();
-        for (var i = 0; i < distributedNodes.length; i++) {
-            axs.AuditRule.collectMatchingElements(distributedNodes[i],
-                                                  matcher,
-                                                  collection,
-                                                  opt_shadowRoot);
-        }
-        return;
-    }
-
-    // If it is a <shadow> element, descend into the olderShadowRoot of the
-    // current ShadowRoot.
-    if (element && element.localName == 'shadow') {
-        var shadow = /** @type {HTMLShadowElement} */ (element);
-        if (!opt_shadowRoot) {
-            console.warn('ShadowRoot not provided for', element);
-        } else {
-            var olderShadowRoot = opt_shadowRoot.olderShadowRoot ||
-                                  shadow.olderShadowRoot;
-            if (olderShadowRoot) {
-                axs.AuditRule.collectMatchingElements(olderShadowRoot,
+        if (element.localName == 'content') {
+            // If it is a <content> element, descend into distributed elements - descend
+            // into distributed elements - these are elements from outside the shadow
+            // root which are rendered inside the shadow DOM.
+            var content = /** @type {HTMLContentElement} */ (element);
+            var distributedNodes = content.getDistributedNodes();
+            for (var i = 0; i < distributedNodes.length; i++) {
+                axs.AuditRule.collectMatchingElements(distributedNodes[i],
                                                       matcher,
                                                       collection,
-                                                      olderShadowRoot);
+                                                      opt_shadowRoot);
+            }
+            return;
+        } else if (element.localName == 'shadow') {
+            // If it is a <shadow> element, descend into the olderShadowRoot of the
+            // current ShadowRoot.
+            var shadow = /** @type {HTMLShadowElement} */ (element);
+            if (!opt_shadowRoot) {
+                console.warn('ShadowRoot not provided for', element);
+            } else {
+                var olderShadowRoot = opt_shadowRoot.olderShadowRoot ||
+                                      shadow.olderShadowRoot;
+                if (olderShadowRoot) {
+                    axs.AuditRule.collectMatchingElements(olderShadowRoot,
+                                                          matcher,
+                                                          collection,
+                                                          olderShadowRoot);
+                }
+            }
+            return;
+        } else {
+            var shadowRoot = element.shadowRoot || element.webkitShadowRoot;
+            if (shadowRoot) {
+                axs.AuditRule.collectMatchingElements(shadowRoot,
+                                                      matcher,
+                                                      collection,
+                                                      shadowRoot);
             }
         }
-        return;
+        
     }
-
     // If it is neither the parent of a ShadowRoot, a <content> element, nor
     // a <shadow> element recurse normally.
     var child = node.firstChild;
