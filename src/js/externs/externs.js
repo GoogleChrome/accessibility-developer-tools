@@ -43,10 +43,9 @@ HTMLContentElement.prototype.getDistributedNodes = function() {};
 function HTMLShadowElement() {}
 
 /**
- * Note: this is an out of date model, but still used in practice sometimes.
- * @type {ShadowRoot}
+ * @return {Array.<Node>}
  */
-HTMLShadowElement.prototype.olderShadowRoot;
+HTMLShadowElement.prototype.getDistributedNodes = function() {};
 
 /**
  * Note: will be deprecated at some point; prefer shadowRoot if it exists.

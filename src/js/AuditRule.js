@@ -139,6 +139,8 @@ axs.AuditRule.collectMatchingElements = function(node, matcher, collection,
     // up by the <content> or <shadow> elements. Descend straight into the
     // ShadowRoot.
     if (element) {
+        // NOTE: grunt qunit DOES NOT support Shadow DOM, so if changing this
+        // code, be sure to run the tests in the browser before committing.
         var shadowRoot = element.shadowRoot || element.webkitShadowRoot;
         if (shadowRoot) {
             axs.AuditRule.collectMatchingElements(shadowRoot,
@@ -171,18 +173,15 @@ axs.AuditRule.collectMatchingElements = function(node, matcher, collection,
         if (!opt_shadowRoot) {
             console.warn('ShadowRoot not provided for', element);
         } else {
-            var olderShadowRoot = opt_shadowRoot.olderShadowRoot ||
-                                  shadow.olderShadowRoot;
-            if (olderShadowRoot) {
-                axs.AuditRule.collectMatchingElements(olderShadowRoot,
+            var distributedNodes = shadow.getDistributedNodes();
+            for (var i = 0; i < distributedNodes.length; i++) {
+                axs.AuditRule.collectMatchingElements(distributedNodes[i],
                                                       matcher,
                                                       collection,
-                                                      olderShadowRoot);
+                                                      opt_shadowRoot);
             }
         }
-        return;
     }
-
     // If it is neither the parent of a ShadowRoot, a <content> element, nor
     // a <shadow> element recurse normally.
     var child = node.firstChild;
