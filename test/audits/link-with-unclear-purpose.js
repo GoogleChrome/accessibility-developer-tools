@@ -41,5 +41,3 @@ test('a link without meaningful text is bad', function() {
                   { elements: [a], result: axs.constants.AuditResult.FAIL });
     });
 });
-
-
