@@ -484,7 +484,8 @@ axs.properties.getTextFromAriaLabelledby = function(element, textAlternatives) {
  * @param {!Element} element
  * @param {!Object} textAlternatives An object that will be updated with information.
  * @param {?string} existingComputedname
- * @param {boolean} recursive
+ * @param {boolean} recursive Whether this method is being called recursively as described in
+ *     http://www.w3.org/TR/wai-aria/roles#textalternativecomputation section 2A.
  * @return {Object}
  */
 axs.properties.getTextFromHostLanguageAttributes = function(element,

@@ -44,5 +44,5 @@ axs.AuditRule.specs.duplicateId = {
         var elementsWithId = element.ownerDocument.querySelectorAll(selector);
         return (elementsWithId.length > 1);
     },
-    code: 'AX_HTML_01'
+    code: 'AX_HTML_02'
 };

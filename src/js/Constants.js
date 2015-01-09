@@ -1071,9 +1071,7 @@ axs.constants.ARIA_TO_HTML_ATTRIBUTE = {
  * <ul>
  * <li>`role` will contain the implicit role if it exists, otherwise empty string.</li>
  * <li>`allowed` contains the roles that can reasonably be applied to this element.
- *    Note: if the implicit role is listed in the allowed array then it is OK (recommended?)
- *    to explictly set the role.
- *    Note2: A tag that can take any role is signified by a '*' wildcard in the array. It is not
+ *    Note: A tag that can take any role is signified by a '*' wildcard in the array. It is not
  *    an error if the array contains other roles but currently this has no meaning. In future it may
  *    be used to indicate recommended roles.
  * </li>
