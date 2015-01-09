@@ -14,7 +14,9 @@
 
 goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
+goog.require('axs.browserUtils');
 goog.require('axs.constants');
+goog.require('axs.properties');
 
 /**
  * @type {axs.AuditRule.Spec}
@@ -39,8 +41,12 @@ axs.AuditRule.specs.requiredAriaAttributeMissing = {
                 var propertyDetails = axs.constants.ARIA_PROPERTIES[propertyKey];
                 if ('defaultValue' in propertyDetails)
                     continue;
-                if (!element.hasAttribute(property))
-                    return true;
+                if (!element.hasAttribute(property)) {
+                    var nativelySupported = axs.properties.getNativelySupportedAttributes(element);
+                    if (nativelySupported.indexOf(property) < 0) {
+                        return true;
+                    }
+                }
             }
         }
     },

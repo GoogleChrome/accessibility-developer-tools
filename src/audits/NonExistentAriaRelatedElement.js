@@ -16,13 +16,15 @@ goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 
+// TODO(RickSBrown): Consider expanding this beyond ARIA? e.g. 'for' on label.
+
 /**
  * @type {axs.AuditRule.Spec}
  */
 axs.AuditRule.specs.nonExistentAriaRelatedElement = {
     name: 'nonExistentAriaRelatedElement',
     heading: 'ARIA attributes which refer to other elements by ID should refer to elements which exist in the DOM',
-    url: '',  // TODO(RickSBrown): talk to Alice about wiki for this (I don't think I can update?);
+    url: '',
     severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {
         var idrefTypes = ['idref', 'idref_list'];

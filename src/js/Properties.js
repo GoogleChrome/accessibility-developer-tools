@@ -65,6 +65,20 @@ axs.properties.getFocusProperties = function(element) {
     return focusProperties;
 };
 
+/**
+ * @typedef {{ property: string,
+ *             on: Element }}
+ *
+ * property examples: 'display: none', 'visibility: hidden', 'aria-hidden'
+ */
+axs.properties.hiddenReason;
+
+/**
+ * Determine the reason an element is not visible.
+ * Will give the CSS rule or attribute and the element/ancestor it is set on.
+ * @param {Element} element
+ * @return {?axs.properties.hiddenReason}
+ */
 axs.properties.getHiddenReason = function(element) {
     if (!element || !(element instanceof element.ownerDocument.defaultView.HTMLElement))
       return null;
@@ -128,6 +142,7 @@ axs.properties.hasDirectTextDescendant = function(element) {
     /**
      * Determines whether element has a text node as a direct descendant.
      * This method uses XPath on HTML DOM which is not universally supported.
+     * @return {boolean}
      */
     function hasDirectTextDescendantXpath() {
         var selectorResults = ownerDocument.evaluate(axs.properties.TEXT_CONTENT_XPATH,
@@ -149,6 +164,7 @@ axs.properties.hasDirectTextDescendant = function(element) {
      * Determines whether element has a text node as a direct descendant.
      * This method uses TreeWalker as a fallback (at time of writing no version
      * of IE (including IE11) supports XPath in the HTML DOM).
+     * @return {boolean}
      */
     function hasDirectTextDescendantTreeWalker() {
         var treeWalker = ownerDocument.createTreeWalker(element,
@@ -377,7 +393,7 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
         var titleValue = {};
         titleValue.type = 'string';
         titleValue.valid = true;
-        titleValue.text =  element.getAttribute('title');
+        titleValue.text = element.getAttribute('title');
         titleValue.lastWord = axs.properties.getLastWord(titleValue.lastWord);
         if (computedName)
             titleValue.unused = true;
@@ -461,6 +477,17 @@ axs.properties.getTextFromAriaLabelledby = function(element, textAlternatives) {
     return computedName;
 };
 
+
+/**
+ * Determine the text description/label for an element.
+ * For example will attempt to find the alt text for an image or label text for a form control.
+ * @param {!Element} element
+ * @param {!Object} textAlternatives An object that will be updated with information.
+ * @param {?string} existingComputedname
+ * @param {boolean} recursive Whether this method is being called recursively as described in
+ *     http://www.w3.org/TR/wai-aria/roles#textalternativecomputation section 2A.
+ * @return {Object}
+ */
 axs.properties.getTextFromHostLanguageAttributes = function(element,
                                                             textAlternatives,
                                                             existingComputedname,
@@ -471,7 +498,7 @@ axs.properties.getTextFromHostLanguageAttributes = function(element,
             var altValue = {};
             altValue.type = 'string';
             altValue.valid = true;
-            altValue.text =  element.getAttribute('alt');
+            altValue.text = element.getAttribute('alt');
             if (computedName)
                 altValue.unused = true;
             else
@@ -486,7 +513,7 @@ axs.properties.getTextFromHostLanguageAttributes = function(element,
             if (typeof(src) == 'string') {
                 var parts = src.split('/');
                 var filename = parts.pop();
-                var filenameValue = { text: filename }
+                var filenameValue = { text: filename };
                 textAlternatives['filename'] = filenameValue;
                 computedName = filename;
             }
@@ -596,6 +623,7 @@ axs.properties.getTextProperties = function(node) {
 };
 
 /**
+ * Finds any ARIA attributes (roles, states and properties) explicitly set on this element.
  * @param {Element} element
  * @return {Object}
  */
@@ -655,7 +683,7 @@ axs.properties.getAriaProperties = function(element) {
 };
 
 /**
- * Gets the ARIA properties which apply to all elements, not just elements with ARIA roles.
+ * Gets the ARIA properties found on this element which apply to all elements, not just elements with ARIA roles.
  * @param {Element} element
  * @return {!Object}
  */
@@ -750,3 +778,124 @@ axs.properties.getAllProperties = function(node) {
     allProperties['videoProperties'] = axs.properties.getVideoProperties(element);
     return allProperties;
 };
+
+(function() {
+    /**
+     * Helper for implicit semantic functionality.
+     * Can be made part of the public API if need be.
+     * @param {Element} element
+     * @return {?axs.constants.HtmlInfo}
+     */
+    function getHtmlInfo(element) {
+        if (!element)
+            return null;
+        var tagName = element.tagName;
+        if (!tagName)
+            return null;
+        tagName = tagName.toUpperCase();
+        var infos = axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO[tagName];
+        if (!infos || !infos.length)
+            return null;
+        var defaultInfo = null;  // will contain the info with no specific selector if no others match
+        for (var i = 0, len = infos.length; i < len; i++) {
+            var htmlInfo = infos[i];
+            if (htmlInfo.selector) {
+                if (axs.browserUtils.matchSelector(element, htmlInfo.selector))
+                    return htmlInfo;
+            } else {
+                defaultInfo = htmlInfo;
+            }
+        }
+        return defaultInfo;
+    }
+
+    /**
+     * @param {Element} element
+     * @return {string} role
+     */
+    axs.properties.getImplicitRole = function(element) {
+        var htmlInfo = getHtmlInfo(element);
+        if (htmlInfo)
+            return htmlInfo.role;
+        return '';
+    };
+
+    /**
+     * Determine if this element can take ANY ARIA attributes including roles, state and properties.
+     * If false then even global attributes should not be used.
+     * @param {Element} element
+     * @return {boolean}
+     */
+    axs.properties.canTakeAriaAttributes = function(element) {
+        var htmlInfo = getHtmlInfo(element);
+        if (htmlInfo)
+            return !htmlInfo.reserved;
+        return true;
+    };
+})();
+
+/**
+ * This lists the ARIA attributes that are supported implicitly by native properties of this element.
+ *
+ * @param {Element} element The element to check.
+ * @return {!Array.<string>} An array of ARIA attributes.
+ *
+ * example:
+ *    var element = document.createElement("input");
+ *    element.setAttribute("type", "range");
+ *    var supported = axs.properties.getNativelySupportedAttributes(element);  // an array of ARIA attributes
+ *    console.log(supported.indexOf("aria-valuemax") >=0);  // logs 'true'
+ */
+axs.properties.getNativelySupportedAttributes = function(element) {
+    var result = [];
+    if (!element) {
+        return result;
+    }
+    var testElement = element.cloneNode(false);  // gets rid of expandos
+    var ariaAttributes = Object.keys(/** @type {!Object} */(axs.constants.ARIA_TO_HTML_ATTRIBUTE));
+    for (var i = 0; i < ariaAttributes.length; i++) {
+        var ariaAttribute = ariaAttributes[i];
+        var nativeAttribute = axs.constants.ARIA_TO_HTML_ATTRIBUTE[ariaAttribute];
+        if (nativeAttribute in testElement) {
+            result[result.length] = ariaAttribute;
+        }
+    }
+    return result;
+};
+
+(function() {
+    var roleToSelectorCache = {};  // performance optimization, cache results from getSelectorForRole
+
+    /**
+     * Build a selector that will match elements which implicity or explicitly have this role.
+     * Note that the selector will probably not look elegant but it will work.
+     * @param {string} role
+     * @return {string} selector
+     */
+    axs.properties.getSelectorForRole = function(role) {
+        if (!role)
+            return '';
+        if (roleToSelectorCache[role] && roleToSelectorCache.hasOwnProperty(role))
+            return roleToSelectorCache[role];
+        var selectors = ['[role="' + role + '"]'];
+        var tagNames = Object.keys(/** @type {!Object} */(axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO));
+        tagNames.forEach(function(tagName) {
+            var htmlInfos = axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO[tagName];
+            if (htmlInfos && htmlInfos.length) {
+                for (var i = 0; i < htmlInfos.length; i++) {
+                    var htmlInfo = htmlInfos[i];
+                    if (htmlInfo.role === role) {
+                        if (htmlInfo.selector) {
+                            selectors[selectors.length] = htmlInfo.selector;
+                        }
+                        else {
+                            selectors[selectors.length] = tagName;  // Selectors API is not case sensitive.
+                            break;  // No need to continue adding selectors since we will match the tag itself.
+                        }
+                    }
+                }
+            }
+        });
+        return (roleToSelectorCache[role] = selectors.join(','));
+    };
+})();

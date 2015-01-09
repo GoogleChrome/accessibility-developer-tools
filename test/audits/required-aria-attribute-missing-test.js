@@ -104,33 +104,6 @@
         deepEqual(rule.run({ scope: fixture }), expected);
     });
 
-    /*
-     * TDD - the tests below won't pass - yet.
-     * They should start to pass when we have support for implicit sematics.
-     * TODO(RickSBrown): Port from aria-toolkit;
-     */
-    if (false) {
-
-    test('Role and states provided implcitly by html', function() {
-        var fixture = document.getElementById('qunit-fixture');
-        var widget = fixture.appendChild(document.createElement('input'));
-        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
-        widget.setAttribute('type', 'range');  // role is slider
-        deepEqual(rule.run({ scope: fixture }), expected);
-    });
-
-    test('Role provided implcitly by html, redundant states', function() {
-        var fixture = document.getElementById('qunit-fixture');
-        var widget = fixture.appendChild(document.createElement('input'));
-        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
-        widget.setAttribute('type', 'range');  // role is slider
-        // below props shouldn't be provided explicitly, that's a different test.
-        widget.setAttribute('aria-valuemax', '79');
-        widget.setAttribute('aria-valuemin', '10');
-        widget.setAttribute('aria-valuenow', '50');
-        deepEqual(rule.run({ scope: fixture }), expected);
-    });
-
     test('Required states provided implcitly by html', function() {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('input'));
@@ -154,5 +127,5 @@
             deepEqual(rule.run({ scope: fixture }), expected);
         });
     });
-    }
+
 })();

@@ -15,28 +15,22 @@
 goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
+goog.require('axs.properties');
 
 /**
+ * Based on recommendations in document: http://www.w3.org/TR/aria-in-html/
  * @type {axs.AuditRule.Spec}
  */
-axs.AuditRule.specs.ariaOwnsDescendant = {
-    // TODO(RickSBrown): check for elements that try to 'aria-own' an ancestor;
-    // Also: own self does not make sense. Perhaps any IDREF pointing to itself is bad?
-    // Perhaps even extend this beyond ARIA (e.g. label for itself). Have to change return code?
-    // Also: other "bad hierarchy" tests - e.g. active-descendant owning a non-descendant...
-    name: 'ariaOwnsDescendant',
-    heading: 'aria-owns should not be used if ownership is implicit in the DOM',
+axs.AuditRule.specs.ariaOnReservedElement = {
+    name: 'ariaOnReservedElement',
+    heading: 'This element does not support ARIA roles, states and properties',
     url: '',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
-        return axs.browserUtils.matchSelector(element, '[aria-owns]');
+        return !axs.properties.canTakeAriaAttributes(element);
     },
     test: function(element) {
-        var attr = 'aria-owns';
-        var ownedElements = axs.utils.getIdReferents(attr, element);
-        return ownedElements.some(function(ownedElement) {
-            return (element.compareDocumentPosition(ownedElement) & Node.DOCUMENT_POSITION_CONTAINED_BY);
-        });
+        return axs.properties.getAriaProperties(element) !== null;
     },
-    code: 'AX_ARIA_06'
+    code: 'AX_ARIA_12'
 };

@@ -238,3 +238,72 @@ test("Returns a selector to match all aria idref properties.", function() {
   var actual = axs.utils.getSelectorForAriaProperties(axs.utils.getAriaPropertiesByValueType(["idref"]));
   deepEqual(actual, expected);
 });
+
+module("getRoles", {
+    setup: function () {}
+});
+
+test("getRoles on element with valid role.", function() {
+    for (var role in axs.constants.ARIA_ROLES) {
+        if (axs.constants.ARIA_ROLES.hasOwnProperty(role) && !axs.constants.ARIA_ROLES[role].abstract) {
+            var expected = {
+                valid: true,
+                roles: [{ name: role, valid: true, details: axs.constants.ARIA_ROLES[role] }]
+            };
+            var element = document.createElement('div');
+            element.setAttribute('role', role);
+            var actual = axs.utils.getRoles(element);
+            deepEqual(actual, expected);
+        }
+    }
+});
+
+test("getRoles on element with no role.", function() {
+    var expected = null;
+    var element = document.createElement('input');
+    element.setAttribute('type', 'checkbox');
+    var actual = axs.utils.getRoles(element);
+    strictEqual(actual, expected);
+});
+
+test("getRoles on element with empty role.", function() {
+    var expected = null;
+    var element = document.createElement('div');
+    element.setAttribute('role', '');
+    var actual = axs.utils.getRoles(element);
+    strictEqual(actual, expected);
+});
+
+test("getRoles on element with implicit role and options.implicit.", function() {
+    var expected = {
+        valid: true,
+        roles: [{ name: 'checkbox', valid: true, details: axs.constants.ARIA_ROLES['checkbox'] }]
+    };
+    var element = document.createElement('input');
+    element.setAttribute('type', 'checkbox');
+    var actual = axs.utils.getRoles(element, { implicit: true });
+    deepEqual(actual, expected);
+});
+
+test("getRoles on element with no role and options.implicit.", function() {
+    var expected = null;
+    var element = document.createElement('div');
+    element.setAttribute('type', 'checkbox');  // invalid but let's put the pressure on
+    var actual = axs.utils.getRoles(element, { implicit: true });
+    strictEqual(actual, expected);
+});
+
+test("getRoles on element with abstract role.", function() {
+    for (var role in axs.constants.ARIA_ROLES) {
+        if (axs.constants.ARIA_ROLES.hasOwnProperty(role) && axs.constants.ARIA_ROLES[role].abstract) {
+            var expected = {
+                valid: false,
+                roles: [{ name: role, valid: false }]
+            };
+            var element = document.createElement('div');
+            element.setAttribute('role', role);
+            var actual = axs.utils.getRoles(element);
+            deepEqual(actual, expected);
+        }
+    }
+});

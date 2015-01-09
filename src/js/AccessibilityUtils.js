@@ -1034,23 +1034,34 @@ axs.utils.isInlineElement = function(element) {
 };
 
 /**
- * @param {Element} element
- * @return {Object|boolean}
+ *
+ * Gets role details from an element.
+ * @param {Element} element The DOM element whose role we want.
+ * @param {boolean=} implicit if true then implicit semantics will be considered if there is no role attribute.
+ *
+ * @return {Object}
  */
-axs.utils.getRoles = function(element) {
-    if (!element.hasAttribute('role'))
-        return false;
+axs.utils.getRoles = function(element, implicit) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE || (!element.hasAttribute('role') && !implicit))
+        return null;
     var roleValue = element.getAttribute('role');
+    if (!roleValue && implicit)
+        roleValue = axs.properties.getImplicitRole(element);
+    if (!roleValue)  // role='' or implicit role came up empty
+        return null;
     var roleNames = roleValue.split(' ');
     var roles = [];
     var valid = true;
     for (var i = 0; i < roleNames.length; i++) {
         var role = roleNames[i];
-        if (axs.constants.ARIA_ROLES[role])
-            roles.push({'name': role, 'details': axs.constants.ARIA_ROLES[role], 'valid': true});
-        else {
-            roles.push({'name': role, 'valid': false});
+        var ariaRole = axs.constants.ARIA_ROLES[role];
+        if (ariaRole && !ariaRole.abstract) {
+            var roleObject = {'name': role, 'details': axs.constants.ARIA_ROLES[role], 'valid': true};
+            roles.push(roleObject);
+        } else {
+            var roleObject = {'name': role, 'valid': false};
             valid = false;
+            roles.push(roleObject);
         }
     }
 
@@ -1393,10 +1404,12 @@ axs.utils.getQuerySelectorText = function(obj) {
  * Gets elements that refer to this element in an ARIA attribute that takes an
  * ID reference list or single ID reference.
  * @param {!string} attributeName Name of an ARIA attribute, e.g. 'aria-owns'.
- * @param {!Element} element a potential referent.
+ * @param {Element} element a potential referent.
  * @return {NodeList} The elements that refer to this element.
  */
 axs.utils.getIdReferrers = function(attributeName, element) {
+    if (!element)
+        return null;
     var id = element.id;
     var propertyKey = attributeName.replace(/^aria-/, '');
     var property = axs.constants.ARIA_PROPERTIES[propertyKey];
@@ -1409,6 +1422,39 @@ axs.utils.getIdReferrers = function(attributeName, element) {
         return element.ownerDocument.querySelectorAll(referrerQuery);
     }
     return null;
+};
+
+/**
+ * Gets elements which this element refers to in the given attribute.
+ * @param {!string} attributeName Name of an ARIA attribute, e.g. 'aria-owns'.
+ * @param {Element} element The DOM element which has the ARIA attribute.
+ * @return {!Array.<Element>} An array of elements that are referred to by this element.
+ * @example
+ *    var owner = document.body.appendChild(document.createElement("div"));
+ *    var owned = document.body.appendChild(document.createElement("div"));
+ *    owner.setAttribute("aria-owns", "kungfu");
+ *    owned.setAttribute("id", "kungfu");
+ *    console.log(axs.utils.getIdReferents("aria-owns", owner)[0] === owned);  // This will log 'true'
+ */
+axs.utils.getIdReferents = function(attributeName, element) {
+    var result = [];
+    var propertyKey = attributeName.replace(/^aria-/, '');
+    var property = axs.constants.ARIA_PROPERTIES[propertyKey];
+    if (!property || !element.hasAttribute(attributeName))
+        return result;
+    var propertyType = property.valueType;
+    if (propertyType === 'idref_list' || propertyType === 'idref') {
+        var ownerDocument = element.ownerDocument;
+        var ids = element.getAttribute(attributeName);
+        ids = ids.split(/\s+/);
+        for (var i = 0, len = ids.length; i < len; i++) {
+            var next = ownerDocument.getElementById(ids[i]);
+            if (next) {
+                result[result.length] = next;
+            }
+        }
+    }
+    return result;
 };
 
 /**
@@ -1440,3 +1486,34 @@ axs.utils.getSelectorForAriaProperties = function(ariaProperties) {
     result.sort();  // facilitates reading long selectors and unit testing
     return result.join(',');
 };
+
+/**
+ * Finds descendants of this element which implement the given ARIA role.
+ * Will look for descendants with implicit or explicit role.
+ * @param {Element} element an HTML DOM element.
+ * @param {string} role The role you seek.
+ * @return {!Array.<Element>} An array of matching elements.
+ * @example
+ *    var container = document.createElement("div");
+ *    var button = document.createElement("button");
+ *    var span = document.createElement("span");
+ *    span.setAttribute("role", "button");
+ *    container.appendChild(button);
+ *    container.appendChild(span);
+ *    var result = axs.utils.findDescendantsWithRole(container, "button");  // result is an array containing both 'button' and 'span'
+ */
+axs.utils.findDescendantsWithRole = function(element, role) {
+    if (!(element && role))
+        return [];
+    var selector = axs.properties.getSelectorForRole(role);
+    if (!selector)
+        return [];
+    var result = element.querySelectorAll(selector);
+    if (result) {  // Convert NodeList to Array; methinks 80/20 that's what callers want.
+        result = Array.prototype.map.call(result, function(item) { return item; });
+    } else {
+        return [];
+    }
+    return result;
+};
+
