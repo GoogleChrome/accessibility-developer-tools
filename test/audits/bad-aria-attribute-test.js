@@ -18,14 +18,14 @@
     test('Element with role and global, supported and required attributes', function() {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('div'));
-        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
         widget.setAttribute('role', 'spinbutton');
         widget.setAttribute('aria-hidden', 'false');  // global
         widget.setAttribute('aria-required', 'true');  // supported
         widget.setAttribute('aria-valuemax', '79');  // required
         widget.setAttribute('aria-valuemin', '10');  // required
         widget.setAttribute('aria-valuenow', '50');  // required
-        deepEqual(rule.run({ scope: fixture }), expected);
+        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
+        deepEqual(rule.run({ scope: fixture }), expected, 'Test should pass with global, supported and required attributes for role');
     });
 
     /*
@@ -34,10 +34,10 @@
     test('Element with role and global but missing supported and required attributes', function() {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('div'));
-        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
         widget.setAttribute('role', 'spinbutton');
         widget.setAttribute('aria-hidden', 'false');  // global (so the audit will encounter this element)
-        deepEqual(rule.run({ scope: fixture }), expected);
+        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
+        deepEqual(rule.run({ scope: fixture }), expected, 'This rule shouldn\'t care if required and/or supported roles are missing.');
     });
 
     /*
@@ -46,13 +46,13 @@
     test('Element with role and known but unsupported attributes', function() {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('div'));
-        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
         widget.setAttribute('role', 'group');
         widget.setAttribute('aria-required', 'true');  // unsupported
         widget.setAttribute('aria-valuemax', '79');  // unsupported
         widget.setAttribute('aria-valuemin', '10');  // unsupported
         widget.setAttribute('aria-valuenow', '50');  // unsupported
-        deepEqual(rule.run({ scope: fixture }), expected);
+        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
+        deepEqual(rule.run({ scope: fixture }), expected, 'This rule shouldn\'t care if known ARIA attributes are used with the wrong role.');
     });
 
     /*
@@ -61,16 +61,15 @@
     test('Element with role and global but missing supported and required attributes', function() {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('meta'));  // note, a reserved HTML element
-        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
         widget.setAttribute('role', 'spinbutton');
         widget.setAttribute('aria-hidden', 'false');  // global (so the audit will encounter this element)
-        deepEqual(rule.run({ scope: fixture }), expected);
+        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
+        deepEqual(rule.run({ scope: fixture }), expected, 'This rule shouldn\'t care if we put ARIA attributes on elements that shouldn\'t have them.');
     });
 
     test('Element with a role and unknown aria- attribute', function() {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('div'));
-        var expected = { elements: [widget], result: axs.constants.AuditResult.FAIL };
         widget.setAttribute('role', 'spinbutton');
         widget.setAttribute('aria-labeledby', 'false');  // unknown
         widget.setAttribute('aria-hidden', 'false');  // global
@@ -78,7 +77,8 @@
         widget.setAttribute('aria-valuemax', '79');  // required
         widget.setAttribute('aria-valuemin', '10');  // required
         widget.setAttribute('aria-valuenow', '50');  // required
-        deepEqual(rule.run({ scope: fixture }), expected);
+        var expected = { elements: [widget], result: axs.constants.AuditResult.FAIL };
+        deepEqual(rule.run({ scope: fixture }), expected, 'This rule should detect unknown "aria-" attributes on elements with role');
     });
 
     /*
@@ -89,7 +89,7 @@
         var widget = fixture.appendChild(document.createElement('div'));
         widget.setAttribute('aria-bananapeel', 'oops');  // unknown
         var expected = { elements: [widget], result: axs.constants.AuditResult.FAIL };
-        deepEqual(rule.run({ scope: fixture }), expected);
+        deepEqual(rule.run({ scope: fixture }), expected, 'This rule should detect unknown "aria-" attributes on elements without role');
     });
 
     /*
@@ -100,7 +100,7 @@
         var widget = fixture.appendChild(document.createElement('div'));
         widget.setAttribute('role', 'spinbutton');
         var expected = { result: axs.constants.AuditResult.NA };
-        deepEqual(rule.run({ scope: fixture }), expected);
+        deepEqual(rule.run({ scope: fixture }), expected, 'This rule should ignore elements with no aria- attributes.');
     });
 
     test('Element with no role and some known, some unknown aria- attributes', function() {
@@ -111,7 +111,7 @@
         widget.setAttribute('aria-awards', 'true');  // unknown
         widget.setAttribute('aria-singer', 'true');  // unknown
         var expected = { elements: [widget], result: axs.constants.AuditResult.FAIL };
-        deepEqual(rule.run({ scope: fixture }), expected);
+        deepEqual(rule.run({ scope: fixture }), expected, 'This rule should detect unknown "aria-" attributes amongst known ones');
     });
 
 })();

@@ -1391,7 +1391,7 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         role: '',
         selector: 'input[type="month"]'
     }, {
-        role: 'spinbutton',
+        role: '',
         selector: 'input[type="number"]'
     }, {
         role: 'textbox',

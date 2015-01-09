@@ -1068,23 +1068,6 @@ axs.utils.getRoles = function(element, implicit) {
     return { 'roles': roles, 'valid': valid };
 };
 
-RoleDetails.prototype.contains = function (role) {
-    var roles = this.roles;
-    if (roles.length) {
-        return (roles.indexOf(role) >= 0);
-    }
-    return false;
-};
-
-/**
- * Represents 
- * @constructor
- */
-function RoleDetails(roles, valid) {
-    this.roles = roles;
-    this.valid = valid;
-}
-
 /**
  * @param {!string} propertyName
  * @param {!string} value

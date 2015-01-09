@@ -623,7 +623,7 @@ axs.properties.getTextProperties = function(node) {
 };
 
 /**
- * Finds any ARIA attributes (roles, states and properties) explcitly set on this element.
+ * Finds any ARIA attributes (roles, states and properties) explicitly set on this element.
  * @param {Element} element
  * @return {Object}
  */

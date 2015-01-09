@@ -13,7 +13,7 @@
 // limitations under the License.
 module('RequiredOwnedAriaRoleMissing');
 
-test('Explcit role on container and required elements all explicitly present', function() {
+test('Explicit role on container and required elements all explicitly present', function() {
     var rule = axs.AuditRules.getRule('requiredOwnedAriaRoleMissing');
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('div'));
@@ -28,7 +28,7 @@ test('Explcit role on container and required elements all explicitly present', f
     deepEqual(actual.elements, []);
 });
 
-test('Explcit role on container and required elements all explicitly present via aria-owns', function() {
+test('Explicit role on container and required elements all explicitly present via aria-owns', function() {
     var rule = axs.AuditRules.getRule('requiredOwnedAriaRoleMissing');
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('div'));
@@ -48,7 +48,7 @@ test('Explcit role on container and required elements all explicitly present via
     equal(container.childNodes.length, 0);  // paranoid check to ensure the test itself is correct
 });
 
-test('Explcit role on container and required elements missing', function() {
+test('Explicit role on container and required elements missing', function() {
     var rule = axs.AuditRules.getRule('requiredOwnedAriaRoleMissing');
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('div'));
@@ -59,7 +59,7 @@ test('Explcit role on container and required elements missing', function() {
     deepEqual(actual.elements, [container]);
 });
 
-test('Explcit role on aria-busy container and required elements missing', function() {
+test('Explicit role on aria-busy container and required elements missing', function() {
     var rule = axs.AuditRules.getRule('requiredOwnedAriaRoleMissing');
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('div'));
@@ -72,7 +72,7 @@ test('Explcit role on aria-busy container and required elements missing', functi
 });
 
 
-test('Explcit role on container and required elements all implicitly present', function() {
+test('Explicit role on container and required elements all implicitly present', function() {
     var rule = axs.AuditRules.getRule('requiredOwnedAriaRoleMissing');
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('ul'));
@@ -104,4 +104,3 @@ test('Role with no required elements', function() {
     var actual = rule.run({ scope: fixture });
     equal(actual.result, axs.constants.AuditResult.NA);
 });
-

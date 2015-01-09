@@ -75,7 +75,6 @@
     });
 
     test("With shadow DOM with shadow element", function () {
-        console.log("With shadow DOM with shadow element");
         var container = document.getElementById('qunit-fixture');
         container.appendChild(buildTestDom());
         var wrapper = container.firstElementChild;

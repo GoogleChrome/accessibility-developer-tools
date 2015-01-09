@@ -127,11 +127,11 @@ test('get implicit role for input type=button', function() {
     equal(actual, 'button');
 });
 
-test('get implicit role for input type=number', function() {
+test('get implicit role for input type=range', function() {
     var element = document.createElement('input');
-    element.setAttribute('type', 'number');
+    element.setAttribute('type', 'range');
     var actual = axs.properties.getImplicitRole(element);
-    equal(actual, 'spinbutton');
+    equal(actual, 'slider');
 });
 
 test('get implicit role for li out of context', function() {

@@ -61,5 +61,4 @@ test('Abstract role == problem', function() {
     axs.AuditRules.getRule('badAriaRole').run({ scope: fixture }),
     { elements: [div], result: axs.constants.AuditResult.FAIL }
   );
-
 });

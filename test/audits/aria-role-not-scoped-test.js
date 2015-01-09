@@ -60,9 +60,9 @@ test('Scope role present via aria-owns', function() {
     }
     container.setAttribute('aria-owns', ids.join(' '));
     var actual = rule.run({ scope: fixture });
+    equal(container.childNodes.length, 0, 'container should have no child nodes since we\'re checking use of aria-owns');  // paranoid check to ensure the test itself is correct
     equal(actual.result, axs.constants.AuditResult.PASS);
     deepEqual(actual.elements, []);
-    equal(container.childNodes.length, 0);  // paranoid check to ensure the test itself is correct
 });
 
 test('Scope role missing', function() {
