@@ -16,21 +16,46 @@ goog.require('axs.AuditRule');
 
 goog.provide('axs.AuditRules');
 
-/**
- * Gets the audit rule with the given name.
- * @param {string} name
- * @return {axs.AuditRule}
- */
-axs.AuditRules.getRule = function(name) {
-    if (!axs.AuditRules.rules) {
-        /** @type Object.<string, axs.AuditRule> */
-        axs.AuditRules.rules = {};
-        for (var specName in axs.AuditRule.specs) {
-            var spec = axs.AuditRule.specs[specName];
-            var auditRule = new axs.AuditRule(spec);
-            axs.AuditRules.rules[spec.name] = auditRule;
-        }
-    }
+(function(){
+    var auditRulesByName = {};
+    var auditRulesByCode = {};
 
-    return axs.AuditRules.rules[name];
-};
+    /**
+     * Instantiates and registers an audit rule.
+     * If a conflicting rule is already registered then the new rule will not be added.
+     * @param {axs.AuditRule.Spec} spec The object which defines the AuditRule to add.
+     * @throws {Error} If the rule duplicates properties that must be unique.
+     */
+    axs.AuditRules.addRule = function(spec) {
+        // axs.AuditRule.specs[spec.name] = spec;  // This would add backwards compatibility
+        // create the auditRule before checking props as we can expect the constructor to perform the
+        // first layer of sanity checking.
+        var auditRule = new axs.AuditRule(spec);
+        if (auditRule.code in auditRulesByCode || auditRule.name in auditRulesByName)
+            throw new Error('Can not add audit rule with same name or code: "' + auditRule.code + '"/"' + auditRule.name + '"');
+        auditRulesByName[auditRule.name] = auditRulesByCode[auditRule.code] = auditRule;
+    };
+
+    /**
+     * Gets the audit rule with the given name.
+     * @param {string} name The name (or code) of an audit rule.
+     * @return {axs.AuditRule}
+     */
+    axs.AuditRules.getRule = function(name) {
+        return auditRulesByName[name] || auditRulesByCode[name] || null;
+    };
+
+    /**
+     * Gets all registered audit rules.
+     * @param {boolean=} namesOnly If true then the result will contain only the rule names.
+     * @return {Array.<axs.AuditRule>|Array.<string>}
+     */
+    axs.AuditRules.getRules = function(namesOnly) {
+        var ruleNames = Object.keys(auditRulesByName);
+        if(namesOnly)
+            return ruleNames;
+        return ruleNames.map(function(name) {
+            return this.getRule(name);
+        }, axs.AuditRules);
+    };
+})();

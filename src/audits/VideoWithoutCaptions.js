@@ -15,10 +15,7 @@
 goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 
-/**
- * @type {axs.AuditRule.Spec}
- */
-axs.AuditRule.specs.videoWithoutCaptions = {
+axs.AuditRules.addRule({
     name: 'videoWithoutCaptions',
     heading: 'Video elements should use <track> elements to provide captions',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_video_01--video-elements-should-use-track-elements-to-provide-captions',
@@ -31,4 +28,4 @@ axs.AuditRule.specs.videoWithoutCaptions = {
         return !captions.length;
     },
     code: 'AX_VIDEO_01'
-};
+});

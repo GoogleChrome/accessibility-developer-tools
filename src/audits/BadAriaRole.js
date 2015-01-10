@@ -17,9 +17,9 @@ goog.require('axs.AuditRules');
 goog.require('axs.utils');
 
 /**
- * @type {axs.AuditRule.Spec}
+ * This audit checks the `role` attribute to ensure it contains a valid, non-abstract ARIA role.
  */
-axs.AuditRule.specs.badAriaRole = {
+axs.AuditRules.addRule({
     name: 'badAriaRole',
     heading: 'Elements with ARIA roles must use a valid, non-abstract ARIA role',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_01--elements-with-aria-roles-must-use-a-valid-non-abstract-aria-role',
@@ -32,4 +32,4 @@ axs.AuditRule.specs.badAriaRole = {
         return !roles.valid;
     },
     code: 'AX_ARIA_01'
-};
+});

@@ -132,7 +132,7 @@ axs.AuditConfiguration.prototype = {
         if (!(auditRuleName in this.rules_))
             return null;
         if (!('severity' in this.rules_[auditRuleName]))
-            return null
+            return null;
         return this.rules_[auditRuleName].severity;
     },
 
@@ -180,14 +180,12 @@ axs.Audit.getRulesCannotRun = function(opt_configuration) {
     if(opt_configuration.withConsoleApi) {
         return [];
     }
-    return Object.keys(axs.AuditRule.specs)
-        .filter(function(key) {
-            return axs.AuditRules.getRule(key).requiresConsoleAPI;
-        })
-        .map(function(key) {
-            return axs.AuditRules.getRule(key).code;
+    return axs.AuditRules.getRules().filter(function(rule) {
+            return rule.requiresConsoleAPI;
+        }).map(function(rule) {
+            return rule.code;
         });
-}
+};
 
 /**
  * Runs an audit with all of the audit rules.
@@ -209,7 +207,7 @@ axs.Audit.run = function(opt_configuration) {
         configuration.auditRulesToRun.length > 0) {
         auditRules = configuration.auditRulesToRun;
     } else
-        auditRules = Object.keys(axs.AuditRule.specs);
+        auditRules = axs.AuditRules.getRules(true);
 
     if (configuration.auditRulesToIgnore) {
         for (var i = 0; i < configuration.auditRulesToIgnore.length; i++) {
@@ -319,15 +317,15 @@ goog.exportSymbol('axs.Audit.createReport', axs.Audit.createReport);
  */
 axs.Audit.accessibilityErrorMessage = function(result) {
     if (result.rule.severity == axs.constants.Severity.SEVERE)
-        var message = 'Error: '
+        var message = 'Error: ';
     else
-        var message = 'Warning: '
+        var message = 'Warning: ';
     message += result.rule.code + ' (' + result.rule.heading +
         ') failed on the following ' +
         (result.elements.length == 1 ? 'element' : 'elements');
 
     if (result.elements.length == 1)
-        message += ':'
+        message += ':';
     else {
         message += ' (1 - ' + Math.min(5, result.elements.length) +
                    ' of ' + result.elements.length + '):';

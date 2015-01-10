@@ -18,9 +18,9 @@ goog.require('axs.constants.Severity');
 goog.require('axs.utils');
 
 /**
- * @type {axs.AuditRule.Spec}
+ * Meaningful images should not be used in element backgrounds.
  */
-axs.AuditRule.specs.elementsWithMeaningfulBackgroundImage = {
+axs.AuditRules.addRule({
     name: 'elementsWithMeaningfulBackgroundImage',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
@@ -44,4 +44,4 @@ axs.AuditRule.specs.elementsWithMeaningfulBackgroundImage = {
         return width < 150 && height < 150;
     },
     code: 'AX_IMAGE_01'
-};
+});

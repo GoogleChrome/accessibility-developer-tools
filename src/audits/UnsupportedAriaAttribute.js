@@ -31,7 +31,7 @@ goog.require('axs.constants');
      *
      * @type {axs.AuditRule.Spec}
      */
-    axs.AuditRule.specs.unsupportedAriaAttribute = {
+    var unsupportedAriaAttribute = {
         name: 'unsupportedAriaAttribute',
         heading: 'This element has an unsupported ARIA attribute',
         url: '',
@@ -65,4 +65,5 @@ goog.require('axs.constants');
         },
         code: 'AX_ARIA_10'
     };
+    axs.AuditRules.addRule(unsupportedAriaAttribute);
 })();

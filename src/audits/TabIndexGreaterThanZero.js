@@ -15,11 +15,7 @@
 goog.require('axs.AuditRule');
 goog.require('axs.constants.Severity');
 
-/**
- * @type {axs.AuditRule.Spec}
- */
-
-axs.AuditRule.specs.tabIndexGreaterThanZero = {
+axs.AuditRules.addRule({
     name: "tabIndexGreaterThanZero",
     heading: "Avoid positive integer values for tabIndex",
     url: "https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_focus_03--avoid-positive-integer-values-for-tabindex",
@@ -33,4 +29,4 @@ axs.AuditRule.specs.tabIndexGreaterThanZero = {
         return true;
     },
     code: 'AX_FOCUS_03'
-};
+});

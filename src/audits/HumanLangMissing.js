@@ -15,10 +15,7 @@
 goog.require('axs.AuditRule');
 goog.require('axs.constants.Severity');
 
-/**
- * @type {axs.AuditRule.Spec}
- */
-axs.AuditRule.specs.humanLangMissing = {
+axs.AuditRules.addRule({
     name: 'humanLangMissing',
     heading: 'The web page should have the content\'s human language indicated in the markup',
     url: '',
@@ -32,4 +29,4 @@ axs.AuditRule.specs.humanLangMissing = {
         return false;
     },
     code: 'AX_HTML_01'
-};
+});

@@ -16,9 +16,9 @@ goog.require('axs.AuditRule');
 goog.require('axs.constants.Severity');
 
 /**
- * @type {axs.AuditRule.Spec}
+ * This audit flags any audio elements that do not have controls.
  */
-axs.AuditRule.specs.audioWithoutControls = {
+axs.AuditRules.addRule({
     name: 'audioWithoutControls',
     heading: 'Audio elements should have controls',
     url: '',
@@ -31,4 +31,4 @@ axs.AuditRule.specs.audioWithoutControls = {
         return !controls.length && audio.duration > 3;
     },
     code: 'AX_AUDIO_01'
-};
+});

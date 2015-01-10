@@ -15,10 +15,7 @@
 goog.require('axs.AuditRule');
 goog.require('axs.constants.Severity');
 
-/**
- * @type {axs.AuditRule.Spec}
- */
-axs.AuditRule.specs.pageWithoutTitle = {
+axs.AuditRules.addRule({
     name: 'pageWithoutTitle',
     heading: 'The web page should have a title that describes topic or purpose',
     url: '',
@@ -36,4 +33,4 @@ axs.AuditRule.specs.pageWithoutTitle = {
         return !title.textContent;
     },
     code: 'AX_TITLE_01'
-};
+});

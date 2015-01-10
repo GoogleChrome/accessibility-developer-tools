@@ -19,9 +19,8 @@ goog.require('axs.properties');
 
 /**
  * Based on recommendations in document: http://www.w3.org/TR/aria-in-html/
- * @type {axs.AuditRule.Spec}
  */
-axs.AuditRule.specs.ariaOnReservedElement = {
+axs.AuditRules.addRule({
     name: 'ariaOnReservedElement',
     heading: 'This element does not support ARIA roles, states and properties',
     url: '',
@@ -33,4 +32,4 @@ axs.AuditRule.specs.ariaOnReservedElement = {
         return axs.properties.getAriaProperties(element) !== null;
     },
     code: 'AX_ARIA_12'
-};
+});

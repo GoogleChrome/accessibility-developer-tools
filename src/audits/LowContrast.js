@@ -19,9 +19,9 @@ goog.require('axs.properties');
 goog.require('axs.utils');
 
 /**
- * @type {axs.AuditRule.Spec}
+ * Text elements should have a reasonable contrast ratio
  */
-axs.AuditRule.specs.lowContrastElements = {
+axs.AuditRules.addRule({
     name: 'lowContrastElements',
     heading: 'Text elements should have a reasonable contrast ratio',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_color_01--text-elements-should-have-a-reasonable-contrast-ratio',
@@ -36,4 +36,4 @@ axs.AuditRule.specs.lowContrastElements = {
         return (contrastRatio && axs.utils.isLowContrast(contrastRatio, style));
     },
     code: 'AX_COLOR_01'
-};
+});

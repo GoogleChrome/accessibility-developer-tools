@@ -18,9 +18,9 @@ goog.require('axs.properties');
 goog.require('axs.utils');
 
 /**
- * @type {axs.AuditRule.Spec}
+ * role=main should only appear on significant elements
  */
-axs.AuditRule.specs.mainRoleOnInappropriateElement = {
+axs.AuditRules.addRule({
     name: 'mainRoleOnInappropriateElement',
     heading: 'role=main should only appear on significant elements',
     url: '',
@@ -37,5 +37,5 @@ axs.AuditRule.specs.mainRoleOnInappropriateElement = {
 
         return false;
     },
-    code: 'AX_ARIA_04'
-};
+    code: 'AX_ARIA_05'
+});

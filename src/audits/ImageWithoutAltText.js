@@ -17,10 +17,7 @@ goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 goog.require('axs.utils');
 
-/**
- * @type {axs.AuditRule.Spec}
- */
-axs.AuditRule.specs.imagesWithoutAltText = {
+axs.AuditRules.addRule({
     name: 'imagesWithoutAltText',
     heading: 'Images should have an alt attribute',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_02--images-should-have-an-alt-attribute-unless-they-have-an-aria-role-of-presentation',
@@ -33,4 +30,4 @@ axs.AuditRule.specs.imagesWithoutAltText = {
         return (!image.hasAttribute('alt') && image.getAttribute('role') != 'presentation');
     },
     code: 'AX_TEXT_02'
-};
+});

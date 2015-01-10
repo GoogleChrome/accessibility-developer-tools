@@ -17,10 +17,7 @@ goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 goog.require('axs.utils');
 
-/**
- * @type {axs.AuditRule.Spec}
- */
-axs.AuditRule.specs.unfocusableElementsWithOnClick = {
+axs.AuditRules.addRule({
     name: 'unfocusableElementsWithOnClick',
     heading: 'Elements with onclick handlers must be focusable',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_focus_02--elements-with-onclick-handlers-must-be-focusable',
@@ -46,4 +43,4 @@ axs.AuditRule.specs.unfocusableElementsWithOnClick = {
                !element.disabled;
     },
     code: 'AX_FOCUS_02'
-};
+});

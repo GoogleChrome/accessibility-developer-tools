@@ -16,9 +16,9 @@ goog.require('axs.AuditRule');
 goog.require('axs.constants.Severity');
 
 /**
- * @type {axs.AuditRule.Spec}
+ * The purpose of each link should be clear from the link text.
  */
-axs.AuditRule.specs.linkWithUnclearPurpose = {
+axs.AuditRules.addRule({
     name: 'linkWithUnclearPurpose',
     heading: 'The purpose of each link should be clear from the link text',
     url: '',
@@ -65,5 +65,5 @@ axs.AuditRule.specs.linkWithUnclearPurpose = {
         }
         return false;
     },
-    code: 'AX_TITLE_01'
-};
+    code: 'AX_TEXT_04'
+});

@@ -19,9 +19,9 @@ goog.require('axs.constants.Severity');
 // TODO(RickSBrown): Consider expanding this beyond ARIA? e.g. 'for' on label.
 
 /**
- * @type {axs.AuditRule.Spec}
+ * 'ARIA attributes which refer to other elements by ID should refer to elements which exist in the DOM'
  */
-axs.AuditRule.specs.nonExistentAriaRelatedElement = {
+axs.AuditRules.addRule({
     name: 'nonExistentAriaRelatedElement',
     heading: 'ARIA attributes which refer to other elements by ID should refer to elements which exist in the DOM',
     url: '',
@@ -52,4 +52,4 @@ axs.AuditRule.specs.nonExistentAriaRelatedElement = {
         return false;
     },
     code: 'AX_ARIA_02'
-};
+});
