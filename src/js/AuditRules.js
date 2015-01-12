@@ -31,8 +31,10 @@ goog.provide('axs.AuditRules');
         // create the auditRule before checking props as we can expect the constructor to perform the
         // first layer of sanity checking.
         var auditRule = new axs.AuditRule(spec);
-        if (auditRule.code in auditRulesByCode || auditRule.name in auditRulesByName)
-            throw new Error('Can not add audit rule with same name or code: "' + auditRule.code + '"/"' + auditRule.name + '"');
+        if (auditRule.code in auditRulesByCode)
+            throw new Error('Can not add audit rule with same code: "' + auditRule.code + '"');
+        if (auditRule.name in auditRulesByName)
+            throw new Error('Can not add audit rule with same name: "' + auditRule.name + '"');
         auditRulesByName[auditRule.name] = auditRulesByCode[auditRule.code] = auditRule;
     };
 
@@ -47,12 +49,12 @@ goog.provide('axs.AuditRules');
 
     /**
      * Gets all registered audit rules.
-     * @param {boolean=} namesOnly If true then the result will contain only the rule names.
+     * @param {boolean=} opt_namesOnly If true then the result will contain only the rule names.
      * @return {Array.<axs.AuditRule>|Array.<string>}
      */
-    axs.AuditRules.getRules = function(namesOnly) {
+    axs.AuditRules.getRules = function(opt_namesOnly) {
         var ruleNames = Object.keys(auditRulesByName);
-        if(namesOnly)
+        if(opt_namesOnly)
             return ruleNames;
         return ruleNames.map(function(name) {
             return this.getRule(name);
