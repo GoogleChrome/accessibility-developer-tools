@@ -1,11 +1,10 @@
 module("AuditConfiguration", {
   setup: function() {
-    this.auditRules_ = [];
-    for (var auditRuleName in axs.AuditRule.specs) {
-      var spec = axs.AuditRule.specs[auditRuleName];
-      if (!spec.opt_requiresConsoleAPI)
-        this.auditRules_.push(auditRuleName);
-    }
+    this.auditRules_ = axs.AuditRules.getRules().filter(function(auditRule) {
+        return !auditRule.requiresConsoleAPI;
+    }).map(function(auditRule) {
+        return auditRule.name;
+    });
   }
 });
 
@@ -42,7 +41,7 @@ test("Configure severity of an audit rule", function() {
       continue;
     var result = results[i];
     equal(result.rule.severity, axs.constants.Severity.WARNING);
-    notEqual(result.rule.severity, axs.AuditRule.specs['badAriaRole'].severity);
+    notEqual(result.rule.severity, axs.AuditRules.getRule('badAriaRole').severity);
     return;
   }
 });

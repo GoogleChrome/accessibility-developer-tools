@@ -17,9 +17,9 @@ goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 
 /**
- * @type {axs.AuditRule.Spec}
+ * This test checks that aria-owns does not reference an element that is already owned implicitly.
  */
-axs.AuditRule.specs.ariaOwnsDescendant = {
+axs.AuditRules.addRule({
     // TODO(RickSBrown): check for elements that try to 'aria-own' an ancestor;
     // Also: own self does not make sense. Perhaps any IDREF pointing to itself is bad?
     // Perhaps even extend this beyond ARIA (e.g. label for itself). Have to change return code?
@@ -39,4 +39,4 @@ axs.AuditRule.specs.ariaOwnsDescendant = {
         });
     },
     code: 'AX_ARIA_06'
-};
+});

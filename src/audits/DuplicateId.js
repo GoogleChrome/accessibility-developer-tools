@@ -17,9 +17,9 @@ goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 
 /**
- * @type {axs.AuditRule.Spec}
+ * This audit checks for duplicate IDs in the DOM.
  */
-axs.AuditRule.specs.duplicateId = {
+axs.AuditRules.addRule({
     name: 'duplicateId',
     heading: 'An element\'s ID must be unique in the DOM',
     url: '',
@@ -45,4 +45,4 @@ axs.AuditRule.specs.duplicateId = {
         return (elementsWithId.length > 1);
     },
     code: 'AX_HTML_02'
-};
+});

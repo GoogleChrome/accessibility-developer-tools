@@ -19,9 +19,9 @@ goog.require('axs.constants.Severity');
 goog.require('axs.utils');
 
 /**
- * @type {axs.AuditRule.Spec}
+ * This audit checks that form controls and media elements have labels.
  */
-axs.AuditRule.specs.controlsWithoutLabel = {
+axs.AuditRules.addRule({
     name: 'controlsWithoutLabel',
     heading: 'Controls and media elements should have labels',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_01--controls-and-media-elements-should-have-labels',
@@ -66,4 +66,4 @@ axs.AuditRule.specs.controlsWithoutLabel = {
     },
     code: 'AX_TEXT_01',
     ruleName: 'Controls and media elements should have labels'
-};
+});

@@ -20,10 +20,8 @@ goog.require('axs.constants');
  * This test checks ARIA roles which must be owned by another role.
  *    For example a role of `tab` can only exist within a `tablist`.
  *    This ownership can be represented implicitly by DOM hierarchy or explictly through the `aria-owns` attribute.
- *
- * @type {axs.AuditRule.Spec}
  */
-axs.AuditRule.specs.ariaRoleNotScoped = {
+axs.AuditRules.addRule({
     name: 'ariaRoleNotScoped',
     heading: 'Elements with ARIA roles must be in the correct scope',
     url: '',
@@ -71,4 +69,4 @@ axs.AuditRule.specs.ariaRoleNotScoped = {
         return true;
     },
     code: 'AX_ARIA_09'
-};
+});

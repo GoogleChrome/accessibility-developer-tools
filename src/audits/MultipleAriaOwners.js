@@ -17,9 +17,9 @@ goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 
 /**
- * @type {axs.AuditRule.Spec}
+ * An element's ID must not be present in more that one aria-owns attribute at any time.
  */
-axs.AuditRule.specs.multipleAriaOwners = {
+axs.AuditRules.addRule({
     name: 'multipleAriaOwners',
     heading: 'An element\'s ID must not be present in more that one aria-owns attribute at any time',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_07--an-element-can-have-only-one-explicit-aria-owner',
@@ -42,4 +42,4 @@ axs.AuditRule.specs.multipleAriaOwners = {
         });
     },
     code: 'AX_ARIA_07'
-};
+});

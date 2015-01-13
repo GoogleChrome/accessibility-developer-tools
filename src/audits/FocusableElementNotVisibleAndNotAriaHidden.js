@@ -19,9 +19,9 @@ goog.require('axs.constants.Severity');
 goog.require('axs.utils');
 
 /**
- * @type {axs.AuditRule.Spec}
+ * This audit checks for elements that are focusable but invisible or obscured by another element.
  */
-axs.AuditRule.specs.focusableElementNotVisibleAndNotAriaHidden = {
+axs.AuditRules.addRule({
     name: 'focusableElementNotVisibleAndNotAriaHidden',
     heading: 'These elements are focusable but either invisible or obscured by another element',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_focus_01--these-elements-are-focusable-but-either-invisible-or-obscured-by-another-element',
@@ -53,7 +53,7 @@ axs.AuditRule.specs.focusableElementNotVisibleAndNotAriaHidden = {
         if (axs.utils.isElementOrAncestorHidden(element))
             return false;
         element.focus();
-        return !axs.utils.elementIsVisible(element)
+        return !axs.utils.elementIsVisible(element);
     },
     code: 'AX_FOCUS_01'
-};
+});

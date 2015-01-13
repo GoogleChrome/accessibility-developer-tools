@@ -243,4 +243,4 @@ axs.AuditRule.prototype.run = function(options) {
     return results;
 };
 
-axs.AuditRule.specs = {};
+// axs.AuditRule.specs = {};

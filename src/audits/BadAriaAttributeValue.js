@@ -18,9 +18,9 @@ goog.require('axs.constants');
 goog.require('axs.utils');
 
 /**
- * @type {axs.AuditRule.Spec}
+ * This audit checks the values of ARIA states and properties to ensure they are valid.
  */
-axs.AuditRule.specs.badAriaAttributeValue = {
+axs.AuditRules.addRule({
     name: 'badAriaAttributeValue',
     heading: 'ARIA state and property values must be valid',
     url: '',
@@ -42,4 +42,4 @@ axs.AuditRule.specs.badAriaAttributeValue = {
         return false;
     },
     code: 'AX_ARIA_04'
-};
+});

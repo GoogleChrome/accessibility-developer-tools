@@ -31,7 +31,7 @@ goog.require('axs.constants');
      *
      * @type {axs.AuditRule.Spec}
      */
-    axs.AuditRule.specs.badAriaAttribute = {
+    var badAriaAttribute = {
         name: 'badAriaAttribute',
         heading: 'This element has an invalid ARIA attribute',
         url: '',
@@ -60,4 +60,5 @@ goog.require('axs.constants');
         },
         code: 'AX_ARIA_11'
     };
+    axs.AuditRules.addRule(badAriaAttribute);
 })();
