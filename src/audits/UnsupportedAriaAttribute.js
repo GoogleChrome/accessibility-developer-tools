@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
+goog.require('axs.browserUtils');
 goog.require('axs.constants');
+goog.require('axs.utils');
 
 (function() {
     'use strict';
@@ -34,7 +35,7 @@ goog.require('axs.constants');
     var unsupportedAriaAttribute = {
         name: 'unsupportedAriaAttribute',
         heading: 'This element has an unsupported ARIA attribute',
-        url: '',
+        url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_10--this-element-has-an-unsupported-aria-attribute',
         severity: axs.constants.Severity.SEVERE,
         relevantElementMatcher: function(element) {
             return axs.browserUtils.matchSelector(element, selector);

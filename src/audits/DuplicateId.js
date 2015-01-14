@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
+goog.require('axs.browserUtils');
 goog.require('axs.constants.Severity');
 
 /**
@@ -22,7 +22,7 @@ goog.require('axs.constants.Severity');
 axs.AuditRules.addRule({
     name: 'duplicateId',
     heading: 'An element\'s ID must be unique in the DOM',
-    url: '',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_html_02--an-elements-id-must-be-unique-in-the-dom',
     severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {
         return axs.browserUtils.matchSelector(element, '[id]');

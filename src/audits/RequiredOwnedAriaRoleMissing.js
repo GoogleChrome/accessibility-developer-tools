@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
+goog.require('axs.browserUtils');
 goog.require('axs.constants');
+goog.require('axs.utils');
 
 (function(){
     /**
@@ -23,7 +24,7 @@ goog.require('axs.constants');
     var spec = {
         name: 'requiredOwnedAriaRoleMissing',
         heading: 'Elements with ARIA roles must ensure required owned elements are present',
-        url: '',
+        url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_08--elements-with-aria-roles-must-ensure-required-owned-elements-are-present',
         severity: axs.constants.Severity.SEVERE,
         relevantElementMatcher: function(element) {
             if (!axs.browserUtils.matchSelector(element, '[role]'))

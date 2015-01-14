@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 goog.require('axs.properties');
@@ -23,7 +22,7 @@ goog.require('axs.properties');
 axs.AuditRules.addRule({
     name: 'ariaOnReservedElement',
     heading: 'This element does not support ARIA roles, states and properties',
-    url: '',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_12--this-element-does-not-support-aria-roles-states-and-properties',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
         return !axs.properties.canTakeAriaAttributes(element);

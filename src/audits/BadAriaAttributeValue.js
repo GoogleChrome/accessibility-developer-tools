@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
+goog.require('axs.browserUtils');
 goog.require('axs.constants');
 goog.require('axs.utils');
 
@@ -23,7 +23,7 @@ goog.require('axs.utils');
 axs.AuditRules.addRule({
     name: 'badAriaAttributeValue',
     heading: 'ARIA state and property values must be valid',
-    url: '',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_04--aria-state-and-property-values-must-be-valid',
     severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {
         var selector = axs.utils.getSelectorForAriaProperties(axs.constants.ARIA_PROPERTIES);

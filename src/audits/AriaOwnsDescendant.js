@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
+goog.require('axs.browserUtils');
 goog.require('axs.constants.Severity');
+goog.require('axs.utils');
 
 /**
  * This test checks that aria-owns does not reference an element that is already owned implicitly.
@@ -26,7 +27,7 @@ axs.AuditRules.addRule({
     // Also: other "bad hierarchy" tests - e.g. active-descendant owning a non-descendant...
     name: 'ariaOwnsDescendant',
     heading: 'aria-owns should not be used if ownership is implicit in the DOM',
-    url: '',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_06--aria-owns-should-not-be-used-if-ownership-is-implicit-in-the-dom',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
         return axs.browserUtils.matchSelector(element, '[aria-owns]');

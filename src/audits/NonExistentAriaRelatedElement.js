@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
+goog.require('axs.browserUtils');
 goog.require('axs.constants.Severity');
+goog.require('axs.utils');
 
 // TODO(RickSBrown): Consider expanding this beyond ARIA? e.g. 'for' on label.
 
@@ -24,7 +25,7 @@ goog.require('axs.constants.Severity');
 axs.AuditRules.addRule({
     name: 'nonExistentAriaRelatedElement',
     heading: 'ARIA attributes which refer to other elements by ID should refer to elements which exist in the DOM',
-    url: '',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_02--aria-labelledby-attributes-should-refer-to-an-element-which-exists-in-the-dom',
     severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {
         var idrefTypes = ['idref', 'idref_list'];
