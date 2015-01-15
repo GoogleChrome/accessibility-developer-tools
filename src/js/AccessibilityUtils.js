@@ -1051,22 +1051,25 @@ axs.utils.getRoles = function(element, implicit) {
     if (!roleValue)  // role='' or implicit role came up empty
         return null;
     var roleNames = roleValue.split(' ');
-    var roles = [];
-    var valid = true;
+    var result = { roles: [], valid: false };
     for (var i = 0; i < roleNames.length; i++) {
         var role = roleNames[i];
         var ariaRole = axs.constants.ARIA_ROLES[role];
-        if (ariaRole && !ariaRole.abstract) {
-            var roleObject = {'name': role, 'details': axs.constants.ARIA_ROLES[role], 'valid': true};
-            roles.push(roleObject);
+        var roleObject = {'name': role};
+        if (ariaRole && !ariaRole['abstract']) {
+            roleObject.details = ariaRole;
+            if (!result.applied) {
+                result.applied = roleObject;
+            }
+            roleObject.valid = result.valid = true;
         } else {
-            var roleObject = {'name': role, 'valid': false};
-            valid = false;
-            roles.push(roleObject);
+            roleObject.valid = false;
+            
         }
+        result.roles.push(roleObject);
     }
 
-    return { 'roles': roles, 'valid': valid };
+    return result;
 };
 
 /**

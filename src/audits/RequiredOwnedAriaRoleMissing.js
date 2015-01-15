@@ -53,8 +53,8 @@ goog.require('axs.utils');
              for (var i = ownedElements.length - 1; i >= 0; i--) {
                  var ownedElement = ownedElements[i];
                  var ownedElementRole = axs.utils.getRoles(ownedElement, true);
-                 if (ownedElementRole && ownedElementRole.roles.length) {
-                     ownedElementRole = ownedElementRole.roles[0];
+                 if (ownedElementRole && ownedElementRole.applied) {
+                     ownedElementRole = ownedElementRole.applied;
                      for (var j = required.length - 1; j >= 0; j--) {
                         if (ownedElementRole.name === required[j]) {  // if this explicitly owned element has a required role
                             return false;
@@ -74,9 +74,9 @@ goog.require('axs.utils');
      */
     function getRequired(element) {
         var elementRole = axs.utils.getRoles(element);
-        if (!elementRole || !elementRole.roles.length)
+        if (!elementRole || !elementRole.applied)
             return [];
-        elementRole = elementRole.roles[0];
+        elementRole = elementRole.applied;
         if (!elementRole.valid)
             return [];
         return elementRole.details['mustcontain'] || [];
