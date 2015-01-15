@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
+goog.require('axs.browserUtils');
 goog.require('axs.constants.Severity');
+goog.require('axs.utils');
 
 /**
  * An element's ID must not be present in more that one aria-owns attribute at any time.

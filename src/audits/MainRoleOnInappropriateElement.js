@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
+goog.require('axs.browserUtils');
 goog.require('axs.properties');
 goog.require('axs.utils');
 
@@ -23,7 +23,7 @@ goog.require('axs.utils');
 axs.AuditRules.addRule({
     name: 'mainRoleOnInappropriateElement',
     heading: 'role=main should only appear on significant elements',
-    url: '',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_05--rolemain-should-only-appear-on-significant-elements',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
         return axs.browserUtils.matchSelector(element, '[role~=main]');

@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
+goog.require('axs.browserUtils');
 goog.require('axs.constants');
+goog.require('axs.utils');
 
 /**
  * This test checks ARIA roles which must be owned by another role.
@@ -24,7 +25,7 @@ goog.require('axs.constants');
 axs.AuditRules.addRule({
     name: 'ariaRoleNotScoped',
     heading: 'Elements with ARIA roles must be in the correct scope',
-    url: '',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_09--elements-with-aria-roles-must-be-in-the-correct-scope',
     severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {
         return axs.browserUtils.matchSelector(element, '[role]');

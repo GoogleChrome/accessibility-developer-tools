@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
+goog.require('axs.AuditRules');
+goog.require('axs.browserUtils');
 goog.require('axs.constants.Severity');
 
 /**
@@ -21,7 +22,7 @@ goog.require('axs.constants.Severity');
 axs.AuditRules.addRule({
     name: 'linkWithUnclearPurpose',
     heading: 'The purpose of each link should be clear from the link text',
-    url: '',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_04--the-purpose-of-each-link-should-be-clear-from-the-link-text',
     severity: axs.constants.Severity.WARNING,
     /**
      * @param {Element} element

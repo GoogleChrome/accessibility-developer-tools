@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.constants');
 
@@ -34,7 +33,7 @@ goog.require('axs.constants');
     var badAriaAttribute = {
         name: 'badAriaAttribute',
         heading: 'This element has an invalid ARIA attribute',
-        url: '',
+        url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_11--this-element-has-an-invalid-aria-attribute',
         severity: axs.constants.Severity.WARNING,
         relevantElementMatcher: function(element) {
             var attributes = element.attributes;
