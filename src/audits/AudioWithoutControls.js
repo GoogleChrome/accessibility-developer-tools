@@ -27,8 +27,7 @@ axs.AuditRule.specs.audioWithoutControls = {
         return axs.browserUtils.matchSelector(element, 'audio[autoplay]');
     },
     test: function(audio) {
-        var controls = audio.querySelectorAll('[controls]');
-        return !controls.length && audio.duration > 3;
+        return !audio.hasAttribute('controls') && audio.duration > 3;
     },
     code: 'AX_AUDIO_01'
 };
