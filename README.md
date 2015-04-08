@@ -76,6 +76,30 @@ The Accessibility Developer Tools project includes a command line runner for the
 
 The runner will load the specified file or URL in a headless browser, inject axs_testing.js, run the audit and output the report text.
 
+### Run from Selenium WebDriver (Scala):
+     val driver = org.openqa.selenium.firefox.FirefoxDriver //use whatever driver you want
+     val jse = driver.asInstanceOf[JavascriptExecutor]
+     jse.executeScript(scala.io.Source.fromURL("https://raw.githubusercontent.com/GoogleChrome/" +
+       "accessibility-developer-tools/stable/dist/js/axs_testing.js").mkString)
+    
+### Run from Selenium WebDriver (Scala)(with caching):
+     val cache = collection.mutable.Map[String, String]()
+     val driver = org.openqa.selenium.firefox.FirefoxDriver //use whatever driver you want
+     val jse = driver.asInstanceOf[JavascriptExecutor]
+     def getUrlSource(arg: String): String = cache get arg match {
+        case Some(result) => result
+        case None =>
+          val result: String = scala.io.Source.fromURL(arg).mkString
+          cache(arg) = result
+          result
+      }
+     val driver = YourChoiceOfDriver
+     val jse = driver.asInstanceOf[JavascriptExecutor]
+     jse.executeScript(getUrlSource("https://raw.githubusercontent.com/GoogleChrome/" +
+       "accessibility-developer-tools/stable/dist/js/axs_testing.js"))
+    
+
+
 ## Using the results
 
 ### Interpreting the result
