@@ -95,8 +95,6 @@ The runner will load the specified file or URL in a headless browser, inject axs
           cache(arg) = result
           result
       }
-     val driver = YourChoiceOfDriver
-     val jse = driver.asInstanceOf[JavascriptExecutor]
      jse.executeScript(getUrlSource("https://raw.githubusercontent.com/GoogleChrome/" +
        "accessibility-developer-tools/stable/dist/js/axs_testing.js"))
      val report = js.executeScript("var results = axs.Audit.run();return axs.Audit.createReport(results);")
