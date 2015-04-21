@@ -20,7 +20,7 @@ goog.require('axs.utils');
 axs.AuditRules.addRule({
     name: 'imagesWithoutAltText',
     heading: 'Images should have an alt attribute',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_02--images-should-have-an-alt-attribute-unless-they-have-an-aria-role-of-presentation',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_02',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
         return axs.browserUtils.matchSelector(element, 'img') &&

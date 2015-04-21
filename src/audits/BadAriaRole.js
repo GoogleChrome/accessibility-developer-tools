@@ -23,7 +23,7 @@ goog.require('axs.utils');
 axs.AuditRules.addRule({
     name: 'badAriaRole',
     heading: 'Elements with ARIA roles must use a valid, non-abstract ARIA role',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_01--elements-with-aria-roles-must-use-a-valid-non-abstract-aria-role',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_01',
     severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {
         return axs.browserUtils.matchSelector(element, '[role]');

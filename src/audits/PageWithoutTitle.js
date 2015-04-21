@@ -18,7 +18,7 @@ goog.require('axs.constants.Severity');
 axs.AuditRules.addRule({
     name: 'pageWithoutTitle',
     heading: 'The web page should have a title that describes topic or purpose',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_title_01--the-web-page-should-have-a-title-that-describes-topic-or-purpose',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_title_01',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
         return element.tagName.toLowerCase() == "html";

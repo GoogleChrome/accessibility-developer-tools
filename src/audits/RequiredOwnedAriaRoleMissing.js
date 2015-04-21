@@ -24,7 +24,7 @@ goog.require('axs.utils');
     var spec = {
         name: 'requiredOwnedAriaRoleMissing',
         heading: 'Elements with ARIA roles must ensure required owned elements are present',
-        url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_08--elements-with-aria-roles-must-ensure-required-owned-elements-are-present',
+        url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_08',
         severity: axs.constants.Severity.SEVERE,
         relevantElementMatcher: function(element) {
             if (!axs.browserUtils.matchSelector(element, '[role]'))
@@ -83,4 +83,3 @@ goog.require('axs.utils');
     }
     axs.AuditRules.addRule(spec);
 })();
-

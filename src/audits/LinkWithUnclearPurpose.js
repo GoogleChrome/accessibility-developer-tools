@@ -22,7 +22,7 @@ goog.require('axs.constants.Severity');
 axs.AuditRules.addRule({
     name: 'linkWithUnclearPurpose',
     heading: 'The purpose of each link should be clear from the link text',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_04--the-purpose-of-each-link-should-be-clear-from-the-link-text',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_04',
     severity: axs.constants.Severity.WARNING,
     /**
      * @param {Element} element

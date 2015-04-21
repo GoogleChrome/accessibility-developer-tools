@@ -26,7 +26,7 @@ axs.AuditRules.addRule({
         return !axs.utils.isElementOrAncestorHidden(element);
     },
     heading: 'Meaningful images should not be used in element backgrounds',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_image_01--meaningful-images-should-not-be-used-in-element-backgrounds',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_image_01',
     test: function(el) {
         if (el.textContent && el.textContent.length > 0) {
           return false;

@@ -25,7 +25,7 @@ goog.require('axs.utils');
 axs.AuditRules.addRule({
     name: 'nonExistentAriaRelatedElement',
     heading: 'ARIA attributes which refer to other elements by ID should refer to elements which exist in the DOM',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_02--aria-labelledby-attributes-should-refer-to-an-element-which-exists-in-the-dom',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_02',
     severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {
         var idrefTypes = ['idref', 'idref_list'];

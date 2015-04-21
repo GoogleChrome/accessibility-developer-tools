@@ -23,7 +23,7 @@ goog.require('axs.utils');
 axs.AuditRules.addRule({
     name: 'focusableElementNotVisibleAndNotAriaHidden',
     heading: 'These elements are focusable but either invisible or obscured by another element',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_focus_01--these-elements-are-focusable-but-either-invisible-or-obscured-by-another-element',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_01',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
         var isFocusable = axs.browserUtils.matchSelector(
