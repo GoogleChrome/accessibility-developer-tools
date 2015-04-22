@@ -26,28 +26,6 @@ HTMLLabelElement.prototype.control;
 ShadowRoot.prototype.olderShadowRoot;
 
 /**
- * @constructor
- * @extends {HTMLElement}
- */
-function HTMLContentElement() {}
-
-/**
- * @return {Array.<Node>}
- */
-HTMLContentElement.prototype.getDistributedNodes = function() {};
-
-/**
- * @constructor
- * @extends {HTMLElement}
- */
-function HTMLShadowElement() {}
-
-/**
- * @return {Array.<Node>}
- */
-HTMLShadowElement.prototype.getDistributedNodes = function() {};
-
-/**
  * Note: will be deprecated at some point; prefer shadowRoot if it exists.
  * @type {HTMLShadowElement}
  */
