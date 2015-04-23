@@ -32,7 +32,7 @@ module.exports = function(grunt) {
           "summary_detail_level": 3,
           "warning_level": "VERBOSE",
           "compilation_level": "SIMPLE_OPTIMIZATIONS",
-          "output_wrapper": "'<%= grunt.file.read('scripts/output_wrapper.txt') %>'",
+          "output_wrapper": "<%= grunt.file.read('scripts/output_wrapper.txt') %>",
           "externs": "./src/js/externs/externs.js"
         }
       }
