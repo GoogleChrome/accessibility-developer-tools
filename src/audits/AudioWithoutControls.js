@@ -22,7 +22,7 @@ goog.require('axs.constants.Severity');
 axs.AuditRules.addRule({
     name: 'audioWithoutControls',
     heading: 'Audio elements should have controls',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_audio_01--audio-elements-should-have-controls',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_audio_01',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
         return axs.browserUtils.matchSelector(element, 'audio[autoplay]');

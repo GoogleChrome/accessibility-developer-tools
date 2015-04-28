@@ -18,7 +18,7 @@ goog.require('axs.constants.Severity');
 axs.AuditRules.addRule({
     name: 'humanLangMissing',
     heading: 'The web page should have the content\'s human language indicated in the markup',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_html_01--the-web-page-should-have-the-contents-human-language-indicated-in-the-markup',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_html_01',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
         return element instanceof element.ownerDocument.defaultView.HTMLHtmlElement;

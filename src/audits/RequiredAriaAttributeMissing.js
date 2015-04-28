@@ -21,7 +21,7 @@ goog.require('axs.utils');
 axs.AuditRules.addRule({
     name: 'requiredAriaAttributeMissing',
     heading: 'Elements with ARIA roles must have all required attributes for that role',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_03--elements-with-aria-roles-must-have-all-required-attributes-for-that-role',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_03',
     severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {
         return axs.browserUtils.matchSelector(element, '[role]');

@@ -19,7 +19,7 @@ goog.require('axs.constants.Severity');
 axs.AuditRules.addRule({
     name: "tabIndexGreaterThanZero",
     heading: "Avoid positive integer values for tabIndex",
-    url: "https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_focus_03--avoid-positive-integer-values-for-tabindex",
+    url: "https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_03",
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
       var selector = "[tabindex]";

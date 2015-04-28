@@ -35,7 +35,7 @@ goog.require('axs.utils');
     var unsupportedAriaAttribute = {
         name: 'unsupportedAriaAttribute',
         heading: 'This element has an unsupported ARIA attribute',
-        url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_10--this-element-has-an-unsupported-aria-attribute',
+        url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_10',
         severity: axs.constants.Severity.SEVERE,
         relevantElementMatcher: function(element) {
             return axs.browserUtils.matchSelector(element, selector);

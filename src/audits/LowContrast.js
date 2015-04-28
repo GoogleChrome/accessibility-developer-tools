@@ -23,7 +23,7 @@ goog.require('axs.utils');
 axs.AuditRules.addRule({
     name: 'lowContrastElements',
     heading: 'Text elements should have a reasonable contrast ratio',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_color_01--text-elements-should-have-a-reasonable-contrast-ratio',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_color_01',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
         return axs.properties.hasDirectTextDescendant(element);

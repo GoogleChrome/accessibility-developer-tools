@@ -27,7 +27,7 @@ axs.AuditRules.addRule({
     // Also: other "bad hierarchy" tests - e.g. active-descendant owning a non-descendant...
     name: 'ariaOwnsDescendant',
     heading: 'aria-owns should not be used if ownership is implicit in the DOM',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_06--aria-owns-should-not-be-used-if-ownership-is-implicit-in-the-dom',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_06',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
         return axs.browserUtils.matchSelector(element, '[aria-owns]');

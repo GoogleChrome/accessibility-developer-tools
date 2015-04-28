@@ -33,7 +33,7 @@ goog.require('axs.constants');
     var badAriaAttribute = {
         name: 'badAriaAttribute',
         heading: 'This element has an invalid ARIA attribute',
-        url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_11--this-element-has-an-invalid-aria-attribute',
+        url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_11',
         severity: axs.constants.Severity.WARNING,
         relevantElementMatcher: function(element) {
             var attributes = element.attributes;
