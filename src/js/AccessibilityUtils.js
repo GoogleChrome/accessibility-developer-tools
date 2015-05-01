@@ -1055,8 +1055,8 @@ axs.utils.getRoles = function(element, implicit) {
     for (var i = 0; i < roleNames.length; i++) {
         var role = roleNames[i];
         var ariaRole = axs.constants.ARIA_ROLES[role];
-        var roleObject = {'name': role};
-        if (ariaRole && !ariaRole['abstract']) {
+        var roleObject = { 'name': role };
+        if (ariaRole && !ariaRole.abstract) {
             roleObject.details = ariaRole;
             if (!result.applied) {
                 result.applied = roleObject;

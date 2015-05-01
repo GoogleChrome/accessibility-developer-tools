@@ -37,8 +37,8 @@ axs.AuditRules.addRule({
         var elementRole = axs.utils.getRoles(element);
         if (!elementRole || !elementRole.applied)
             return false;
-        elementRole = elementRole.applied;
-        var ariaRole = elementRole.details;
+        var appliedRole  = elementRole.applied;
+        var ariaRole = appliedRole.details;
         var requiredScope = ariaRole['scope'];
         if (!requiredScope || requiredScope.length === 0) {
             return false;
@@ -47,8 +47,8 @@ axs.AuditRules.addRule({
         while ((parent = parent.parentNode)) {
             var parentRole = axs.utils.getRoles(parent, true);
             if (parentRole && parentRole.applied) {
-                parentRole = parentRole.applied;
-                if (requiredScope.indexOf(parentRole.name) >= 0)  // if this ancestor role is one of the required roles
+                var appliedParentRole = parentRole.applied;
+                if (requiredScope.indexOf(appliedParentRole.name) >= 0)  // if this ancestor role is one of the required roles
                     return false;
             }
         }

@@ -54,9 +54,9 @@ goog.require('axs.utils');
                  var ownedElement = ownedElements[i];
                  var ownedElementRole = axs.utils.getRoles(ownedElement, true);
                  if (ownedElementRole && ownedElementRole.applied) {
-                     ownedElementRole = ownedElementRole.applied;
+                     var appliedRole = ownedElementRole.applied;
                      for (var j = required.length - 1; j >= 0; j--) {
-                        if (ownedElementRole.name === required[j]) {  // if this explicitly owned element has a required role
+                        if (appliedRole.name === required[j]) {  // if this explicitly owned element has a required role
                             return false;
                         }
                     }
@@ -76,10 +76,10 @@ goog.require('axs.utils');
         var elementRole = axs.utils.getRoles(element);
         if (!elementRole || !elementRole.applied)
             return [];
-        elementRole = elementRole.applied;
-        if (!elementRole.valid)
+        var appliedRole = elementRole.applied;
+        if (!appliedRole.valid)
             return [];
-        return elementRole.details['mustcontain'] || [];
+        return appliedRole.details['mustcontain'] || [];
     }
     axs.AuditRules.addRule(spec);
 })();
