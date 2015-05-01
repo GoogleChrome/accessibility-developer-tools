@@ -25,7 +25,7 @@ goog.require('axs.utils');
 axs.AuditRules.addRule({
     name: 'ariaRoleNotScoped',
     heading: 'Elements with ARIA roles must be in the correct scope',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_09--elements-with-aria-roles-must-be-in-the-correct-scope',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_09',
     severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {
         return axs.browserUtils.matchSelector(element, '[role]');

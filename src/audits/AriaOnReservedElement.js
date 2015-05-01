@@ -22,7 +22,7 @@ goog.require('axs.properties');
 axs.AuditRules.addRule({
     name: 'ariaOnReservedElement',
     heading: 'This element does not support ARIA roles, states and properties',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_12--this-element-does-not-support-aria-roles-states-and-properties',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_12',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
         return !axs.properties.canTakeAriaAttributes(element);
