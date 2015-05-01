@@ -173,7 +173,7 @@ test("returns the aria owners for a given element", function() {
   var actual = axs.utils.getIdReferrers("aria-owns", owned);
   equal(expected.length, ownerCount);  // sanity check the test itself
   equal(actual.length, ownerCount);
-  var allFound = Array.prototype.every.call(expected, function(element){
+  var allFound = Array.prototype.every.call(expected, function(element) {
       return (Array.prototype.indexOf.call(actual, element) >= 0);
   });
   equal(allFound, true);
@@ -193,7 +193,7 @@ test("returns the elements this element labels", function() {
   var actual = axs.utils.getIdReferrers("aria-labelledby", label);
   equal(expected.length, labelledCount);  // sanity check the test itself
   equal(actual.length, labelledCount);
-  var allFound = Array.prototype.every.call(expected, function(element){
+  var allFound = Array.prototype.every.call(expected, function(element) {
       return (Array.prototype.indexOf.call(actual, element) >= 0);
   });
   equal(allFound, true);
@@ -246,9 +246,11 @@ module("getRoles", {
 test("getRoles on element with valid role.", function() {
     for (var role in axs.constants.ARIA_ROLES) {
         if (axs.constants.ARIA_ROLES.hasOwnProperty(role) && !axs.constants.ARIA_ROLES[role].abstract) {
+            var appliedRole = { name: role, valid: true, details: axs.constants.ARIA_ROLES[role] };
             var expected = {
                 valid: true,
-                roles: [{ name: role, valid: true, details: axs.constants.ARIA_ROLES[role] }]
+                applied: appliedRole,
+                roles: [appliedRole]
             };
             var element = document.createElement('div');
             element.setAttribute('role', role);
@@ -275,9 +277,11 @@ test("getRoles on element with empty role.", function() {
 });
 
 test("getRoles on element with implicit role and options.implicit.", function() {
+    var appliedRole = { name: 'checkbox', valid: true, details: axs.constants.ARIA_ROLES['checkbox'] };
     var expected = {
         valid: true,
-        roles: [{ name: 'checkbox', valid: true, details: axs.constants.ARIA_ROLES['checkbox'] }]
+        applied: appliedRole,
+        roles: [appliedRole]
     };
     var element = document.createElement('input');
     element.setAttribute('type', 'checkbox');
@@ -307,3 +311,50 @@ test("getRoles on element with abstract role.", function() {
         }
     }
 });
+(function() {
+    /**
+     * Creates a 'role detail' object which can be used for comparison in the assertions below.
+     * @param {!string} role A potential ARIA role.
+     * @return The 'role detail' object.
+     */
+    function createExpectedRoleObject(role) {
+        var valid = (axs.constants.ARIA_ROLES.hasOwnProperty(role) && !axs.constants.ARIA_ROLES[role].abstract);
+        var result = { name: role, valid: valid };
+        if (valid) {
+            result.details = axs.constants.ARIA_ROLES[role];
+        }
+        return result;
+    }
+
+    /**
+     * Helper for multiple role tests.
+     * @param {!Array<string>} roles Strings to set in the 'role' attribute of the element under test.
+     * @param {!number} validIdx The index of the expected applied (valid) ARIA role in the array above
+     *    or a negative number if there are no valid roles.
+     * @return {Function} A test function for qunit.
+     */
+    function multipleRoleTestHelper(roles, validIdx) {
+        return function() {
+            var expectedRoles = roles.map(createExpectedRoleObject);
+            var expected = {
+                roles: expectedRoles
+            };
+            if (validIdx >= 0) {
+                expected.valid = true;
+                expected.applied = expectedRoles[validIdx];
+            }
+            else {
+                expected.valid = false;
+            }
+            var element = document.createElement('div');
+            element.setAttribute('role', roles.join(' '));
+            var actual = axs.utils.getRoles(element);
+            deepEqual(actual, expected);
+        };
+    }
+
+    test("getRoles on element with multiple valid roles.", multipleRoleTestHelper(['checkbox', 'button', 'radio'], 0));
+    test("getRoles on element with invalid and valid roles.", multipleRoleTestHelper(['foo', 'button', 'bar'], 1));
+    test("getRoles on element with multiple invalid roles.", multipleRoleTestHelper(['foo', 'fubar', 'bar'], -1));
+
+}());

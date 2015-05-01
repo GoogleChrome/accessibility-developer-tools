@@ -44,8 +44,8 @@ goog.require('axs.utils');
             // Even though we may not need to look up role, supported etc it's better performance to do it here than in loop
             var role = axs.utils.getRoles(element, true);
             var supported;
-            if (role && role.roles.length) {
-                supported = role.roles[0].details.propertiesSet;
+            if (role && role.applied) {
+                supported = role.applied.details.propertiesSet;
             }
             else {
                 // This test ignores the fact that some HTML elements should not take even global attributes.

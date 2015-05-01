@@ -35,12 +35,10 @@ axs.AuditRules.addRule({
          * Checks that this element is in the required scope for its role.
          */
         var elementRole = axs.utils.getRoles(element);
-        if (!elementRole || !elementRole.roles.length)
+        if (!elementRole || !elementRole.applied)
             return false;
-        elementRole = elementRole.roles[0];
-        if (!elementRole || !elementRole.valid)
-            return false;
-        var ariaRole = elementRole.details;
+        var appliedRole  = elementRole.applied;
+        var ariaRole = appliedRole.details;
         var requiredScope = ariaRole['scope'];
         if (!requiredScope || requiredScope.length === 0) {
             return false;
@@ -48,9 +46,9 @@ axs.AuditRules.addRule({
         var parent = element;
         while ((parent = parent.parentNode)) {
             var parentRole = axs.utils.getRoles(parent, true);
-            if (parentRole && parentRole.roles.length) {
-                parentRole = parentRole.roles[0];
-                if (requiredScope.indexOf(parentRole.name) >= 0)  // if this ancestor role is one of the required roles
+            if (parentRole && parentRole.applied) {
+                var appliedParentRole = parentRole.applied;
+                if (requiredScope.indexOf(appliedParentRole.name) >= 0)  // if this ancestor role is one of the required roles
                     return false;
             }
         }
@@ -60,11 +58,8 @@ axs.AuditRules.addRule({
         if (owners) {
             for (var i = 0; i < owners.length; i++) {
                 var ownerRole = axs.utils.getRoles(owners[i], true);
-                if (ownerRole && ownerRole.roles.length)
-                    ownerRole = ownerRole.roles[0];
-                if (ownerRole && requiredScope.indexOf(ownerRole.name) >= 0) {  // if the owner role is one of the required roles
-                    return false;
-                }
+                if (ownerRole && ownerRole.applied && requiredScope.indexOf(ownerRole.applied.name) >= 0)
+                    return false;  // the owner role is one of the required roles
             }
         }
         return true;

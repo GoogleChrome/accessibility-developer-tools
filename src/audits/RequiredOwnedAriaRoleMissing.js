@@ -53,10 +53,10 @@ goog.require('axs.utils');
              for (var i = ownedElements.length - 1; i >= 0; i--) {
                  var ownedElement = ownedElements[i];
                  var ownedElementRole = axs.utils.getRoles(ownedElement, true);
-                 if (ownedElementRole && ownedElementRole.roles.length) {
-                     ownedElementRole = ownedElementRole.roles[0];
+                 if (ownedElementRole && ownedElementRole.applied) {
+                     var appliedRole = ownedElementRole.applied;
                      for (var j = required.length - 1; j >= 0; j--) {
-                        if (ownedElementRole.name === required[j]) {  // if this explicitly owned element has a required role
+                        if (appliedRole.name === required[j]) {  // if this explicitly owned element has a required role
                             return false;
                         }
                     }
@@ -74,12 +74,12 @@ goog.require('axs.utils');
      */
     function getRequired(element) {
         var elementRole = axs.utils.getRoles(element);
-        if (!elementRole || !elementRole.roles.length)
+        if (!elementRole || !elementRole.applied)
             return [];
-        elementRole = elementRole.roles[0];
-        if (!elementRole.valid)
+        var appliedRole = elementRole.applied;
+        if (!appliedRole.valid)
             return [];
-        return elementRole.details['mustcontain'] || [];
+        return appliedRole.details['mustcontain'] || [];
     }
     axs.AuditRules.addRule(spec);
 })();
