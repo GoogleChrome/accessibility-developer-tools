@@ -1536,19 +1536,20 @@ axs.AuditRule.collectMatchingElements = function(a, b, c, d) {
     }
   }
   if (e && "content" == e.localName) {
-    for (e = e.getDistributedNodes(), f = 0;f < e.length;f++) {
-      axs.AuditRule.collectMatchingElements(e[f], b, c, d);
+    for (var f = e.getDistributedNodes(), g = 0;g < f.length;g++) {
+      axs.AuditRule.collectMatchingElements(f[g], b, c, d);
     }
   } else {
     if (e && "shadow" == e.localName) {
       if (f = e, d) {
-        for (e = f.getDistributedNodes(), f = 0;f < e.length;f++) {
-          axs.AuditRule.collectMatchingElements(e[f], b, c, d);
+        for (f = f.getDistributedNodes(), g = 0;g < f.length;g++) {
+          axs.AuditRule.collectMatchingElements(f[g], b, c, d);
         }
       } else {
         console.warn("ShadowRoot not provided for", e);
       }
     }
+    e && "iframe" == e.localName && axs.AuditRule.collectMatchingElements(a.contentDocument, b, c, d);
     for (a = a.firstChild;null != a;) {
       axs.AuditRule.collectMatchingElements(a, b, c, d), a = a.nextSibling;
     }
