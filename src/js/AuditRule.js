@@ -182,6 +182,14 @@ axs.AuditRule.collectMatchingElements = function(node, matcher, collection,
             }
         }
     }
+
+    //If it is a iframe, get the contentDocument
+    if (element && element.localName == 'iframe') {
+        axs.AuditRule.collectMatchingElements(node.contentDocument,
+                                              matcher,
+                                              collection,
+                                              false);
+    }
     // If it is neither the parent of a ShadowRoot, a <content> element, nor
     // a <shadow> element recurse normally.
     var child = node.firstChild;
