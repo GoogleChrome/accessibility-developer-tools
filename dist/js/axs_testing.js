@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/f61fd0447d7ad90256597e6b1203e6495f430694
+ * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/88731e16c8639738a1375f8c2de1ec2a23fcb631
  *
  * See project README for build steps.
  */
@@ -917,12 +917,12 @@ axs.utils.getRoles = function(a, b) {
   if (!c) {
     return null;
   }
-  for (var c = c.split(" "), d = [], e = !0, f = 0;f < c.length;f++) {
-    var g = c[f], h = axs.constants.ARIA_ROLES[g];
-    h && !h.abstract ? g = {name:g, details:axs.constants.ARIA_ROLES[g], valid:!0} : (g = {name:g, valid:!1}, e = !1);
-    d.push(g);
+  for (var c = c.split(" "), d = {roles:[], valid:!1}, e = 0;e < c.length;e++) {
+    var f = c[e], g = axs.constants.ARIA_ROLES[f], f = {name:f};
+    g && !g.abstract ? (f.details = g, d.applied || (d.applied = f), f.valid = d.valid = !0) : f.valid = !1;
+    d.roles.push(f);
   }
-  return {roles:d, valid:e};
+  return d;
 };
 axs.utils.getAriaPropertyValue = function(a, b, c) {
   var d = a.replace(/^aria-/, ""), e = axs.constants.ARIA_PROPERTIES[d], d = {name:a, rawValue:b};
@@ -1536,20 +1536,19 @@ axs.AuditRule.collectMatchingElements = function(a, b, c, d) {
     }
   }
   if (e && "content" == e.localName) {
-    for (var f = e.getDistributedNodes(), g = 0;g < f.length;g++) {
-      axs.AuditRule.collectMatchingElements(f[g], b, c, d);
+    for (e = e.getDistributedNodes(), f = 0;f < e.length;f++) {
+      axs.AuditRule.collectMatchingElements(e[f], b, c, d);
     }
   } else {
     if (e && "shadow" == e.localName) {
       if (f = e, d) {
-        for (f = f.getDistributedNodes(), g = 0;g < f.length;g++) {
-          axs.AuditRule.collectMatchingElements(f[g], b, c, d);
+        for (e = f.getDistributedNodes(), f = 0;f < e.length;f++) {
+          axs.AuditRule.collectMatchingElements(e[f], b, c, d);
         }
       } else {
         console.warn("ShadowRoot not provided for", e);
       }
     }
-    e && "iframe" == e.localName && axs.AuditRule.collectMatchingElements(a.contentDocument, b, c, !1);
     for (a = a.firstChild;null != a;) {
       axs.AuditRule.collectMatchingElements(a, b, c, d), a = a.nextSibling;
     }
@@ -1760,26 +1759,22 @@ axs.AuditRules.addRule({name:"ariaRoleNotScoped", heading:"Elements with ARIA ro
   return axs.browserUtils.matchSelector(a, "[role]");
 }, test:function(a) {
   var b = axs.utils.getRoles(a);
-  if (!b || !b.roles.length) {
+  if (!b || !b.applied) {
     return !1;
   }
-  b = b.roles[0];
-  if (!b || !b.valid) {
-    return !1;
-  }
-  b = b.details.scope;
+  b = b.applied.details.scope;
   if (!b || 0 === b.length) {
     return !1;
   }
   for (var c = a;c = c.parentNode;) {
     var d = axs.utils.getRoles(c, !0);
-    if (d && d.roles.length && (d = d.roles[0], 0 <= b.indexOf(d.name))) {
+    if (d && d.applied && 0 <= b.indexOf(d.applied.name)) {
       return !1;
     }
   }
   if (a = axs.utils.getIdReferrers("aria-owns", a)) {
     for (c = 0;c < a.length;c++) {
-      if ((d = axs.utils.getRoles(a[c], !0)) && d.roles.length && (d = d.roles[0]), d && 0 <= b.indexOf(d.name)) {
+      if ((d = axs.utils.getRoles(a[c], !0)) && d.applied && 0 <= b.indexOf(d.applied.name)) {
         return !1;
       }
     }
@@ -1984,10 +1979,10 @@ axs.AuditRules.addRule({name:"requiredAriaAttributeMissing", heading:"Elements w
 (function() {
   function a(a) {
     a = axs.utils.getRoles(a);
-    if (!a || !a.roles.length) {
+    if (!a || !a.applied) {
       return [];
     }
-    a = a.roles[0];
+    a = a.applied;
     return a.valid ? a.details.mustcontain || [] : [];
   }
   axs.AuditRules.addRule({name:"requiredOwnedAriaRoleMissing", heading:"Elements with ARIA roles must ensure required owned elements are present", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_08", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(b) {
@@ -2004,8 +1999,8 @@ axs.AuditRules.addRule({name:"requiredAriaAttributeMissing", heading:"Elements w
     }
     b = axs.utils.getIdReferents("aria-owns", b);
     for (d = b.length - 1;0 <= d;d--) {
-      if ((e = axs.utils.getRoles(b[d], !0)) && e.roles.length) {
-        for (var e = e.roles[0], f = c.length - 1;0 <= f;f--) {
+      if ((e = axs.utils.getRoles(b[d], !0)) && e.applied) {
+        for (var e = e.applied, f = c.length - 1;0 <= f;f--) {
           if (e.name === c[f]) {
             return !1;
           }
@@ -2032,7 +2027,7 @@ axs.AuditRules.addRule({name:"unfocusableElementsWithOnClick", heading:"Elements
   axs.AuditRules.addRule({name:"unsupportedAriaAttribute", heading:"This element has an unsupported ARIA attribute", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_10", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
     return axs.browserUtils.matchSelector(a, b);
   }, test:function(b) {
-    var d = axs.utils.getRoles(b, !0), d = d && d.roles.length ? d.roles[0].details.propertiesSet : axs.constants.GLOBAL_PROPERTIES;
+    var d = axs.utils.getRoles(b, !0), d = d && d.applied ? d.applied.details.propertiesSet : axs.constants.GLOBAL_PROPERTIES;
     b = b.attributes;
     for (var e = 0, f = b.length;e < f;e++) {
       var g = b[e].name;

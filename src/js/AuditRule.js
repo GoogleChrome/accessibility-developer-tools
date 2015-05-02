@@ -188,7 +188,7 @@ axs.AuditRule.collectMatchingElements = function(node, matcher, collection,
         axs.AuditRule.collectMatchingElements(node.contentDocument,
                                               matcher,
                                               collection,
-                                              false);
+                                              opt_shadowRoot);
     }
     // If it is neither the parent of a ShadowRoot, a <content> element, nor
     // a <shadow> element recurse normally.
