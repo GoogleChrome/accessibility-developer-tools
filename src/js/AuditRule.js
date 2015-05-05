@@ -184,8 +184,8 @@ axs.AuditRule.collectMatchingElements = function(node, matcher, collection,
     }
 
     //If it is a iframe, get the contentDocument
-    if (element && element.localName == 'iframe') {
-        axs.AuditRule.collectMatchingElements(node.contentDocument,
+    if (element && element.localName == 'iframe' && element.contentDocument) {
+        axs.AuditRule.collectMatchingElements(element.contentDocument,
                                               matcher,
                                               collection,
                                               opt_shadowRoot);

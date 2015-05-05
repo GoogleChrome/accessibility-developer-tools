@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/88731e16c8639738a1375f8c2de1ec2a23fcb631
+ * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/08b3be1e095d0203a094b370c27f77446a6c69e9
  *
  * See project README for build steps.
  */
@@ -1549,7 +1549,7 @@ axs.AuditRule.collectMatchingElements = function(a, b, c, d) {
         console.warn("ShadowRoot not provided for", e);
       }
     }
-    e && "iframe" == e.localName && axs.AuditRule.collectMatchingElements(a.contentDocument, b, c, d);
+    e && "iframe" == e.localName && e.contentDocument && axs.AuditRule.collectMatchingElements(e.contentDocument, b, c, d);
     for (a = a.firstChild;null != a;) {
       axs.AuditRule.collectMatchingElements(a, b, c, d), a = a.nextSibling;
     }
@@ -1866,7 +1866,8 @@ axs.AuditRules.addRule({name:"focusableElementNotVisibleAndNotAriaHidden", headi
       return !1;
     }
   }
-  return "" === axs.properties.findTextAlternatives(a, {}).trim() ? !1 : !0;
+  a = axs.properties.findTextAlternatives(a, {});
+  return null == a || "" === a.trim() ? !1 : !0;
 }, test:function(a) {
   if (axs.utils.isElementOrAncestorHidden(a)) {
     return !1;
