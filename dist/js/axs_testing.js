@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Google Inc.
+ * Copyright 2015 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/3d4893b4ecd0eb8f4765e04479213d04b240f3e0
+ * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/a33b34feb4bf5c6990c9d88f98c3c8e3115168ab
  *
  * See project README for build steps.
  */
@@ -62,7 +62,7 @@ goog.setTestOnly = function(a) {
 goog.forwardDeclare = function(a) {
 };
 COMPILED || (goog.isProvided_ = function(a) {
-  return!goog.implicitNamespaces_[a] && goog.isDefAndNotNull(goog.getObjectByName(a));
+  return !goog.implicitNamespaces_[a] && goog.isDefAndNotNull(goog.getObjectByName(a));
 }, goog.implicitNamespaces_ = {});
 goog.getObjectByName = function(a, b) {
   for (var c = a.split("."), d = b || goog.global, e;e = c.shift();) {
@@ -153,14 +153,14 @@ goog.DEPENDENCIES_ENABLED && (goog.included_ = {}, goog.dependencies_ = {pathToN
     var b = goog.global.document;
     if ("complete" == b.readyState) {
       if (/\bdeps.js$/.test(a)) {
-        return!1;
+        return !1;
       }
       throw Error('Cannot write "' + a + '" after document load');
     }
     b.write('<script type="text/javascript" src="' + a + '">\x3c/script>');
-    return!0;
+    return !0;
   }
-  return!1;
+  return !1;
 }, goog.writeScripts_ = function() {
   function a(e) {
     if (!(e in d.written)) {
@@ -258,7 +258,7 @@ goog.getUid = function(a) {
   return a[goog.UID_PROPERTY_] || (a[goog.UID_PROPERTY_] = ++goog.uidCounter_);
 };
 goog.hasUid = function(a) {
-  return!!a[goog.UID_PROPERTY_];
+  return !!a[goog.UID_PROPERTY_];
 };
 goog.removeUid = function(a) {
   "removeAttribute" in a && a.removeAttribute(goog.UID_PROPERTY_);
@@ -322,7 +322,7 @@ goog.mixin = function(a, b) {
   }
 };
 goog.now = goog.TRUSTED_SITE && Date.now || function() {
-  return+new Date;
+  return +new Date;
 };
 goog.globalEval = function(a) {
   if (goog.global.execScript) {
@@ -421,24 +421,24 @@ goog.scope = function(a) {
 var axs = {};
 axs.browserUtils = {};
 axs.browserUtils.matchSelector = function(a, b) {
-  return a.webkitMatchesSelector ? a.webkitMatchesSelector(b) : a.mozMatchesSelector ? a.mozMatchesSelector(b) : !1;
+  return a.webkitMatchesSelector ? a.webkitMatchesSelector(b) : a.mozMatchesSelector ? a.mozMatchesSelector(b) : a.msMatchesSelector ? a.msMatchesSelector(b) : !1;
 };
 axs.constants = {};
 axs.constants.ARIA_ROLES = {alert:{namefrom:["author"], parent:["region"]}, alertdialog:{namefrom:["author"], namerequired:!0, parent:["alert", "dialog"]}, application:{namefrom:["author"], namerequired:!0, parent:["landmark"]}, article:{namefrom:["author"], parent:["document", "region"]}, banner:{namefrom:["author"], parent:["landmark"]}, button:{childpresentational:!0, namefrom:["contents", "author"], namerequired:!0, parent:["command"], properties:["aria-expanded", "aria-pressed"]}, checkbox:{namefrom:["contents", 
-"author"], namerequired:!0, parent:["input"], requiredProperties:["aria-checked"], properties:["aria-checked"]}, columnheader:{namefrom:["contents", "author"], namerequired:!0, parent:["gridcell", "sectionhead", "widget"], properties:["aria-sort"]}, combobox:{mustcontain:["listbox", "textbox"], namefrom:["author"], namerequired:!0, parent:["select"], requiredProperties:["aria-expanded"], properties:["aria-expanded", "aria-autocomplete", "aria-required"]}, command:{"abstract":!0, namefrom:["author"], 
+"author"], namerequired:!0, parent:["input"], requiredProperties:["aria-checked"], properties:["aria-checked"]}, columnheader:{namefrom:["contents", "author"], namerequired:!0, parent:["gridcell", "sectionhead", "widget"], properties:["aria-sort"], scope:["row"]}, combobox:{mustcontain:["listbox", "textbox"], namefrom:["author"], namerequired:!0, parent:["select"], requiredProperties:["aria-expanded"], properties:["aria-expanded", "aria-autocomplete", "aria-required"]}, command:{"abstract":!0, namefrom:["author"], 
 parent:["widget"]}, complementary:{namefrom:["author"], parent:["landmark"]}, composite:{"abstract":!0, childpresentational:!1, namefrom:["author"], parent:["widget"], properties:["aria-activedescendant"]}, contentinfo:{namefrom:["author"], parent:["landmark"]}, definition:{namefrom:["author"], parent:["section"]}, dialog:{namefrom:["author"], namerequired:!0, parent:["window"]}, directory:{namefrom:["contents", "author"], parent:["list"]}, document:{namefrom:[" author"], namerequired:!0, parent:["structure"], 
-properties:["aria-expanded"]}, form:{namefrom:["author"], parent:["landmark"]}, grid:{mustcontain:["row", "rowgroup"], namefrom:["author"], namerequired:!0, parent:["composite", "region"], properties:["aria-level", "aria-multiselectable", "aria-readonly"]}, gridcell:{namefrom:["contents", "author"], namerequired:!0, parent:["section", "widget"], properties:["aria-readonly", "aria-required", "aria-selected"]}, group:{namefrom:[" author"], parent:["section"], properties:["aria-activedescendant"]}, 
+properties:["aria-expanded"]}, form:{namefrom:["author"], parent:["landmark"]}, grid:{mustcontain:["row", "rowgroup"], namefrom:["author"], namerequired:!0, parent:["composite", "region"], properties:["aria-level", "aria-multiselectable", "aria-readonly"]}, gridcell:{namefrom:["contents", "author"], namerequired:!0, parent:["section", "widget"], properties:["aria-readonly", "aria-required", "aria-selected"], scope:["row"]}, group:{namefrom:[" author"], parent:["section"], properties:["aria-activedescendant"]}, 
 heading:{namerequired:!0, parent:["sectionhead"], properties:["aria-level"]}, img:{childpresentational:!0, namefrom:["author"], namerequired:!0, parent:["section"]}, input:{"abstract":!0, namefrom:["author"], parent:["widget"]}, landmark:{"abstract":!0, namefrom:["contents", "author"], namerequired:!1, parent:["region"]}, link:{namefrom:["contents", "author"], namerequired:!0, parent:["command"], properties:["aria-expanded"]}, list:{mustcontain:["group", "listitem"], namefrom:["author"], parent:["region"]}, 
-listbox:{mustcontain:["option"], namefrom:["author"], namerequired:!0, parent:["list", "select"], properties:["aria-multiselectable", "aria-required"]}, listitem:{namefrom:["contents", "author"], namerequired:!0, parent:["section"], properties:["aria-level", "aria-posinset", "aria-setsize"]}, log:{namefrom:[" author"], namerequired:!0, parent:["region"]}, main:{namefrom:["author"], parent:["landmark"]}, marquee:{namerequired:!0, parent:["section"]}, math:{childpresentational:!0, namefrom:["author"], 
-parent:["section"]}, menu:{mustcontain:["group", "menuitemradio", "menuitem", "menuitemcheckbox"], namefrom:["author"], namerequired:!0, parent:["list", "select"]}, menubar:{namefrom:["author"], parent:["menu"]}, menuitem:{namefrom:["contents", "author"], namerequired:!0, parent:["command"]}, menuitemcheckbox:{namefrom:["contents", "author"], namerequired:!0, parent:["checkbox", "menuitem"]}, menuitemradio:{namefrom:["contents", "author"], namerequired:!0, parent:["menuitemcheckbox", "radio"]}, navigation:{namefrom:["author"], 
-parent:["landmark"]}, note:{namefrom:["author"], parent:["section"]}, option:{namefrom:["contents", "author"], namerequired:!0, parent:["input"], properties:["aria-checked", "aria-posinset", "aria-selected", "aria-setsize"]}, presentation:{parent:["structure"]}, progressbar:{childpresentational:!0, namefrom:["author"], namerequired:!0, parent:["range"]}, radio:{namefrom:["contents", "author"], namerequired:!0, parent:["checkbox", "option"]}, radiogroup:{mustcontain:["radio"], namefrom:["author"], 
-namerequired:!0, parent:["select"], properties:["aria-required"]}, range:{"abstract":!0, namefrom:["author"], parent:["widget"], properties:["aria-valuemax", "aria-valuemin", "aria-valuenow", "aria-valuetext"]}, region:{namefrom:[" author"], parent:["section"]}, roletype:{"abstract":!0, properties:"aria-atomic aria-busy aria-controls aria-describedby aria-disabled aria-dropeffect aria-flowto aria-grabbed aria-haspopup aria-hidden aria-invalid aria-label aria-labelledby aria-live aria-owns aria-relevant".split(" ")}, 
-row:{mustcontain:["columnheader", "gridcell", "rowheader"], namefrom:["contents", "author"], parent:["group", "widget"], properties:["aria-level", "aria-selected"]}, rowgroup:{mustcontain:["row"], namefrom:["contents", "author"], parent:["group"]}, rowheader:{namefrom:["contents", "author"], namerequired:!0, parent:["gridcell", "sectionhead", "widget"], properties:["aria-sort"]}, search:{namefrom:["author"], parent:["landmark"]}, section:{"abstract":!0, namefrom:["contents", "author"], parent:["structure"], 
-properties:["aria-expanded"]}, sectionhead:{"abstract":!0, namefrom:["contents", "author"], parent:["structure"], properties:["aria-expanded"]}, select:{"abstract":!0, namefrom:["author"], parent:["composite", "group", "input"]}, separator:{childpresentational:!0, namefrom:["author"], parent:["structure"], properties:["aria-expanded", "aria-orientation"]}, scrollbar:{childpresentational:!0, namefrom:["author"], namerequired:!1, parent:["input", "range"], requiredProperties:["aria-controls", "aria-orientation", 
-"aria-valuemax", "aria-valuemin", "aria-valuenow"], properties:["aria-controls", "aria-orientation", "aria-valuemax", "aria-valuemin", "aria-valuenow"]}, slider:{childpresentational:!0, namefrom:["author"], namerequired:!0, parent:["input", "range"], requiredProperties:["aria-valuemax", "aria-valuemin", "aria-valuenow"], properties:["aria-valuemax", "aria-valuemin", "aria-valuenow", "aria-orientation"]}, spinbutton:{namefrom:["author"], namerequired:!0, parent:["input", "range"], requiredProperties:["aria-valuemax", 
-"aria-valuemin", "aria-valuenow"], properties:["aria-valuemax", "aria-valuemin", "aria-valuenow", "aria-required"]}, status:{parent:["region"]}, structure:{"abstract":!0, parent:["roletype"]}, tab:{namefrom:["contents", "author"], parent:["sectionhead", "widget"], properties:["aria-selected"]}, tablist:{mustcontain:["tab"], namefrom:["author"], parent:["composite", "directory"], properties:["aria-level"]}, tabpanel:{namefrom:["author"], namerequired:!0, parent:["region"]}, textbox:{namefrom:["author"], 
-namerequired:!0, parent:["input"], properties:["aria-activedescendant", "aria-autocomplete", "aria-multiline", "aria-readonly", "aria-required"]}, timer:{namefrom:["author"], namerequired:!0, parent:["status"]}, toolbar:{namefrom:["author"], parent:["group"]}, tooltip:{namerequired:!0, parent:["section"]}, tree:{mustcontain:["group", "treeitem"], namefrom:["author"], namerequired:!0, parent:["select"], properties:["aria-multiselectable", "aria-required"]}, treegrid:{mustcontain:["row"], namefrom:["author"], 
-namerequired:!0, parent:["grid", "tree"]}, treeitem:{namefrom:["contents", "author"], namerequired:!0, parent:["listitem", "option"]}, widget:{"abstract":!0, parent:["roletype"]}, window:{"abstract":!0, namefrom:[" author"], parent:["roletype"], properties:["aria-expanded"]}};
+listbox:{mustcontain:["option"], namefrom:["author"], namerequired:!0, parent:["list", "select"], properties:["aria-multiselectable", "aria-required"]}, listitem:{namefrom:["contents", "author"], namerequired:!0, parent:["section"], properties:["aria-level", "aria-posinset", "aria-setsize"], scope:["list"]}, log:{namefrom:[" author"], namerequired:!0, parent:["region"]}, main:{namefrom:["author"], parent:["landmark"]}, marquee:{namerequired:!0, parent:["section"]}, math:{childpresentational:!0, namefrom:["author"], 
+parent:["section"]}, menu:{mustcontain:["group", "menuitemradio", "menuitem", "menuitemcheckbox"], namefrom:["author"], namerequired:!0, parent:["list", "select"]}, menubar:{namefrom:["author"], parent:["menu"]}, menuitem:{namefrom:["contents", "author"], namerequired:!0, parent:["command"], scope:["menu", "menubar"]}, menuitemcheckbox:{namefrom:["contents", "author"], namerequired:!0, parent:["checkbox", "menuitem"], scope:["menu", "menubar"]}, menuitemradio:{namefrom:["contents", "author"], namerequired:!0, 
+parent:["menuitemcheckbox", "radio"], scope:["menu", "menubar"]}, navigation:{namefrom:["author"], parent:["landmark"]}, note:{namefrom:["author"], parent:["section"]}, option:{namefrom:["contents", "author"], namerequired:!0, parent:["input"], properties:["aria-checked", "aria-posinset", "aria-selected", "aria-setsize"]}, presentation:{parent:["structure"]}, progressbar:{childpresentational:!0, namefrom:["author"], namerequired:!0, parent:["range"]}, radio:{namefrom:["contents", "author"], namerequired:!0, 
+parent:["checkbox", "option"]}, radiogroup:{mustcontain:["radio"], namefrom:["author"], namerequired:!0, parent:["select"], properties:["aria-required"]}, range:{"abstract":!0, namefrom:["author"], parent:["widget"], properties:["aria-valuemax", "aria-valuemin", "aria-valuenow", "aria-valuetext"]}, region:{namefrom:[" author"], parent:["section"]}, roletype:{"abstract":!0, properties:"aria-atomic aria-busy aria-controls aria-describedby aria-disabled aria-dropeffect aria-flowto aria-grabbed aria-haspopup aria-hidden aria-invalid aria-label aria-labelledby aria-live aria-owns aria-relevant".split(" ")}, 
+row:{mustcontain:["columnheader", "gridcell", "rowheader"], namefrom:["contents", "author"], parent:["group", "widget"], properties:["aria-level", "aria-selected"], scope:["grid", "rowgroup", "treegrid"]}, rowgroup:{mustcontain:["row"], namefrom:["contents", "author"], parent:["group"], scope:["grid"]}, rowheader:{namefrom:["contents", "author"], namerequired:!0, parent:["gridcell", "sectionhead", "widget"], properties:["aria-sort"], scope:["row"]}, search:{namefrom:["author"], parent:["landmark"]}, 
+section:{"abstract":!0, namefrom:["contents", "author"], parent:["structure"], properties:["aria-expanded"]}, sectionhead:{"abstract":!0, namefrom:["contents", "author"], parent:["structure"], properties:["aria-expanded"]}, select:{"abstract":!0, namefrom:["author"], parent:["composite", "group", "input"]}, separator:{childpresentational:!0, namefrom:["author"], parent:["structure"], properties:["aria-expanded", "aria-orientation"]}, scrollbar:{childpresentational:!0, namefrom:["author"], namerequired:!1, 
+parent:["input", "range"], requiredProperties:["aria-controls", "aria-orientation", "aria-valuemax", "aria-valuemin", "aria-valuenow"], properties:["aria-controls", "aria-orientation", "aria-valuemax", "aria-valuemin", "aria-valuenow"]}, slider:{childpresentational:!0, namefrom:["author"], namerequired:!0, parent:["input", "range"], requiredProperties:["aria-valuemax", "aria-valuemin", "aria-valuenow"], properties:["aria-valuemax", "aria-valuemin", "aria-valuenow", "aria-orientation"]}, spinbutton:{namefrom:["author"], 
+namerequired:!0, parent:["input", "range"], requiredProperties:["aria-valuemax", "aria-valuemin", "aria-valuenow"], properties:["aria-valuemax", "aria-valuemin", "aria-valuenow", "aria-required"]}, status:{parent:["region"]}, structure:{"abstract":!0, parent:["roletype"]}, tab:{namefrom:["contents", "author"], parent:["sectionhead", "widget"], properties:["aria-selected"]}, tablist:{mustcontain:["tab"], namefrom:["author"], parent:["composite", "directory"], properties:["aria-level"], scope:["tablist"]}, 
+tabpanel:{namefrom:["author"], namerequired:!0, parent:["region"]}, textbox:{namefrom:["author"], namerequired:!0, parent:["input"], properties:["aria-activedescendant", "aria-autocomplete", "aria-multiline", "aria-readonly", "aria-required"]}, timer:{namefrom:["author"], namerequired:!0, parent:["status"]}, toolbar:{namefrom:["author"], parent:["group"]}, tooltip:{namerequired:!0, parent:["section"]}, tree:{mustcontain:["group", "treeitem"], namefrom:["author"], namerequired:!0, parent:["select"], 
+properties:["aria-multiselectable", "aria-required"]}, treegrid:{mustcontain:["row"], namefrom:["author"], namerequired:!0, parent:["grid", "tree"]}, treeitem:{namefrom:["contents", "author"], namerequired:!0, parent:["listitem", "option"], scope:["group", "tree"]}, widget:{"abstract":!0, parent:["roletype"]}, window:{"abstract":!0, namefrom:[" author"], parent:["roletype"], properties:["aria-expanded"]}};
 axs.constants.WIDGET_ROLES = {};
 axs.constants.addAllParentRolesToSet_ = function(a, b) {
   if (a.parent) {
@@ -480,7 +480,7 @@ describedby:{type:"property", valueType:"idref_list"}, disabled:{defaultValue:"f
 multiline:{defaultValue:"false", type:"property", valueType:"boolean"}, multiselectable:{defaultValue:"false", type:"property", valueType:"boolean"}, orientation:{defaultValue:"vertical", type:"property", valueType:"token", values:["horizontal", "vertical"]}, owns:{type:"property", valueType:"idref_list"}, posinset:{type:"property", valueType:"integer"}, pressed:{defaultValue:"undefined", type:"state", valueType:"token", values:["true", "false", "mixed", "undefined"]}, readonly:{defaultValue:"false", 
 type:"property", valueType:"boolean"}, relevant:{defaultValue:"additions text", type:"property", valueType:"token_list", values:["additions", "removals", "text", "all"]}, required:{defaultValue:"false", type:"property", valueType:"boolean"}, selected:{defaultValue:"undefined", type:"state", valueType:"token", values:["true", "false", "undefined"]}, setsize:{type:"property", valueType:"integer"}, sort:{defaultValue:"none", type:"property", valueType:"token", values:["ascending", "descending", "none", 
 "other"]}, valuemax:{type:"property", valueType:"decimal"}, valuemin:{type:"property", valueType:"decimal"}, valuenow:{type:"property", valueType:"decimal"}, valuetext:{type:"property", valueType:"string"}};
-axs.constants.GLOBAL_PROPERTIES = "aria-atomic aria-busy aria-controls aria-describedby aria-disabled aria-dropeffect aria-flowto aria-grabbed aria-haspopup aria-hidden aria-invalid aria-label aria-labelledby aria-live aria-owns aria-relevant".split(" ");
+axs.constants.GLOBAL_PROPERTIES = axs.constants.ARIA_ROLES.roletype.properties;
 axs.constants.NO_ROLE_NAME = " ";
 axs.constants.WIDGET_ROLE_TO_NAME = {alert:"aria_role_alert", alertdialog:"aria_role_alertdialog", button:"aria_role_button", checkbox:"aria_role_checkbox", columnheader:"aria_role_columnheader", combobox:"aria_role_combobox", dialog:"aria_role_dialog", grid:"aria_role_grid", gridcell:"aria_role_gridcell", link:"aria_role_link", listbox:"aria_role_listbox", log:"aria_role_log", marquee:"aria_role_marquee", menu:"aria_role_menu", menubar:"aria_role_menubar", menuitem:"aria_role_menuitem", menuitemcheckbox:"aria_role_menuitemcheckbox", 
 menuitemradio:"aria_role_menuitemradio", option:axs.constants.NO_ROLE_NAME, progressbar:"aria_role_progressbar", radio:"aria_role_radio", radiogroup:"aria_role_radiogroup", rowheader:"aria_role_rowheader", scrollbar:"aria_role_scrollbar", slider:"aria_role_slider", spinbutton:"aria_role_spinbutton", status:"aria_role_status", tab:"aria_role_tab", tabpanel:"aria_role_tabpanel", textbox:"aria_role_textbox", timer:"aria_role_timer", toolbar:"aria_role_toolbar", tooltip:"aria_role_tooltip", treeitem:"aria_role_treeitem"};
@@ -508,6 +508,21 @@ axs.constants.MIXED_VALUES = {"true":!0, "false":!0, mixed:!0};
 axs.constants.Severity = {INFO:"Info", WARNING:"Warning", SEVERE:"Severe"};
 axs.constants.AuditResult = {PASS:"PASS", FAIL:"FAIL", NA:"NA"};
 axs.constants.InlineElements = {TT:!0, I:!0, B:!0, BIG:!0, SMALL:!0, EM:!0, STRONG:!0, DFN:!0, CODE:!0, SAMP:!0, KBD:!0, VAR:!0, CITE:!0, ABBR:!0, ACRONYM:!0, A:!0, IMG:!0, OBJECT:!0, BR:!0, SCRIPT:!0, MAP:!0, Q:!0, SUB:!0, SUP:!0, SPAN:!0, BDO:!0, INPUT:!0, SELECT:!0, TEXTAREA:!0, LABEL:!0, BUTTON:!0};
+axs.constants.ARIA_TO_HTML_ATTRIBUTE = {"aria-checked":"checked", "aria-disabled":"disabled", "aria-hidden":"hidden", "aria-expanded":"open", "aria-valuemax":"max", "aria-valuemin":"min", "aria-readonly":"readonly", "aria-required":"required", "aria-selected":"selected", "aria-valuenow":"value"};
+axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {A:[{role:"link", allowed:"button checkbox menuitem menuitemcheckbox menuitemradio tab treeitem".split(" "), selector:"a[href]"}], ADDRESS:[{role:"", allowed:["contentinfo", "presentation"]}], AREA:[{role:"link", selector:"area[href]"}], ARTICLE:[{role:"article", allowed:["presentation", "article", "document", "application", "main"]}], ASIDE:[{role:"complementary", allowed:["note", "complementary", "search", "presentation"]}], AUDIO:[{role:"", allowed:["application", 
+"presentation"]}], BASE:[{role:"", reserved:!0}], BODY:[{role:"document", allowed:["presentation"]}], BUTTON:[{role:"button", allowed:["link", "menuitem", "menuitemcheckbox", "menuitemradio", "radio"], selector:'button:not([aria-pressed]):not([type="menu"])'}, {role:"button", allowed:["button"], selector:"button[aria-pressed]"}, {role:"button", attributes:{"aria-haspopup":!0}, allowed:["link", "menuitem", "menuitemcheckbox", "menuitemradio", "radio"], selector:'button[type="menu"]'}], CAPTION:[{role:"", 
+allowed:["presentation"]}], COL:[{role:"", reserved:!0}], COLGROUP:[{role:"", reserved:!0}], DATALIST:[{role:"listbox", attributes:{"aria-multiselectable":!1}, allowed:["presentation"]}], DEL:[{role:"", allowed:["*"]}], DD:[{role:"", allowed:["presentation"]}], DT:[{role:"", allowed:["presentation"]}], DETAILS:[{role:"group", allowed:["group", "presentation"]}], DIALOG:[{role:"dialog", allowed:"dialog alert alertdialog application log marquee status".split(" "), selector:"dialog[open]"}, {role:"dialog", 
+attributes:{"aria-hidden":!0}, allowed:"dialog alert alertdialog application log marquee status".split(" "), selector:"dialog:not([open])"}], DIV:[{role:"", allowed:["*"]}], DL:[{role:"list", allowed:["presentation"]}], EMBED:[{role:"", allowed:["application", "document", "img", "presentation"]}], FIGURE:[{role:"", allowed:["*"]}], FOOTER:[{role:"", allowed:["contentinfo", "presentation"]}], FORM:[{role:"form", allowed:["presentation"]}], P:[{role:"", allowed:["*"]}], PRE:[{role:"", allowed:["*"]}], 
+BLOCKQUOTE:[{role:"", allowed:["*"]}], H1:[{role:"heading"}], H2:[{role:"heading"}], H3:[{role:"heading"}], H4:[{role:"heading"}], H5:[{role:"heading"}], H6:[{role:"heading"}], HEAD:[{role:"", reserved:!0}], HEADER:[{role:"", allowed:["banner", "presentation"]}], HR:[{role:"separator", allowed:["presentation"]}], HTML:[{role:"", reserved:!0}], IFRAME:[{role:"", allowed:["application", "document", "img", "presentation"], selector:"iframe:not([seamless])"}, {role:"", allowed:["application", "document", 
+"img", "presentation", "group"], selector:"iframe[seamless]"}], IMG:[{role:"presentation", reserved:!0, selector:'img[alt=""]'}, {role:"img", allowed:["*"], selector:'img[alt]:not([alt=""])'}], INPUT:[{role:"button", allowed:["link", "menuitem", "menuitemcheckbox", "menuitemradio", "radio"], selector:'input[type="button"]:not([aria-pressed])'}, {role:"button", allowed:["button"], selector:'input[type="button"][aria-pressed]'}, {role:"checkbox", allowed:["checkbox"], selector:'input[type="checkbox"]'}, 
+{role:"", selector:'input[type="color"]'}, {role:"", selector:'input[type="date"]'}, {role:"", selector:'input[type="datetime"]'}, {role:"textbox", selector:'input[type="email"]:not([list])'}, {role:"", selector:'input[type="file"]'}, {role:"", reserved:!0, selector:'input[type="hidden"]'}, {role:"button", allowed:["button"], selector:'input[type="image"][aria-pressed]'}, {role:"button", allowed:["link", "menuitem", "menuitemcheckbox", "menuitemradio", "radio"], selector:'input[type="image"]:not([aria-pressed])'}, 
+{role:"", selector:'input[type="month"]'}, {role:"", selector:'input[type="number"]'}, {role:"textbox", selector:'input[type="password"]'}, {role:"radio", allowed:["menuitemradio"], selector:'input[type="radio"]'}, {role:"slider", selector:'input[type="range"]'}, {role:"button", selector:'input[type="reset"]'}, {role:"combobox", selector:'input[type="search"][list]'}, {role:"textbox", selector:'input[type="search"]:not([list])'}, {role:"button", selector:'input[type="submit"]'}, {role:"combobox", 
+selector:'input[type="tel"][list]'}, {role:"textbox", selector:'input[type="tel"]:not([list])'}, {role:"combobox", selector:'input[type="text"][list]'}, {role:"", selector:'input[type="text"]:not([list])'}, {role:"", selector:'input[type="time"]'}, {role:"combobox", selector:'input[type="url"][list]'}, {role:"textbox", selector:'input[type="url"]:not([list])'}, {role:"", selector:'input[type="week"]'}], INS:[{role:"", allowed:["*"]}], KEYGEN:[{role:""}], LABEL:[{role:"", allowed:["presentation"]}], 
+LI:[{role:"listitem", allowed:"menuitem menuitemcheckbox menuitemradio option tab treeitem presentation".split(" "), selector:'ol:not([role="presentation"])>li, ul:not([role="presentation"])>li'}, {role:"listitem", allowed:"listitem menuitem menuitemcheckbox menuitemradio option tab treeitem presentation".split(" "), selector:'ol[role="presentation"]>li, ul[role="presentation"]>li'}], LINK:[{role:"link", reserved:!0, selector:"link[href]"}], MAIN:[{role:"", allowed:["main", "presentation"]}], MAP:[{role:"", 
+reserved:!0}], MATH:[{role:"", allowed:["presentation"]}], MENU:[{role:"toolbar", selector:'menu[type="toolbar"]'}], MENUITEM:[{role:"menuitem", selector:'menuitem[type="command"]'}, {role:"menuitemcheckbox", selector:'menuitem[type="checkbox"]'}, {role:"menuitemradio", selector:'menuitem[type="radio"]'}], META:[{role:"", reserved:!0}], METER:[{role:"progressbar", allowed:["presentation"]}], NAV:[{role:"navigation", allowed:["navigation", "presentation"]}], NOSCRIPT:[{role:"", reserved:!0}], OBJECT:[{role:"", 
+allowed:["application", "document", "img", "presentation"]}], OL:[{role:"list", allowed:"directory group listbox menu menubar tablist toolbar tree presentation".split(" ")}], OPTGROUP:[{role:"", allowed:["presentation"]}], OPTION:[{role:"option"}], OUTPUT:[{role:"status", allowed:["*"]}], PARAM:[{role:"", reserved:!0}], PICTURE:[{role:"", reserved:!0}], PROGRESS:[{role:"progressbar", allowed:["presentation"]}], SCRIPT:[{role:"", reserved:!0}], SECTION:[{role:"region", allowed:"alert alertdialog application contentinfo dialog document log marquee search status presentation".split(" ")}], 
+SELECT:[{role:"listbox"}], SOURCE:[{role:"", reserved:!0}], SPAN:[{role:"", allowed:["*"]}], STYLE:[{role:"", reserved:!0}], SVG:[{role:"", allowed:["application", "document", "img", "presentation"]}], SUMMARY:[{role:"", allowed:["presentation"]}], TABLE:[{role:"", allowed:["*"]}], TEMPLATE:[{role:"", reserved:!0}], TEXTAREA:[{role:"textbox"}], TBODY:[{role:"rowgroup", allowed:["*"]}], THEAD:[{role:"rowgroup", allowed:["*"]}], TFOOT:[{role:"rowgroup", allowed:["*"]}], TITLE:[{role:"", reserved:!0}], 
+TD:[{role:"", allowed:["*"]}], TH:[{role:"", allowed:["*"]}], TR:[{role:"", allowed:["*"]}], TRACK:[{role:"", reserved:!0}], UL:[{role:"list", allowed:"directory group listbox menu menubar tablist toolbar tree presentation".split(" ")}], VIDEO:[{role:"", allowed:["application", "presentation"]}]};
 axs.utils = {};
 axs.utils.FOCUSABLE_ELEMENTS_SELECTOR = "input:not([type=hidden]):not([disabled]),select:not([disabled]),textarea:not([disabled]),button:not([disabled]),a[href],iframe,[tabindex]";
 axs.utils.Color = function(a, b, c, d) {
@@ -522,10 +537,10 @@ axs.utils.calculateContrastRatio = function(a, b) {
   }
   1 > a.alpha && (a = axs.utils.flattenColors(a, b));
   var c = axs.utils.calculateLuminance(a), d = axs.utils.calculateLuminance(b);
-  return(Math.max(c, d) + .05) / (Math.min(c, d) + .05);
+  return (Math.max(c, d) + .05) / (Math.min(c, d) + .05);
 };
 axs.utils.luminanceRatio = function(a, b) {
-  return(Math.max(a, b) + .05) / (Math.min(a, b) + .05);
+  return (Math.max(a, b) + .05) / (Math.min(a, b) + .05);
 };
 axs.utils.parentElement = function(a) {
   if (!a) {
@@ -579,19 +594,19 @@ axs.utils.elementHasZeroArea = function(a) {
 axs.utils.elementIsOutsideScrollArea = function(a) {
   for (var b = axs.utils.parentElement(a), c = a.ownerDocument.defaultView;b != c.document.body;) {
     if (axs.utils.isClippedBy(a, b)) {
-      return!0;
+      return !0;
     }
     if (axs.utils.canScrollTo(a, b) && !axs.utils.elementIsOutsideScrollArea(b)) {
-      return!1;
+      return !1;
     }
     b = axs.utils.parentElement(b);
   }
-  return!axs.utils.canScrollTo(a, c.document.body);
+  return !axs.utils.canScrollTo(a, c.document.body);
 };
 axs.utils.canScrollTo = function(a, b) {
   var c = a.getBoundingClientRect(), d = b.getBoundingClientRect(), e = d.top, f = d.left, g = e - b.scrollTop, e = e - b.scrollTop + b.scrollHeight, h = f - b.scrollLeft + b.scrollWidth;
   if (c.right < f - b.scrollLeft || c.bottom < g || c.left > h || c.top > e) {
-    return!1;
+    return !1;
   }
   f = a.ownerDocument.defaultView;
   g = f.getComputedStyle(b);
@@ -599,7 +614,7 @@ axs.utils.canScrollTo = function(a, b) {
 };
 axs.utils.isClippedBy = function(a, b) {
   var c = a.getBoundingClientRect(), d = b.getBoundingClientRect(), e = d.top - b.scrollTop, f = d.left - b.scrollLeft, g = a.ownerDocument.defaultView.getComputedStyle(b);
-  return(c.right < d.left || c.bottom < d.top || c.left > d.right || c.top > d.bottom) && "hidden" == g.overflow ? !0 : c.right < f || c.bottom < e ? "visible" != g.overflow : !1;
+  return (c.right < d.left || c.bottom < d.top || c.left > d.right || c.top > d.bottom) && "hidden" == g.overflow ? !0 : c.right < f || c.bottom < e ? "visible" != g.overflow : !1;
 };
 axs.utils.isAncestor = function(a, b) {
   return null == b ? !1 : b === a ? !0 : axs.utils.isAncestor(a, b.parentNode);
@@ -648,10 +663,10 @@ axs.utils.isLargeFont = function(a) {
   }
   if (c = b.match(/(\d+)pt/)) {
     if (b = parseInt(c[1], 10), a && 14 <= b || 18 <= b) {
-      return!0;
+      return !0;
     }
   }
-  return!1;
+  return !1;
 };
 axs.utils.getBgColor = function(a, b) {
   var c = axs.utils.parseColor(a.backgroundColor);
@@ -700,10 +715,10 @@ axs.utils.parseColor = function(a) {
   var b = a.match(/^rgb\((\d+), (\d+), (\d+)\)$/);
   if (b) {
     a = parseInt(b[1], 10);
-    var c = parseInt(b[2], 10), b = parseInt(b[3], 10), d;
-    return new axs.utils.Color(a, c, b, 1);
+    var c = parseInt(b[2], 10), d = parseInt(b[3], 10);
+    return new axs.utils.Color(a, c, d, 1);
   }
-  return(b = a.match(/^rgba\((\d+), (\d+), (\d+), (\d+(\.\d+)?)\)/)) ? (d = parseInt(b[4], 10), a = parseInt(b[1], 10), c = parseInt(b[2], 10), b = parseInt(b[3], 10), new axs.utils.Color(a, c, b, d)) : null;
+  return (b = a.match(/^rgba\((\d+), (\d+), (\d+), (\d*(\.\d+)?)\)/)) ? (a = parseInt(b[1], 10), c = parseInt(b[2], 10), d = parseInt(b[3], 10), b = parseFloat(b[4]), new axs.utils.Color(a, c, d, b)) : null;
 };
 axs.utils.colorChannelToString = function(a) {
   a = Math.round(a);
@@ -723,17 +738,15 @@ axs.utils.suggestColors = function(a, b, c, d) {
   if (!axs.utils.isLowContrast(c, d, !0)) {
     return null;
   }
-  var e = {}, f = axs.utils.calculateLuminance(a), g = axs.utils.calculateLuminance(b), h = axs.utils.isLargeFont(d) ? 3 : 4.5, k = axs.utils.isLargeFont(d) ? 4.5 : 7, m = g > f, l = axs.utils.luminanceFromContrastRatio(f, h + .02, m), n = axs.utils.luminanceFromContrastRatio(f, k + .02, m), q = axs.utils.toYCC(b);
+  var e = {}, f = axs.utils.calculateLuminance(a), g = axs.utils.calculateLuminance(b), h = axs.utils.isLargeFont(d) ? 3 : 4.5, k = axs.utils.isLargeFont(d) ? 4.5 : 7, m = g > f, l = axs.utils.luminanceFromContrastRatio(f, h + .02, m), n = axs.utils.luminanceFromContrastRatio(f, k + .02, m), p = axs.utils.toYCC(b);
   if (axs.utils.isLowContrast(c, d, !1) && 1 >= l && 0 <= l) {
-    var p = axs.utils.translateColor(q, l), l = axs.utils.calculateContrastRatio(p, a);
-    axs.utils.calculateLuminance(p);
-    f = {};
-    f.fg = axs.utils.colorToString(p);
+    var q = axs.utils.translateColor(p, l), l = axs.utils.calculateContrastRatio(q, a), f = {};
+    f.fg = axs.utils.colorToString(q);
     f.bg = axs.utils.colorToString(a);
     f.contrast = l.toFixed(2);
     e.AA = f;
   }
-  axs.utils.isLowContrast(c, d, !0) && 1 >= n && 0 <= n && (n = axs.utils.translateColor(q, n), l = axs.utils.calculateContrastRatio(n, a), f = {}, f.fg = axs.utils.colorToString(n), f.bg = axs.utils.colorToString(a), f.contrast = l.toFixed(2), e.AAA = f);
+  axs.utils.isLowContrast(c, d, !0) && 1 >= n && 0 <= n && (n = axs.utils.translateColor(p, n), l = axs.utils.calculateContrastRatio(n, a), f = {}, f.fg = axs.utils.colorToString(n), f.bg = axs.utils.colorToString(a), f.contrast = l.toFixed(2), e.AAA = f);
   h = axs.utils.luminanceFromContrastRatio(g, h + .02, !m);
   g = axs.utils.luminanceFromContrastRatio(g, k + .02, !m);
   a = axs.utils.toYCC(a);
@@ -749,7 +762,7 @@ axs.utils.calculateLuminance = function(a) {
   return axs.utils.toYCC(a)[0];
 };
 axs.utils.RGBToYCCMatrix = function(a, b) {
-  return[[a, 1 - a - b, b], [-a / (2 - 2 * b), (a + b - 1) / (2 - 2 * b), (1 - b) / (2 - 2 * b)], [(1 - a) / (2 - 2 * a), (a + b - 1) / (2 - 2 * a), -b / (2 - 2 * a)]];
+  return [[a, 1 - a - b, b], [-a / (2 - 2 * b), (a + b - 1) / (2 - 2 * b), (1 - b) / (2 - 2 * b)], [(1 - a) / (2 - 2 * a), (a + b - 1) / (2 - 2 * a), -b / (2 - 2 * a)]];
 };
 axs.utils.invert3x3Matrix = function(a) {
   var b = a[0][0], c = a[0][1], d = a[0][2], e = a[1][0], f = a[1][1], g = a[1][2], h = a[2][0], k = a[2][1];
@@ -770,7 +783,7 @@ axs.utils.YCC_MATRIX = axs.utils.RGBToYCCMatrix(axs.utils.kR, axs.utils.kB);
 axs.utils.INVERTED_YCC_MATRIX = axs.utils.invert3x3Matrix(axs.utils.YCC_MATRIX);
 axs.utils.convertColor = function(a, b) {
   var c = b[0], d = b[1], e = b[2];
-  return[a[0][0] * c + a[0][1] * d + a[0][2] * e, a[1][0] * c + a[1][1] * d + a[1][2] * e, a[2][0] * c + a[2][1] * d + a[2][2] * e];
+  return [a[0][0] * c + a[0][1] * d + a[0][2] * e, a[1][0] * c + a[1][1] * d + a[1][2] * e, a[2][0] * c + a[2][1] * d + a[2][2] * e];
 };
 axs.utils.multiplyMatrices = function(a, b) {
   for (var c = [[], [], []], d = 0;3 > d;d++) {
@@ -835,10 +848,10 @@ axs.utils.isNativeTextElement = function(a) {
   var b = a.tagName.toLowerCase();
   a = a.type ? a.type.toLowerCase() : "";
   if ("textarea" == b) {
-    return!0;
+    return !0;
   }
   if ("input" != b) {
-    return!1;
+    return !1;
   }
   switch(a) {
     case "email":
@@ -856,9 +869,9 @@ axs.utils.isNativeTextElement = function(a) {
     case "url":
     ;
     case "":
-      return!0;
+      return !0;
     default:
-      return!1;
+      return !1;
   }
 };
 axs.utils.isLowContrast = function(a, b, c) {
@@ -867,20 +880,20 @@ axs.utils.isLowContrast = function(a, b, c) {
 };
 axs.utils.hasLabel = function(a) {
   var b = a.tagName.toLowerCase(), c = a.type ? a.type.toLowerCase() : "";
-  if (a.hasAttribute("aria-label") || a.hasAttribute("title") || "img" == b && a.hasAttribute("alt") || "input" == b && "image" == c && a.hasAttribute("alt") || "input" == b && ("submit" == c || "reset" == c) || a.hasAttribute("aria-labelledby") || axs.utils.isNativeTextElement(a) && a.hasAttribute("placeholder") || a.hasAttribute("id") && 0 < document.querySelectorAll('label[for="' + a.id + '"]').length) {
-    return!0;
+  if (a.hasAttribute("aria-label") || a.hasAttribute("title") || "img" == b && a.hasAttribute("alt") || "input" == b && "image" == c && a.hasAttribute("alt") || "input" == b && ("submit" == c || "reset" == c) || a.hasAttribute("aria-labelledby") || a.hasAttribute("id") && 0 < document.querySelectorAll('label[for="' + a.id + '"]').length) {
+    return !0;
   }
   for (b = axs.utils.parentElement(a);b;) {
     if ("label" == b.tagName.toLowerCase() && b.control == a) {
-      return!0;
+      return !0;
     }
     b = axs.utils.parentElement(b);
   }
-  return!1;
+  return !1;
 };
 axs.utils.isElementHidden = function(a) {
   if (!(a instanceof a.ownerDocument.defaultView.HTMLElement)) {
-    return!1;
+    return !1;
   }
   if (a.hasAttribute("chromevoxignoreariahidden")) {
     var b = !0
@@ -895,16 +908,21 @@ axs.utils.isInlineElement = function(a) {
   a = a.tagName.toUpperCase();
   return axs.constants.InlineElements[a];
 };
-axs.utils.getRoles = function(a) {
-  if (!a.hasAttribute("role")) {
-    return!1;
+axs.utils.getRoles = function(a, b) {
+  if (!a || a.nodeType !== Node.ELEMENT_NODE || !a.hasAttribute("role") && !b) {
+    return null;
   }
-  a = a.getAttribute("role").split(" ");
-  for (var b = [], c = !0, d = 0;d < a.length;d++) {
-    var e = a[d];
-    axs.constants.ARIA_ROLES[e] ? b.push({name:e, details:axs.constants.ARIA_ROLES[e], valid:!0}) : (b.push({name:e, valid:!1}), c = !1);
+  var c = a.getAttribute("role");
+  !c && b && (c = axs.properties.getImplicitRole(a));
+  if (!c) {
+    return null;
   }
-  return{roles:b, valid:c};
+  for (var c = c.split(" "), d = {roles:[], valid:!1}, e = 0;e < c.length;e++) {
+    var f = c[e], g = axs.constants.ARIA_ROLES[f], f = {name:f};
+    g && !g.abstract ? (f.details = g, d.applied || (d.applied = f), f.valid = d.valid = !0) : f.valid = !1;
+    d.roles.push(f);
+  }
+  return d;
 };
 axs.utils.getAriaPropertyValue = function(a, b, c) {
   var d = a.replace(/^aria-/, ""), e = axs.constants.ARIA_PROPERTIES[d], d = {name:a, rawValue:b};
@@ -978,7 +996,7 @@ axs.utils.isValidNumber = function(a) {
   try {
     var b = JSON.parse(a);
   } catch (c) {
-    return{valid:!1, value:a, reason:'"' + a + '" is not a number'};
+    return {valid:!1, value:a, reason:'"' + a + '" is not a number'};
   }
   return "number" != typeof b ? {valid:!1, value:a, reason:'"' + a + '" is not a number'} : {valid:!0, value:b};
 };
@@ -1027,7 +1045,9 @@ axs.utils.getQuerySelectorText = function(a) {
       } else {
         d = 1;
       }
-      return 1 == d ? axs.utils.getQuerySelectorText(a.parentNode) + " > " + b : axs.utils.getQuerySelectorText(a.parentNode) + " > " + b + ":nth-of-type(" + d + ")";
+      if (1 == d) {
+        return axs.utils.getQuerySelectorText(a.parentNode) + " > " + b;
+      }
     }
     if (a.parentNode) {
       b = a.parentNode.children;
@@ -1045,6 +1065,60 @@ axs.utils.getQuerySelectorText = function(a) {
     }
   }
   return "";
+};
+axs.utils.getIdReferrers = function(a, b) {
+  if (!b) {
+    return null;
+  }
+  var c = b.id, d = a.replace(/^aria-/, ""), d = axs.constants.ARIA_PROPERTIES[d];
+  if (!c || !d) {
+    return null;
+  }
+  d = d.valueType;
+  return "idref_list" === d || "idref" === d ? (c = c.replace(/'/g, "\\'"), b.ownerDocument.querySelectorAll("[" + a + "~='" + c + "']")) : null;
+};
+axs.utils.getIdReferents = function(a, b) {
+  var c = [], d = a.replace(/^aria-/, ""), d = axs.constants.ARIA_PROPERTIES[d];
+  if (!d || !b.hasAttribute(a)) {
+    return c;
+  }
+  d = d.valueType;
+  if ("idref_list" === d || "idref" === d) {
+    for (var d = b.ownerDocument, e = b.getAttribute(a), e = e.split(/\s+/), f = 0, g = e.length;f < g;f++) {
+      var h = d.getElementById(e[f]);
+      h && (c[c.length] = h);
+    }
+  }
+  return c;
+};
+axs.utils.getAriaPropertiesByValueType = function(a) {
+  var b = {}, c;
+  for (c in axs.constants.ARIA_PROPERTIES) {
+    var d = axs.constants.ARIA_PROPERTIES[c];
+    d && 0 <= a.indexOf(d.valueType) && (b[c] = d);
+  }
+  return b;
+};
+axs.utils.getSelectorForAriaProperties = function(a) {
+  a = Object.keys(a).map(function(a) {
+    return "[aria-" + a + "]";
+  });
+  a.sort();
+  return a.join(",");
+};
+axs.utils.findDescendantsWithRole = function(a, b) {
+  if (!a || !b) {
+    return [];
+  }
+  var c = axs.properties.getSelectorForRole(b);
+  if (c && (c = a.querySelectorAll(c))) {
+    c = Array.prototype.map.call(c, function(a) {
+      return a;
+    });
+  } else {
+    return [];
+  }
+  return c;
 };
 axs.properties = {};
 axs.properties.TEXT_CONTENT_XPATH = './/text()[normalize-space(.)!=""]/parent::*[name()!="script"]';
@@ -1086,13 +1160,26 @@ axs.properties.getColorProperties = function(a) {
   return 0 == Object.keys(b).length ? null : b;
 };
 axs.properties.hasDirectTextDescendant = function(a) {
-  for (var b = (a.nodeType == Node.DOCUMENT_NODE ? a : a.ownerDocument).evaluate(axs.properties.TEXT_CONTENT_XPATH, a, null, XPathResult.ANY_TYPE, null), c = !1, d = b.iterateNext();null != d;d = b.iterateNext()) {
-    if (d === a) {
-      c = !0;
-      break;
+  function b() {
+    for (var b = d.evaluate(axs.properties.TEXT_CONTENT_XPATH, a, null, XPathResult.ANY_TYPE, null), c = b.iterateNext();null != c;c = b.iterateNext()) {
+      if (c === a) {
+        return !0;
+      }
     }
+    return !1;
   }
-  return c;
+  function c() {
+    for (var b = d.createTreeWalker(a, NodeFilter.SHOW_TEXT, null, !1);b.nextNode();) {
+      var c = b.currentNode, g = c.parentNode.tagName.toLowerCase();
+      if (c.nodeValue.trim() && "script" !== g && a !== c) {
+        return !0;
+      }
+    }
+    return !1;
+  }
+  var d;
+  d = a.nodeType == Node.DOCUMENT_NODE ? a : a.ownerDocument;
+  return d.evaluate ? b() : c();
 };
 axs.properties.getContrastRatioProperties = function(a) {
   if (!axs.properties.hasDirectTextDescendant(a)) {
@@ -1330,7 +1417,7 @@ axs.properties.getTrackElements = function(a, b) {
 axs.properties.getAllProperties = function(a) {
   var b = axs.utils.asElement(a);
   if (!b) {
-    return{};
+    return {};
   }
   var c = {};
   c.ariaProperties = axs.properties.getAriaProperties(b);
@@ -1340,6 +1427,80 @@ axs.properties.getAllProperties = function(a) {
   c.videoProperties = axs.properties.getVideoProperties(b);
   return c;
 };
+(function() {
+  function a(a) {
+    if (!a) {
+      return null;
+    }
+    var c = a.tagName;
+    if (!c) {
+      return null;
+    }
+    c = c.toUpperCase();
+    c = axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO[c];
+    if (!c || !c.length) {
+      return null;
+    }
+    for (var d = null, e = 0, f = c.length;e < f;e++) {
+      var g = c[e];
+      if (g.selector) {
+        if (axs.browserUtils.matchSelector(a, g.selector)) {
+          return g;
+        }
+      } else {
+        d = g;
+      }
+    }
+    return d;
+  }
+  axs.properties.getImplicitRole = function(b) {
+    return (b = a(b)) ? b.role : "";
+  };
+  axs.properties.canTakeAriaAttributes = function(b) {
+    return (b = a(b)) ? !b.reserved : !0;
+  };
+})();
+axs.properties.getNativelySupportedAttributes = function(a) {
+  var b = [];
+  if (!a) {
+    return b;
+  }
+  a = a.cloneNode(!1);
+  for (var c = Object.keys(axs.constants.ARIA_TO_HTML_ATTRIBUTE), d = 0;d < c.length;d++) {
+    var e = c[d];
+    axs.constants.ARIA_TO_HTML_ATTRIBUTE[e] in a && (b[b.length] = e);
+  }
+  return b;
+};
+(function() {
+  var a = {};
+  axs.properties.getSelectorForRole = function(b) {
+    if (!b) {
+      return "";
+    }
+    if (a[b] && a.hasOwnProperty(b)) {
+      return a[b];
+    }
+    var c = ['[role="' + b + '"]'];
+    Object.keys(axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO).forEach(function(a) {
+      var e = axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO[a];
+      if (e && e.length) {
+        for (var f = 0;f < e.length;f++) {
+          var g = e[f];
+          if (g.role === b) {
+            if (g.selector) {
+              c[c.length] = g.selector;
+            } else {
+              c[c.length] = a;
+              break;
+            }
+          }
+        }
+      }
+    });
+    return a[b] = c.join(",");
+  };
+})();
 axs.AuditRule = function(a) {
   for (var b = !0, c = [], d = 0;d < axs.AuditRule.requiredFields.length;d++) {
     var e = axs.AuditRule.requiredFields[d];
@@ -1375,16 +1536,21 @@ axs.AuditRule.collectMatchingElements = function(a, b, c, d) {
     }
   }
   if (e && "content" == e.localName) {
-    for (e = e.getDistributedNodes(), a = 0;a < e.length;a++) {
-      axs.AuditRule.collectMatchingElements(e[a], b, c, d);
+    for (e = e.getDistributedNodes(), f = 0;f < e.length;f++) {
+      axs.AuditRule.collectMatchingElements(e[f], b, c, d);
     }
   } else {
     if (e && "shadow" == e.localName) {
-      a = e, d ? (d = d.olderShadowRoot || a.olderShadowRoot) && axs.AuditRule.collectMatchingElements(d, b, c, d) : console.warn("ShadowRoot not provided for", e);
-    } else {
-      for (e = a.firstChild;null != e;) {
-        axs.AuditRule.collectMatchingElements(e, b, c, d), e = e.nextSibling;
+      if (f = e, d) {
+        for (e = f.getDistributedNodes(), f = 0;f < e.length;f++) {
+          axs.AuditRule.collectMatchingElements(e[f], b, c, d);
+        }
+      } else {
+        console.warn("ShadowRoot not provided for", e);
       }
+    }
+    for (a = a.firstChild;null != a;) {
+      axs.AuditRule.collectMatchingElements(a, b, c, d), a = a.nextSibling;
     }
   }
 };
@@ -1394,38 +1560,49 @@ axs.AuditRule.prototype.run = function(a) {
   axs.AuditRule.collectMatchingElements("scope" in a ? a.scope : document, this.relevantElementMatcher_, d);
   var e = [];
   if (!d.length) {
-    return{result:axs.constants.AuditResult.NA};
+    return {result:axs.constants.AuditResult.NA};
   }
-  for (a = 0;a < d.length && !(null != c && e.length >= c);a++) {
-    var f = d[a], g;
+  for (var f = 0;f < d.length && !(null != c && e.length >= c);f++) {
+    var g = d[f], h;
     a: {
-      g = f;
-      for (var h = 0;h < b.length;h++) {
-        if (axs.browserUtils.matchSelector(g, b[h])) {
-          g = !0;
+      h = g;
+      for (var k = 0;k < b.length;k++) {
+        if (axs.browserUtils.matchSelector(h, b[k])) {
+          h = !0;
           break a;
         }
       }
-      g = !1;
+      h = !1;
     }
-    !g && this.test_(f) && this.addElement(e, f);
+    !h && this.test_(g, a.config) && this.addElement(e, g);
   }
-  b = {result:e.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS, elements:e};
-  a < d.length && (b.resultsTruncated = !0);
-  return b;
+  a = {result:e.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS, elements:e};
+  f < d.length && (a.resultsTruncated = !0);
+  return a;
 };
-axs.AuditRule.specs = {};
 axs.AuditRules = {};
-axs.AuditRules.getRule = function(a) {
-  if (!axs.AuditRules.rules) {
-    axs.AuditRules.rules = {};
-    for (var b in axs.AuditRule.specs) {
-      var c = axs.AuditRule.specs[b], d = new axs.AuditRule(c);
-      axs.AuditRules.rules[c.name] = d;
+(function() {
+  var a = {}, b = {};
+  axs.AuditRules.addRule = function(c) {
+    c = new axs.AuditRule(c);
+    if (c.code in b) {
+      throw Error('Can not add audit rule with same code: "' + c.code + '"');
     }
-  }
-  return axs.AuditRules.rules[a];
-};
+    if (c.name in a) {
+      throw Error('Can not add audit rule with same name: "' + c.name + '"');
+    }
+    a[c.name] = b[c.code] = c;
+  };
+  axs.AuditRules.getRule = function(c) {
+    return a[c] || b[c] || null;
+  };
+  axs.AuditRules.getRules = function(b) {
+    var d = Object.keys(a);
+    return b ? d : d.map(function(a) {
+      return this.getRule(a);
+    }, axs.AuditRules);
+  };
+})();
 axs.AuditResults = function() {
   this.errors_ = [];
   this.warnings_ = [];
@@ -1490,21 +1667,26 @@ axs.AuditConfiguration.prototype = {ignoreSelectors:function(a, b) {
   this.rules_[a].severity = b;
 }, getSeverity:function(a) {
   return a in this.rules_ && "severity" in this.rules_[a] ? this.rules_[a].severity : null;
+}, setRuleConfig:function(a, b) {
+  a in this.rules_ || (this.rules_[a] = {});
+  this.rules_[a].config = b;
+}, getRuleConfig:function(a) {
+  return a in this.rules_ && "config" in this.rules_[a] ? this.rules_[a].config : null;
 }};
 goog.exportProperty(axs.AuditConfiguration.prototype, "ignoreSelectors", axs.AuditConfiguration.prototype.ignoreSelectors);
 goog.exportProperty(axs.AuditConfiguration.prototype, "getIgnoreSelectors", axs.AuditConfiguration.prototype.getIgnoreSelectors);
 axs.Audit.unsupportedRulesWarningShown = !1;
 axs.Audit.getRulesCannotRun = function(a) {
-  return a.withConsoleApi ? [] : Object.keys(axs.AuditRule.specs).filter(function(a) {
-    return axs.AuditRules.getRule(a).requiresConsoleAPI;
+  return a.withConsoleApi ? [] : axs.AuditRules.getRules().filter(function(a) {
+    return a.requiresConsoleAPI;
   }).map(function(a) {
-    return axs.AuditRules.getRule(a).code;
+    return a.code;
   });
 };
 axs.Audit.run = function(a) {
   a = a || new axs.AuditConfiguration;
   var b = a.withConsoleApi, c = [], d;
-  d = a.auditRulesToRun && 0 < a.auditRulesToRun.length ? a.auditRulesToRun : Object.keys(axs.AuditRule.specs);
+  d = a.auditRulesToRun && 0 < a.auditRulesToRun.length ? a.auditRulesToRun : axs.AuditRules.getRules(!0);
   if (a.auditRulesToIgnore) {
     for (var e = 0;e < a.auditRulesToIgnore.length;e++) {
       var f = a.auditRulesToIgnore[e];
@@ -1519,6 +1701,8 @@ axs.Audit.run = function(a) {
       if (0 < k.length || a.scope) {
         h.ignoreSelectors = k;
       }
+      k = a.getRuleConfig(g.name);
+      null != k && (h.config = k);
       a.scope && (h.scope = a.scope);
       a.maxResults && (h.maxResults = a.maxResults);
       h = g.run.call(g, h);
@@ -1559,17 +1743,72 @@ axs.Audit.accessibilityErrorMessage = function(a) {
   return b;
 };
 goog.exportSymbol("axs.Audit.accessibilityErrorMessage", axs.Audit.accessibilityErrorMessage);
-axs.AuditRule.specs.audioWithoutControls = {name:"audioWithoutControls", heading:"Audio elements should have controls", url:"", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
+axs.AuditRules.addRule({name:"ariaOnReservedElement", heading:"This element does not support ARIA roles, states and properties", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_12", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
+  return !axs.properties.canTakeAriaAttributes(a);
+}, test:function(a) {
+  return null !== axs.properties.getAriaProperties(a);
+}, code:"AX_ARIA_12"});
+axs.AuditRules.addRule({name:"ariaOwnsDescendant", heading:"aria-owns should not be used if ownership is implicit in the DOM", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_06", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
+  return axs.browserUtils.matchSelector(a, "[aria-owns]");
+}, test:function(a) {
+  return axs.utils.getIdReferents("aria-owns", a).some(function(b) {
+    return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_CONTAINED_BY;
+  });
+}, code:"AX_ARIA_06"});
+axs.AuditRules.addRule({name:"ariaRoleNotScoped", heading:"Elements with ARIA roles must be in the correct scope", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_09", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
+  return axs.browserUtils.matchSelector(a, "[role]");
+}, test:function(a) {
+  var b = axs.utils.getRoles(a);
+  if (!b || !b.applied) {
+    return !1;
+  }
+  b = b.applied.details.scope;
+  if (!b || 0 === b.length) {
+    return !1;
+  }
+  for (var c = a;c = c.parentNode;) {
+    var d = axs.utils.getRoles(c, !0);
+    if (d && d.applied && 0 <= b.indexOf(d.applied.name)) {
+      return !1;
+    }
+  }
+  if (a = axs.utils.getIdReferrers("aria-owns", a)) {
+    for (c = 0;c < a.length;c++) {
+      if ((d = axs.utils.getRoles(a[c], !0)) && d.applied && 0 <= b.indexOf(d.applied.name)) {
+        return !1;
+      }
+    }
+  }
+  return !0;
+}, code:"AX_ARIA_09"});
+axs.AuditRules.addRule({name:"audioWithoutControls", heading:"Audio elements should have controls", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_audio_01", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
   return axs.browserUtils.matchSelector(a, "audio[autoplay]");
 }, test:function(a) {
-  return!a.querySelectorAll("[controls]").length && 3 < a.duration;
-}, code:"AX_AUDIO_01"};
-axs.AuditRule.specs.badAriaAttributeValue = {name:"badAriaAttributeValue", heading:"ARIA state and property values must be valid", url:"", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
-  var b = "", c;
-  for (c in axs.constants.ARIA_PROPERTIES) {
-    b += "[aria-" + c + "],";
-  }
-  b = b.substring(0, b.length - 1);
+  return !a.querySelectorAll("[controls]").length && 3 < a.duration;
+}, code:"AX_AUDIO_01"});
+(function() {
+  var a = /^aria\-/;
+  axs.AuditRules.addRule({name:"badAriaAttribute", heading:"This element has an invalid ARIA attribute", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_11", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(b) {
+    b = b.attributes;
+    for (var c = 0, d = b.length;c < d;c++) {
+      if (a.test(b[c].name)) {
+        return !0;
+      }
+    }
+    return !1;
+  }, test:function(b) {
+    b = b.attributes;
+    for (var c = 0, d = b.length;c < d;c++) {
+      var e = b[c].name;
+      if (a.test(e) && (e = e.replace(a, ""), !axs.constants.ARIA_PROPERTIES.hasOwnProperty(e))) {
+        return !0;
+      }
+    }
+    return !1;
+  }, code:"AX_ARIA_11"});
+})();
+axs.AuditRules.addRule({name:"badAriaAttributeValue", heading:"ARIA state and property values must be valid", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_04", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
+  var b = axs.utils.getSelectorForAriaProperties(axs.constants.ARIA_PROPERTIES);
   return axs.browserUtils.matchSelector(a, b);
 }, test:function(a) {
   for (var b in axs.constants.ARIA_PROPERTIES) {
@@ -1577,135 +1816,235 @@ axs.AuditRule.specs.badAriaAttributeValue = {name:"badAriaAttributeValue", headi
     if (a.hasAttribute(c)) {
       var d = a.getAttribute(c);
       if (!axs.utils.getAriaPropertyValue(c, d, a).valid) {
-        return!0;
+        return !0;
       }
     }
   }
-  return!1;
-}, code:"AX_ARIA_04"};
-axs.AuditRule.specs.badAriaRole = {name:"badAriaRole", heading:"Elements with ARIA roles must use a valid, non-abstract ARIA role", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_01--elements-with-aria-roles-must-use-a-valid-non-abstract-aria-role", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
+  return !1;
+}, code:"AX_ARIA_04"});
+axs.AuditRules.addRule({name:"badAriaRole", heading:"Elements with ARIA roles must use a valid, non-abstract ARIA role", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_01", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
   return axs.browserUtils.matchSelector(a, "[role]");
 }, test:function(a) {
-  return!axs.utils.getRoles(a).valid;
-}, code:"AX_ARIA_01"};
-axs.AuditRule.specs.controlsWithoutLabel = {name:"controlsWithoutLabel", heading:"Controls and media elements should have labels", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_01--controls-and-media-elements-should-have-labels", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
-  if (!axs.browserUtils.matchSelector(a, 'input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])')) {
-    return!1;
+  return !axs.utils.getRoles(a).valid;
+}, code:"AX_ARIA_01"});
+axs.AuditRules.addRule({name:"controlsWithoutLabel", heading:"Controls and media elements should have labels", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_01", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
+  if (!axs.browserUtils.matchSelector(a, 'input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])') || "presentation" == a.getAttribute("role")) {
+    return !1;
   }
   if (0 <= a.tabIndex) {
-    return!0;
+    return !0;
   }
   for (a = axs.utils.parentElement(a);null != a;a = axs.utils.parentElement(a)) {
     if (axs.utils.elementIsAriaWidget(a)) {
-      return!1;
+      return !1;
     }
   }
-  return!0;
+  return !0;
 }, test:function(a) {
   return axs.utils.isElementOrAncestorHidden(a) || "input" == a.tagName.toLowerCase() && "button" == a.type && a.value.length || "button" == a.tagName.toLowerCase() && a.textContent.replace(/^\s+|\s+$/g, "").length ? !1 : axs.utils.hasLabel(a) ? !1 : !0;
-}, code:"AX_TEXT_01", ruleName:"Controls and media elements should have labels"};
-axs.AuditRule.specs.focusableElementNotVisibleAndNotAriaHidden = {name:"focusableElementNotVisibleAndNotAriaHidden", heading:"These elements are focusable but either invisible or obscured by another element", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_focus_01--these-elements-are-focusable-but-either-invisible-or-obscured-by-another-element", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
+}, code:"AX_TEXT_01", ruleName:"Controls and media elements should have labels"});
+axs.AuditRules.addRule({name:"duplicateId", heading:"An element's ID must be unique in the DOM", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_html_02", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
+  return axs.browserUtils.matchSelector(a, "[id]");
+}, test:function(a) {
+  var b = a.id;
+  if (!b) {
+    return !1;
+  }
+  b = "[id='" + b.replace(/'/g, "\\'") + "']";
+  return 1 < a.ownerDocument.querySelectorAll(b).length;
+}, code:"AX_HTML_02"});
+axs.AuditRules.addRule({name:"focusableElementNotVisibleAndNotAriaHidden", heading:"These elements are focusable but either invisible or obscured by another element", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_01", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
   if (!axs.browserUtils.matchSelector(a, axs.utils.FOCUSABLE_ELEMENTS_SELECTOR)) {
-    return!1;
+    return !1;
   }
   if (0 <= a.tabIndex) {
-    return!0;
+    return !0;
   }
-  for (a = axs.utils.parentElement(a);null != a;a = axs.utils.parentElement(a)) {
-    if (axs.utils.elementIsAriaWidget(a)) {
-      return!1;
+  for (var b = axs.utils.parentElement(a);null != b;b = axs.utils.parentElement(b)) {
+    if (axs.utils.elementIsAriaWidget(b)) {
+      return !1;
     }
   }
-  return!0;
+  return "" === axs.properties.findTextAlternatives(a, {}).trim() ? !1 : !0;
 }, test:function(a) {
   if (axs.utils.isElementOrAncestorHidden(a)) {
-    return!1;
+    return !1;
   }
   a.focus();
-  return!axs.utils.elementIsVisible(a);
-}, code:"AX_FOCUS_01"};
-axs.AuditRule.specs.imagesWithoutAltText = {name:"imagesWithoutAltText", heading:"Images should have an alt attribute", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_02--images-should-have-an-alt-attribute-unless-they-have-an-aria-role-of-presentation", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
+  return !axs.utils.elementIsVisible(a);
+}, code:"AX_FOCUS_01"});
+axs.AuditRules.addRule({name:"humanLangMissing", heading:"The web page should have the content's human language indicated in the markup", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_html_01", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
+  return a instanceof a.ownerDocument.defaultView.HTMLHtmlElement;
+}, test:function(a) {
+  return a.lang ? !1 : !0;
+}, code:"AX_HTML_01"});
+axs.AuditRules.addRule({name:"imagesWithoutAltText", heading:"Images should have an alt attribute", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_02", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
   return axs.browserUtils.matchSelector(a, "img") && !axs.utils.isElementOrAncestorHidden(a);
 }, test:function(a) {
-  return!a.hasAttribute("alt") && "presentation" != a.getAttribute("role");
-}, code:"AX_TEXT_02"};
-axs.AuditRule.specs.linkWithUnclearPurpose = {name:"linkWithUnclearPurpose", heading:"The purpose of each link should be clear from the link text", url:"", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
+  return !a.hasAttribute("alt") && "presentation" != a.getAttribute("role");
+}, code:"AX_TEXT_02"});
+axs.AuditRules.addRule({name:"linkWithUnclearPurpose", heading:"The purpose of each link should be clear from the link text", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_04", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
   return axs.browserUtils.matchSelector(a, "a");
-}, test:function(a) {
-  return/^\s*click\s*here\s*[^a-z]?$/i.test(a.textContent);
-}, code:"AX_TITLE_01"};
-axs.AuditRule.specs.lowContrastElements = {name:"lowContrastElements", heading:"Text elements should have a reasonable contrast ratio", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_color_01--text-elements-should-have-a-reasonable-contrast-ratio", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
+}, test:function(a, b) {
+  for (var c = b || {}, d = c.blacklistPhrases || [], e = /\s+/, f = 0;f < d.length;f++) {
+    var g = "^\\s*" + d[f].trim().replace(e, "\\s*") + "s*[^a-z]$";
+    if ((new RegExp(g, "i")).test(a.textContent)) {
+      return !0;
+    }
+  }
+  c = c.stopwords || "click tap go here learn more this page link about".split(" ");
+  d = a.textContent;
+  d = d.replace(/[^a-zA-Z ]/g, "");
+  for (f = 0;f < c.length;f++) {
+    if (d = d.replace(new RegExp("\\b" + c[f] + "\\b", "ig"), ""), "" == d.trim()) {
+      return !0;
+    }
+  }
+  return !1;
+}, code:"AX_TEXT_04"});
+axs.AuditRules.addRule({name:"lowContrastElements", heading:"Text elements should have a reasonable contrast ratio", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_color_01", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
   return axs.properties.hasDirectTextDescendant(a);
 }, test:function(a) {
   var b = window.getComputedStyle(a, null);
-  return(a = axs.utils.getContrastRatioForElementWithComputedStyle(b, a)) && axs.utils.isLowContrast(a, b);
-}, code:"AX_COLOR_01"};
-axs.AuditRule.specs.mainRoleOnInappropriateElement = {name:"mainRoleOnInappropriateElement", heading:"role=main should only appear on significant elements", url:"", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
+  return (a = axs.utils.getContrastRatioForElementWithComputedStyle(b, a)) && axs.utils.isLowContrast(a, b);
+}, code:"AX_COLOR_01"});
+axs.AuditRules.addRule({name:"mainRoleOnInappropriateElement", heading:"role=main should only appear on significant elements", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_05", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
   return axs.browserUtils.matchSelector(a, "[role~=main]");
 }, test:function(a) {
   if (axs.utils.isInlineElement(a)) {
-    return!0;
+    return !0;
   }
   a = axs.properties.getTextFromDescendantContent(a);
-  return!a || 50 > a.length ? !0 : !1;
-}, code:"AX_ARIA_04"};
-axs.AuditRule.specs.elementsWithMeaningfulBackgroundImage = {name:"elementsWithMeaningfulBackgroundImage", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
-  return!axs.utils.isElementOrAncestorHidden(a);
-}, heading:"Meaningful images should not be used in element backgrounds", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_image_01--meaningful-images-should-not-be-used-in-element-backgrounds", test:function(a) {
+  return !a || 50 > a.length ? !0 : !1;
+}, code:"AX_ARIA_05"});
+axs.AuditRules.addRule({name:"elementsWithMeaningfulBackgroundImage", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
+  return !axs.utils.isElementOrAncestorHidden(a);
+}, heading:"Meaningful images should not be used in element backgrounds", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_image_01", test:function(a) {
   if (a.textContent && 0 < a.textContent.length) {
-    return!1;
+    return !1;
   }
   a = window.getComputedStyle(a, null);
   var b = a.backgroundImage;
   if (!b || "undefined" === b || "none" === b || 0 != b.indexOf("url")) {
-    return!1;
+    return !1;
   }
   b = parseInt(a.width, 10);
   a = parseInt(a.height, 10);
   return 150 > b && 150 > a;
-}, code:"AX_IMAGE_01"};
-axs.AuditRule.specs.nonExistentAriaLabelledbyElement = {name:"nonExistentAriaLabelledbyElement", heading:"aria-labelledby attributes should refer to an element which exists in the DOM", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_02--aria-labelledby-attributes-should-refer-to-an-element-which-exists-in-the-dom", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
-  return axs.browserUtils.matchSelector(a, "[aria-labelledby]");
+}, code:"AX_IMAGE_01"});
+axs.AuditRules.addRule({name:"multipleAriaOwners", heading:"An element's ID must not be present in more that one aria-owns attribute at any time", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_07", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
+  return axs.browserUtils.matchSelector(a, "[aria-owns]");
 }, test:function(a) {
-  a = a.getAttribute("aria-labelledby").split(/\s+/);
-  for (var b = 0;b < a.length;b++) {
-    if (!document.getElementById(a[b])) {
-      return!0;
+  return axs.utils.getIdReferents("aria-owns", a).some(function(a) {
+    return 1 < axs.utils.getIdReferrers("aria-owns", a).length;
+  });
+}, code:"AX_ARIA_07"});
+axs.AuditRules.addRule({name:"nonExistentAriaRelatedElement", heading:"ARIA attributes which refer to other elements by ID should refer to elements which exist in the DOM", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_02", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
+  var b = axs.utils.getAriaPropertiesByValueType(["idref", "idref_list"]), b = axs.utils.getSelectorForAriaProperties(b);
+  return axs.browserUtils.matchSelector(a, b);
+}, test:function(a) {
+  for (var b = axs.utils.getAriaPropertiesByValueType(["idref", "idref_list"]), b = axs.utils.getSelectorForAriaProperties(b).split(","), c = 0, d = b.length;c < d;c++) {
+    var e = b[c];
+    if (axs.browserUtils.matchSelector(a, e)) {
+      var e = e.match(/aria-[^\]]+/)[0], f = a.getAttribute(e);
+      if (!axs.utils.getAriaPropertyValue(e, f, a).valid) {
+        return !0;
+      }
     }
   }
-  return!1;
-}, code:"AX_ARIA_02"};
-axs.AuditRule.specs.pageWithoutTitle = {name:"pageWithoutTitle", heading:"The web page should have a title that describes topic or purpose", url:"", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
+  return !1;
+}, code:"AX_ARIA_02"});
+axs.AuditRules.addRule({name:"pageWithoutTitle", heading:"The web page should have a title that describes topic or purpose", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_title_01", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
   return "html" == a.tagName.toLowerCase();
 }, test:function(a) {
   a = a.querySelector("head");
   return a ? (a = a.querySelector("title")) ? !a.textContent : !0 : !0;
-}, code:"AX_TITLE_01"};
-axs.AuditRule.specs.requiredAriaAttributeMissing = {name:"requiredAriaAttributeMissing", heading:"Elements with ARIA roles must have all required attributes for that role", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_03--elements-with-aria-roles-must-have-all-required-attributes-for-that-role", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
+}, code:"AX_TITLE_01"});
+axs.AuditRules.addRule({name:"requiredAriaAttributeMissing", heading:"Elements with ARIA roles must have all required attributes for that role", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_03", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
   return axs.browserUtils.matchSelector(a, "[role]");
 }, test:function(a) {
   var b = axs.utils.getRoles(a);
   if (!b.valid) {
-    return!1;
+    return !1;
   }
   for (var c = 0;c < b.roles.length;c++) {
     var d = b.roles[c].details.requiredPropertiesSet, e;
     for (e in d) {
-      if (d = e.replace(/^aria-/, ""), !("defaultValue" in axs.constants.ARIA_PROPERTIES[d] || a.hasAttribute(e))) {
-        return!0;
+      if (d = e.replace(/^aria-/, ""), !("defaultValue" in axs.constants.ARIA_PROPERTIES[d] || a.hasAttribute(e)) && 0 > axs.properties.getNativelySupportedAttributes(a).indexOf(e)) {
+        return !0;
       }
     }
   }
-}, code:"AX_ARIA_03"};
-axs.AuditRule.specs.unfocusableElementsWithOnClick = {name:"unfocusableElementsWithOnClick", heading:"Elements with onclick handlers must be focusable", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_focus_02--elements-with-onclick-handlers-must-be-focusable", severity:axs.constants.Severity.WARNING, opt_requiresConsoleAPI:!0, relevantElementMatcher:function(a) {
+}, code:"AX_ARIA_03"});
+(function() {
+  function a(a) {
+    a = axs.utils.getRoles(a);
+    if (!a || !a.applied) {
+      return [];
+    }
+    a = a.applied;
+    return a.valid ? a.details.mustcontain || [] : [];
+  }
+  axs.AuditRules.addRule({name:"requiredOwnedAriaRoleMissing", heading:"Elements with ARIA roles must ensure required owned elements are present", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_08", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(b) {
+    return axs.browserUtils.matchSelector(b, "[role]") ? 0 < a(b).length : !1;
+  }, test:function(b) {
+    if ("true" === b.getAttribute("aria-busy")) {
+      return !1;
+    }
+    for (var c = a(b), d = c.length - 1;0 <= d;d--) {
+      var e = axs.utils.findDescendantsWithRole(b, c[d]);
+      if (e && e.length) {
+        return !1;
+      }
+    }
+    b = axs.utils.getIdReferents("aria-owns", b);
+    for (d = b.length - 1;0 <= d;d--) {
+      if ((e = axs.utils.getRoles(b[d], !0)) && e.applied) {
+        for (var e = e.applied, f = c.length - 1;0 <= f;f--) {
+          if (e.name === c[f]) {
+            return !1;
+          }
+        }
+      }
+    }
+    return !0;
+  }, code:"AX_ARIA_08"});
+})();
+axs.AuditRules.addRule({name:"tabIndexGreaterThanZero", heading:"Avoid positive integer values for tabIndex", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_03", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
+  return axs.browserUtils.matchSelector(a, "[tabindex]");
+}, test:function(a) {
+  if (0 < a.tabIndex) {
+    return !0;
+  }
+}, code:"AX_FOCUS_03"});
+axs.AuditRules.addRule({name:"unfocusableElementsWithOnClick", heading:"Elements with onclick handlers must be focusable", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_02", severity:axs.constants.Severity.WARNING, opt_requiresConsoleAPI:!0, relevantElementMatcher:function(a) {
   return a instanceof a.ownerDocument.defaultView.HTMLBodyElement || axs.utils.isElementOrAncestorHidden(a) ? !1 : "click" in getEventListeners(a) ? !0 : !1;
 }, test:function(a) {
-  return!a.hasAttribute("tabindex") && !axs.utils.isElementImplicitlyFocusable(a) && !a.disabled;
-}, code:"AX_FOCUS_02"};
-axs.AuditRule.specs.videoWithoutCaptions = {name:"videoWithoutCaptions", heading:"Video elements should use <track> elements to provide captions", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_video_01--video-elements-should-use-track-elements-to-provide-captions", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
+  return !a.hasAttribute("tabindex") && !axs.utils.isElementImplicitlyFocusable(a) && !a.disabled;
+}, code:"AX_FOCUS_02"});
+(function() {
+  var a = /^aria\-/, b = axs.utils.getSelectorForAriaProperties(axs.constants.ARIA_PROPERTIES);
+  axs.AuditRules.addRule({name:"unsupportedAriaAttribute", heading:"This element has an unsupported ARIA attribute", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_10", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
+    return axs.browserUtils.matchSelector(a, b);
+  }, test:function(b) {
+    var d = axs.utils.getRoles(b, !0), d = d && d.applied ? d.applied.details.propertiesSet : axs.constants.GLOBAL_PROPERTIES;
+    b = b.attributes;
+    for (var e = 0, f = b.length;e < f;e++) {
+      var g = b[e].name;
+      if (a.test(g)) {
+        var h = g.replace(a, "");
+        if (axs.constants.ARIA_PROPERTIES.hasOwnProperty(h) && !(g in d)) {
+          return !0;
+        }
+      }
+    }
+    return !1;
+  }, code:"AX_ARIA_10"});
+})();
+axs.AuditRules.addRule({name:"videoWithoutCaptions", heading:"Video elements should use <track> elements to provide captions", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_video_01", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
   return axs.browserUtils.matchSelector(a, "video");
 }, test:function(a) {
-  return!a.querySelectorAll("track[kind=captions]").length;
-}, code:"AX_VIDEO_01"};
+  return !a.querySelectorAll("track[kind=captions]").length;
+}, code:"AX_VIDEO_01"});
 
 
