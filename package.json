@@ -9,7 +9,7 @@
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
     "grunt-closurecompiler": "^0.9.9",
-    "grunt-contrib-qunit": "^0.2.2",
+    "grunt-contrib-qunit": "^0.7.0",
     "grunt-util-spawn": "^0.0.2"
   },
   "scripts": {
