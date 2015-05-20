@@ -32,6 +32,66 @@ test('returns the calculated text alternative for the given element', function()
         ok(false, 'Threw exception');
     }
 });
+test('Image with no text alternative', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var img = fixture.appendChild(document.createElement('img'));
+    img.src = 'smile.jpg';
+    var textAlternatives = {};
+    axs.properties.findTextAlternatives(img, textAlternatives);
+    equal(Object.keys(textAlternatives).length, 0, 'Image has no text alternative');
+});
+
+test('Image with alt text', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var img = fixture.appendChild(document.createElement('img'));
+    img.src = 'smile.jpg';
+    img.alt = 'Smile!';
+    var textAlternatives = {};
+    axs.properties.findTextAlternatives(img, textAlternatives);
+    equal(Object.keys(textAlternatives).length, 1, 'exactly one text alternative');
+    equal('alt' in textAlternatives, true, 'alt in textAlternatives');
+    equal('Smile!', textAlternatives.alt.text);
+});
+
+test('Image with aria label', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var img = fixture.appendChild(document.createElement('img'));
+    img.src = 'smile.jpg';
+    img.setAttribute('aria-label', 'Smile!');
+    var textAlternatives = {};
+    axs.properties.findTextAlternatives(img, textAlternatives);
+    equal(Object.keys(textAlternatives).length, 1, 'exactly one text alternative');
+    equal('ariaLabel' in textAlternatives, true, 'ariaLabel in textAlternatives');
+    equal('Smile!', textAlternatives.ariaLabel.text);
+});
+
+test('Image with aria labelledby', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var img = fixture.appendChild(document.createElement('img'));
+    img.src = 'smile.jpg';
+    var label = fixture.appendChild(document.createElement('div'));
+    label.textContent = 'Smile!';
+    label.id = 'label';
+    img.setAttribute('aria-labelledby', 'label');
+    var textAlternatives = {};
+    axs.properties.findTextAlternatives(img, textAlternatives);
+    equal(Object.keys(textAlternatives).length, 1, 'exactly one text alternative');
+    equal('ariaLabelledby' in textAlternatives, true, 'ariaLabelledby in textAlternatives');
+    equal('Smile!', textAlternatives.ariaLabelledby.text);
+});
+
+test('Image with title', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var img = fixture.appendChild(document.createElement('img'));
+    img.src = 'smile.jpg';
+    img.setAttribute('title', 'Smile!');
+    var textAlternatives = {};
+    axs.properties.findTextAlternatives(img, textAlternatives);
+    equal(Object.keys(textAlternatives).length, 1, 'exactly one text alternative');
+    equal('title' in textAlternatives, true, 'title in textAlternatives');
+    equal('Smile!', textAlternatives.title.text);
+});
+
 
 module('getTextFromHostLanguageAttributes', {
     setup: function () {
@@ -153,4 +213,18 @@ test('get implicit role for li descendant of ul', function() {
     element = element.appendChild(document.createElement('li'));
     var actual = axs.properties.getImplicitRole(element);
     strictEqual(actual, '');
+});
+
+module('getTextProperties', {});
+test('Image with no text alternative', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var img = fixture.appendChild(document.createElement('img'));
+    img.src = 'smile.jpg';
+    var textProperties = axs.properties.getTextProperties(img);
+    equal('alt' in textProperties, true, 'alt in textProperties');
+    equal(textProperties.alt.valid, false, 'alt is not valid');
+    equal('filename' in textProperties, true, 'filename in textProperties');
+    equal(textProperties.filename.text, 'smile.jpg');
+    equal('computedText' in textProperties, true, 'computedText in textProperties');
+    equal(textProperties.computedText, 'smile.jpg');
 });
