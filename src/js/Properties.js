@@ -494,31 +494,16 @@ axs.properties.getTextFromHostLanguageAttributes = function(element,
                                                             existingComputedname,
                                                             recursive) {
     var computedName = existingComputedname;
-    if (axs.browserUtils.matchSelector(element, 'img')) {
-        if (element.hasAttribute('alt')) {
-            var altValue = {};
-            altValue.type = 'string';
-            altValue.valid = true;
-            altValue.text = element.getAttribute('alt');
-            if (computedName)
-                altValue.unused = true;
-            else
-                computedName = altValue.text;
-            textAlternatives['alt'] = altValue;
-        } else {
-            var altValue = {};
-            altValue.valid = false;
-            altValue.errorMessage = 'No alt value provided';
-            textAlternatives['alt'] = altValue;
-            var src = element.src;
-            if (typeof(src) == 'string') {
-                var parts = src.split('/');
-                var filename = parts.pop();
-                var filenameValue = { text: filename };
-                textAlternatives['filename'] = filenameValue;
-                computedName = filename;
-            }
-        }
+    if (axs.browserUtils.matchSelector(element, 'img') && element.hasAttribute('alt')) {
+        var altValue = {};
+        altValue.type = 'string';
+        altValue.valid = true;
+        altValue.text = element.getAttribute('alt');
+        if (computedName)
+            altValue.unused = true;
+        else
+            computedName = altValue.text;
+        textAlternatives['alt'] = altValue;
     }
 
     var controlsSelector = ['input:not([type="hidden"]):not([disabled])',
@@ -611,13 +596,28 @@ axs.properties.getTextProperties = function(node) {
     var computedName = axs.properties.findTextAlternatives(node, textProperties, false, true);
 
     if (Object.keys(textProperties).length == 0) {
+        /** @type {Element} */ var element = axs.utils.asElement(node);
+        if (element && axs.browserUtils.matchSelector(element, 'img')) {
+            var altValue = {};
+            altValue.valid = false;
+            altValue.errorMessage = 'No alt value provided';
+            textProperties['alt'] = altValue;
+
+            var src = element.src;
+            if (typeof(src) == 'string') {
+                var parts = src.split('/');
+                var filename = parts.pop();
+                var filenameValue = { text: filename };
+                textProperties['filename'] = filenameValue;
+                computedName = filename;
+            }
+        }
+
         if (!computedName)
             return null;
-        textProperties.hasProperties = false;
-    } else {
-        textProperties.hasProperties = true;
     }
 
+    textProperties.hasProperties = Boolean(Object.keys(textProperties).length);
     textProperties.computedText = computedName;
     textProperties.lastWord = axs.properties.getLastWord(computedName);
     return textProperties;
