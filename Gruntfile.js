@@ -4,17 +4,11 @@ module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt);
 
   grunt.initConfig({
-    'git-describe': {
-      options: {
-
-      },
-      'run': {}
-    },
     closurecompiler: {
       minify: {
         requiresConfig: 'git-revision',
         files: {
-          "gen/axs_testing.js": [
+          ".tmp/build/axs_testing.js": [
               "./lib/closure-library/closure/goog/base.js",
               "./src/js/axs.js",
               "./src/js/BrowserUtils.js",
@@ -39,18 +33,26 @@ module.exports = function(grunt) {
         }
       }
     },
+
     qunit: {
       all: ['test/index.html']
+    },
+
+    copy: {
+      dist: {
+        expand: true,
+        cwd: '.tmp/build',
+        src: '**/*',
+        dest: 'dist/js'
+      }
     }
   });
 
   grunt.registerTask('git-describe', function() {
-    var _spawn = require("grunt-util-spawn")(grunt);
-
     // Start async task
     var done = this.async();
 
-    _spawn({
+    grunt.util.spawn({
       "cmd" : "git",
       "args" : [ "rev-parse", "HEAD" ],
       "opts" : {
@@ -76,11 +78,10 @@ module.exports = function(grunt) {
     grunt.task.run('git-describe');
   });
 
-  grunt.registerTask('copy-dist', function() {
-    grunt.file.copy('gen/axs_testing.js', 'dist/js/axs_testing.js');
-  });
+  grunt.registerTask('build', ['save-revision', 'closurecompiler:minify']);
+  grunt.registerTask('test:unit', ['qunit']);
 
-  grunt.registerTask('default', ['save-revision', 'closurecompiler:minify', 'qunit']);
-  grunt.registerTask('build', ['default', 'copy-dist']);
-  grunt.registerTask('travis', ['closurecompiler:minify', 'qunit']);
+  grunt.registerTask('travis', ['closurecompiler:minify', 'test:unit']);
+  grunt.registerTask('default', ['build', 'test:unit']);
+  grunt.registerTask('release', ['build', 'test:unit', 'copy:dist']);
 };
