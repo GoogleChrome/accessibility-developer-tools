@@ -4,4 +4,7 @@ extension/Handlebar.js
 upload.py
 gen/
 node_modules/
-.tmp
+.tmp/
+
+# Only include dist in `stable` branch.
+dist/
