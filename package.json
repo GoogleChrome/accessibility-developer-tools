@@ -10,7 +10,8 @@
     "grunt-cli": "^0.1.13",
     "grunt-closurecompiler": "^0.9.9",
     "grunt-contrib-qunit": "^0.7.0",
-    "grunt-util-spawn": "^0.0.2"
+    "grunt-util-spawn": "^0.0.2",
+    "load-grunt-tasks": "^3.2.0"
   },
   "scripts": {
     "test": "grunt travis --verbose"

@@ -1,6 +1,8 @@
 'use strict';
 
 module.exports = function(grunt) {
+  require('load-grunt-tasks')(grunt);
+
   grunt.initConfig({
     'git-describe': {
       options: {
@@ -42,9 +44,6 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.loadNpmTasks('grunt-closurecompiler');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
-
   grunt.registerTask('git-describe', function() {
     var _spawn = require("grunt-util-spawn")(grunt);
 
@@ -85,4 +84,3 @@ module.exports = function(grunt) {
   grunt.registerTask('build', ['default', 'copy-dist']);
   grunt.registerTask('travis', ['closurecompiler:minify', 'qunit']);
 };
-
