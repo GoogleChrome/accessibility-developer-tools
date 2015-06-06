@@ -12,27 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module("Contrast Ratio", {
-  setup: function () {
-    var fixture = document.createElement('div');
-    document.getElementById('qunit-fixture').appendChild(fixture);
-    this.fixture_ = fixture;
-    this.black_ = {"red": 0, "green": 0, "blue": 0, "alpha": 1};
-    this.white_ = {"red": 255, "green": 255, "blue": 255, "alpha": 1};
-  }
-});
-test("Black and white.", function () {
-  equal(axs.utils.calculateContrastRatio(this.white_, this.black_), 21);
-  equal(axs.utils.calculateContrastRatio(this.black_, this.white_), 21);
-});
-test("Same color === no contrast.", function () {
-  equal(axs.utils.calculateContrastRatio(this.white_, this.white_), 1);
-  equal(axs.utils.calculateContrastRatio(this.black_, this.black_), 1);
-});
-test("Transparent foreground === no contrast.", function () {
-  equal(axs.utils.calculateContrastRatio({"red": 0, "green": 0, "blue": 0, "alpha": 0}, this.white_), 1);
-});
-
 module("Zero Area", {
   setup: function () {
     var fixture = document.createElement('div');
@@ -141,16 +120,6 @@ test("nth-of-type does not refer to a selector but a tagName", function() {
   var selector = axs.utils.getQuerySelectorText(lastLi);
   equal(lastLi, document.querySelector(selector),
         'selector "' + selector + '" does not match element');
-});
-
-module("parseColor");
-test("parses alpha values correctly", function() {
-  var colorString = 'rgba(255, 255, 255, .47)';
-  var color = axs.utils.parseColor(colorString);
-  equal(color.red, 255);
-  equal(color.blue, 255);
-  equal(color.green, 255);
-  equal(color.alpha, .47);
 });
 
 module("getIdReferrers", {
