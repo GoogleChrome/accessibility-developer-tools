@@ -74,12 +74,12 @@ module.exports = function(grunt) {
       }
     };
 
-    var stopRegex = /^\#\#\#\ [0-9]+.*$/m;
+    var stopRegex = /^\#\#\ [0-9]+.*$/m;
     var stopIndex = 0;
     var releaseNotes = '';
     var dest = grunt.config.get('changelog');
     var contents = grunt.file.read(dest);
-    var headerTpl = "### <%= version %> - <%= releaseDate %>\n\n";
+    var headerTpl = "## <%= version %> - <%= releaseDate %>\n\n";
     var header = grunt.template.process(headerTpl, config);
 
     if (contents.length > 0) {
