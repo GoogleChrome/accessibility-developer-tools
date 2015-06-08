@@ -1,3 +1,5 @@
+var request = require('superagent');
+
 module.exports = function(grunt) {
   'use strict';
 
@@ -139,6 +141,36 @@ module.exports = function(grunt) {
     grunt.log.ok("Changelog updated, and release notes extracted.");
   });
 
+  grunt.registerTask('gh-release', function() {
+    var config = grunt.config.get('gh-release');
+    var pkg = grunt.config.get('pkg');
+    var done = this.async();
+
+    request
+      .post('https://api.github.com/repos/' + config.repo + '/releases')
+      .auth(config.username, config.password)
+      .set('Accept', 'application/vnd.github.v3')
+      .set('User-Agent', 'grunt')
+      .send({
+        'tag_name': 'v' + pkg.version,
+        name: pkg.version,
+        body: config['release-notes'],
+        draft: true
+      })
+      .end(function(err, res){
+        if (typeof err !== "undefined" && err !== null) {
+          grunt.fail.warn('Error encountered while creating Github release.', err);
+        }
+
+        if (res.statusCode === 201){
+          grunt.log.ok('Github release created');
+          done();
+        } else {
+          grunt.fail.warn('Unable to create github release.', res.text);
+        }
+      });
+  });
+
   grunt.registerTask('git-describe', function() {
     // Start async task
     var done = this.async();
@@ -169,7 +201,8 @@ module.exports = function(grunt) {
       'copy:dist',
       'bump-only:' + type,
       'changelog:' + type,
-      'bump-commit'
+      'bump-commit',
+      'gh-release'
     ]);
   });
 
