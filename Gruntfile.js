@@ -7,6 +7,8 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     changelog: 'CHANGELOG.md',
 
+    'gh-release': {},
+
     closurecompiler: {
       minify: {
         requiresConfig: 'git-revision',
@@ -58,8 +60,51 @@ module.exports = function(grunt) {
       options: {
         files: ['package.json', 'bower.json'],
         updateConfigs: ['pkg'],
-        pushTo: 'GoogleChrome',
+        pushTo: "<%= grunt.config.get('gh-release.remote') %>",
         commitFiles: ['package.json', grunt.config.get('changelog'), 'bower.json', 'dist']
+      }
+    },
+
+    prompt: {
+      'gh-release': {
+        options: {
+          questions: [
+            {
+              config: 'gh-release.remote',
+              type: 'input',
+              message: 'Git Remote (usually GoogleChrome or origin)',
+              default: 'GoogleChrome',
+              validate: function(val) {
+                return (grunt.util._.size(val) > 0);
+              }
+            },
+            {
+              config: 'gh-release.repo',
+              type: 'input',
+              message: 'Github Repository',
+              default: 'GoogleChrome/accessibility-developer-tools',
+              validate: function(val) {
+                return (grunt.util._.size(val) > 0);
+              }
+            },
+            {
+              config: 'gh-release.username',
+              type: 'input',
+              message: 'Github Username',
+              validate: function(val) {
+                return (grunt.util._.size(val) > 0);
+              }
+            },
+            {
+              config: 'gh-release.password',
+              type: 'password',
+              message: 'Github Password or Token',
+              validate: function(val) {
+                return (grunt.util._.size(val) > 0);
+              }
+            }
+          ]
+        }
       }
     }
   });
@@ -88,7 +133,7 @@ module.exports = function(grunt) {
       }
     }
 
-    grunt.config.set("release-notes", releaseNotes);
+    grunt.config.set("gh-release.release-notes", releaseNotes);
 
     grunt.file.write(dest, "" + header + contents);
     grunt.log.ok("Changelog updated, and release notes extracted.");
@@ -118,6 +163,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('release', function(type) {
     grunt.task.run([
+      'prompt:gh-release',
       'build',
       'test:unit',
       'copy:dist',
