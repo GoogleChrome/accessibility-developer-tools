@@ -5,6 +5,8 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    changelog: 'CHANGELOG.md',
+
     closurecompiler: {
       minify: {
         requiresConfig: 'git-revision',
