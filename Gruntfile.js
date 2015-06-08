@@ -48,7 +48,50 @@ module.exports = function(grunt) {
         src: '**/*',
         dest: 'dist/js'
       }
+    },
+
+    clean: {
+      all: ['.tmp', 'dist']
+    },
+
+    bump: {
+      options: {
+        files: ['package.json', 'bower.json'],
+        updateConfigs: ['pkg'],
+        pushTo: 'GoogleChrome',
+        commitFiles: ['package.json', grunt.config.get('changelog'), 'bower.json', 'dist']
+      }
     }
+  });
+
+  grunt.registerTask('changelog', function(type) {
+    grunt.task.requires('bump-only:' + type);
+
+    var config = {
+      data: {
+        version: grunt.config.get('pkg.version'),
+        releaseDate: grunt.template.today("yyyy-mm-dd")
+      }
+    };
+
+    var stopRegex = /^\#\#\#\ [0-9]+.*$/m;
+    var stopIndex = 0;
+    var releaseNotes = '';
+    var dest = grunt.config.get('changelog');
+    var contents = grunt.file.read(dest);
+    var headerTpl = "### <%= version %> - <%= releaseDate %>\n\n";
+    var header = grunt.template.process(headerTpl, config);
+
+    if (contents.length > 0) {
+      if ((stopIndex = contents.search(stopRegex)) !== -1) {
+        releaseNotes = contents.slice(0, stopIndex);
+      }
+    }
+
+    grunt.config.set("release-notes", releaseNotes);
+
+    grunt.file.write(dest, "" + header + contents);
+    grunt.log.ok("Changelog updated, and release notes extracted.");
   });
 
   grunt.registerTask('git-describe', function() {
@@ -73,6 +116,17 @@ module.exports = function(grunt) {
     });
   });
 
+  grunt.registerTask('release', function(type) {
+    grunt.task.run([
+      'build',
+      'test:unit',
+      'copy:dist',
+      'bump-only:' + type,
+      'changelog:' + type,
+      'bump-commit'
+    ]);
+  });
+
   grunt.registerTask('save-revision', function() {
     grunt.event.once('git-describe', function (rev) {
       grunt.log.writeln('Git Revision: ' + rev);
@@ -81,10 +135,9 @@ module.exports = function(grunt) {
     grunt.task.run('git-describe');
   });
 
-  grunt.registerTask('build', ['save-revision', 'closurecompiler:minify']);
+  grunt.registerTask('build', ['clean:all', 'save-revision', 'closurecompiler:minify']);
   grunt.registerTask('test:unit', ['qunit']);
 
   grunt.registerTask('travis', ['closurecompiler:minify', 'test:unit']);
   grunt.registerTask('default', ['build', 'test:unit']);
-  grunt.registerTask('release', ['build', 'test:unit', 'copy:dist']);
 };
