@@ -37,6 +37,54 @@ axs.color.Color = function(red, green, blue, alpha) {
 };
 
 /**
+ * @constructor
+ * See https://en.wikipedia.org/wiki/YCbCr for more information.
+ * @param {Array.<number>} coords The YCbCr values as a 3 element array, in the order [luma, Cb, Cr].
+ *     All numbers are in the range [0, 1].
+ */
+axs.color.YCbCr = function(coords) {
+    /** @type {number} */
+    this.luma = this.z = coords[0];
+
+    /** @type {number} */
+    this.Cb = this.x = coords[1];
+
+    /** @type {number} */
+    this.Cr = this.y = coords[2];
+};
+
+axs.color.YCbCr.prototype = {
+    /**
+     * @param {number} scalar
+     * @return {axs.color.YCbCr} This color multiplied by the given scalar
+     */
+    multiply: function(scalar) {
+        var result = [ this.luma * scalar, this.Cb * scalar, this.Cr * scalar ];
+        return new axs.color.YCbCr(result);
+    },
+
+    /**
+     * @param {axs.color.YCbCr} other
+     * @return {axs.color.YCbCr} This plus other
+     */
+    add: function(other) {
+        var result = [ this.luma + other.luma, this.Cb + other.Cb, this.Cr + other.Cr ];
+        return new axs.color.YCbCr(result);
+    },
+
+    /**
+     * @param {axs.color.YCbCr} other
+     * @return {axs.color.YCbCr} This minus other
+     */
+    subtract: function(other) {
+        var result = [ this.luma - other.luma, this.Cb - other.Cb, this.Cr - other.Cr ];
+        return new axs.color.YCbCr(result);
+    }
+
+};
+
+
+/**
  * Calculate the contrast ratio between the two given colors. Returns the ratio
  * to 1, for example for two two colors with a contrast ratio of 21:1, this
  * function will return 21.
@@ -70,8 +118,8 @@ axs.color.calculateLuminance = function(color) {
     var b = bSRGB <= 0.03928 ? bSRGB / 12.92 : Math.pow(((bSRGB + 0.055)/1.055), 2.4);
 
     return 0.2126 * r + 0.7152 * g + 0.0722 * b; */
-    var ycc = axs.color.toYCC(color);
-    return ycc[0];
+    var ycc = axs.color.toYCbCr(color);
+    return ycc.luma;
 };
 
 /**
@@ -155,27 +203,53 @@ axs.color.luminanceFromContrastRatio = function(luminance, contrast, higher) {
 };
 
 /**
- * Given a color in YCC format and a desired luminance, pick a new color with the desired luminance which is
- * a translation towards black or white of the old color.
- * @param {Array.<number>} ycc A color in YCC as an array with three elements.
- * @param {number} luminance The desired luminance
- * @return {axs.color.Color} A new color in RGB.
+ * Given a color in YCbCr format and a desired luminance, pick a new color with the desired luminance which is
+ * as close as possible to the original color.
+ * @param {axs.color.YCbCr} ycc The original color in YCbCr form.
+ * @param {number} luma The desired luminance
+ * @return {!axs.color.Color} A new color in RGB.
  */
-axs.color.translateColor = function(ycc, luminance) {
-    var oldLuminance = ycc[0];
-    if (oldLuminance > luminance)
-        var endpoint = 0;
-    else
-        var endpoint = 1;
+axs.color.translateColor = function(ycc, luma) {
+    var endpoint = (luma > ycc.luma) ? axs.color.WHITE_YCC : axs.color.BLACK_YCC;
+    var cubeFaces = (endpoint == axs.color.WHITE_YCC) ? axs.color.YCC_CUBE_FACES_WHITE
+                                                      : axs.color.YCC_CUBE_FACES_BLACK;
 
-    var d = luminance - oldLuminance;
-    var scale = 0; // d / (endpoint - oldLuminance);
+    var a = new axs.color.YCbCr([0, ycc.Cb, ycc.Cr]);
+    var b = new axs.color.YCbCr([1, ycc.Cb, ycc.Cr]);
+    var line = { a: a, b: b };
 
-    /** @type {Array.<number>} */ var translatedColor = [ luminance,
-                                                          ycc[1] - ycc[1] * scale,
-                                                          ycc[2] - ycc[2] * scale ];
-    var rgb = axs.color.fromYCC(translatedColor);
-    return rgb;
+    var intersection = null;
+    for (var i = 0; i < cubeFaces.length; i++) {
+        var cubeFace = cubeFaces[i];
+        intersection = axs.color.findIntersection(line, cubeFace);
+        // If intersection within [0, 1] in Z axis, it is within the cube.
+        if (intersection.z >= 0 && intersection.z <= 1)
+            break;
+    }
+    if (!intersection) {
+        // Should never happen
+        throw "Couldn't find intersection with YCbCr color cube for Cb=" + ycc.Cb + ", Cr=" + ycc.Cr + ".";
+    }
+    if (intersection.x != ycc.x || intersection.y != ycc.y) {
+        // Should never happen
+        throw "Intersection has wrong Cb/Cr values.";
+    }
+
+    // If intersection.luma is closer to endpoint than desired luma, then luma is inside cube
+    // and we can immediately return new value.
+    if (Math.abs(endpoint.luma - intersection.luma) < Math.abs(endpoint.luma - luma)) {
+        var translatedColor = [luma, ycc.Cb, ycc.Cr];
+        return axs.color.fromYCbCrArray(translatedColor);
+    }
+
+    // Otherwise, translate from intersection towards white/black such that luma is correct.
+    var dLuma = luma - intersection.luma;
+    var scale = dLuma / (endpoint.luma - intersection.luma);
+    var translatedColor = [ luma,
+                            intersection.Cb - (intersection.Cb * scale),
+                            intersection.Cr - (intersection.Cr * scale) ];
+
+    return axs.color.fromYCbCrArray(translatedColor);
 };
 
 /** @typedef {{fg: string, bg: string, contrast: string}} */
@@ -193,14 +267,14 @@ axs.color.suggestColors = function(bgColor, fgColor, desiredContrastRatios) {
     var fgLuminance = axs.color.calculateLuminance(fgColor);
 
     var fgLuminanceIsHigher = fgLuminance > bgLuminance;
-    var fgYCC = axs.color.toYCC(fgColor);
-    var bgYCC = axs.color.toYCC(bgColor);
+    var fgYCbCr = axs.color.toYCbCr(fgColor);
+    var bgYCbCr = axs.color.toYCbCr(bgColor);
     for (var desiredLabel in desiredContrastRatios) {
         var desiredContrast = desiredContrastRatios[desiredLabel];
 
         var desiredFgLuminance = axs.color.luminanceFromContrastRatio(bgLuminance, desiredContrast + 0.02, fgLuminanceIsHigher);
         if (desiredFgLuminance <= 1 && desiredFgLuminance >= 0) {
-            var newFgColor = axs.color.translateColor(fgYCC, desiredFgLuminance);
+            var newFgColor = axs.color.translateColor(fgYCbCr, desiredFgLuminance);
             var newContrastRatio = axs.color.calculateContrastRatio(newFgColor, bgColor);
             var suggestedColors = {};
             suggestedColors.fg = /** @type {!string} */ (axs.color.colorToString(newFgColor));
@@ -212,7 +286,7 @@ axs.color.suggestColors = function(bgColor, fgColor, desiredContrastRatios) {
 
         var desiredBgLuminance = axs.color.luminanceFromContrastRatio(fgLuminance, desiredContrast + 0.02, !fgLuminanceIsHigher);
         if (desiredBgLuminance <= 1 && desiredBgLuminance >= 0) {
-            var newBgColor = axs.color.translateColor(bgYCC, desiredBgLuminance);
+            var newBgColor = axs.color.translateColor(bgYCbCr, desiredBgLuminance);
             var newContrastRatio = axs.color.calculateContrastRatio(fgColor, newBgColor);
             var suggestedColors = {};
             suggestedColors.bg = /** @type {!string} */ (axs.color.colorToString(newBgColor));
@@ -241,12 +315,12 @@ axs.color.flattenColors = function(fgColor, bgColor) {
 };
 
 /**
- * Multiply the given color vector by the given transformation matrix.
- * @param {Array.<Array.<number>>} matrix A 3x3 conversion matrix
- * @param {Array.<number>} vector A 3-element color vector
- * @return {Array.<number>} A 3-element color vector
+ * Multiply the given vector by the given matrix.
+ * @param {Array.<Array.<number>>} matrix A 3x3 matrix
+ * @param {Array.<number>} vector A 3-element vector
+ * @return {Array.<number>} A 3-element vector
  */
-axs.color.convertColor = function(matrix, vector) {
+axs.color.multiplyMatrixVector = function(matrix, vector) {
     var a = matrix[0][0];
     var b = matrix[0][1];
     var c = matrix[0][2];
@@ -269,10 +343,11 @@ axs.color.convertColor = function(matrix, vector) {
 };
 
 /**
- * Convert a given RGB color to YCC.
+ * Convert a given RGB color to YCbCr.
  * @param {axs.color.Color} color
+ * @return {axs.color.YCbCr}
  */
-axs.color.toYCC = function(color) {
+axs.color.toYCbCr = function(color) {
     var rSRGB = color.red / 255;
     var gSRGB = color.green / 255;
     var bSRGB = color.blue / 255;
@@ -281,16 +356,24 @@ axs.color.toYCC = function(color) {
     var g = gSRGB <= 0.03928 ? gSRGB / 12.92 : Math.pow(((gSRGB + 0.055)/1.055), 2.4);
     var b = bSRGB <= 0.03928 ? bSRGB / 12.92 : Math.pow(((bSRGB + 0.055)/1.055), 2.4);
 
-    return axs.color.convertColor(axs.color.YCC_MATRIX, [r, g, b]);
+    return new axs.color.YCbCr(axs.color.multiplyMatrixVector(axs.color.YCC_MATRIX, [r, g, b]));
 };
 
 /**
- * Convert a color from a YCC color (as a vector) to an RGB color
- * @param {Array.<number>} yccColor
- * @return {axs.color.Color}
+ * @param {axs.color.YCbCr} ycc
+ * @return {!axs.color.Color}
  */
-axs.color.fromYCC = function(yccColor) {
-    var rgb = axs.color.convertColor(axs.color.INVERTED_YCC_MATRIX, yccColor);
+axs.color.fromYCbCr = function(ycc) {
+    return axs.color.fromYCbCrArray([ycc.luma, ycc.Cb, ycc.Cr]);
+};
+
+/**
+ * Convert a color from a YCbCr color (as a vector) to an RGB color
+ * @param {Array.<number>} yccArray
+ * @return {!axs.color.Color}
+ */
+axs.color.fromYCbCrArray = function(yccArray) {
+    var rgb = axs.color.multiplyMatrixVector(axs.color.INVERTED_YCC_MATRIX, yccArray);
 
     var r = rgb[0];
     var g = rgb[1];
@@ -307,12 +390,12 @@ axs.color.fromYCC = function(yccColor) {
 };
 
 /**
- * Returns an RGB to YCC conversion matrix for the given kR, kB constants.
+ * Returns an RGB to YCbCr conversion matrix for the given kR, kB constants.
  * @param {number} kR
  * @param {number} kB
  * @return {Array.<Array.<number>>}
  */
-axs.color.RGBToYCCMatrix = function(kR, kB) {
+axs.color.RGBToYCbCrMatrix = function(kR, kB) {
     return [
         [
             kR,
@@ -368,6 +451,34 @@ axs.color.invert3x3Matrix = function(matrix) {
     ], z);
 };
 
+/** @typedef {{ a: axs.color.YCbCr, b: axs.color.YCbCr }} */
+axs.color.Line;
+
+/** @typedef {{ p0: axs.color.YCbCr, p1: axs.color.YCbCr, p2: axs.color.YCbCr }} */
+axs.color.Plane;
+
+/**
+ * Find the intersection between a line and a plane using
+ * http://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection#Parametric_form
+ * @param {axs.color.Line} l
+ * @param {axs.color.Plane} p
+ * @return {axs.color.YCbCr}
+ */
+axs.color.findIntersection = function(l, p) {
+    var lhs = [ l.a.x - p.p0.x, l.a.y - p.p0.y, l.a.z - p.p0.z ];
+
+    var matrix = [ [ l.a.x - l.b.x, p.p1.x - p.p0.x, p.p2.x - p.p0.x ],
+                   [ l.a.y - l.b.y, p.p1.y - p.p0.y, p.p2.y - p.p0.y ],
+                   [ l.a.z - l.b.z, p.p1.z - p.p0.z, p.p2.z - p.p0.z ] ];
+    var invertedMatrix = axs.color.invert3x3Matrix(matrix);
+
+    var tuv = axs.color.multiplyMatrixVector(invertedMatrix, lhs);
+    var t = tuv[0];
+
+    var result = l.a.add(l.b.subtract(l.a).multiply(t));
+    return result;
+};
+
 /**
  * Multiply a matrix by a scalar.
  * @param {Array.<Array.<number>>} matrix A 3x3 matrix.
@@ -376,20 +487,51 @@ axs.color.invert3x3Matrix = function(matrix) {
  */
 axs.color.scalarMultiplyMatrix = function(matrix, scalar) {
     var result = [];
-    result[0] = [];
-    result[1] = [];
-    result[2] = [];
 
-    for (var i = 0; i < 3; i++) {
-        for (var j = 0; j < 3; j++) {
-            result[i][j] = matrix[i][j] * scalar;
-        }
-    }
+    for (var i = 0; i < 3; i++)
+      result[i] = axs.color.scalarMultiplyVector(matrix[i], scalar);
 
+    return result;
+};
+
+/**
+ * Multiply a vector by a scalar.
+ * @param {Array.<number>} vector
+ * @param {number} scalar
+ * @return {Array.<number>} vector
+ */
+axs.color.scalarMultiplyVector = function(vector, scalar) {
+    var result = []
+    for (var i = 0; i < vector.length; i++)
+        result[i] = vector[i] * scalar;
     return result;
 };
 
 axs.color.kR = 0.2126;
 axs.color.kB = 0.0722;
-axs.color.YCC_MATRIX = axs.color.RGBToYCCMatrix(axs.color.kR, axs.color.kB);
+axs.color.YCC_MATRIX = axs.color.RGBToYCbCrMatrix(axs.color.kR, axs.color.kB);
 axs.color.INVERTED_YCC_MATRIX = axs.color.invert3x3Matrix(axs.color.YCC_MATRIX);
+
+axs.color.BLACK = new axs.color.Color(0, 0, 0, 1.0);
+axs.color.BLACK_YCC = axs.color.toYCbCr(axs.color.BLACK);
+axs.color.WHITE = new axs.color.Color(255, 255, 255, 1.0);
+axs.color.WHITE_YCC = axs.color.toYCbCr(axs.color.WHITE);
+axs.color.RED = new axs.color.Color(255, 0, 0, 1.0);
+axs.color.RED_YCC = axs.color.toYCbCr(axs.color.RED);
+axs.color.GREEN = new axs.color.Color(0, 255, 0, 1.0);
+axs.color.GREEN_YCC = axs.color.toYCbCr(axs.color.GREEN);
+axs.color.BLUE = new axs.color.Color(0, 0, 255, 1.0);
+axs.color.BLUE_YCC = axs.color.toYCbCr(axs.color.BLUE);
+axs.color.CYAN = new axs.color.Color(0, 255, 255, 1.0);
+axs.color.CYAN_YCC = axs.color.toYCbCr(axs.color.CYAN);
+axs.color.MAGENTA = new axs.color.Color(255, 0, 255, 1.0);
+axs.color.MAGENTA_YCC = axs.color.toYCbCr(axs.color.MAGENTA);
+axs.color.YELLOW = new axs.color.Color(255, 255, 0, 1.0);
+axs.color.YELLOW_YCC = axs.color.toYCbCr(axs.color.YELLOW);
+
+axs.color.YCC_CUBE_FACES_BLACK = [ { p0: axs.color.BLACK_YCC, p1: axs.color.RED_YCC, p2: axs.color.GREEN_YCC },
+                                   { p0: axs.color.BLACK_YCC, p1: axs.color.GREEN_YCC, p2: axs.color.BLUE_YCC },
+                                   { p0: axs.color.BLACK_YCC, p1: axs.color.BLUE_YCC, p2: axs.color.RED_YCC } ];
+axs.color.YCC_CUBE_FACES_WHITE = [ { p0: axs.color.WHITE_YCC, p1: axs.color.CYAN_YCC, p2: axs.color.MAGENTA_YCC },
+                                   { p0: axs.color.WHITE_YCC, p1: axs.color.MAGENTA_YCC, p2: axs.color.YELLOW_YCC },
+                                   { p0: axs.color.WHITE_YCC, p1: axs.color.YELLOW_YCC, p2: axs.color.CYAN_YCC } ];

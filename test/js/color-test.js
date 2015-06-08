@@ -33,7 +33,6 @@ test("Transparent foreground === no contrast.", function () {
   equal(axs.color.calculateContrastRatio({"red": 0, "green": 0, "blue": 0, "alpha": 0}, this.white_), 1);
 });
 
-
 module("parseColor");
 test("parses alpha values correctly", function() {
   var colorString = 'rgba(255, 255, 255, .47)';
@@ -52,4 +51,3 @@ test("suggests correct grey values", function() {
   deepEqual(suggestions, { AA: { bg: "#ffffff", contrast: "4.54", fg: "#767676" },
                            AAA: { bg: "#ffffff", contrast: "7.00", fg: "#595959" } });
 });
-
