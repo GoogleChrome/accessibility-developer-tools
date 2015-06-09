@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/a33b34feb4bf5c6990c9d88f98c3c8e3115168ab
+ * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/1a490fcdd6ff78e66da53b98949eda740b763578
  *
  * See project README for build steps.
  */
- 
+
 // AUTO-GENERATED CONTENT BELOW: DO NOT EDIT! See above for details.
 
-var COMPILED = !0, goog = goog || {};
+var fn = (function() {
+  var COMPILED = !0, goog = goog || {};
 goog.global = this;
 goog.isDef = function(a) {
   return void 0 !== a;
@@ -1287,15 +1288,11 @@ axs.properties.getTextFromAriaLabelledby = function(a, b) {
   return c;
 };
 axs.properties.getTextFromHostLanguageAttributes = function(a, b, c, d) {
-  if (axs.browserUtils.matchSelector(a, "img")) {
-    if (a.hasAttribute("alt")) {
-      var e = {type:"string", valid:!0};
-      e.text = a.getAttribute("alt");
-      c ? e.unused = !0 : c = e.text;
-      b.alt = e;
-    } else {
-      e = {valid:!1, errorMessage:"No alt value provided"}, b.alt = e, e = a.src, "string" == typeof e && (c = e.split("/").pop(), b.filename = {text:c});
-    }
+  if (axs.browserUtils.matchSelector(a, "img") && a.hasAttribute("alt")) {
+    var e = {type:"string", valid:!0};
+    e.text = a.getAttribute("alt");
+    c ? e.unused = !0 : c = e.text;
+    b.alt = e;
   }
   if (axs.browserUtils.matchSelector(a, 'input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])') && !d) {
     if (a.hasAttribute("id")) {
@@ -1332,18 +1329,13 @@ axs.properties.getLastWord = function(a) {
   return a.substring(b > c ? b : c);
 };
 axs.properties.getTextProperties = function(a) {
-  var b = {};
-  a = axs.properties.findTextAlternatives(a, b, !1, !0);
-  if (0 == Object.keys(b).length) {
-    if (!a) {
-      return null;
-    }
-    b.hasProperties = !1;
-  } else {
-    b.hasProperties = !0;
+  var b = {}, c = axs.properties.findTextAlternatives(a, b, !1, !0);
+  if (0 == Object.keys(b).length && ((a = axs.utils.asElement(a)) && axs.browserUtils.matchSelector(a, "img") && (b.alt = {valid:!1, errorMessage:"No alt value provided"}, a = a.src, "string" == typeof a && (c = a.split("/").pop(), b.filename = {text:c})), !c)) {
+    return null;
   }
-  b.computedText = a;
-  b.lastWord = axs.properties.getLastWord(a);
+  b.hasProperties = Boolean(Object.keys(b).length);
+  b.computedText = c;
+  b.lastWord = axs.properties.getLastWord(c);
   return b;
 };
 axs.properties.getAriaProperties = function(a) {
@@ -1878,10 +1870,15 @@ axs.AuditRules.addRule({name:"humanLangMissing", heading:"The web page should ha
 }, test:function(a) {
   return a.lang ? !1 : !0;
 }, code:"AX_HTML_01"});
-axs.AuditRules.addRule({name:"imagesWithoutAltText", heading:"Images should have an alt attribute", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_02", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
+axs.AuditRules.addRule({name:"imagesWithoutAltText", heading:"Images should have a text alternative or presentational role", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_02", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
   return axs.browserUtils.matchSelector(a, "img") && !axs.utils.isElementOrAncestorHidden(a);
 }, test:function(a) {
-  return !a.hasAttribute("alt") && "presentation" != a.getAttribute("role");
+  if (a.hasAttribute("alt") && "" == a.alt || "presentation" == a.getAttribute("role")) {
+    return !1;
+  }
+  var b = {};
+  axs.properties.findTextAlternatives(a, b);
+  return 0 == Object.keys(b).length ? !0 : !1;
 }, code:"AX_TEXT_02"});
 axs.AuditRules.addRule({name:"linkWithUnclearPurpose", heading:"The purpose of each link should be clear from the link text", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_04", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
   return axs.browserUtils.matchSelector(a, "a");
@@ -2047,4 +2044,13 @@ axs.AuditRules.addRule({name:"videoWithoutCaptions", heading:"Video elements sho
   return !a.querySelectorAll("track[kind=captions]").length;
 }, code:"AX_VIDEO_01"});
 
+  return axs;
+});
+
+// Define AMD module if possible, export globals otherwise.
+if (typeof define !== 'undefined' && define.amd) {
+  define([], fn);
+} else {
+  fn.call(this);
+}
 
