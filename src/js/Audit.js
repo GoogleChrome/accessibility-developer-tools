@@ -22,8 +22,13 @@ goog.provide('axs.AuditConfiguration');
 /**
  * Object to hold configuration for an Audit run.
  * @constructor
+ * @param {?Object=} config Configuration object
  */
-axs.AuditConfiguration = function() {
+axs.AuditConfiguration = function(config) {
+    if (config == null) {
+        config = {};
+    }
+
     /**
      * Dictionary of { audit rule name : { rules } } where rules is a dictionary
      * of { rule type : value }.
@@ -77,6 +82,12 @@ axs.AuditConfiguration = function() {
      * @type {boolean}
      */
     this.showUnsupportedRulesWarning = true;
+
+    for (var prop in this) {
+        if ((this.hasOwnProperty(prop)) && (prop in config)) {
+            this[prop] = config[prop];
+        }
+    }
 
     goog.exportProperty(this, 'scope', this.scope);
     goog.exportProperty(this, 'auditRulesToRun', this.auditRulesToRun);

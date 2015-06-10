@@ -46,6 +46,22 @@ test("Configure severity of an audit rule", function() {
   }
 });
 
+test("Specify configuration as an object", function() {
+  var fixtures = document.getElementById('qunit-fixture');
+  
+  var configPayload = {
+    auditRulesToRun: ['badAriaRole'],
+    scope: fixtures,
+    maxResults: 1
+  };
+
+  var auditConfig = new axs.AuditConfiguration(configPayload);
+
+  for (var k in configPayload) {
+    equal(auditConfig[k], configPayload[k]);
+  }
+});
+
 test("Configure the number of results returned", function() {
   var fixture = document.getElementById('qunit-fixture');
   var div = document.createElement('div');
