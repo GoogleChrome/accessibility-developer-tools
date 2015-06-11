@@ -5,6 +5,3 @@ upload.py
 gen/
 node_modules/
 .tmp/
-
-# Only include dist in `stable` branch.
-dist/
