@@ -1,3 +1,10 @@
+### Enhancements:
+* Rework findTextAlternatives not to return non-exposed text alternatives.
+* Add Bower config (#157)
+
+### Bug fixes:
+* Check for any text alternatives when assessing unlabeled images (#154).
+
 ## 2.7.0 - 2015-05-15
 
 ### New rules
