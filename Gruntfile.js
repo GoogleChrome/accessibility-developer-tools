@@ -1,5 +1,3 @@
-var request = require('superagent');
-
 module.exports = function(grunt) {
   'use strict';
 
@@ -7,7 +5,7 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    changelog: 'CHANGELOG.md',
+    changelog: 'Changelog.md',
 
     'gh-release': {},
 
@@ -65,6 +63,14 @@ module.exports = function(grunt) {
         updateConfigs: ['pkg'],
         pushTo: "<%= grunt.config.get('gh-release.remote') %>",
         commitFiles: ['package.json', "<%= grunt.config.get('changelog') %>", 'bower.json', 'dist']
+      }
+    },
+
+    coffee: {
+      compile: {
+        files: {
+          '.tmp/util/gh_repo.js': 'src/util/gh_repo.coffee'
+        }
       }
     },
 
@@ -143,32 +149,43 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('gh-release', function() {
+    // Compile and load GH Repo manager.
+    grunt.task.requires('coffee:compile');
+    var GHRepo = require('./.tmp/util/gh_repo');
+
+    var done = this.async();
     var config = grunt.config.get('gh-release');
     var pkg = grunt.config.get('pkg');
-    var done = this.async();
+    var currentRelease = 'v' + pkg.version;
+    var nextRelease = currentRelease.replace(/-rc\.[0-9]+/, '');
+    var repo = new GHRepo(config);
+    repo.log = function() { grunt.log.writeln.apply(grunt, arguments); };
 
-    request
-      .post('https://api.github.com/repos/' + config.repo + '/releases')
-      .auth(config.username, config.password)
-      .set('Accept', 'application/vnd.github.v3')
-      .set('User-Agent', 'grunt')
-      .send({
-        'tag_name': 'v' + pkg.version,
-        name: pkg.version,
-        body: config['release-notes'],
-        draft: true
-      })
-      .end(function(err, res){
-        if (typeof err !== "undefined" && err !== null) {
-          grunt.fail.warn('Error encountered while creating Github release.', err);
-        }
+    var payload = {
+      tag_name: currentRelease,
+      name: nextRelease,
+      body: config['release-notes'],
+      draft: true
+    };
 
-        if (res.statusCode === 201){
-          grunt.log.ok('Github release created');
-          done();
+    grunt.log.writeln("Searching for existing GH release:", nextRelease);
+    repo.getReleaseByName(nextRelease)
+      .then(function(release) {
+        if (release) {
+          payload.body += "\n" + release.body;
+          repo.updateRelease(release, payload).then(function() {
+            grunt.log.ok('Github release ' + nextRelease + ' updated successfully.');
+            done();
+          });
         } else {
-          grunt.fail.warn('Unable to create github release.', res.text);
+          repo.createRelease(payload).then(function() {
+            grunt.log.ok('Github release ' + nextRelease + ' created successfully');
+            done();
+          });
         }
+      })
+      .catch(function(err) {
+        throw err;
       });
   });
 
@@ -207,6 +224,7 @@ module.exports = function(grunt) {
       'bump-only:' + releaseType,
       'changelog:' + releaseType,
       'bump-commit',
+      'coffee:compile',
       'gh-release'
     ]);
   });
