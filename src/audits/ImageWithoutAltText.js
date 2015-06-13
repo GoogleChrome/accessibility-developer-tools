@@ -15,11 +15,12 @@
 goog.require('axs.AuditRules');
 goog.require('axs.browserUtils');
 goog.require('axs.constants.Severity');
+goog.require('axs.properties');
 goog.require('axs.utils');
 
 axs.AuditRules.addRule({
     name: 'imagesWithoutAltText',
-    heading: 'Images should have an alt attribute',
+    heading: 'Images should have a text alternative or presentational role',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_02',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
@@ -27,7 +28,15 @@ axs.AuditRules.addRule({
             !axs.utils.isElementOrAncestorHidden(element);
     },
     test: function(image) {
-        return (!image.hasAttribute('alt') && image.getAttribute('role') != 'presentation');
+        var imageIsPresentational = (image.hasAttribute('alt') && image.alt == '') || image.getAttribute('role') == 'presentation';
+        if (imageIsPresentational)
+            return false;
+        var textAlternatives = {};
+        axs.properties.findTextAlternatives(image, textAlternatives);
+        var numTextAlternatives = Object.keys(textAlternatives).length;
+        if (numTextAlternatives == 0)
+            return true;
+        return false;
     },
     code: 'AX_TEXT_02'
 });
