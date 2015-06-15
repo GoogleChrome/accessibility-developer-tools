@@ -1,3 +1,5 @@
+## 2.7.1-rc.0 - 2015-06-15
+
 ### Enhancements:
 * Rework findTextAlternatives not to return non-exposed text alternatives.
 * Add Bower config (#157)
