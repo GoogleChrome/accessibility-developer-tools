@@ -69,7 +69,7 @@ module.exports = function(grunt) {
     coffee: {
       compile: {
         files: {
-          '.tmp/util/gh_repo.js': 'src/util/gh_repo.coffee'
+          '.tmp/util/gh_repo.js': 'scripts/gh_repo.coffee'
         }
       }
     },
