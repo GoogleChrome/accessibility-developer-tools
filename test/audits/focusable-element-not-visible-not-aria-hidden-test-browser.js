@@ -1,4 +1,4 @@
-// Copyright 2013 Google Inc.
+// Copyright 2015 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module('FocusableElementNotVisibleAndNotAriaHidden', {
+module('FocusableElementNotVisibleAndNotAriaHiddenBrowser', {
   setup: function() {
     var fixture = document.createElement('div');
     document.getElementById('qunit-fixture').appendChild(fixture);
@@ -27,38 +27,21 @@ module('FocusableElementNotVisibleAndNotAriaHidden', {
   }
 });
 
-test('a focusable element that is visible passes the audit', function() {
-  var input = document.createElement('input');
+test('a focusable element that is hidden but shown on focus passes the audit', function() {
+  var style = document.createElement('style');
+  var skipLink = document.createElement('a');
 
-  this.fixture_.appendChild(input);
-  var rule = axs.AuditRules.getRule('focusableElementNotVisibleAndNotAriaHidden');
-  deepEqual(
-    rule.run({scope: this.fixture_}),
-    { elements: [], result: axs.constants.AuditResult.PASS }
-  );
-});
+  skipLink.href = '#main';
+  skipLink.id = 'skip';
+  skipLink.textContent = 'Skip to content';
 
-test('a focusable element that is hidden fails the audit', function() {
-  var input = document.createElement('input');
-  input.style.opacity = '0';
-
-  this.fixture_.appendChild(input);
+  style.appendChild(document.createTextNode("a#skip { position:fixed; top: -1000px; left: -1000px }" +
+                                            "a#skip:focus, a#skip:active { top: 10px; left: 10px }"));
+  this.fixture_.appendChild(style);
+  this.fixture_.appendChild(skipLink);
 
   var rule = axs.AuditRules.getRule('focusableElementNotVisibleAndNotAriaHidden');
   deepEqual(
     rule.run({scope: this.fixture_}),
-    { elements: [input], result: axs.constants.AuditResult.FAIL }
-  );
+    { elements: [], result: axs.constants.AuditResult.PASS });
 });
-
-test('an element with negative tabindex and empty computed text is ignored', function() {
-  var emptyDiv = document.createElement('div');
-  emptyDiv.tabIndex = '-1';
-  this.fixture_.appendChild(emptyDiv);
-
-  var rule = axs.AuditRules.getRule('focusableElementNotVisibleAndNotAriaHidden');
-  deepEqual(
-    rule.run({scope: this.fixture_}),
-    { result: axs.constants.AuditResult.NA });
-});
-
