@@ -53,7 +53,8 @@ module.exports = function(grunt) {
     },
 
     clean: {
-      all: ['.tmp', 'dist']
+      local: ['.tmp'],
+      dist: ['dist']
     },
 
     bump: {
@@ -220,6 +221,7 @@ module.exports = function(grunt) {
       'prompt:gh-release',
       'build',
       'test:unit',
+      'clean:dist',
       'copy:dist',
       'bump-only:' + releaseType,
       'changelog:' + releaseType,
@@ -237,9 +239,9 @@ module.exports = function(grunt) {
     grunt.task.run('git-describe');
   });
 
-  grunt.registerTask('build', ['clean:all', 'save-revision', 'closurecompiler:minify']);
+  grunt.registerTask('build', ['clean:local', 'save-revision', 'closurecompiler:minify']);
   grunt.registerTask('test:unit', ['qunit']);
-  grunt.registerTask('dist', ['build', 'copy:dist']);
+  grunt.registerTask('dist', ['clean:dist', 'build', 'copy:dist']);
   grunt.registerTask('travis', ['closurecompiler:minify', 'test:unit']);
   grunt.registerTask('default', ['build', 'test:unit']);
 };
