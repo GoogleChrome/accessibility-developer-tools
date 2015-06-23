@@ -18,6 +18,7 @@ module.exports = function(grunt) {
               './src/js/axs.js',
               './src/js/BrowserUtils.js',
               './src/js/Constants.js',
+              './src/js/Color.js',
               './src/js/AccessibilityUtils.js',
               './src/js/Properties.js',
               './src/js/AuditRule.js',
