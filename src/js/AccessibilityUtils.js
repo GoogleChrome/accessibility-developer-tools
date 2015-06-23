@@ -13,9 +13,10 @@
 // limitations under the License.
 
 goog.require('axs.browserUtils');
+goog.require('axs.color');
+goog.require('axs.color.Color');
 goog.require('axs.constants');
 goog.provide('axs.utils');
-goog.provide('axs.utils.Color');
 
 /**
  * @const
@@ -29,54 +30,6 @@ axs.utils.FOCUSABLE_ELEMENTS_SELECTOR =
     'a[href],' +
     'iframe,' +
     '[tabindex]';
-
-/**
- * @constructor
- * @param {number} red
- * @param {number} green
- * @param {number} blue
- * @param {number} alpha
- */
-axs.utils.Color = function(red, green, blue, alpha) {
-    /** @type {number} */
-    this.red = red;
-
-    /** @type {number} */
-    this.green = green;
-
-    /** @type {number} */
-    this.blue = blue;
-
-    /** @type {number} */
-    this.alpha = alpha;
-};
-
-/**
- * Calculate the contrast ratio between the two given colors. Returns the ratio
- * to 1, for example for two two colors with a contrast ratio of 21:1, this
- * function will return 21.
- * @param {axs.utils.Color} fgColor
- * @param {axs.utils.Color} bgColor
- * @return {?number}
- */
-axs.utils.calculateContrastRatio = function(fgColor, bgColor) {
-    if (!fgColor || !bgColor)
-        return null;
-
-    if (fgColor.alpha < 1)
-        fgColor = axs.utils.flattenColors(fgColor, bgColor);
-
-    var fgLuminance = axs.utils.calculateLuminance(fgColor);
-    var bgLuminance = axs.utils.calculateLuminance(bgColor);
-    var contrastRatio = (Math.max(fgLuminance, bgLuminance) + 0.05) /
-        (Math.min(fgLuminance, bgLuminance) + 0.05);
-    return contrastRatio;
-};
-
-axs.utils.luminanceRatio = function(luminance1, luminance2) {
-    return (Math.max(luminance1, luminance2) + 0.05) /
-        (Math.min(luminance1, luminance2) + 0.05);
-};
 
 /**
  * Returns the nearest ancestor which is an Element.
@@ -403,11 +356,11 @@ axs.utils.isLargeFont = function(style) {
 /**
  * @param {CSSStyleDeclaration} style
  * @param {Element} element
- * @return {?axs.utils.Color}
+ * @return {?axs.color.Color}
  */
 axs.utils.getBgColor = function(style, element) {
     var bgColorString = style.backgroundColor;
-    var bgColor = axs.utils.parseColor(bgColorString);
+    var bgColor = axs.color.parseColor(bgColorString);
     if (!bgColor)
         return null;
 
@@ -419,7 +372,7 @@ axs.utils.getBgColor = function(style, element) {
         if (parentBg == null)
             return null;
 
-        bgColor = axs.utils.flattenColors(bgColor, parentBg);
+        bgColor = axs.color.flattenColors(bgColor, parentBg);
     }
     return bgColor;
 };
@@ -427,7 +380,7 @@ axs.utils.getBgColor = function(style, element) {
 /**
  * Gets the effective background color of the parent of |element|.
  * @param {Element} element
- * @return {?axs.utils.Color}
+ * @return {?axs.color.Color}
  */
 axs.utils.getParentBgColor = function(element) {
     /** @type {Element} */ var parent = element;
@@ -438,7 +391,7 @@ axs.utils.getParentBgColor = function(element) {
         if (!computedStyle)
             continue;
 
-        var parentBg = axs.utils.parseColor(computedStyle.backgroundColor);
+        var parentBg = axs.color.parseColor(computedStyle.backgroundColor);
         if (!parentBg)
             continue;
 
@@ -457,12 +410,12 @@ axs.utils.getParentBgColor = function(element) {
     }
 
     if (!foundSolidColor)
-        bgStack.push(new axs.utils.Color(255, 255, 255, 1));
+        bgStack.push(new axs.color.Color(255, 255, 255, 1));
 
     var bg = bgStack.pop();
     while (bgStack.length) {
         var fg = bgStack.pop();
-        bg = axs.utils.flattenColors(fg, bg);
+        bg = axs.color.flattenColors(fg, bg);
     }
     return bg;
 };
@@ -470,405 +423,27 @@ axs.utils.getParentBgColor = function(element) {
 /**
  * @param {CSSStyleDeclaration} style
  * @param {Element} element
- * @param {axs.utils.Color} bgColor The background color, which may come from
+ * @param {axs.color.Color} bgColor The background color, which may come from
  *    another element (such as a parent element), for flattening into the
  *    foreground color.
- * @return {?axs.utils.Color}
+ * @return {?axs.color.Color}
  */
 axs.utils.getFgColor = function(style, element, bgColor) {
     var fgColorString = style.color;
-    var fgColor = axs.utils.parseColor(fgColorString);
+    var fgColor = axs.color.parseColor(fgColorString);
     if (!fgColor)
         return null;
 
     if (fgColor.alpha < 1)
-        fgColor = axs.utils.flattenColors(fgColor, bgColor);
+        fgColor = axs.color.flattenColors(fgColor, bgColor);
 
     if (style.opacity < 1) {
         var parentBg = axs.utils.getParentBgColor(element);
         fgColor.alpha = fgColor.alpha * style.opacity;
-        fgColor = axs.utils.flattenColors(fgColor, parentBg);
+        fgColor = axs.color.flattenColors(fgColor, parentBg);
     }
 
     return fgColor;
-};
-
-/**
- * @param {string} colorString The color string from CSS.
- * @return {?axs.utils.Color}
- */
-axs.utils.parseColor = function(colorString) {
-    var rgbRegex = /^rgb\((\d+), (\d+), (\d+)\)$/;
-    var match = colorString.match(rgbRegex);
-
-    if (match) {
-        var r = parseInt(match[1], 10);
-        var g = parseInt(match[2], 10);
-        var b = parseInt(match[3], 10);
-        var a = 1;
-        return new axs.utils.Color(r, g, b, a);
-    }
-
-    var rgbaRegex = /^rgba\((\d+), (\d+), (\d+), (\d*(\.\d+)?)\)/;
-    match = colorString.match(rgbaRegex);
-    if (match) {
-        var r = parseInt(match[1], 10);
-        var g = parseInt(match[2], 10);
-        var b = parseInt(match[3], 10);
-        var a = parseFloat(match[4]);
-        return new axs.utils.Color(r, g, b, a);
-    }
-
-    return null;
-};
-
-/**
- * @param {number} value The value of a color channel, 0 <= value <= 0xFF
- * @return {string}
- */
-axs.utils.colorChannelToString = function(value) {
-    value = Math.round(value);
-    if (value <= 0xF)
-        return '0' + value.toString(16);
-    return value.toString(16);
-};
-
-/**
- * @param {axs.utils.Color} color
- * @return {string}
- */
-axs.utils.colorToString = function(color) {
-    if (color.alpha == 1) {
-         return '#' + axs.utils.colorChannelToString(color.red) +
-         axs.utils.colorChannelToString(color.green) + axs.utils.colorChannelToString(color.blue);
-    }
-    else
-        return 'rgba(' + [color.red, color.green, color.blue, color.alpha].join(',') + ')';
-};
-
-axs.utils.luminanceFromContrastRatio = function(luminance, contrast, higher) {
-    if (higher) {
-        var newLuminance = (luminance + 0.05) * contrast - 0.05;
-        return newLuminance;
-    } else {
-        var newLuminance = (luminance + 0.05) / contrast - 0.05;
-        return newLuminance;
-    }
-};
-
-axs.utils.translateColor = function(ycc, luminance) {
-    var oldLuminance = ycc[0];
-    if (oldLuminance > luminance)
-        var endpoint = 0;
-    else
-        var endpoint = 1;
-
-    var d = luminance - oldLuminance;
-    var scale = d / (endpoint - oldLuminance);
-
-    /** @type {Array.<number>} */ var translatedColor = [ luminance,
-                                                          ycc[1] - ycc[1] * scale,
-                                                          ycc[2] - ycc[2] * scale ];
-    var rgb = axs.utils.fromYCC(translatedColor);
-    return rgb;
-};
-
-/**
- * @param {axs.utils.Color} bgColor
- * @param {axs.utils.Color} fgColor
- * @param {number} contrastRatio
- * @param {CSSStyleDeclaration} style
- * @return {Object}
- */
-axs.utils.suggestColors = function(bgColor, fgColor, contrastRatio, style) {
-    if (!axs.utils.isLowContrast(contrastRatio, style, true))
-        return null;
-    var colors = {};
-    var bgLuminance = axs.utils.calculateLuminance(bgColor);
-    var fgLuminance = axs.utils.calculateLuminance(fgColor);
-
-    var levelAAContrast = axs.utils.isLargeFont(style) ? 3.0 : 4.5;
-    var levelAAAContrast = axs.utils.isLargeFont(style) ? 4.5 : 7.0;
-    var fgLuminanceIsHigher = fgLuminance > bgLuminance;
-    var desiredFgLuminanceAA = axs.utils.luminanceFromContrastRatio(bgLuminance, levelAAContrast + 0.02, fgLuminanceIsHigher);
-    var desiredFgLuminanceAAA = axs.utils.luminanceFromContrastRatio(bgLuminance, levelAAAContrast + 0.02, fgLuminanceIsHigher);
-    var fgYCC = axs.utils.toYCC(fgColor);
-
-    if (axs.utils.isLowContrast(contrastRatio, style, false) &&
-        desiredFgLuminanceAA <= 1 && desiredFgLuminanceAA >= 0) {
-        var newFgColorAA = axs.utils.translateColor(fgYCC, desiredFgLuminanceAA);
-        var newContrastRatioAA = axs.utils.calculateContrastRatio(newFgColorAA, bgColor);
-        var suggestedColorsAA = {};
-        suggestedColorsAA['fg'] = axs.utils.colorToString(newFgColorAA);
-        suggestedColorsAA['bg'] = axs.utils.colorToString(bgColor);
-        suggestedColorsAA['contrast'] = newContrastRatioAA.toFixed(2);
-        colors['AA'] = suggestedColorsAA;
-    }
-    if (axs.utils.isLowContrast(contrastRatio, style, true) &&
-        desiredFgLuminanceAAA <= 1 && desiredFgLuminanceAAA >= 0) {
-        var newFgColorAAA = axs.utils.translateColor(fgYCC, desiredFgLuminanceAAA);
-        var newContrastRatioAAA = axs.utils.calculateContrastRatio(newFgColorAAA, bgColor);
-        var suggestedColorsAAA = {};
-        suggestedColorsAAA['fg'] = axs.utils.colorToString(newFgColorAAA);
-        suggestedColorsAAA['bg'] = axs.utils.colorToString(bgColor);
-        suggestedColorsAAA['contrast'] = newContrastRatioAAA.toFixed(2);
-        colors['AAA'] = suggestedColorsAAA;
-    }
-    var desiredBgLuminanceAA = axs.utils.luminanceFromContrastRatio(fgLuminance, levelAAContrast + 0.02, !fgLuminanceIsHigher);
-    var desiredBgLuminanceAAA = axs.utils.luminanceFromContrastRatio(fgLuminance, levelAAAContrast + 0.02, !fgLuminanceIsHigher);
-    var bgYCC = axs.utils.toYCC(bgColor);
-
-    if (!('AA' in colors) && axs.utils.isLowContrast(contrastRatio, style, false) &&
-        desiredBgLuminanceAA <= 1 && desiredBgLuminanceAA >= 0) {
-        var newBgColorAA = axs.utils.translateColor(bgYCC, desiredBgLuminanceAA);
-        var newContrastRatioAA = axs.utils.calculateContrastRatio(fgColor, newBgColorAA);
-        var suggestedColorsAA = {};
-        suggestedColorsAA['bg'] = axs.utils.colorToString(newBgColorAA);
-        suggestedColorsAA['fg'] = axs.utils.colorToString(fgColor);
-        suggestedColorsAA['contrast'] = newContrastRatioAA.toFixed(2);
-        colors['AA'] = suggestedColorsAA;
-    }
-    if (!('AAA' in colors) && axs.utils.isLowContrast(contrastRatio, style, true) &&
-        desiredBgLuminanceAAA <= 1 && desiredBgLuminanceAAA >= 0) {
-        var newBgColorAAA = axs.utils.translateColor(bgYCC, desiredBgLuminanceAAA);
-        var newContrastRatioAAA = axs.utils.calculateContrastRatio(fgColor, newBgColorAAA);
-        var suggestedColorsAAA = {};
-        suggestedColorsAAA['bg'] = axs.utils.colorToString(newBgColorAAA);
-        suggestedColorsAAA['fg'] = axs.utils.colorToString(fgColor);
-        suggestedColorsAAA['contrast'] = newContrastRatioAAA.toFixed(2);
-        colors['AAA'] = suggestedColorsAAA;
-    }
-    return colors;
-};
-
-/**
- * Combine the two given color according to alpha blending.
- * @param {axs.utils.Color} fgColor
- * @param {axs.utils.Color} bgColor
- * @return {axs.utils.Color}
- */
-axs.utils.flattenColors = function(fgColor, bgColor) {
-    var alpha = fgColor.alpha;
-    var r = ((1 - alpha) * bgColor.red) + (alpha * fgColor.red);
-    var g = ((1 - alpha) * bgColor.green) + (alpha * fgColor.green);
-    var b = ((1 - alpha) * bgColor.blue) + (alpha * fgColor.blue);
-    var a = fgColor.alpha + (bgColor.alpha * (1 - fgColor.alpha));
-
-    return new axs.utils.Color(r, g, b, a);
-};
-
-/**
- * Calculate the luminance of the given color using the WCAG algorithm.
- * @param {axs.utils.Color} color
- * @return {number}
- */
-axs.utils.calculateLuminance = function(color) {
-/*    var rSRGB = color.red / 255;
-    var gSRGB = color.green / 255;
-    var bSRGB = color.blue / 255;
-
-    var r = rSRGB <= 0.03928 ? rSRGB / 12.92 : Math.pow(((rSRGB + 0.055)/1.055), 2.4);
-    var g = gSRGB <= 0.03928 ? gSRGB / 12.92 : Math.pow(((gSRGB + 0.055)/1.055), 2.4);
-    var b = bSRGB <= 0.03928 ? bSRGB / 12.92 : Math.pow(((bSRGB + 0.055)/1.055), 2.4);
-
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b; */
-    var ycc = axs.utils.toYCC(color);
-    return ycc[0];
-};
-
-/**
- * Returns an RGB to YCC conversion matrix for the given kR, kB constants.
- * @param {number} kR
- * @param {number} kB
- * @return {Array.<Array.<number>>}
- */
-axs.utils.RGBToYCCMatrix = function(kR, kB) {
-    return [
-        [
-            kR,
-            (1 - kR - kB),
-            kB
-        ],
-        [
-            -kR/(2 - 2*kB),
-            (kR + kB - 1)/(2 - 2*kB),
-            (1 - kB)/(2 - 2*kB)
-        ],
-        [
-            (1 - kR)/(2 - 2*kR),
-            (kR + kB - 1)/(2 - 2*kR),
-            -kB/(2 - 2*kR)
-        ]
-    ];
-};
-
-/**
- * Return the inverse of the given 3x3 matrix.
- * @param {Array.<Array.<number>>} matrix
- * @return Array.<Array.<number>> The inverse of the given matrix.
- */
-axs.utils.invert3x3Matrix = function(matrix) {
-    var a = matrix[0][0];
-    var b = matrix[0][1];
-    var c = matrix[0][2];
-    var d = matrix[1][0];
-    var e = matrix[1][1];
-    var f = matrix[1][2];
-    var g = matrix[2][0];
-    var h = matrix[2][1];
-    var k = matrix[2][2];
-
-    var A = (e*k - f*h);
-    var B = (f*g - d*k);
-    var C = (d*h - e*g);
-    var D = (c*h - b*k);
-    var E = (a*k - c*g);
-    var F = (g*b - a*h);
-    var G = (b*f - c*e);
-    var H = (c*d - a*f);
-    var K = (a*e - b*d);
-
-    var det = a * (e*k - f*h) - b * (k*d - f*g) + c * (d*h - e*g);
-    var z = 1/det;
-
-    return axs.utils.scalarMultiplyMatrix([
-        [ A, D, G ],
-        [ B, E, H ],
-        [ C, F, K ]
-    ], z);
-};
-
-axs.utils.scalarMultiplyMatrix = function(matrix, scalar) {
-    var result = [];
-    result[0] = [];
-    result[1] = [];
-    result[2] = [];
-
-    for (var i = 0; i < 3; i++) {
-        for (var j = 0; j < 3; j++) {
-            result[i][j] = matrix[i][j] * scalar;
-        }
-    }
-
-    return result;
-};
-
-axs.utils.kR = 0.2126;
-axs.utils.kB = 0.0722;
-axs.utils.YCC_MATRIX = axs.utils.RGBToYCCMatrix(axs.utils.kR, axs.utils.kB);
-axs.utils.INVERTED_YCC_MATRIX = axs.utils.invert3x3Matrix(axs.utils.YCC_MATRIX);
-
-/**
- * Multiply the given color vector by the given transformation matrix.
- * @param {Array.<Array.<number>>} matrix A 3x3 conversion matrix
- * @param {Array.<number>} vector A 3-element color vector
- * @return {Array.<number>} A 3-element color vector
- */
-axs.utils.convertColor = function(matrix, vector) {
-    var a = matrix[0][0];
-    var b = matrix[0][1];
-    var c = matrix[0][2];
-    var d = matrix[1][0];
-    var e = matrix[1][1];
-    var f = matrix[1][2];
-    var g = matrix[2][0];
-    var h = matrix[2][1];
-    var k = matrix[2][2];
-
-    var x = vector[0];
-    var y = vector[1];
-    var z = vector[2];
-
-    return [
-        a*x + b*y + c*z,
-        d*x + e*y + f*z,
-        g*x + h*y + k*z
-    ];
-};
-
-axs.utils.multiplyMatrices = function(matrix1, matrix2) {
-    var result = [];
-    result[0] = [];
-    result[1] = [];
-    result[2] = [];
-
-    for (var i = 0; i < 3; i++) {
-        for (var j = 0; j < 3; j++) {
-            result[i][j] = matrix1[i][0] * matrix2[0][j] +
-                           matrix1[i][1] * matrix2[1][j] +
-                           matrix1[i][2] * matrix2[2][j];
-        }
-    }
-    return result;
-};
-
-/**
- * Convert a given RGB color to YCC.
- * @param {axs.utils.Color} color
- */
-axs.utils.toYCC = function(color) {
-    var rSRGB = color.red / 255;
-    var gSRGB = color.green / 255;
-    var bSRGB = color.blue / 255;
-
-    var r = rSRGB <= 0.03928 ? rSRGB / 12.92 : Math.pow(((rSRGB + 0.055)/1.055), 2.4);
-    var g = gSRGB <= 0.03928 ? gSRGB / 12.92 : Math.pow(((gSRGB + 0.055)/1.055), 2.4);
-    var b = bSRGB <= 0.03928 ? bSRGB / 12.92 : Math.pow(((bSRGB + 0.055)/1.055), 2.4);
-
-    return axs.utils.convertColor(axs.utils.YCC_MATRIX, [r, g, b]);
-};
-
-/**
- * Convert a color from a YCC color (as a vector) to an RGB color
- * @param {Array.<number>} yccColor
- * @return {axs.utils.Color}
- */
-axs.utils.fromYCC = function(yccColor) {
-    var rgb = axs.utils.convertColor(axs.utils.INVERTED_YCC_MATRIX, yccColor);
-
-    var r = rgb[0];
-    var g = rgb[1];
-    var b = rgb[2];
-    var rSRGB = r <= 0.00303949 ? (r * 12.92) : (Math.pow(r, (1/2.4)) * 1.055) - 0.055;
-    var gSRGB = g <= 0.00303949 ? (g * 12.92) : (Math.pow(g, (1/2.4)) * 1.055) - 0.055;
-    var bSRGB = b <= 0.00303949 ? (b * 12.92) : (Math.pow(b, (1/2.4)) * 1.055) - 0.055;
-
-    var red = Math.min(Math.max(Math.round(rSRGB * 255), 0), 255);
-    var green = Math.min(Math.max(Math.round(gSRGB * 255), 0), 255);
-    var blue = Math.min(Math.max(Math.round(bSRGB * 255), 0), 255);
-
-    return new axs.utils.Color(red, green, blue, 1);
-};
-
-axs.utils.scalarMultiplyMatrix = function(matrix, scalar) {
-    var result = [];
-    result[0] = [];
-    result[1] = [];
-    result[2] = [];
-
-    for (var i = 0; i < 3; i++) {
-        for (var j = 0; j < 3; j++) {
-            result[i][j] = matrix[i][j] * scalar;
-        }
-    }
-
-    return result;
-};
-
-axs.utils.multiplyMatrices = function(matrix1, matrix2) {
-    var result = [];
-    result[0] = [];
-    result[1] = [];
-    result[2] = [];
-
-    for (var i = 0; i < 3; i++) {
-        for (var j = 0; j < 3; j++) {
-            result[i][j] = matrix1[i][0] * matrix2[0][j] +
-                           matrix1[i][1] * matrix2[1][j] +
-                           matrix1[i][2] * matrix2[2][j];
-        }
-    }
-    return result;
 };
 
 /**
@@ -897,7 +472,7 @@ axs.utils.getContrastRatioForElementWithComputedStyle = function(style, element)
     if (!fgColor)
         return null;
 
-    return axs.utils.calculateContrastRatio(fgColor, bgColor);
+    return axs.color.calculateContrastRatio(fgColor, bgColor);
 };
 
 /**

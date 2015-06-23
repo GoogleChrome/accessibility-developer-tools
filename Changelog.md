@@ -1,3 +1,20 @@
+## 2.7.1-rc.1 - 2015-06-23
+
+### Bug fixes:
+
+* Check for null `textAlternatives` in `FocusableElementNotVisibleAndNotAriaHidden`'s `relevantElementMatcher` method.
+
+## 2.7.1-rc.0 - 2015-06-15
+
+### Enhancements:
+* Rework findTextAlternatives not to return non-exposed text alternatives.
+* Add Bower config (#157)
+* Pull color code into separate file.
+* Improve color suggestion algorithm.
+
+### Bug fixes:
+* Check for any text alternatives when assessing unlabeled images (#154).
+
 ## 2.7.0 - 2015-05-15
 
 ### New rules
