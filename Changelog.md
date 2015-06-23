@@ -9,6 +9,8 @@
 ### Enhancements:
 * Rework findTextAlternatives not to return non-exposed text alternatives.
 * Add Bower config (#157)
+* Pull color code into separate file.
+* Improve color suggestion algorithm.
 
 ### Bug fixes:
 * Check for any text alternatives when assessing unlabeled images (#154).

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 goog.require('axs.browserUtils');
+goog.require('axs.color');
 goog.require('axs.utils');
 
 goog.provide('axs.properties');
@@ -198,16 +199,28 @@ axs.properties.getContrastRatioProperties = function(element) {
     if (!bgColor)
         return null;
 
-    contrastRatioProperties['backgroundColor'] = axs.utils.colorToString(bgColor);
+    contrastRatioProperties['backgroundColor'] = axs.color.colorToString(bgColor);
     var fgColor = axs.utils.getFgColor(style, element, bgColor);
-    contrastRatioProperties['foregroundColor'] = axs.utils.colorToString(fgColor);
-    var value = axs.utils.getContrastRatioForElementWithComputedStyle(style, element);
-    if (!value)
+    contrastRatioProperties['foregroundColor'] = axs.color.colorToString(fgColor);
+    var contrast = axs.utils.getContrastRatioForElementWithComputedStyle(style, element);
+    if (!contrast)
         return null;
-    contrastRatioProperties['value'] = value.toFixed(2);
-    if (axs.utils.isLowContrast(value, style))
+    contrastRatioProperties['value'] = contrast.toFixed(2);
+    if (axs.utils.isLowContrast(contrast, style))
         contrastRatioProperties['alert'] = true;
-    var suggestedColors = axs.utils.suggestColors(bgColor, fgColor, value, style);
+
+    var levelAAContrast = axs.utils.isLargeFont(style) ? 3.0 : 4.5;
+    var levelAAAContrast = axs.utils.isLargeFont(style) ? 4.5 : 7.0;
+    var desiredContrastRatios = {};
+    if (levelAAContrast > contrast)
+        desiredContrastRatios['AA'] = levelAAContrast;
+    if (levelAAAContrast > contrast)
+        desiredContrastRatios['AAA'] = levelAAAContrast;
+
+    if (!Object.keys(desiredContrastRatios).length)
+        return contrastRatioProperties;
+
+    var suggestedColors = axs.color.suggestColors(bgColor, fgColor, desiredContrastRatios);
     if (suggestedColors && Object.keys(suggestedColors).length)
         contrastRatioProperties['suggestedColors'] = suggestedColors;
     return contrastRatioProperties;
