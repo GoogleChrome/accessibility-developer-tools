@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/c4f8e2d24fc5bbba7000e8c3b9308ff24bd762ff
+ * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/91ec7093ac31a45c6b3611e65e08ef82ecdc11d1
  *
  * See project README for build steps.
  */
@@ -1856,7 +1856,7 @@ axs.AuditRules.addRule({name:"focusableElementNotVisibleAndNotAriaHidden", headi
       return!1;
     }
   }
-  return "" === axs.properties.findTextAlternatives(a, {}).trim() ? !1 : !0;
+  return(a = axs.properties.findTextAlternatives(a, {})) && "" !== a.trim() ? !0 : !1;
 }, test:function(a) {
   if (axs.utils.isElementOrAncestorHidden(a)) {
     return!1;

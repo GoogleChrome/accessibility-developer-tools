@@ -1,3 +1,5 @@
+## 2.7.1-rc.1 - 2015-06-23
+
 ### Bug fixes:
 
 * Check for null `textAlternatives` in `FocusableElementNotVisibleAndNotAriaHidden`'s `relevantElementMatcher` method.
