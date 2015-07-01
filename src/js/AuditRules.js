@@ -20,6 +20,9 @@ goog.provide('axs.AuditRules');
     var auditRulesByName = {};
     var auditRulesByCode = {};
 
+    /** @type {Object.<string, axs.AuditRule.Spec>} */
+    axs.AuditRules.specs = {};
+
     /**
      * Instantiates and registers an audit rule.
      * If a conflicting rule is already registered then the new rule will not be added.
@@ -27,7 +30,6 @@ goog.provide('axs.AuditRules');
      * @throws {Error} If the rule duplicates properties that must be unique.
      */
     axs.AuditRules.addRule = function(spec) {
-        // axs.AuditRule.specs[spec.name] = spec;  // This would add backwards compatibility
         // create the auditRule before checking props as we can expect the constructor to perform the
         // first layer of sanity checking.
         var auditRule = new axs.AuditRule(spec);
@@ -36,6 +38,7 @@ goog.provide('axs.AuditRules');
         if (auditRule.name in auditRulesByName)
             throw new Error('Can not add audit rule with same name: "' + auditRule.name + '"');
         auditRulesByName[auditRule.name] = auditRulesByCode[auditRule.code] = auditRule;
+        axs.AuditRules.specs[spec.name] = spec;
     };
 
     /**

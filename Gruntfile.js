@@ -18,6 +18,7 @@ module.exports = function(grunt) {
               './src/js/axs.js',
               './src/js/BrowserUtils.js',
               './src/js/Constants.js',
+              './src/js/Color.js',
               './src/js/AccessibilityUtils.js',
               './src/js/Properties.js',
               './src/js/AuditRule.js',
@@ -53,7 +54,8 @@ module.exports = function(grunt) {
     },
 
     clean: {
-      all: ['.tmp', 'dist']
+      local: ['.tmp'],
+      dist: ['dist']
     },
 
     bump: {
@@ -69,7 +71,7 @@ module.exports = function(grunt) {
     coffee: {
       compile: {
         files: {
-          '.tmp/util/gh_repo.js': 'src/util/gh_repo.coffee'
+          '.tmp/util/gh_repo.js': 'scripts/gh_repo.coffee'
         }
       }
     },
@@ -220,6 +222,7 @@ module.exports = function(grunt) {
       'prompt:gh-release',
       'build',
       'test:unit',
+      'clean:dist',
       'copy:dist',
       'bump-only:' + releaseType,
       'changelog:' + releaseType,
@@ -237,9 +240,9 @@ module.exports = function(grunt) {
     grunt.task.run('git-describe');
   });
 
-  grunt.registerTask('build', ['clean:all', 'save-revision', 'closurecompiler:minify']);
+  grunt.registerTask('build', ['clean:local', 'save-revision', 'closurecompiler:minify']);
   grunt.registerTask('test:unit', ['qunit']);
-  grunt.registerTask('dist', ['build', 'copy:dist']);
+  grunt.registerTask('dist', ['clean:dist', 'build', 'copy:dist']);
   grunt.registerTask('travis', ['closurecompiler:minify', 'test:unit']);
   grunt.registerTask('default', ['build', 'test:unit']);
 };
