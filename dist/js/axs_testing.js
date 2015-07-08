@@ -1288,11 +1288,11 @@ axs.properties.getTextFromAriaLabelledby = function(a, b) {
 };
 axs.properties.getTextFromHostLanguageAttributes = function(a, b, c, d) {
   if (axs.browserUtils.matchSelector(a, "img") && a.hasAttribute("alt")) {
-    var e = {type:"string", valid:!0};
-    e.text = a.getAttribute("alt");
-    c ? e.unused = !0 : c = e.text;
-    b.alt = e;
-  }
+      var e = {type:"string", valid:!0};
+      e.text = a.getAttribute("alt");
+      c ? e.unused = !0 : c = e.text;
+      b.alt = e;
+    }
   if (axs.browserUtils.matchSelector(a, 'input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])') && !d) {
     if (a.hasAttribute("id")) {
       d = document.querySelectorAll('label[for="' + a.id + '"]');
@@ -1330,8 +1330,8 @@ axs.properties.getLastWord = function(a) {
 axs.properties.getTextProperties = function(a) {
   var b = {}, c = axs.properties.findTextAlternatives(a, b, !1, !0);
   if (0 == Object.keys(b).length && ((a = axs.utils.asElement(a)) && axs.browserUtils.matchSelector(a, "img") && (b.alt = {valid:!1, errorMessage:"No alt value provided"}, a = a.src, "string" == typeof a && (c = a.split("/").pop(), b.filename = {text:c})), !c)) {
-    return null;
-  }
+      return null;
+    }
   b.hasProperties = Boolean(Object.keys(b).length);
   b.computedText = c;
   b.lastWord = axs.properties.getLastWord(c);
