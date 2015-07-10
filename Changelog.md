@@ -1,3 +1,8 @@
+# Enhancements:
+* Pull color code into separate file.
+* Improve color suggestion algorithm.
+* Descend into iframes when collecting matching elements.
+
 ## 2.7.1 - 2015-06-30
 
 ## 2.7.1-rc.1 - 2015-06-23
@@ -11,8 +16,6 @@
 ### Enhancements:
 * Rework findTextAlternatives not to return non-exposed text alternatives.
 * Add Bower config (#157)
-* Pull color code into separate file.
-* Improve color suggestion algorithm.
 
 ### Bug fixes:
 * Check for any text alternatives when assessing unlabeled images (#154).
