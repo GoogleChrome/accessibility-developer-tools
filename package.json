@@ -1,6 +1,6 @@
 {
   "name": "accessibility-developer-tools",
-  "version": "2.7.1",
+  "version": "2.8.0-rc.0",
   "repository": {
     "type": "git",
     "url": "http://github.com/GoogleChrome/accessibility-developer-tools"
