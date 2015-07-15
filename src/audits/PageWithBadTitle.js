@@ -1,4 +1,4 @@
-// Copyright 2013 Google Inc.
+// Copyright 2015 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,20 +17,27 @@ goog.require('axs.constants.Severity');
 
 axs.AuditRules.addRule({
     name: 'pageWithBadTitle',
-    heading: 'The web page should have a title that is not too large and does not contain bad characters',
+    heading: 'The web page should have a title less than 66 characters long and does not contain bad characters',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#TODO-WIKIENTRY',
-    severity: axs.constants.Severity.SEVERE,
+    severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
-        return element.tagName.toLowerCase() == "html";
+        return element.tagName.toLowerCase() == "title";
     },
     test: function(scope) {
-        var head = scope.querySelector('head');
-        if (!head)
+        // test length of title
+        if (document.title.length >= 66)
           return true;
-        var title = head.querySelector('title');
-        if (!title)
-            return true;
-        return !title.textContent;
+        // test if last char of title is '.'
+        if (document.title.slice(-1) === '.')
+          return true;
+        // tests if title contains illegal chars
+        if (document.title.indexOf('-') === -1)
+          return true;
+        if (document.title.indexOf('/') === -1)
+          return true;
+        if (document.title.indexOf('\\') === -1)
+          return true;
+        return false;
     },
     code: 'AX_TITLE_02'
 });
