@@ -24,18 +24,20 @@ axs.AuditRules.addRule({
         return element.tagName.toLowerCase() == "title";
     },
     test: function(scope) {
+        var head = scope.querySelector('head');
+        var title = head.querySelector('title');
         // test length of title
-        if (document.title.length >= 66)
+        if (title.length >= 66)
           return true;
         // test if last char of title is '.'
-        if (document.title.slice(-1) === '.')
+        if (title.slice(-1) === '.')
           return true;
         // tests if title contains illegal chars
-        if (document.title.indexOf('-') === -1)
+        if (title.indexOf('-') === -1)
           return true;
-        if (document.title.indexOf('/') === -1)
+        if (title.indexOf('/') === -1)
           return true;
-        if (document.title.indexOf('\\') === -1)
+        if (title.indexOf('\\') === -1)
           return true;
         return false;
     },
