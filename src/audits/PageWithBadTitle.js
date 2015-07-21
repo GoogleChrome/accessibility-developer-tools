@@ -23,23 +23,10 @@ axs.AuditRules.addRule({
     relevantElementMatcher: function(element) {
         return element.tagName.toLowerCase() == "title";
     },
-    test: function(scope) {
-        var head = scope.querySelector('head');
-        var title = head.querySelector('title');
-        // test length of title
-        if (title.length >= 66)
-          return true;
-        // test if last char of title is '.'
-        if (title.slice(-1) === '.')
-          return true;
-        // tests if title contains illegal chars
-        if (title.indexOf('-') === -1)
-          return true;
-        if (title.indexOf('/') === -1)
-          return true;
-        if (title.indexOf('\\') === -1)
-          return true;
-        return false;
+    test: function(title) {
+        var titleText = title.textContent;
+        var badChars = /([-/\\]|[.]$)/;
+        return titleText.length > 65 || badChars.test(titleText);
     },
     code: 'AX_TITLE_02'
 });
