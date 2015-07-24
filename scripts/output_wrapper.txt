@@ -17,7 +17,17 @@
  *
  * See project README for build steps.
  */
- 
+
 // AUTO-GENERATED CONTENT BELOW: DO NOT EDIT! See above for details.
 
-%output%
+var fn = (function() {
+  %output%
+  return axs;
+});
+
+// Define AMD module if possible, export globals otherwise.
+if (typeof define !== 'undefined' && define.amd) {
+  define([], fn);
+} else {
+  fn.call(this);
+}
