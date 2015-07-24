@@ -18,6 +18,7 @@ module.exports = function(grunt) {
               './src/js/axs.js',
               './src/js/BrowserUtils.js',
               './src/js/Constants.js',
+              './src/js/Color.js',
               './src/js/AccessibilityUtils.js',
               './src/js/Properties.js',
               './src/js/AuditRule.js',
@@ -122,6 +123,7 @@ module.exports = function(grunt) {
   grunt.registerTask('changelog', function(type) {
     grunt.task.requires('bump-only:' + type);
 
+    var dryRun = grunt.option('dry-run');
     var config = {
       data: {
         version: grunt.config.get('pkg.version'),
@@ -137,6 +139,7 @@ module.exports = function(grunt) {
     var headerTpl = "## <%= version %> - <%= releaseDate %>\n\n";
     var header = grunt.template.process(headerTpl, config);
 
+    grunt.log.ok('changelog: Extracting release notes.');
     if (contents.length > 0) {
       if ((stopIndex = contents.search(stopRegex)) !== -1) {
         releaseNotes = contents.slice(0, stopIndex);
@@ -145,8 +148,15 @@ module.exports = function(grunt) {
 
     grunt.config.set("gh-release.release-notes", releaseNotes);
 
-    grunt.file.write(dest, "" + header + contents);
-    grunt.log.ok("Changelog updated, and release notes extracted.");
+    if (dryRun) {
+      grunt.log.ok('changelog (dry): Prepending header to ' + dest);
+      grunt.log.writeln(header);
+    } else {
+      grunt.file.write(dest, "" + header + contents);
+    }
+
+    grunt.log.writeln("Release Notes:\n" + releaseNotes);
+    grunt.log.ok('changelog: Task completed.');
   });
 
   grunt.registerTask('gh-release', function() {
@@ -154,6 +164,7 @@ module.exports = function(grunt) {
     grunt.task.requires('coffee:compile');
     var GHRepo = require('./.tmp/util/gh_repo');
 
+    var dryRun = grunt.option('dry-run');
     var done = this.async();
     var config = grunt.config.get('gh-release');
     var pkg = grunt.config.get('pkg');
@@ -169,20 +180,30 @@ module.exports = function(grunt) {
       draft: true
     };
 
-    grunt.log.writeln("Searching for existing GH release:", nextRelease);
+    grunt.log.writeln("gh-release: Searching for existing Github release:", nextRelease);
     repo.getReleaseByName(nextRelease)
       .then(function(release) {
         if (release) {
-          payload.body += "\n" + release.body;
-          repo.updateRelease(release, payload).then(function() {
-            grunt.log.ok('Github release ' + nextRelease + ' updated successfully.');
+          if (dryRun) {
+            grunt.log.ok('gh-release (dry): Updating existing Github release: ' + nextRelease);
             done();
-          });
+          } else {
+            payload.body += "\n" + release.body;
+            repo.updateRelease(release, payload).then(function() {
+              grunt.log.ok('Github release ' + nextRelease + ' updated successfully.');
+              done();
+            });
+          }
         } else {
-          repo.createRelease(payload).then(function() {
-            grunt.log.ok('Github release ' + nextRelease + ' created successfully');
+          if (dryRun) {
+            grunt.log.ok('gh-release (dry): Creating new Github release: ' + nextRelease);
             done();
-          });
+          } else {
+            repo.createRelease(payload).then(function() {
+              grunt.log.ok('Github release ' + nextRelease + ' created successfully');
+              done();
+            });
+          }
         }
       })
       .catch(function(err) {
@@ -217,18 +238,26 @@ module.exports = function(grunt) {
       grunt.fail.fatal('You must specify a release type. i.e. grunt release:prerelease');
     }
 
-    grunt.task.run([
-      'prompt:gh-release',
-      'build',
+    var dryRun = grunt.option('dry-run');
+
+    var tasks = ['prompt:gh-release'];
+
+    if (dryRun) {
+      grunt.log.ok('Skipping build, clean:dist and copy:dist tasks in dry-run');
+    } else {
+      tasks.push('build', 'clean:dist', 'copy:dist');
+    }
+
+    tasks = tasks.concat([
       'test:unit',
-      'clean:dist',
-      'copy:dist',
       'bump-only:' + releaseType,
       'changelog:' + releaseType,
       'bump-commit',
       'coffee:compile',
       'gh-release'
     ]);
+
+    grunt.task.run(tasks);
   });
 
   grunt.registerTask('save-revision', function() {

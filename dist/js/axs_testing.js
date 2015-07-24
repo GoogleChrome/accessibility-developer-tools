@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/ef4fec4549616cd69a0f0f732d43c838d8ab17eb
+ * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/407f318f682c802645c3ef867ed97854de4b655b
  *
  * See project README for build steps.
  */
@@ -523,25 +523,166 @@ reserved:!0}], MATH:[{role:"", allowed:["presentation"]}], MENU:[{role:"toolbar"
 allowed:["application", "document", "img", "presentation"]}], OL:[{role:"list", allowed:"directory group listbox menu menubar tablist toolbar tree presentation".split(" ")}], OPTGROUP:[{role:"", allowed:["presentation"]}], OPTION:[{role:"option"}], OUTPUT:[{role:"status", allowed:["*"]}], PARAM:[{role:"", reserved:!0}], PICTURE:[{role:"", reserved:!0}], PROGRESS:[{role:"progressbar", allowed:["presentation"]}], SCRIPT:[{role:"", reserved:!0}], SECTION:[{role:"region", allowed:"alert alertdialog application contentinfo dialog document log marquee search status presentation".split(" ")}], 
 SELECT:[{role:"listbox"}], SOURCE:[{role:"", reserved:!0}], SPAN:[{role:"", allowed:["*"]}], STYLE:[{role:"", reserved:!0}], SVG:[{role:"", allowed:["application", "document", "img", "presentation"]}], SUMMARY:[{role:"", allowed:["presentation"]}], TABLE:[{role:"", allowed:["*"]}], TEMPLATE:[{role:"", reserved:!0}], TEXTAREA:[{role:"textbox"}], TBODY:[{role:"rowgroup", allowed:["*"]}], THEAD:[{role:"rowgroup", allowed:["*"]}], TFOOT:[{role:"rowgroup", allowed:["*"]}], TITLE:[{role:"", reserved:!0}], 
 TD:[{role:"", allowed:["*"]}], TH:[{role:"", allowed:["*"]}], TR:[{role:"", allowed:["*"]}], TRACK:[{role:"", reserved:!0}], UL:[{role:"list", allowed:"directory group listbox menu menubar tablist toolbar tree presentation".split(" ")}], VIDEO:[{role:"", allowed:["application", "presentation"]}]};
-axs.utils = {};
-axs.utils.FOCUSABLE_ELEMENTS_SELECTOR = "input:not([type=hidden]):not([disabled]),select:not([disabled]),textarea:not([disabled]),button:not([disabled]),a[href],iframe,[tabindex]";
-axs.utils.Color = function(a, b, c, d) {
+axs.color = {};
+axs.color.Color = function(a, b, c, d) {
   this.red = a;
   this.green = b;
   this.blue = c;
   this.alpha = d;
 };
-axs.utils.calculateContrastRatio = function(a, b) {
-  if (!a || !b) {
-    return null;
-  }
-  1 > a.alpha && (a = axs.utils.flattenColors(a, b));
-  var c = axs.utils.calculateLuminance(a), d = axs.utils.calculateLuminance(b);
+axs.color.YCbCr = function(a) {
+  this.luma = this.z = a[0];
+  this.Cb = this.x = a[1];
+  this.Cr = this.y = a[2];
+};
+axs.color.YCbCr.prototype = {multiply:function(a) {
+  return new axs.color.YCbCr([this.luma * a, this.Cb * a, this.Cr * a]);
+}, add:function(a) {
+  return new axs.color.YCbCr([this.luma + a.luma, this.Cb + a.Cb, this.Cr + a.Cr]);
+}, subtract:function(a) {
+  return new axs.color.YCbCr([this.luma - a.luma, this.Cb - a.Cb, this.Cr - a.Cr]);
+}};
+axs.color.calculateContrastRatio = function(a, b) {
+  1 > a.alpha && (a = axs.color.flattenColors(a, b));
+  var c = axs.color.calculateLuminance(a), d = axs.color.calculateLuminance(b);
   return (Math.max(c, d) + .05) / (Math.min(c, d) + .05);
 };
-axs.utils.luminanceRatio = function(a, b) {
+axs.color.calculateLuminance = function(a) {
+  return axs.color.toYCbCr(a).luma;
+};
+axs.color.luminanceRatio = function(a, b) {
   return (Math.max(a, b) + .05) / (Math.min(a, b) + .05);
 };
+axs.color.parseColor = function(a) {
+  var b = a.match(/^rgb\((\d+), (\d+), (\d+)\)$/);
+  if (b) {
+    a = parseInt(b[1], 10);
+    var c = parseInt(b[2], 10), d = parseInt(b[3], 10);
+    return new axs.color.Color(a, c, d, 1);
+  }
+  return (b = a.match(/^rgba\((\d+), (\d+), (\d+), (\d*(\.\d+)?)\)/)) ? (a = parseInt(b[1], 10), c = parseInt(b[2], 10), d = parseInt(b[3], 10), b = parseFloat(b[4]), new axs.color.Color(a, c, d, b)) : null;
+};
+axs.color.colorChannelToString = function(a) {
+  a = Math.round(a);
+  return 15 >= a ? "0" + a.toString(16) : a.toString(16);
+};
+axs.color.colorToString = function(a) {
+  return 1 == a.alpha ? "#" + axs.color.colorChannelToString(a.red) + axs.color.colorChannelToString(a.green) + axs.color.colorChannelToString(a.blue) : "rgba(" + [a.red, a.green, a.blue, a.alpha].join() + ")";
+};
+axs.color.luminanceFromContrastRatio = function(a, b, c) {
+  return c ? (a + .05) * b - .05 : (a + .05) / b - .05;
+};
+axs.color.translateColor = function(a, b) {
+  for (var c = b > a.luma ? axs.color.WHITE_YCC : axs.color.BLACK_YCC, d = c == axs.color.WHITE_YCC ? axs.color.YCC_CUBE_FACES_WHITE : axs.color.YCC_CUBE_FACES_BLACK, e = new axs.color.YCbCr([0, a.Cb, a.Cr]), f = new axs.color.YCbCr([1, a.Cb, a.Cr]), f = {a:e, b:f}, e = null, g = 0;g < d.length && !(e = axs.color.findIntersection(f, d[g]), 0 <= e.z && 1 >= e.z);g++) {
+  }
+  if (!e) {
+    throw "Couldn't find intersection with YCbCr color cube for Cb=" + a.Cb + ", Cr=" + a.Cr + ".";
+  }
+  if (e.x != a.x || e.y != a.y) {
+    throw "Intersection has wrong Cb/Cr values.";
+  }
+  if (Math.abs(c.luma - e.luma) < Math.abs(c.luma - b)) {
+    return c = [b, a.Cb, a.Cr], axs.color.fromYCbCrArray(c);
+  }
+  c = (b - e.luma) / (c.luma - e.luma);
+  c = [b, e.Cb - e.Cb * c, e.Cr - e.Cr * c];
+  return axs.color.fromYCbCrArray(c);
+};
+axs.color.suggestColors = function(a, b, c) {
+  var d = {}, e = axs.color.calculateLuminance(a), f = axs.color.calculateLuminance(b), g = f > e, h = axs.color.toYCbCr(b), k = axs.color.toYCbCr(a), m;
+  for (m in c) {
+    var l = c[m], n = axs.color.luminanceFromContrastRatio(e, l + .02, g);
+    if (1 >= n && 0 <= n) {
+      var p = axs.color.translateColor(h, n), l = axs.color.calculateContrastRatio(p, a), n = {};
+      n.fg = axs.color.colorToString(p);
+      n.bg = axs.color.colorToString(a);
+      n.contrast = l.toFixed(2);
+      d[m] = n;
+    } else {
+      l = axs.color.luminanceFromContrastRatio(f, l + .02, !g), 1 >= l && 0 <= l && (p = axs.color.translateColor(k, l), l = axs.color.calculateContrastRatio(b, p), n = {}, n.bg = axs.color.colorToString(p), n.fg = axs.color.colorToString(b), n.contrast = l.toFixed(2), d[m] = n);
+    }
+  }
+  return d;
+};
+axs.color.flattenColors = function(a, b) {
+  var c = a.alpha;
+  return new axs.color.Color((1 - c) * b.red + c * a.red, (1 - c) * b.green + c * a.green, (1 - c) * b.blue + c * a.blue, a.alpha + b.alpha * (1 - a.alpha));
+};
+axs.color.multiplyMatrixVector = function(a, b) {
+  var c = b[0], d = b[1], e = b[2];
+  return [a[0][0] * c + a[0][1] * d + a[0][2] * e, a[1][0] * c + a[1][1] * d + a[1][2] * e, a[2][0] * c + a[2][1] * d + a[2][2] * e];
+};
+axs.color.toYCbCr = function(a) {
+  var b = a.red / 255, c = a.green / 255;
+  a = a.blue / 255;
+  b = .03928 >= b ? b / 12.92 : Math.pow((b + .055) / 1.055, 2.4);
+  c = .03928 >= c ? c / 12.92 : Math.pow((c + .055) / 1.055, 2.4);
+  a = .03928 >= a ? a / 12.92 : Math.pow((a + .055) / 1.055, 2.4);
+  return new axs.color.YCbCr(axs.color.multiplyMatrixVector(axs.color.YCC_MATRIX, [b, c, a]));
+};
+axs.color.fromYCbCr = function(a) {
+  return axs.color.fromYCbCrArray([a.luma, a.Cb, a.Cr]);
+};
+axs.color.fromYCbCrArray = function(a) {
+  var b = axs.color.multiplyMatrixVector(axs.color.INVERTED_YCC_MATRIX, a), c = b[0];
+  a = b[1];
+  b = b[2];
+  c = .00303949 >= c ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - .055;
+  a = .00303949 >= a ? 12.92 * a : 1.055 * Math.pow(a, 1 / 2.4) - .055;
+  b = .00303949 >= b ? 12.92 * b : 1.055 * Math.pow(b, 1 / 2.4) - .055;
+  c = Math.min(Math.max(Math.round(255 * c), 0), 255);
+  a = Math.min(Math.max(Math.round(255 * a), 0), 255);
+  b = Math.min(Math.max(Math.round(255 * b), 0), 255);
+  return new axs.color.Color(c, a, b, 1);
+};
+axs.color.RGBToYCbCrMatrix = function(a, b) {
+  return [[a, 1 - a - b, b], [-a / (2 - 2 * b), (a + b - 1) / (2 - 2 * b), (1 - b) / (2 - 2 * b)], [(1 - a) / (2 - 2 * a), (a + b - 1) / (2 - 2 * a), -b / (2 - 2 * a)]];
+};
+axs.color.invert3x3Matrix = function(a) {
+  var b = a[0][0], c = a[0][1], d = a[0][2], e = a[1][0], f = a[1][1], g = a[1][2], h = a[2][0], k = a[2][1];
+  a = a[2][2];
+  return axs.color.scalarMultiplyMatrix([[f * a - g * k, d * k - c * a, c * g - d * f], [g * h - e * a, b * a - d * h, d * e - b * g], [e * k - f * h, h * c - b * k, b * f - c * e]], 1 / (b * (f * a - g * k) - c * (a * e - g * h) + d * (e * k - f * h)));
+};
+axs.color.findIntersection = function(a, b) {
+  var c = [a.a.x - b.p0.x, a.a.y - b.p0.y, a.a.z - b.p0.z], d = axs.color.invert3x3Matrix([[a.a.x - a.b.x, b.p1.x - b.p0.x, b.p2.x - b.p0.x], [a.a.y - a.b.y, b.p1.y - b.p0.y, b.p2.y - b.p0.y], [a.a.z - a.b.z, b.p1.z - b.p0.z, b.p2.z - b.p0.z]]), c = axs.color.multiplyMatrixVector(d, c)[0];
+  return a.a.add(a.b.subtract(a.a).multiply(c));
+};
+axs.color.scalarMultiplyMatrix = function(a, b) {
+  for (var c = [], d = 0;3 > d;d++) {
+    c[d] = axs.color.scalarMultiplyVector(a[d], b);
+  }
+  return c;
+};
+axs.color.scalarMultiplyVector = function(a, b) {
+  for (var c = [], d = 0;d < a.length;d++) {
+    c[d] = a[d] * b;
+  }
+  return c;
+};
+axs.color.kR = .2126;
+axs.color.kB = .0722;
+axs.color.YCC_MATRIX = axs.color.RGBToYCbCrMatrix(axs.color.kR, axs.color.kB);
+axs.color.INVERTED_YCC_MATRIX = axs.color.invert3x3Matrix(axs.color.YCC_MATRIX);
+axs.color.BLACK = new axs.color.Color(0, 0, 0, 1);
+axs.color.BLACK_YCC = axs.color.toYCbCr(axs.color.BLACK);
+axs.color.WHITE = new axs.color.Color(255, 255, 255, 1);
+axs.color.WHITE_YCC = axs.color.toYCbCr(axs.color.WHITE);
+axs.color.RED = new axs.color.Color(255, 0, 0, 1);
+axs.color.RED_YCC = axs.color.toYCbCr(axs.color.RED);
+axs.color.GREEN = new axs.color.Color(0, 255, 0, 1);
+axs.color.GREEN_YCC = axs.color.toYCbCr(axs.color.GREEN);
+axs.color.BLUE = new axs.color.Color(0, 0, 255, 1);
+axs.color.BLUE_YCC = axs.color.toYCbCr(axs.color.BLUE);
+axs.color.CYAN = new axs.color.Color(0, 255, 255, 1);
+axs.color.CYAN_YCC = axs.color.toYCbCr(axs.color.CYAN);
+axs.color.MAGENTA = new axs.color.Color(255, 0, 255, 1);
+axs.color.MAGENTA_YCC = axs.color.toYCbCr(axs.color.MAGENTA);
+axs.color.YELLOW = new axs.color.Color(255, 255, 0, 1);
+axs.color.YELLOW_YCC = axs.color.toYCbCr(axs.color.YELLOW);
+axs.color.YCC_CUBE_FACES_BLACK = [{p0:axs.color.BLACK_YCC, p1:axs.color.RED_YCC, p2:axs.color.GREEN_YCC}, {p0:axs.color.BLACK_YCC, p1:axs.color.GREEN_YCC, p2:axs.color.BLUE_YCC}, {p0:axs.color.BLACK_YCC, p1:axs.color.BLUE_YCC, p2:axs.color.RED_YCC}];
+axs.color.YCC_CUBE_FACES_WHITE = [{p0:axs.color.WHITE_YCC, p1:axs.color.CYAN_YCC, p2:axs.color.MAGENTA_YCC}, {p0:axs.color.WHITE_YCC, p1:axs.color.MAGENTA_YCC, p2:axs.color.YELLOW_YCC}, {p0:axs.color.WHITE_YCC, p1:axs.color.YELLOW_YCC, p2:axs.color.CYAN_YCC}];
+axs.utils = {};
+axs.utils.FOCUSABLE_ELEMENTS_SELECTOR = "input:not([type=hidden]):not([disabled]),select:not([disabled]),textarea:not([disabled]),button:not([disabled]),a[href],iframe,[tabindex]";
 axs.utils.parentElement = function(a) {
   if (!a) {
     return null;
@@ -669,7 +810,7 @@ axs.utils.isLargeFont = function(a) {
   return !1;
 };
 axs.utils.getBgColor = function(a, b) {
-  var c = axs.utils.parseColor(a.backgroundColor);
+  var c = axs.color.parseColor(a.backgroundColor);
   if (!c) {
     return null;
   }
@@ -679,7 +820,7 @@ axs.utils.getBgColor = function(a, b) {
     if (null == d) {
       return null;
     }
-    c = axs.utils.flattenColors(c, d);
+    c = axs.color.flattenColors(c, d);
   }
   return c;
 };
@@ -689,145 +830,27 @@ axs.utils.getParentBgColor = function(a) {
   for (var c = null;b = axs.utils.parentElement(b);) {
     var d = window.getComputedStyle(b, null);
     if (d) {
-      var e = axs.utils.parseColor(d.backgroundColor);
+      var e = axs.color.parseColor(d.backgroundColor);
       if (e && (1 > d.opacity && (e.alpha *= d.opacity), 0 != e.alpha && (a.push(e), 1 == e.alpha))) {
         c = !0;
         break;
       }
     }
   }
-  c || a.push(new axs.utils.Color(255, 255, 255, 1));
+  c || a.push(new axs.color.Color(255, 255, 255, 1));
   for (b = a.pop();a.length;) {
-    c = a.pop(), b = axs.utils.flattenColors(c, b);
+    c = a.pop(), b = axs.color.flattenColors(c, b);
   }
   return b;
 };
 axs.utils.getFgColor = function(a, b, c) {
-  var d = axs.utils.parseColor(a.color);
+  var d = axs.color.parseColor(a.color);
   if (!d) {
     return null;
   }
-  1 > d.alpha && (d = axs.utils.flattenColors(d, c));
-  1 > a.opacity && (b = axs.utils.getParentBgColor(b), d.alpha *= a.opacity, d = axs.utils.flattenColors(d, b));
+  1 > d.alpha && (d = axs.color.flattenColors(d, c));
+  1 > a.opacity && (b = axs.utils.getParentBgColor(b), d.alpha *= a.opacity, d = axs.color.flattenColors(d, b));
   return d;
-};
-axs.utils.parseColor = function(a) {
-  var b = a.match(/^rgb\((\d+), (\d+), (\d+)\)$/);
-  if (b) {
-    a = parseInt(b[1], 10);
-    var c = parseInt(b[2], 10), d = parseInt(b[3], 10);
-    return new axs.utils.Color(a, c, d, 1);
-  }
-  return (b = a.match(/^rgba\((\d+), (\d+), (\d+), (\d*(\.\d+)?)\)/)) ? (a = parseInt(b[1], 10), c = parseInt(b[2], 10), d = parseInt(b[3], 10), b = parseFloat(b[4]), new axs.utils.Color(a, c, d, b)) : null;
-};
-axs.utils.colorChannelToString = function(a) {
-  a = Math.round(a);
-  return 15 >= a ? "0" + a.toString(16) : a.toString(16);
-};
-axs.utils.colorToString = function(a) {
-  return 1 == a.alpha ? "#" + axs.utils.colorChannelToString(a.red) + axs.utils.colorChannelToString(a.green) + axs.utils.colorChannelToString(a.blue) : "rgba(" + [a.red, a.green, a.blue, a.alpha].join() + ")";
-};
-axs.utils.luminanceFromContrastRatio = function(a, b, c) {
-  return c ? (a + .05) * b - .05 : (a + .05) / b - .05;
-};
-axs.utils.translateColor = function(a, b) {
-  var c = a[0], c = (b - c) / ((c > b ? 0 : 1) - c);
-  return axs.utils.fromYCC([b, a[1] - a[1] * c, a[2] - a[2] * c]);
-};
-axs.utils.suggestColors = function(a, b, c, d) {
-  if (!axs.utils.isLowContrast(c, d, !0)) {
-    return null;
-  }
-  var e = {}, f = axs.utils.calculateLuminance(a), g = axs.utils.calculateLuminance(b), h = axs.utils.isLargeFont(d) ? 3 : 4.5, k = axs.utils.isLargeFont(d) ? 4.5 : 7, m = g > f, l = axs.utils.luminanceFromContrastRatio(f, h + .02, m), n = axs.utils.luminanceFromContrastRatio(f, k + .02, m), p = axs.utils.toYCC(b);
-  if (axs.utils.isLowContrast(c, d, !1) && 1 >= l && 0 <= l) {
-    var q = axs.utils.translateColor(p, l), l = axs.utils.calculateContrastRatio(q, a), f = {};
-    f.fg = axs.utils.colorToString(q);
-    f.bg = axs.utils.colorToString(a);
-    f.contrast = l.toFixed(2);
-    e.AA = f;
-  }
-  axs.utils.isLowContrast(c, d, !0) && 1 >= n && 0 <= n && (n = axs.utils.translateColor(p, n), l = axs.utils.calculateContrastRatio(n, a), f = {}, f.fg = axs.utils.colorToString(n), f.bg = axs.utils.colorToString(a), f.contrast = l.toFixed(2), e.AAA = f);
-  h = axs.utils.luminanceFromContrastRatio(g, h + .02, !m);
-  g = axs.utils.luminanceFromContrastRatio(g, k + .02, !m);
-  a = axs.utils.toYCC(a);
-  !("AA" in e) && axs.utils.isLowContrast(c, d, !1) && 1 >= h && 0 <= h && (k = axs.utils.translateColor(a, h), l = axs.utils.calculateContrastRatio(b, k), f = {}, f.bg = axs.utils.colorToString(k), f.fg = axs.utils.colorToString(b), f.contrast = l.toFixed(2), e.AA = f);
-  !("AAA" in e) && axs.utils.isLowContrast(c, d, !0) && 1 >= g && 0 <= g && (c = axs.utils.translateColor(a, g), l = axs.utils.calculateContrastRatio(b, c), f = {}, f.bg = axs.utils.colorToString(c), f.fg = axs.utils.colorToString(b), f.contrast = l.toFixed(2), e.AAA = f);
-  return e;
-};
-axs.utils.flattenColors = function(a, b) {
-  var c = a.alpha;
-  return new axs.utils.Color((1 - c) * b.red + c * a.red, (1 - c) * b.green + c * a.green, (1 - c) * b.blue + c * a.blue, a.alpha + b.alpha * (1 - a.alpha));
-};
-axs.utils.calculateLuminance = function(a) {
-  return axs.utils.toYCC(a)[0];
-};
-axs.utils.RGBToYCCMatrix = function(a, b) {
-  return [[a, 1 - a - b, b], [-a / (2 - 2 * b), (a + b - 1) / (2 - 2 * b), (1 - b) / (2 - 2 * b)], [(1 - a) / (2 - 2 * a), (a + b - 1) / (2 - 2 * a), -b / (2 - 2 * a)]];
-};
-axs.utils.invert3x3Matrix = function(a) {
-  var b = a[0][0], c = a[0][1], d = a[0][2], e = a[1][0], f = a[1][1], g = a[1][2], h = a[2][0], k = a[2][1];
-  a = a[2][2];
-  return axs.utils.scalarMultiplyMatrix([[f * a - g * k, d * k - c * a, c * g - d * f], [g * h - e * a, b * a - d * h, d * e - b * g], [e * k - f * h, h * c - b * k, b * f - c * e]], 1 / (b * (f * a - g * k) - c * (a * e - g * h) + d * (e * k - f * h)));
-};
-axs.utils.scalarMultiplyMatrix = function(a, b) {
-  for (var c = [[], [], []], d = 0;3 > d;d++) {
-    for (var e = 0;3 > e;e++) {
-      c[d][e] = a[d][e] * b;
-    }
-  }
-  return c;
-};
-axs.utils.kR = .2126;
-axs.utils.kB = .0722;
-axs.utils.YCC_MATRIX = axs.utils.RGBToYCCMatrix(axs.utils.kR, axs.utils.kB);
-axs.utils.INVERTED_YCC_MATRIX = axs.utils.invert3x3Matrix(axs.utils.YCC_MATRIX);
-axs.utils.convertColor = function(a, b) {
-  var c = b[0], d = b[1], e = b[2];
-  return [a[0][0] * c + a[0][1] * d + a[0][2] * e, a[1][0] * c + a[1][1] * d + a[1][2] * e, a[2][0] * c + a[2][1] * d + a[2][2] * e];
-};
-axs.utils.multiplyMatrices = function(a, b) {
-  for (var c = [[], [], []], d = 0;3 > d;d++) {
-    for (var e = 0;3 > e;e++) {
-      c[d][e] = a[d][0] * b[0][e] + a[d][1] * b[1][e] + a[d][2] * b[2][e];
-    }
-  }
-  return c;
-};
-axs.utils.toYCC = function(a) {
-  var b = a.red / 255, c = a.green / 255;
-  a = a.blue / 255;
-  b = .03928 >= b ? b / 12.92 : Math.pow((b + .055) / 1.055, 2.4);
-  c = .03928 >= c ? c / 12.92 : Math.pow((c + .055) / 1.055, 2.4);
-  a = .03928 >= a ? a / 12.92 : Math.pow((a + .055) / 1.055, 2.4);
-  return axs.utils.convertColor(axs.utils.YCC_MATRIX, [b, c, a]);
-};
-axs.utils.fromYCC = function(a) {
-  var b = axs.utils.convertColor(axs.utils.INVERTED_YCC_MATRIX, a), c = b[0];
-  a = b[1];
-  b = b[2];
-  c = .00303949 >= c ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - .055;
-  a = .00303949 >= a ? 12.92 * a : 1.055 * Math.pow(a, 1 / 2.4) - .055;
-  b = .00303949 >= b ? 12.92 * b : 1.055 * Math.pow(b, 1 / 2.4) - .055;
-  c = Math.min(Math.max(Math.round(255 * c), 0), 255);
-  a = Math.min(Math.max(Math.round(255 * a), 0), 255);
-  b = Math.min(Math.max(Math.round(255 * b), 0), 255);
-  return new axs.utils.Color(c, a, b, 1);
-};
-axs.utils.scalarMultiplyMatrix = function(a, b) {
-  for (var c = [[], [], []], d = 0;3 > d;d++) {
-    for (var e = 0;3 > e;e++) {
-      c[d][e] = a[d][e] * b;
-    }
-  }
-  return c;
-};
-axs.utils.multiplyMatrices = function(a, b) {
-  for (var c = [[], [], []], d = 0;3 > d;d++) {
-    for (var e = 0;3 > e;e++) {
-      c[d][e] = a[d][0] * b[0][e] + a[d][1] * b[1][e] + a[d][2] * b[2][e];
-    }
-  }
-  return c;
 };
 axs.utils.getContrastRatioForElement = function(a) {
   var b = window.getComputedStyle(a, null);
@@ -842,7 +865,7 @@ axs.utils.getContrastRatioForElementWithComputedStyle = function(a, b) {
     return null;
   }
   var d = axs.utils.getFgColor(a, b, c);
-  return d ? axs.utils.calculateContrastRatio(d, c) : null;
+  return d ? axs.color.calculateContrastRatio(d, c) : null;
 };
 axs.utils.isNativeTextElement = function(a) {
   var b = a.tagName.toLowerCase();
@@ -1189,16 +1212,22 @@ axs.properties.getContrastRatioProperties = function(a) {
   if (!d) {
     return null;
   }
-  b.backgroundColor = axs.utils.colorToString(d);
+  b.backgroundColor = axs.color.colorToString(d);
   var e = axs.utils.getFgColor(c, a, d);
-  b.foregroundColor = axs.utils.colorToString(e);
+  b.foregroundColor = axs.color.colorToString(e);
   a = axs.utils.getContrastRatioForElementWithComputedStyle(c, a);
   if (!a) {
     return null;
   }
   b.value = a.toFixed(2);
   axs.utils.isLowContrast(a, c) && (b.alert = !0);
-  (c = axs.utils.suggestColors(d, e, a, c)) && Object.keys(c).length && (b.suggestedColors = c);
+  var f = axs.utils.isLargeFont(c) ? 3 : 4.5, c = axs.utils.isLargeFont(c) ? 4.5 : 7, g = {};
+  f > a && (g.AA = f);
+  c > a && (g.AAA = c);
+  if (!Object.keys(g).length) {
+    return b;
+  }
+  (d = axs.color.suggestColors(d, e, g)) && Object.keys(d).length && (b.suggestedColors = d);
   return b;
 };
 axs.properties.findTextAlternatives = function(a, b, c, d) {
@@ -1527,19 +1556,20 @@ axs.AuditRule.collectMatchingElements = function(a, b, c, d) {
     }
   }
   if (e && "content" == e.localName) {
-    for (e = e.getDistributedNodes(), f = 0;f < e.length;f++) {
-      axs.AuditRule.collectMatchingElements(e[f], b, c, d);
+    for (var f = e.getDistributedNodes(), g = 0;g < f.length;g++) {
+      axs.AuditRule.collectMatchingElements(f[g], b, c, d);
     }
   } else {
     if (e && "shadow" == e.localName) {
       if (f = e, d) {
-        for (e = f.getDistributedNodes(), f = 0;f < e.length;f++) {
-          axs.AuditRule.collectMatchingElements(e[f], b, c, d);
+        for (f = f.getDistributedNodes(), g = 0;g < f.length;g++) {
+          axs.AuditRule.collectMatchingElements(f[g], b, c, d);
         }
       } else {
         console.warn("ShadowRoot not provided for", e);
       }
     }
+    e && "iframe" == e.localName && e.contentDocument && axs.AuditRule.collectMatchingElements(e.contentDocument, b, c, d);
     for (a = a.firstChild;null != a;) {
       axs.AuditRule.collectMatchingElements(a, b, c, d), a = a.nextSibling;
     }
@@ -1574,15 +1604,17 @@ axs.AuditRule.prototype.run = function(a) {
 axs.AuditRules = {};
 (function() {
   var a = {}, b = {};
+  axs.AuditRules.specs = {};
   axs.AuditRules.addRule = function(c) {
-    c = new axs.AuditRule(c);
-    if (c.code in b) {
-      throw Error('Can not add audit rule with same code: "' + c.code + '"');
+    var d = new axs.AuditRule(c);
+    if (d.code in b) {
+      throw Error('Can not add audit rule with same code: "' + d.code + '"');
     }
-    if (c.name in a) {
-      throw Error('Can not add audit rule with same name: "' + c.name + '"');
+    if (d.name in a) {
+      throw Error('Can not add audit rule with same name: "' + d.name + '"');
     }
-    a[c.name] = b[c.code] = c;
+    a[d.name] = b[d.code] = d;
+    axs.AuditRules.specs[c.name] = c;
   };
   axs.AuditRules.getRule = function(c) {
     return a[c] || b[c] || null;
