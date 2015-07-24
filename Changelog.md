@@ -2,7 +2,7 @@
 
 ## 2.8.0-rc.0 - 2015-07-10
 
-# Enhancements:
+### Enhancements:
 * Pull color code into separate file.
 * Improve color suggestion algorithm.
 * Descend into iframes when collecting matching elements.
