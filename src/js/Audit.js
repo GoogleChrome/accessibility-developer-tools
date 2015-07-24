@@ -20,9 +20,22 @@ goog.provide('axs.Audit');
 goog.provide('axs.AuditConfiguration');
 
 /**
+ * @typedef {{
+ *   scope: (Element|undefined),
+ *   auditRulesToRun: (Array.<String>|undefined),
+ *   auditRulesToIgnore: (Array.<String>|undefined),
+ *   maxResults: (number|undefined),
+ *   withConsoleApi: (boolean|undefined),
+ *   showUnsupportedRulesWarning: (boolean|undefined)
+ * }}
+ */
+axs.AuditConfigurationOptions_;
+
+
+/**
  * Object to hold configuration for an Audit run.
  * @constructor
- * @param {?Object=} config Configuration object
+ * @param {?axs.AuditConfigurationOptions_=} config Configuration object
  */
 axs.AuditConfiguration = function(config) {
     if (config == null) {
