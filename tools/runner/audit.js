@@ -16,6 +16,9 @@ var page = require('webpage').create(),
     system = require('system'),
     url;
 
+// disabling so we can get the document root from iframes (http -> https)
+page.settings.webSecurityEnabled = false;
+
 if (system.args.length !== 2) {
   console.log('Usage: phantomjs audit.js URL');
   phantom.exit();
