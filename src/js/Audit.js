@@ -19,23 +19,18 @@ goog.require('axs.utils');
 goog.provide('axs.Audit');
 goog.provide('axs.AuditConfiguration');
 
-/**
- * @typedef {{
- *   scope: (Element|undefined),
- *   auditRulesToRun: (Array.<String>|undefined),
- *   auditRulesToIgnore: (Array.<String>|undefined),
- *   maxResults: (number|undefined),
- *   withConsoleApi: (boolean|undefined),
- *   showUnsupportedRulesWarning: (boolean|undefined)
- * }}
- */
-axs.AuditConfigurationOptions_;
-
 
 /**
  * Object to hold configuration for an Audit run.
  * @constructor
- * @param {?axs.AuditConfigurationOptions_=} config Configuration object
+ * @param {?Object=} config Configuration object
+ *   The following configuration options are supported:
+ *   - scope
+ *   - auditRulesToRun
+ *   - auditRulesToIgnore
+ *   - maxResults
+ *   - withConsoleApi
+ *   - showUnsupportedRulesWarning
  */
 axs.AuditConfiguration = function(config) {
     if (config == null) {
