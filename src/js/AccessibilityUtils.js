@@ -654,7 +654,6 @@ axs.utils.getRoles = function(element, implicit) {
             roleObject.valid = result.valid = true;
         } else {
             roleObject.valid = false;
-
         }
         result.roles.push(roleObject);
     }
@@ -722,11 +721,13 @@ axs.utils.getAriaPropertyValue = function(propertyName, value, element) {
     case "decimal":
     case "number":
         var validNumber = axs.utils.isValidNumber(value);
+        result.valid = validNumber.valid;
         if (!validNumber.valid) {
-            result.valid = false;
             result.reason = validNumber.reason;
             return result;
         }
+        result.value = validNumber.value;
+        return result;
     case "string":
         result.valid = true;
         result.value = value;
