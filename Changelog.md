@@ -1,6 +1,16 @@
+### Enhancements
+
+* Implement support for AMD loaders.
+
+### New rules
+
+* A label element may not have labelable descendants other than its labeled control (`src/audits/MultipleLabelableElementsPerLabel.js`)
+
+## 2.8.0 - 2015-07-24
+
 ## 2.8.0-rc.0 - 2015-07-10
 
-# Enhancements:
+### Enhancements:
 * Pull color code into separate file.
 * Improve color suggestion algorithm.
 * Descend into iframes when collecting matching elements.

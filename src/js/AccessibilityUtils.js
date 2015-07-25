@@ -32,6 +32,21 @@ axs.utils.FOCUSABLE_ELEMENTS_SELECTOR =
     '[tabindex]';
 
 /**
+ * Elements that can have labels: https://html.spec.whatwg.org/multipage/forms.html#category-label
+ * @const
+ * @type {string}
+ */
+axs.utils.LABELABLE_ELEMENTS_SELECTOR =
+    'button,' +
+    'input:not([type=hidden]),' +
+    'keygen,' +
+    'meter,' +
+    'output,' +
+    'progress,' +
+    'select,' +
+    'textarea';
+
+/**
  * Returns the nearest ancestor which is an Element.
  * @param {Node} node
  * @return {Element}
