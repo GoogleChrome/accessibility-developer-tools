@@ -8,6 +8,7 @@
 
 ### Bug fixes:
 
+* Fix `badAriaAttributeValue` not correctly handling decimal values (#182).
 * Work around null pointer exception caused by closure compiler issue (#183).
 * Add a special case to handle color `"transparent"` to fix #180.
 
