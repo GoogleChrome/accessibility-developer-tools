@@ -654,7 +654,6 @@ axs.utils.getRoles = function(element, implicit) {
             roleObject.valid = result.valid = true;
         } else {
             roleObject.valid = false;
-            
         }
         result.roles.push(roleObject);
     }
@@ -705,14 +704,13 @@ axs.utils.getAriaPropertyValue = function(propertyName, value, element) {
         }
         return result;
     case "integer":
-    case "decimal":
         var validNumber = axs.utils.isValidNumber(value);
         if (!validNumber.valid) {
             result.valid = false;
             result.reason = validNumber.reason;
             return result;
         }
-        if (Math.floor(validNumber.value) != validNumber.value) {
+        if (Math.floor(validNumber.value) !== validNumber.value) {
             result.valid = false;
             result.reason = '' + value + ' is not a whole integer';
         } else {
@@ -720,12 +718,16 @@ axs.utils.getAriaPropertyValue = function(propertyName, value, element) {
             result.value = validNumber.value;
         }
         return result;
+    case "decimal":
     case "number":
         var validNumber = axs.utils.isValidNumber(value);
-        if (validNumber.valid) {
-            result.valid = true;
-            result.value = validNumber.value;
+        result.valid = validNumber.valid;
+        if (!validNumber.valid) {
+            result.reason = validNumber.reason;
+            return result;
         }
+        result.value = validNumber.value;
+        return result;
     case "string":
         result.valid = true;
         result.value = value;
