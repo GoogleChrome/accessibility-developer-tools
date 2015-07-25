@@ -1,5 +1,6 @@
 ### Enhancements
 
+* Implement support for specifying audit configuration options through an object when initializing audits (#165).
 * Implement support for AMD loaders.
 
 ### New rules
