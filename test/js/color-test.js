@@ -54,6 +54,7 @@ test("handles rgba transparent value correctly", function() {
 
 test("handles xbrowser 'transparent' value correctly", function() {
   // Firefox, IE11, Project Spartan (MS Edge Release Candidate)
+  // See #180 https://github.com/GoogleChrome/accessibility-developer-tools/issues/180
   var colorString = 'transparent';
   var color = axs.color.parseColor(colorString);
   equal(color.red, 0);
