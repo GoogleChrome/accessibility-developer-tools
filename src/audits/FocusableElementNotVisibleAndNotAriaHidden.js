@@ -43,7 +43,7 @@ axs.AuditRules.addRule({
         // Ignore elements which have a negative tabindex and no text content,
         // as they will be skipped by assistive technology
         var textAlternatives = axs.properties.findTextAlternatives(element, {});
-        if (textAlternatives == null || textAlternatives.trim() === '')
+        if (textAlternatives === null || textAlternatives.trim() === '')
             return false;
 
         return true;

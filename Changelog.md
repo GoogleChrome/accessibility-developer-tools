@@ -6,6 +6,10 @@
 
 * A label element may not have labelable descendants other than its labeled control (`src/audits/MultipleLabelableElementsPerLabel.js`)
 
+### Bug fixes:
+
+* Work around null pointer exception caused by closure compiler issue (#183).
+
 ## 2.8.0 - 2015-07-24
 
 ## 2.8.0-rc.0 - 2015-07-10
