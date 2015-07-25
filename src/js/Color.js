@@ -137,6 +137,9 @@ axs.color.luminanceRatio = function(luminance1, luminance2) {
  * @return {?axs.color.Color}
  */
 axs.color.parseColor = function(colorString) {
+    if(colorString === "transparent") {
+        return new axs.color.Color(0, 0, 0, 0);
+    }
     var rgbRegex = /^rgb\((\d+), (\d+), (\d+)\)$/;
     var match = colorString.match(rgbRegex);
 
