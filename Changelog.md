@@ -9,6 +9,7 @@
 ### Bug fixes:
 
 * Work around null pointer exception caused by closure compiler issue (#183).
+* Add a special case to handle color `"transparent"` to fix #180.
 
 ## 2.8.0 - 2015-07-24
 
