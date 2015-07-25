@@ -23,6 +23,8 @@ goog.require('axs.utils');
     var ARIA_ATTR_RE = /^aria\-/;
     // No need to compute the selector for every element in the DOM.
     var selector = axs.utils.getSelectorForAriaProperties(axs.constants.ARIA_PROPERTIES);
+    // Store global properties on first use
+	var globalProperties;
 
     /**
      * This test looks for known ARIA states and properties that have been used with a role that does
@@ -49,7 +51,15 @@ goog.require('axs.utils');
             }
             else {
                 // This test ignores the fact that some HTML elements should not take even global attributes.
-                supported = axs.constants.GLOBAL_PROPERTIES;
+                if(globalProperties) {  // if we have previously computed this value, use it
+                    supported = globalProperties;
+                }
+                else {  // this is the first time we have needed global properties
+                    supported = globalProperties = {};  // cache the computed value to improve peformance
+                    axs.constants.GLOBAL_PROPERTIES.forEach(function(property) {
+                        supported[property] = true;
+                    });
+                }
             }
             var attributes = element.attributes;
             for (var i = 0, len = attributes.length; i < len; i++) {

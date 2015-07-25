@@ -125,4 +125,12 @@
         deepEqual(rule.run({ scope: fixture }), expected);
     });
 
+	test('Element with no role and global aria- attributes', function() {
+        var fixture = document.getElementById('qunit-fixture');
+        var widget = fixture.appendChild(document.createElement('input'));
+        widget.type = "text";
+        widget.setAttribute('aria-label', 'This is my label');  // global
+        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
+        deepEqual(rule.run({ scope: fixture }), expected);
+    });
 })();
