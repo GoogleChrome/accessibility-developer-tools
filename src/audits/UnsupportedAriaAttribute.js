@@ -24,7 +24,7 @@ goog.require('axs.utils');
     // No need to compute the selector for every element in the DOM.
     var selector = axs.utils.getSelectorForAriaProperties(axs.constants.ARIA_PROPERTIES);
     // Store global properties on first use
-	var globalProperties;
+    var globalProperties;
 
     /**
      * This test looks for known ARIA states and properties that have been used with a role that does
