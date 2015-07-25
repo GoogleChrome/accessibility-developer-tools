@@ -9,6 +9,7 @@
 ### Bug fixes:
 
 * Work around null pointer exception caused by closure compiler issue (#183).
+* Fix `unsupportedAriaAttribute` fails with global attributes (#178).
 
 ## 2.8.0 - 2015-07-24
 
