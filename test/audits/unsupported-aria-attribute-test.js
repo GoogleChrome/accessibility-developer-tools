@@ -28,6 +28,15 @@
         deepEqual(rule.run({ scope: fixture }), expected);
     });
 
+    test('Element with no role and global attributes only', function() {
+        var fixture = document.getElementById('qunit-fixture');
+        var div = fixture.appendChild(document.createElement('div'));
+        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
+        div.setAttribute('aria-hidden', 'false');  // global
+        div.setAttribute('aria-label', 'bananas'); // global
+        deepEqual(rule.run({ scope: fixture }), expected);
+    });
+
     /*
      * This rule shouldn't care if required and/or supported roles are missing.
      */
