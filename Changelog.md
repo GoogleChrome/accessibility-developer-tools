@@ -10,7 +10,8 @@
 
 * Fix `badAriaAttributeValue` not correctly handling decimal values (#182).
 * Work around null pointer exception caused by closure compiler issue (#183).
-* Add a special case to handle color `"transparent"` to fix #180.
+* Add a special case to handle color `"transparent"` to fix (#180).
+* Fix `matchSelector` not working properly in browser environments without vendor prefixes (#189).
 * Fix false positives on elements with no role for Unsupported ARIA Attribute rule (#178 and #199).
 
 ## 2.8.0 - 2015-07-24
