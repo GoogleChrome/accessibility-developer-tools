@@ -327,3 +327,59 @@ test("getRoles on element with abstract role.", function() {
     test("getRoles on element with multiple invalid roles.", multipleRoleTestHelper(['foo', 'fubar', 'bar'], -1));
 
 }());
+
+module("isValidNumber");
+
+test("with integer.", function() {
+    var actual = axs.utils.isValidNumber("10");
+    strictEqual(actual.value, 10, "Integer should be parsed");
+    ok(actual.valid, "Integer should be valid");
+});
+
+test("with leading zero integer.", function() {
+    var actual = axs.utils.isValidNumber("09");
+    strictEqual(actual.value, 9, "Integer should be parsed");
+    ok(actual.valid, "Integer should be valid");
+});
+
+test("with string starting with number.", function() {
+    var actual = axs.utils.isValidNumber("10 foo");
+    equal(actual.valid, false, "Number starting with string is not valid");
+    ok(actual.reason, "There should be a reason");
+});
+
+test("with hexadecimal.", function() {
+    var actual = axs.utils.isValidNumber("0xF");
+    equal(actual.valid, false, "Hexadecimal is not valid");
+    ok(actual.reason, "There should be a reason");
+});
+
+test("with float.", function() {
+    var actual = axs.utils.isValidNumber("0.5");
+    strictEqual(actual.value, 0.5, "Float should be parsed");
+    ok(actual.valid, "Float should be valid");
+});
+
+test("with negative integer.", function() {
+    var actual = axs.utils.isValidNumber("-100");
+    strictEqual(actual.value, -100, "Negative should be parsed");
+    ok(actual.valid, "Negative should be valid");
+});
+
+test("with negative float.", function() {
+    var actual = axs.utils.isValidNumber("-1.5");
+    strictEqual(actual.value, -1.5, "Negative should be parsed");
+    ok(actual.valid, "Negative should be valid");
+});
+
+test("with positive integer.", function() {
+    var actual = axs.utils.isValidNumber("+100");
+    strictEqual(actual.value, 100, "Positive should be parsed");
+    ok(actual.valid, "Positive should be valid");
+});
+
+test("with positive float.", function() {
+    var actual = axs.utils.isValidNumber("+1.5");
+    strictEqual(actual.value, 1.5, "Positive should be parsed");
+    ok(actual.valid, "Positive should be valid");
+});
