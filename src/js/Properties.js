@@ -703,9 +703,7 @@ axs.properties.getAriaProperties = function(element) {
  */
 axs.properties.getGlobalAriaProperties = function(element) {
     var globalProperties = {};
-    var globalPropertyList = Object.keys(axs.constants.GLOBAL_PROPERTIES);
-    for (var i = 0; i < globalPropertyList.length; i++) {
-        var property = globalPropertyList[i];
+    for (var property in axs.constants.GLOBAL_PROPERTIES) {
         if (element.hasAttribute(property)) {
             var propertyValue = element.getAttribute(property);
             globalProperties[property] =
