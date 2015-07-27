@@ -413,8 +413,7 @@ axs.constants.ARIA_ROLES = {
         "mustcontain": [ "tab" ],
         "namefrom": [ "author" ],
         "parent": [ "composite", "directory" ],
-        "properties": [ "aria-level" ],
-        "scope": [ "tablist" ]
+        "properties": [ "aria-level" ]
     },
     "tabpanel": {
         "namefrom": [ "author" ],
