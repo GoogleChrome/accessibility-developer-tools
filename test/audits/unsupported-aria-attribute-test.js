@@ -28,6 +28,15 @@
         deepEqual(rule.run({ scope: fixture }), expected);
     });
 
+    test('Element with no role and global attributes only', function() {
+        var fixture = document.getElementById('qunit-fixture');
+        var div = fixture.appendChild(document.createElement('div'));
+        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
+        div.setAttribute('aria-hidden', 'false');  // global
+        div.setAttribute('aria-label', 'bananas'); // global
+        deepEqual(rule.run({ scope: fixture }), expected);
+    });
+
     /*
      * This rule shouldn't care if required and/or supported roles are missing.
      */
@@ -125,4 +134,12 @@
         deepEqual(rule.run({ scope: fixture }), expected);
     });
 
+	test('Element with no role and global aria- attributes', function() {
+        var fixture = document.getElementById('qunit-fixture');
+        var widget = fixture.appendChild(document.createElement('input'));
+        widget.type = "text";
+        widget.setAttribute('aria-label', 'This is my label');  // global
+        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
+        deepEqual(rule.run({ scope: fixture }), expected);
+    });
 })();
