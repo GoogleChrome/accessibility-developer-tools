@@ -12,6 +12,20 @@ test("No text = no relevant elements", function() {
   );
 });
 
+test("Noscript = no relevant elements", function() {
+  var fixture = document.getElementById('qunit-fixture');
+  var noscript = document.createElement("noscript");
+  var para = noscript.appendChild(document.createElement("p"));
+  para.textContent = "Please enable JS to use this app";
+  para.style.backgroundColor = 'white';
+  para.style.color = 'white';  // this line is optional
+  fixture.appendChild(noscript);
+  deepEqual(
+    axs.AuditRules.getRule('lowContrastElements').run({ scope: fixture }),
+    { result: axs.constants.AuditResult.NA }
+  );
+});
+
 test("Black on white = no problem", function() {
   var fixture = document.getElementById('qunit-fixture');
   var div = document.createElement('div');
