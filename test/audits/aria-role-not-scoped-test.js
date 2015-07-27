@@ -94,3 +94,18 @@ test('Scope role present - tablist', function() {
     equal(actual.result, axs.constants.AuditResult.PASS);
     deepEqual(actual.elements, []);
 });
+
+test('Scope role missing - tab', function() {
+    var rule = axs.AuditRules.getRule('ariaRoleNotScoped');
+    var fixture = document.getElementById('qunit-fixture');
+    var expected = [];
+    for (var i = 0; i < 4; i++) {
+        var item = fixture.appendChild(document.createElement('span'));
+        item.setAttribute('role', 'tab');
+        expected.push(item);
+    }
+
+    var actual = rule.run({ scope: fixture });
+    equal(actual.result, axs.constants.AuditResult.FAIL);
+    deepEqual(actual.elements, expected);
+});

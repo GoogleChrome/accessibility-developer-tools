@@ -407,7 +407,8 @@ axs.constants.ARIA_ROLES = {
     "tab": {
         "namefrom": [ "contents", "author" ],
         "parent": [ "sectionhead", "widget" ],
-        "properties": [ "aria-selected" ]
+        "properties": [ "aria-selected" ],
+        "scope": [ "tablist" ]
     },
     "tablist": {
         "mustcontain": [ "tab" ],
