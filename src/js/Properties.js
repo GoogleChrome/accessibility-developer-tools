@@ -22,7 +22,7 @@ goog.provide('axs.properties');
  * @const
  * @type {string}
  */
-axs.properties.TEXT_CONTENT_XPATH = './/text()[normalize-space(.)!=""]/parent::*[name()!="script"]';
+axs.properties.TEXT_CONTENT_XPATH = './/text()[normalize-space(.)!="" and not(ancestor::*[name()="noscript"])]/parent::*[name()!="script"]';
 
 /**
  * @param {Element} element
@@ -137,7 +137,7 @@ axs.properties.hasDirectTextDescendant = function(element) {
     if (ownerDocument.evaluate) {
         return hasDirectTextDescendantXpath();
     }
-    else {  // IE
+    else {  // IE but could use this in all browsers
         return hasDirectTextDescendantTreeWalker();
     }
 
@@ -178,10 +178,29 @@ axs.properties.hasDirectTextDescendant = function(element) {
             var parent = resultElement.parentNode;
             var tagName = parent.tagName.toLowerCase();
             var value = resultElement.nodeValue.trim();
-            if (value && tagName !== 'script' && element !== resultElement)
+            if (value && tagName !== 'script' && element !== resultElement &&
+                    !getAncestorOrSelf(parent, 'noscript'))
                 return true;
         }
         return false;
+    }
+
+    /**
+     * Finds the first element which matches the tag name.
+     * Note: goog.dom.DomHelper.getAncestorByTagNameAndClass could be used for this task.
+     * @param {Element} element The start point.
+     * @param {string} tagName The tag name to search for.
+     * @return {?Element} The element itself if it matches, or the first matching ancestor, or null.
+     */
+    function getAncestorOrSelf(element, tagName) {
+        var el = element;
+        while(el && el.nodeType === Node.ELEMENT_NODE) {
+            if(el.tagName.toLowerCase() === tagName) {
+                return /** @type {Element} */ (el);
+            }
+            el = el.parentNode;
+        }
+        return null;
     }
 };
 
