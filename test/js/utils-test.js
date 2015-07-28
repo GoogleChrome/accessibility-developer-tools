@@ -336,15 +336,64 @@ test("with integer.", function() {
     ok(actual.valid, "Integer should be valid");
 });
 
+test("with leading and trailing whitespace.", function() {
+    var actual = axs.utils.isValidNumber(" 10 ");
+    strictEqual(actual.value, 10, "Integer should be parsed");
+    ok(actual.valid, "Integer should be valid");
+});
+
+test("with zero.", function() {
+    var actual = axs.utils.isValidNumber("0");
+    strictEqual(actual.value, 0, "Zero should be parsed");
+    ok(actual.valid, "Integer should be valid");
+});
+
 test("with leading zero integer.", function() {
     var actual = axs.utils.isValidNumber("09");
     strictEqual(actual.value, 9, "Integer should be parsed");
     ok(actual.valid, "Integer should be valid");
 });
 
+
+test("with multiple leading zero integer.", function() {
+    var actual = axs.utils.isValidNumber("000000009");
+    strictEqual(actual.value, 9, "Integer should be parsed");
+    ok(actual.valid, "Integer should be valid");
+});
+
+test("with leading zero positivie integer.", function() {
+    var actual = axs.utils.isValidNumber("+09");
+    strictEqual(actual.value, 9, "Integer should be parsed");
+    ok(actual.valid, "Integer should be valid");
+});
+
+test("with leading zero negative integer.", function() {
+    var actual = axs.utils.isValidNumber("-09");
+    strictEqual(actual.value, -9, "Integer should be parsed");
+    ok(actual.valid, "Integer should be valid");
+});
+
 test("with string starting with number.", function() {
     var actual = axs.utils.isValidNumber("10 foo");
     equal(actual.valid, false, "Number starting with string is not valid");
+    ok(actual.reason, "There should be a reason");
+});
+
+test("with true.", function() {
+    var actual = axs.utils.isValidNumber("true");
+    equal(actual.valid, false, "boolean is not valid");
+    ok(actual.reason, "There should be a reason");
+});
+
+test("with true, leading and trailing space.", function() {
+    var actual = axs.utils.isValidNumber(" true ");
+    equal(actual.valid, false, "boolean is not valid");
+    ok(actual.reason, "There should be a reason");
+});
+
+test("with false.", function() {
+    var actual = axs.utils.isValidNumber("false");
+    equal(actual.valid, false, "boolean is not valid");
     ok(actual.reason, "There should be a reason");
 });
 
@@ -357,6 +406,12 @@ test("with hexadecimal.", function() {
 test("with float.", function() {
     var actual = axs.utils.isValidNumber("0.5");
     strictEqual(actual.value, 0.5, "Float should be parsed");
+    ok(actual.valid, "Float should be valid");
+});
+
+test("with float with no integer part.", function() {
+    var actual = axs.utils.isValidNumber(".5");
+    strictEqual(actual.value, .5, "Float should be parsed");
     ok(actual.valid, "Float should be valid");
 });
 
@@ -382,4 +437,22 @@ test("with positive float.", function() {
     var actual = axs.utils.isValidNumber("+1.5");
     strictEqual(actual.value, 1.5, "Positive should be parsed");
     ok(actual.valid, "Positive should be valid");
+});
+
+test("with Infinity.", function() {
+    var actual = axs.utils.isValidNumber("Infinity");
+    equal(actual.valid, false, "Infinity is not a real number");
+    ok(actual.reason, "There should be a reason");
+});
+
+test("with -Infinity.", function() {
+    var actual = axs.utils.isValidNumber("-Infinity");
+    equal(actual.valid, false, "-Infinity is not a real number");
+    ok(actual.reason, "There should be a reason");
+});
+
+test("with true.", function() {
+    var actual = axs.utils.isValidNumber("-Infinity");
+    equal(actual.valid, false, "-Infinity is not a real number");
+    ok(actual.reason, "There should be a reason");
 });
