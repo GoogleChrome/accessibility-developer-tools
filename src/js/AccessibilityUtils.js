@@ -577,6 +577,9 @@ axs.utils.hasLabel = function(element) {
 };
 
 /**
+ * Determine if this element is disabled without considering the effect of a disabled ancestor.
+ * Disabled here means that the element should be considered disabled according to specification.
+ * This element may or may not be effectively disabled in practice as this is dependent on implementation.
  * @param {Element} element An element to check.
  * @return {boolean} True if the element is disabled.
  */
@@ -590,6 +593,8 @@ axs.utils.isElementDisabled = function(element) {
 };
 
 /**
+ * Determine if this element is disabled directly or indirectly by a disabled ancestor.
+ * @see axs.utils.isElementDisabled
  * @param {Element} element An element to check.
  * @return {boolean} True if the element or one of its ancestors is disabled.
  */
