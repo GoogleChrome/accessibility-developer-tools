@@ -450,9 +450,3 @@ test("with -Infinity.", function() {
     equal(actual.valid, false, "-Infinity is not a real number");
     ok(actual.reason, "There should be a reason");
 });
-
-test("with true.", function() {
-    var actual = axs.utils.isValidNumber("-Infinity");
-    equal(actual.valid, false, "-Infinity is not a real number");
-    ok(actual.reason, "There should be a reason");
-});
