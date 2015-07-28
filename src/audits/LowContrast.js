@@ -26,7 +26,8 @@ axs.AuditRules.addRule({
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_color_01',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
-        return axs.properties.hasDirectTextDescendant(element);
+        return axs.properties.hasDirectTextDescendant(element) &&
+            !axs.utils.isElementOrAncestorDisabled(element);
     },
     test: function(element) {
         var style = window.getComputedStyle(element, null);

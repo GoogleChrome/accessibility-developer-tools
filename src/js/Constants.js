@@ -1049,6 +1049,20 @@ axs.constants.InlineElements = {
     'BUTTON': true
  };
 
+ /** @enum {boolean} */
+axs.constants.NATIVELY_DISABLEABLE = {
+    // W3C and WHATWG https://html.spec.whatwg.org/#enabling-and-disabling-form-controls:-the-disabled-attribute
+    'BUTTON': true,
+    'INPUT': true,
+    'SELECT': true,
+    'TEXTAREA': true,
+    'FIELDSET': true,
+
+    // W3C http://www.w3.org/TR/html5/disabled-elements.html#disabled-elements
+    'OPTGROUP': true,
+    'OPTION': true
+};
+
 /**
  * Maps ARIA attributes to their exactly equivalent HTML attributes.
  * @type {Object.<string, string>}

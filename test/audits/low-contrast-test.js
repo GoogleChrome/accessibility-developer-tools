@@ -63,3 +63,55 @@ test("Uses tolerance value", function() {
     { elements: [], result: axs.constants.AuditResult.PASS }
   );
 });
+
+test("Disabled button = no relevant elements", function() {
+  var fixture = document.getElementById('qunit-fixture');
+  var button = document.createElement('button');
+  button.textContent = "I Can Has Cheezburger?";
+  button.setAttribute("disabled", "disabled");
+  fixture.appendChild(button);
+  deepEqual(axs.AuditRules.getRule('lowContrastElements').run({ scope: fixture }),
+    { result: axs.constants.AuditResult.NA });
+});
+
+test("Button in disabled fieldset = no relevant elements", function() {
+  var fixture = document.getElementById('qunit-fixture');
+  var container = document.createElement('fieldset');
+  container.setAttribute("disabled", "disabled");
+  var legend = container.appendChild(document.createElement('legend'));
+  legend.textContent = 'Pointless legend';
+  var button = container.appendChild(document.createElement('button'));
+  button.textContent = "I Can Has Cheezburger?";
+  fixture.appendChild(container);
+  deepEqual(axs.AuditRules.getRule('lowContrastElements').run({ scope: fixture }),
+    { result: axs.constants.AuditResult.NA });
+});
+
+test("Crazy button in disabled fieldset legend test = relevant elements", function() {
+  var fixture = document.getElementById('qunit-fixture');
+  var container = document.createElement('fieldset');
+  container.setAttribute("disabled", "disabled");
+  var legend = container.appendChild(document.createElement('legend'));
+  legend.textContent = 'Pointless legend';
+  var button = legend.appendChild(document.createElement('button'));
+  button.textContent = "I Can Has Cheezburger?";
+  fixture.appendChild(container);
+  deepEqual(
+    axs.AuditRules.getRule('lowContrastElements').run({ scope: fixture }),
+    { elements: [], result: axs.constants.AuditResult.PASS });
+});
+
+test("Even crazier button in disabled fieldset second legend test = no relevant elements", function() {
+  var fixture = document.getElementById('qunit-fixture');
+  var container = document.createElement('fieldset');
+  container.setAttribute("disabled", "disabled");
+  var legend = container.appendChild(document.createElement('legend'));
+  legend.textContent = 'Pointless legend 1';
+  legend = container.appendChild(document.createElement('legend'));
+  legend.textContent = 'Pointless legend 2';
+  var button = legend.appendChild(document.createElement('button'));
+  button.textContent = "I Can Has Cheezburger?";
+  fixture.appendChild(container);
+  deepEqual(axs.AuditRules.getRule('lowContrastElements').run({ scope: fixture }),
+    { result: axs.constants.AuditResult.NA });
+});

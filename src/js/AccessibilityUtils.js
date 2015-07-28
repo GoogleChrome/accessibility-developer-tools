@@ -578,6 +578,35 @@ axs.utils.hasLabel = function(element) {
 
 /**
  * @param {Element} element An element to check.
+ * @return {boolean} True if the element is disabled.
+ */
+axs.utils.isElementDisabled = function(element) {
+    if(!element || element.nodeType !== Node.ELEMENT_NODE) {
+        return false;
+    }
+    var tagName = element.tagName.toUpperCase();
+    return (tagName in axs.constants.NATIVELY_DISABLEABLE && element.hasAttribute("disabled")) ||
+        element.getAttribute("aria-disabled") === "true";
+};
+
+/**
+ * @param {Element} element An element to check.
+ * @return {boolean} True if the element or one of its ancestors is disabled.
+ */
+axs.utils.isElementOrAncestorDisabled = function(element) {
+    if (axs.utils.isElementDisabled(element))
+        return true;
+    var parent = axs.utils.parentElement(element);
+    // fieldset disabled-ness does not flow to descendants of its first legend
+    if (parent && !axs.browserUtils.matchSelector(parent, "fieldset>legend:first-of-type")) {
+        return axs.utils.isElementOrAncestorDisabled(parent);
+    }
+    else
+        return false;
+};
+
+/**
+ * @param {Element} element An element to check.
  * @return {boolean} True if the element is hidden from accessibility.
  */
 axs.utils.isElementHidden = function(element) {
