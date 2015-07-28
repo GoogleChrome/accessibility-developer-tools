@@ -14,6 +14,7 @@
 * Add a special case to handle color `"transparent"` to fix (#180).
 * Fix `matchSelector` not working properly in browser environments without vendor prefixes (#189).
 * Fix false positives on elements with no role for Unsupported ARIA Attribute rule (#178 and #199).
+* Handle edge cases in number parser, e.g. "+1", ".1", "01"
 
 ## 2.8.0 - 2015-07-24
 
