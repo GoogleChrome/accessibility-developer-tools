@@ -56,7 +56,9 @@ axs.AuditRules.addRule({
         // all whitespace.
         var stopwords = config['stopwords'] ||
             ['click', 'tap', 'go', 'here', 'learn', 'more', 'this', 'page', 'link', 'about'];
-        var filteredText = anchor.textContent;
+        var filteredText = axs.properties.findTextAlternatives(anchor, {});
+        if (filteredText === null || filteredText.trim() === '')
+            return true;
         filteredText = filteredText.replace(/[^a-zA-Z ]/g, '');
         for (var i = 0; i < stopwords.length; i++) {
             var stopwordRE = new RegExp('\\b' + stopwords[i] + '\\b', 'ig');
