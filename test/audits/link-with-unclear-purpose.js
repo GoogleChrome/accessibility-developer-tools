@@ -69,15 +69,19 @@ test('a link with meaningful aria-label is good', function() {
         { elements: [], result: axs.constants.AuditResult.PASS });
 });
 
-test('a link with meaningful aria-label is good', function() {
+test('a link with meaningful aria-labelledby is good', function() {
     var fixture = document.getElementById('qunit-fixture');
     // Style our link to be visually meaningful with no descendent nodes at all.
     fixture.innerHTML = '<style>a.trout::after{content: "Learn more about trout fishing"}</style>';
     var a = document.createElement('a');
     a.href = '#main';
     a.className = 'trout';
-    a.setAttribute('aria-label', 'Learn more about trout fishing');
+    var label = document.createElement('span');
+    label.textContent = 'Learn more about trout fishing';
+    label.id = "trout" + Date.now();
+    a.setAttribute('aria-labelledby', label.id);
     fixture.appendChild(a);
+    fixture.appendChild(label);
     var rule = axs.AuditRules.getRule('linkWithUnclearPurpose');
     deepEqual(
         rule.run({scope: fixture}),
