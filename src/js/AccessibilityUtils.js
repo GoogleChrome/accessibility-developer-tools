@@ -593,21 +593,21 @@ axs.utils.isNativelyDisableable = function(element) {
  * Determine if this element is disabled directly or indirectly by a disabled ancestor.
  * Disabled here means that the element should be considered disabled according to specification.
  * This element may or may not be effectively disabled in practice as this is dependent on implementation.
- * 
+ *
  * @param {Element} element An element to check.
  * @return {boolean} true if the element or one of its ancestors is disabled.
  */
 axs.utils.isElementDisabled = function(element) {
-    if (axs.browserUtils.matchSelector(element, "[aria-disabled=true], [aria-disabled=true] *")) {
+    if (axs.browserUtils.matchSelector(element, '[aria-disabled=true], [aria-disabled=true] *')) {
         return true;
     }
     if(!axs.utils.isNativelyDisableable(element) ||
-            axs.browserUtils.matchSelector(element, "fieldset>legend:first-of-type *")) {
+            axs.browserUtils.matchSelector(element, 'fieldset>legend:first-of-type *')) {
         return false;
     }
     var next = element;
     do {
-        if(axs.utils.isNativelyDisableable(next) && next.hasAttribute("disabled")) {
+        if(axs.utils.isNativelyDisableable(next) && next.hasAttribute('disabled')) {
             return true;
         }
     } while((next = axs.utils.parentElement(next)));
