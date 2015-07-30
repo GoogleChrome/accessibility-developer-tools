@@ -243,7 +243,7 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
 
     // 1. Skip hidden elements unless the author specifies to use them via an aria-labelledby or
     // aria-describedby being used in the current computation.
-    if (!recursive && !opt_force && axs.utils.isElementOrAncestorHidden(element))
+    if (!opt_force && axs.utils.isElementOrAncestorHidden(element))
         return null;
 
     // if this is a text node, just return text content.

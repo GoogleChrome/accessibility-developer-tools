@@ -93,6 +93,34 @@ test('Image with title', function() {
 });
 
 
+test('Link with aria-hidden text', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var anchor = fixture.appendChild(document.createElement('a'));
+    anchor.href = '#';
+    anchor.innerHTML = '<span aria-hidden="true">X</span><span>Close this window</span>';
+    var textAlternatives = {};
+    var result = axs.properties.findTextAlternatives(anchor, textAlternatives);
+    equal(1, Object.keys(textAlternatives).length, 'exactly one text alternative');
+    equal(true, 'content' in textAlternatives, 'content in textAlternatives');
+    equal('Close this window', textAlternatives.content.text);
+    equal('Close this window', result);
+});
+
+test('Link with aria-labelledby aria-hidden text', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var anchor = fixture.appendChild(document.createElement('a'));
+    anchor.href = '#';
+    anchor.setAttribute('aria-labelledby', 'foobar');
+    anchor.innerHTML = '<span id="foobar" aria-hidden="true">X</span><span>Close this window</span>';
+    var textAlternatives = {};
+    var result = axs.properties.findTextAlternatives(anchor, textAlternatives);
+    equal(2, Object.keys(textAlternatives).length, 'exactly two text alternatives');
+    equal(true, 'ariaLabelledby' in textAlternatives, 'ariaLabelledby in textAlternatives');
+    equal('Close this window', textAlternatives.content.text);
+    equal('X', textAlternatives.ariaLabelledby.text);
+    equal('X', result);
+});
+
 module('getTextFromHostLanguageAttributes', {
     setup: function () {
         this.fixture_ = document.getElementById('qunit-fixture');
