@@ -327,3 +327,138 @@ test("getRoles on element with abstract role.", function() {
     test("getRoles on element with multiple invalid roles.", multipleRoleTestHelper(['foo', 'fubar', 'bar'], -1));
 
 }());
+
+module("isElementDisabled", {
+    setup: function () {
+        var fixture = document.getElementById('qunit-fixture');
+        var html = '<fieldset><legend>I am Legend<input/><span tabindex="0" role="checkbox"/></legend>';
+        html += '<legend>I am Legend Too<input/><span tabindex="0" role="checkbox"/></legend>';
+        html += '<input/><span tabindex="0" role="checkbox"/></fieldset>';
+        fixture.innerHTML = html;
+    }
+});
+
+test('nothing disabled', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var widget = fixture.querySelector('fieldset>input');
+    strictEqual(axs.utils.isElementDisabled(widget), false);
+});
+
+test('form control natively disabled', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var widget = fixture.querySelector('fieldset>input');
+    widget.setAttribute('disabled', 'false');  // also testing that disabled false is the same as disabled true
+    strictEqual(axs.utils.isElementDisabled(widget), true);
+});
+
+test('form control aria-disabled', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var widget = fixture.querySelector('fieldset>input');
+    widget.setAttribute('aria-disabled', 'true');
+    strictEqual(axs.utils.isElementDisabled(widget), true);
+});
+
+test('form control aria-disabled false', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var widget = fixture.querySelector('fieldset>input');
+    widget.setAttribute('aria-disabled', 'false');
+    strictEqual(axs.utils.isElementDisabled(widget), false);
+});
+
+test('ARIA widget erroneously disabled', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var widget = fixture.querySelector('fieldset>[role]');
+    widget.setAttribute('disabled', 'disabled');
+    strictEqual(axs.utils.isElementDisabled(widget), false);
+});
+
+test('ARIA widget aria-disabled', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var widget = fixture.querySelector('fieldset>[role]');
+    widget.setAttribute('aria-disabled', 'true');
+    strictEqual(axs.utils.isElementDisabled(widget), true);
+});
+
+test('container natively disabled', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var container = fixture.querySelector('fieldset');
+    container.setAttribute('disabled', 'disabled');
+
+    var widget = container.querySelector('fieldset>input');
+    var actual = axs.utils.isElementDisabled(widget);
+    strictEqual(actual, true, 'form control ');
+
+    widget = container.querySelector('legend:first-of-type>input');
+    actual = axs.utils.isElementDisabled(widget);
+    strictEqual(actual, false, 'control in legend should not be disabled');
+
+    widget = container.querySelector('legend:nth-of-type(2)>input');
+    actual = axs.utils.isElementDisabled(widget);
+    strictEqual(actual, true, 'control in 2nd legend should be disabled');
+
+    widget = container.querySelector('fieldset>[role]');
+    actual = axs.utils.isElementDisabled(widget);
+    strictEqual(actual, false, 'ARIA widget should not be disabled');
+
+    widget = container.querySelector('legend:first-of-type [role]');
+    actual = axs.utils.isElementDisabled(widget);
+    strictEqual(actual, false, 'ARIA widget in legend should not be disabled');
+
+    widget = container.querySelector('legend:nth-of-type(2) [role]');
+    actual = axs.utils.isElementDisabled(widget);
+    strictEqual(actual, false, 'ARIA widget in 2nd legend should not be disabled');
+});
+
+(function() {
+    test('container aria-disabled', function() {
+        ariaDisabledOnContainerHelper(true);
+    });
+
+    test('container aria-disabled=false', function() {
+        ariaDisabledOnContainerHelper(false);
+    });
+
+    function ariaDisabledOnContainerHelper(ariaDisabled) {
+        var fixture = document.getElementById('qunit-fixture');
+        var container = fixture.querySelector('fieldset');
+        container.setAttribute('aria-disabled', ariaDisabled);
+
+        var widget = container.querySelector('fieldset>input');
+        var actual = axs.utils.isElementDisabled(widget);
+        strictEqual(actual, ariaDisabled, 'form control');
+
+        widget = container.querySelector('legend:first-of-type>input');
+        actual = axs.utils.isElementDisabled(widget);
+        strictEqual(actual, ariaDisabled, 'control in legend');
+
+        widget = container.querySelector('legend:nth-of-type(2)>input');
+        actual = axs.utils.isElementDisabled(widget);
+        strictEqual(actual, ariaDisabled, 'control in 2nd legend');
+
+        widget = container.querySelector('fieldset [role]');
+        actual = axs.utils.isElementDisabled(widget);
+        strictEqual(actual, ariaDisabled, 'ARIA widget');
+
+        widget = container.querySelector('legend:first-of-type [role]');
+        actual = axs.utils.isElementDisabled(widget);
+        strictEqual(actual, ariaDisabled, 'ARIA widget in legend');
+
+        widget = container.querySelector('legend:nth-of-type(2) [role]');
+        actual = axs.utils.isElementDisabled(widget);
+        strictEqual(actual, ariaDisabled, 'ARIA widget in 2nd legend');
+    }
+})();
+
+test('first fieldset legend aria-disabled', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var container = fixture.querySelector('legend:first-of-type');
+    container.setAttribute('aria-disabled', 'true');
+
+    var widget = container.querySelector('input');
+    var actual = axs.utils.isElementDisabled(widget);
+    strictEqual(actual, true, 'form control should be disabled');
+
+    widget = container.querySelector('[role]');
+    actual = axs.utils.isElementDisabled(widget);
+    strictEqual(actual, true, 'ARIA widget should be disabled');
+});

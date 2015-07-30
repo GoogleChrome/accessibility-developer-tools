@@ -27,7 +27,7 @@ axs.AuditRules.addRule({
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
         return axs.properties.hasDirectTextDescendant(element) &&
-            !axs.utils.isElementOrAncestorDisabled(element);
+            !axs.utils.isElementDisabled(element);
     },
     test: function(element) {
         var style = window.getComputedStyle(element, null);

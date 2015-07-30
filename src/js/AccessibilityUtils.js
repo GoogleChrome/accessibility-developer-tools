@@ -577,37 +577,41 @@ axs.utils.hasLabel = function(element) {
 };
 
 /**
- * Determine if this element is disabled without considering the effect of a disabled ancestor.
+ * Determine if this element natively supports being disabled (i.e. via the `disabled` attribute.
  * Disabled here means that the element should be considered disabled according to specification.
  * This element may or may not be effectively disabled in practice as this is dependent on implementation.
+ *
  * @param {Element} element An element to check.
- * @return {boolean} True if the element is disabled.
+ * @return {boolean} true If the element supports being natively disabled.
  */
-axs.utils.isElementDisabled = function(element) {
-    if(!element || element.nodeType !== Node.ELEMENT_NODE) {
-        return false;
-    }
+axs.utils.isNativelyDisableable = function(element) {
     var tagName = element.tagName.toUpperCase();
-    return (tagName in axs.constants.NATIVELY_DISABLEABLE && element.hasAttribute("disabled")) ||
-        element.getAttribute("aria-disabled") === "true";
+    return (tagName in axs.constants.NATIVELY_DISABLEABLE);
 };
 
 /**
  * Determine if this element is disabled directly or indirectly by a disabled ancestor.
- * @see axs.utils.isElementDisabled
+ * Disabled here means that the element should be considered disabled according to specification.
+ * This element may or may not be effectively disabled in practice as this is dependent on implementation.
+ * 
  * @param {Element} element An element to check.
- * @return {boolean} True if the element or one of its ancestors is disabled.
+ * @return {boolean} true if the element or one of its ancestors is disabled.
  */
-axs.utils.isElementOrAncestorDisabled = function(element) {
-    if (axs.utils.isElementDisabled(element))
+axs.utils.isElementDisabled = function(element) {
+    if (axs.browserUtils.matchSelector(element, "[aria-disabled=true], [aria-disabled=true] *")) {
         return true;
-    var parent = axs.utils.parentElement(element);
-    // fieldset disabled-ness does not flow to descendants of its first legend
-    if (parent && !axs.browserUtils.matchSelector(parent, "fieldset>legend:first-of-type")) {
-        return axs.utils.isElementOrAncestorDisabled(parent);
     }
-    else
+    if(!axs.utils.isNativelyDisableable(element) ||
+            axs.browserUtils.matchSelector(element, "fieldset>legend:first-of-type *")) {
         return false;
+    }
+    var next = element;
+    do {
+        if(axs.utils.isNativelyDisableable(next) && next.hasAttribute("disabled")) {
+            return true;
+        }
+    } while((next = axs.utils.parentElement(next)));
+    return false;
 };
 
 /**
@@ -1146,4 +1150,3 @@ axs.utils.findDescendantsWithRole = function(element, role) {
     }
     return result;
 };
-
