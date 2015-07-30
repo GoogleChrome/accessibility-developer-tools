@@ -100,10 +100,10 @@ test('Link with aria-hidden text', function() {
     anchor.innerHTML = '<span aria-hidden="true">X</span><span>Close this window</span>';
     var textAlternatives = {};
     var result = axs.properties.findTextAlternatives(anchor, textAlternatives);
-    equal(1, Object.keys(textAlternatives).length, 'exactly one text alternative');
-    equal(true, 'content' in textAlternatives, 'content in textAlternatives');
-    equal('Close this window', textAlternatives.content.text);
-    equal('Close this window', result);
+    equal(Object.keys(textAlternatives).length, 1, 'exactly one text alternative');
+    equal('content' in textAlternatives, true, 'content in textAlternatives');
+    equal(textAlternatives.content.text, 'Close this window');
+    equal(result, 'Close this window');
 });
 
 test('Link with aria-labelledby aria-hidden text', function() {
@@ -114,11 +114,11 @@ test('Link with aria-labelledby aria-hidden text', function() {
     anchor.innerHTML = '<span id="foobar" aria-hidden="true">X</span><span>Close this window</span>';
     var textAlternatives = {};
     var result = axs.properties.findTextAlternatives(anchor, textAlternatives);
-    equal(2, Object.keys(textAlternatives).length, 'exactly two text alternatives');
-    equal(true, 'ariaLabelledby' in textAlternatives, 'ariaLabelledby in textAlternatives');
-    equal('Close this window', textAlternatives.content.text);
-    equal('X', textAlternatives.ariaLabelledby.text);
-    equal('X', result);
+    equal(Object.keys(textAlternatives).length, 2, 'exactly two text alternatives');
+    equal('ariaLabelledby' in textAlternatives, true, 'ariaLabelledby in textAlternatives');
+    equal(textAlternatives.content.text, 'Close this window');
+    equal(textAlternatives.ariaLabelledby.text, 'X');
+    equal(result, 'X');
 });
 
 module('getTextFromHostLanguageAttributes', {
