@@ -605,12 +605,11 @@ axs.utils.isElementDisabled = function(element) {
             axs.browserUtils.matchSelector(element, 'fieldset>legend:first-of-type *')) {
         return false;
     }
-    var next = element;
-    do {
+    for (var next = element; next !== null; next = axs.utils.parentElement(next)) {
         if(axs.utils.isNativelyDisableable(next) && next.hasAttribute('disabled')) {
             return true;
         }
-    } while((next = axs.utils.parentElement(next)));
+    }
     return false;
 };
 
