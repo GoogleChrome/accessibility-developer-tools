@@ -15,6 +15,7 @@
 * Fix `matchSelector` not working properly in browser environments without vendor prefixes (#189).
 * Fix false positives on elements with no role for Unsupported ARIA Attribute rule (#178 and #199).
 * Fix ARIA `tablist` and ARIA `tab` scope (#204)
+* Fix link with clear purpose with text alternative (#156);
 
 ## 2.8.0 - 2015-07-24
 
