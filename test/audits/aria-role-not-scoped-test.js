@@ -98,9 +98,10 @@ test('Scope role present - tablist', function() {
 test('Scope role missing - tab', function() {
     var rule = axs.AuditRules.getRule('ariaRoleNotScoped');
     var fixture = document.getElementById('qunit-fixture');
+    var container = fixture.appendChild(document.createElement('ul'));
     var expected = [];
     for (var i = 0; i < 4; i++) {
-        var item = fixture.appendChild(document.createElement('span'));
+        var item = container.appendChild(document.createElement('li'));
         item.setAttribute('role', 'tab');
         expected.push(item);
     }
