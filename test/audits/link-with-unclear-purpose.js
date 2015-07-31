@@ -54,6 +54,9 @@ test('a link with an img with meaningless alt text is bad', function() {
         { elements: [a], result: axs.constants.AuditResult.FAIL });
 });
 
+/*
+ * This test will need to be reviewed when issue #214 is addressed.
+ */
 test('a link with meaningful aria-label is good', function() {
     var fixture = document.getElementById('qunit-fixture');
     // Style our link to be visually meaningful with no descendent nodes at all.
@@ -69,6 +72,9 @@ test('a link with meaningful aria-label is good', function() {
         { elements: [], result: axs.constants.AuditResult.PASS });
 });
 
+/*
+ * This test will need to be reviewed when issue #214 is addressed.
+ */
 test('a link with meaningful aria-labelledby is good', function() {
     var fixture = document.getElementById('qunit-fixture');
     // Style our link to be visually meaningful with no descendent nodes at all.
@@ -101,4 +107,19 @@ test('a link without meaningful text is bad', function() {
         deepEqual(rule.run({scope: fixture}),
                   { elements: [a], result: axs.constants.AuditResult.FAIL });
     });
+});
+
+test('a link with bg image and meaningful aria-label is good', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    // Style our link to be visually meaningful with no descendent nodes at all.
+    fixture.innerHTML = '<style>a.trout{background-image: url("/trout.png"); display:block; height:1em}</style>';
+    var a = document.createElement('a');
+    a.href = '#main';
+    a.className = 'trout';
+    a.setAttribute('aria-label', 'Learn more about trout fishing');
+    fixture.appendChild(a);
+    var rule = axs.AuditRules.getRule('linkWithUnclearPurpose');
+    deepEqual(
+        rule.run({scope: fixture}),
+        { elements: [], result: axs.constants.AuditResult.PASS });
 });
