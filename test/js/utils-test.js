@@ -375,7 +375,7 @@ test("with leading zero negative integer.", function() {
 
 test("with string starting with number.", function() {
     var actual = axs.utils.isValidNumber("10 foo");
-    equal(actual.valid, false, "Number starting with string is not valid");
+    equal(actual.valid, false, "String that starts with a number is not valid");
     ok(actual.reason, "There should be a reason");
 });
 
