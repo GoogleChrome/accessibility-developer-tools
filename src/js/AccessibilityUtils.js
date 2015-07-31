@@ -854,21 +854,28 @@ axs.utils.isValidIDRefValue = function(value, element) {
 };
 
 /**
+ * Tests if a number is real number for a11y purposes.
+ * Must be a real, numerical, decimal value; heavily inspired by
+ *    http://www.w3.org/TR/wai-aria/states_and_properties#valuetype_number
  * @param {string} value
  * @return {!Object}
  */
 axs.utils.isValidNumber = function(value) {
-    try {
-        var parsedValue = JSON.parse(value);
-    } catch (ex) {
-        return { 'valid': false,
-                 'value': value,
-                 'reason': '"' + value + '" is not a number' };
+    var failResult = {
+        'valid': false,
+        'value': value,
+        'reason': '"' + value + '" is not a number'
+    };
+    if(!value) {
+        return failResult;
     }
-    if (typeof(parsedValue) != 'number') {
-        return { 'valid': false,
-                 'value': value,
-                 'reason': '"' + value + '" is not a number' };
+    if(/^0x/i.test(value)) {
+        failResult.reason = '"' + value + '" is not a decimal number';  // hex is not accepted
+        return failResult;
+    }
+    var parsedValue = value * 1;
+    if (!isFinite(parsedValue)) {
+        return failResult;
     }
     return { 'valid': true, 'value': parsedValue };
 };
