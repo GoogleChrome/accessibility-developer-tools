@@ -17,7 +17,7 @@ goog.require('axs.browserUtils');
 goog.require('axs.constants');
 goog.require('axs.utils');
 
-(function(){
+(function() {
     /**
      * @type {axs.AuditRule.Spec}
      */
@@ -43,26 +43,26 @@ goog.require('axs.utils');
 
             var required = getRequired(element);
             for (var i = required.length - 1; i >= 0; i--) {
-                 var descendants = axs.utils.findDescendantsWithRole(element, required[i]);
-                 if (descendants && descendants.length) {  // if we found at least one descendant with a required role
-                     return false;
-                 }
-             }
-             // if we get to this point our element has 'required owned elements' but it does not own them implicitly in the DOM
-             var ownedElements = axs.utils.getIdReferents('aria-owns', element);
-             for (var i = ownedElements.length - 1; i >= 0; i--) {
-                 var ownedElement = ownedElements[i];
-                 var ownedElementRole = axs.utils.getRoles(ownedElement, true);
-                 if (ownedElementRole && ownedElementRole.applied) {
-                     var appliedRole = ownedElementRole.applied;
-                     for (var j = required.length - 1; j >= 0; j--) {
+                var descendants = axs.utils.findDescendantsWithRole(element, required[i]);
+                if (descendants && descendants.length) {  // if we found at least one descendant with a required role
+                    return false;
+                }
+            }
+            // if we get to this point our element has 'required owned elements' but it does not own them implicitly in the DOM
+            var ownedElements = axs.utils.getIdReferents('aria-owns', element);
+            for (var i = ownedElements.length - 1; i >= 0; i--) {
+                var ownedElement = ownedElements[i];
+                var ownedElementRole = axs.utils.getRoles(ownedElement, true);
+                if (ownedElementRole && ownedElementRole.applied) {
+                    var appliedRole = ownedElementRole.applied;
+                    for (var j = required.length - 1; j >= 0; j--) {
                         if (appliedRole.name === required[j]) {  // if this explicitly owned element has a required role
                             return false;
                         }
                     }
-                 }
-             }
-             return true;  // if we made it here then we did not find the required owned elements in the DOM
+                }
+            }
+            return true;  // if we made it here then we did not find the required owned elements in the DOM
         },
         code: 'AX_ARIA_08'
     };
