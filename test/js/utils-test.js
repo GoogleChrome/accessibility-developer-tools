@@ -328,7 +328,130 @@ test("getRoles on element with abstract role.", function() {
 
 }());
 
-module("isElementDisabled", {
+module("isValidNumber");
+
+test("with integer.", function() {
+    var actual = axs.utils.isValidNumber("10");
+    strictEqual(actual.value, 10, "Integer should be parsed");
+    ok(actual.valid, "Integer should be valid");
+});
+
+test("with leading and trailing whitespace.", function() {
+    var actual = axs.utils.isValidNumber(" 10 ");
+    strictEqual(actual.value, 10, "Integer should be parsed");
+    ok(actual.valid, "Integer should be valid");
+});
+
+test("with zero.", function() {
+    var actual = axs.utils.isValidNumber("0");
+    strictEqual(actual.value, 0, "Zero should be parsed");
+    ok(actual.valid, "Integer should be valid");
+});
+
+test("with leading zero integer.", function() {
+    var actual = axs.utils.isValidNumber("09");
+    strictEqual(actual.value, 9, "Integer should be parsed");
+    ok(actual.valid, "Integer should be valid");
+});
+
+
+test("with multiple leading zero integer.", function() {
+    var actual = axs.utils.isValidNumber("000000009");
+    strictEqual(actual.value, 9, "Integer should be parsed");
+    ok(actual.valid, "Integer should be valid");
+});
+
+test("with leading zero positivie integer.", function() {
+    var actual = axs.utils.isValidNumber("+09");
+    strictEqual(actual.value, 9, "Integer should be parsed");
+    ok(actual.valid, "Integer should be valid");
+});
+
+test("with leading zero negative integer.", function() {
+    var actual = axs.utils.isValidNumber("-09");
+    strictEqual(actual.value, -9, "Integer should be parsed");
+    ok(actual.valid, "Integer should be valid");
+});
+
+test("with string starting with number.", function() {
+    var actual = axs.utils.isValidNumber("10 foo");
+    equal(actual.valid, false, "String that starts with a number is not valid");
+    ok(actual.reason, "There should be a reason");
+});
+
+test("with true.", function() {
+    var actual = axs.utils.isValidNumber("true");
+    equal(actual.valid, false, "boolean is not valid");
+    ok(actual.reason, "There should be a reason");
+});
+
+test("with true, leading and trailing space.", function() {
+    var actual = axs.utils.isValidNumber(" true ");
+    equal(actual.valid, false, "boolean is not valid");
+    ok(actual.reason, "There should be a reason");
+});
+
+test("with false.", function() {
+    var actual = axs.utils.isValidNumber("false");
+    equal(actual.valid, false, "boolean is not valid");
+    ok(actual.reason, "There should be a reason");
+});
+
+test("with hexadecimal.", function() {
+    var actual = axs.utils.isValidNumber("0xF");
+    equal(actual.valid, false, "Hexadecimal is not valid");
+    ok(actual.reason, "There should be a reason");
+});
+
+test("with float.", function() {
+    var actual = axs.utils.isValidNumber("0.5");
+    strictEqual(actual.value, 0.5, "Float should be parsed");
+    ok(actual.valid, "Float should be valid");
+});
+
+test("with float with no integer part.", function() {
+    var actual = axs.utils.isValidNumber(".5");
+    strictEqual(actual.value, .5, "Float should be parsed");
+    ok(actual.valid, "Float should be valid");
+});
+
+test("with negative integer.", function() {
+    var actual = axs.utils.isValidNumber("-100");
+    strictEqual(actual.value, -100, "Negative should be parsed");
+    ok(actual.valid, "Negative should be valid");
+});
+
+test("with negative float.", function() {
+    var actual = axs.utils.isValidNumber("-1.5");
+    strictEqual(actual.value, -1.5, "Negative should be parsed");
+    ok(actual.valid, "Negative should be valid");
+});
+
+test("with positive integer.", function() {
+    var actual = axs.utils.isValidNumber("+100");
+    strictEqual(actual.value, 100, "Positive should be parsed");
+    ok(actual.valid, "Positive should be valid");
+});
+
+test("with positive float.", function() {
+    var actual = axs.utils.isValidNumber("+1.5");
+    strictEqual(actual.value, 1.5, "Positive should be parsed");
+    ok(actual.valid, "Positive should be valid");
+});
+
+test("with Infinity.", function() {
+    var actual = axs.utils.isValidNumber("Infinity");
+    equal(actual.valid, false, "Infinity is not a real number");
+    ok(actual.reason, "There should be a reason");
+});
+
+test("with -Infinity.", function() {
+    var actual = axs.utils.isValidNumber("-Infinity");
+    equal(actual.valid, false, "-Infinity is not a real number");
+    ok(actual.reason, "There should be a reason");
+});
+
+module('isElementDisabled', {
     setup: function () {
         var fixture = document.getElementById('qunit-fixture');
         var html = '<fieldset><legend>I am Legend<input/><span tabindex="0" role="checkbox"/></legend>';
