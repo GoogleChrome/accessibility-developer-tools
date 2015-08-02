@@ -2,6 +2,7 @@
 
 * Implement support for specifying audit configuration options through an object when initializing audits (#165).
 * Implement support for AMD loaders.
+* AX_HTML_02 (duplicate IDs) now only audits elements that are referenced by an IDREF (#141);
 
 ### New rules
 

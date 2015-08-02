@@ -139,7 +139,7 @@ test("returns the aria owners for a given element", function() {
     this.fixture_.appendChild(owner);
   }
   var expected = this.fixture_.querySelectorAll(".owner");
-  var actual = axs.utils.getIdReferrers("aria-owns", owned);
+  var actual = axs.utils.getAriaIdReferrers(owned, "aria-owns");
   equal(expected.length, ownerCount);  // sanity check the test itself
   equal(actual.length, ownerCount);
   var allFound = Array.prototype.every.call(expected, function(element) {
@@ -159,7 +159,7 @@ test("returns the elements this element labels", function() {
     this.fixture_.appendChild(labelled);
   }
   var expected = this.fixture_.querySelectorAll(".labelled");
-  var actual = axs.utils.getIdReferrers("aria-labelledby", label);
+  var actual = axs.utils.getAriaIdReferrers(label, "aria-labelledby");
   equal(expected.length, labelledCount);  // sanity check the test itself
   equal(actual.length, labelledCount);
   var allFound = Array.prototype.every.call(expected, function(element) {

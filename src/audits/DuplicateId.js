@@ -15,6 +15,7 @@
 goog.require('axs.AuditRules');
 goog.require('axs.browserUtils');
 goog.require('axs.constants.Severity');
+goog.require('axs.utils');
 
 /**
  * This audit checks for duplicate IDs in the DOM.
@@ -25,24 +26,33 @@ axs.AuditRules.addRule({
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_html_02',
     severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {
-        return axs.browserUtils.matchSelector(element, '[id]');
+        if (element.hasAttribute('id')) {
+            var referrers = axs.utils.getIdReferrers(element);
+            return referrers.length > 0;
+        }
+        return false;
     },
     test: function(element) {
         /*
          * Checks for duplicate IDs within the context of this element.
          * This is not a pure a11y check however IDREF attributes in ARIA and HTML (label 'for', td 'headers)
          *    depend on IDs being correctly implemented.
-         * While we could limit this audit to IDs which are actually referred to via any IDREF attribute
-         *    that would be incomplete, because naturally many of these attributes change over time e.g.
-         *    'aria-activedescendant' is likely to change over time and therefore safer to vet them all.
+         * Because this audit is noisy (in practice duplicate IDs are not unusual and often harmless)
+         *    we limit this audit to IDs which are actually referred to via any IDREF attribute.
          */
         var id = element.id;
-        if (!id) {
-            return false;  // Is an empty ID even an ID? I think not.
-        }
-        var selector = "[id='" + id.replace(/'/g, "\\'") + "']";
+        var selector = '[id=\'' + id.replace(/'/g, '\\\'') + '\']';
         var elementsWithId = element.ownerDocument.querySelectorAll(selector);
-        return (elementsWithId.length > 1);
+        if (elementsWithId.length > 1) {
+            var visible = [];
+            for (var i = 0; i < elementsWithId.length; i++) {
+                if (!axs.utils.isElementOrAncestorHidden(elementsWithId[i])) {
+                    visible.push(elementsWithId[i]);
+                }
+            }
+            return visible.length > 1;
+        }
+        return false;
     },
     code: 'AX_HTML_02'
 });

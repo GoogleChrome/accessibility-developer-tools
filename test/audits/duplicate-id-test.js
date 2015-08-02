@@ -13,7 +13,7 @@
 // limitations under the License.
 module('DuplicateId');
 
-test('No duplicate IDs', function() {
+test('No duplicate ID, no used IDREF', function() {
     var rule = axs.AuditRules.getRule('duplicateId');
     var fixture = document.getElementById('qunit-fixture');
 
@@ -24,21 +24,35 @@ test('No duplicate IDs', function() {
     element2.setAttribute('id', 'fukung');
 
     var actual = rule.run({ scope: fixture });
+    equal(actual.result, axs.constants.AuditResult.NA);
+});
+
+test('No duplicate ID with IDREF', function() {
+    var rule = axs.AuditRules.getRule('duplicateId');
+    var fixture = document.getElementById('qunit-fixture');
+
+    var element = fixture.appendChild(document.createElement('input'));
+    element.setAttribute('id', 'kungfu');
+    var element2 = fixture.appendChild(element.cloneNode());
+    element2.setAttribute('id', 'kungfutoo');
+    fixture.appendChild(document.createElement('label')).setAttribute('for', element.id);
+    fixture.appendChild(document.createElement('label')).setAttribute('for', element2.id);
+
+    var actual = rule.run({ scope: fixture });
     equal(actual.result, axs.constants.AuditResult.PASS);
     deepEqual(actual.elements, []);
 });
 
-test('Single duplicate ID', function() {
+test('Single duplicate ID, not used', function() {
     var rule = axs.AuditRules.getRule('duplicateId');
     var fixture = document.getElementById('qunit-fixture');
 
     var element = fixture.appendChild(document.createElement('div'));
     element.setAttribute('id', 'kungfu');
-    var element2 = fixture.appendChild(element.cloneNode());
+    fixture.appendChild(element.cloneNode());
 
     var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.FAIL);
-    deepEqual(actual.elements, [element, element2]);
+    equal(actual.result, axs.constants.AuditResult.NA);
 });
 
 test('Single duplicate ID but it\'s in shadow DOM', function() {
@@ -58,6 +72,105 @@ test('Single duplicate ID but it\'s in shadow DOM', function() {
     shadowRoot.appendChild(element.cloneNode());
 
     var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.PASS);
-    deepEqual(actual.elements, []);
+    equal(actual.result, axs.constants.AuditResult.NA);
+});
+
+test('Single duplicate ID, used in html idref', function() {
+    var rule = axs.AuditRules.getRule('duplicateId');
+    var fixture = document.getElementById('qunit-fixture');
+
+    var element = fixture.appendChild(document.createElement('input'));
+    element.setAttribute('id', 'kungfu');
+    var element2 = fixture.appendChild(element.cloneNode());
+    fixture.appendChild(document.createElement('label')).setAttribute('for', element.id);
+
+    var actual = rule.run({ scope: fixture });
+    equal(actual.result, axs.constants.AuditResult.FAIL);
+    deepEqual(actual.elements, [element, element2]);
+
+    element2.setAttribute('aria-hidden', 'true');
+    actual = rule.run({ scope: fixture });
+    equal(actual.result, axs.constants.AuditResult.PASS, 'aria-hidden elements should be ignored');
+    element2.removeAttribute('aria-hidden');
+
+    element2.setAttribute('hidden', 'hidden');
+    actual = rule.run({ scope: fixture });
+    equal(actual.result, axs.constants.AuditResult.PASS, 'hidden elements should be ignored');
+
+});
+
+test('Single duplicate ID, used in html idrefs', function() {
+    var rule = axs.AuditRules.getRule('duplicateId');
+    var fixture = document.getElementById('qunit-fixture');
+
+    var element = fixture.appendChild(document.createElement('input'));
+    element.setAttribute('id', 'kungfu');
+    var element2 = fixture.appendChild(element.cloneNode());
+    var element3 = fixture.appendChild(document.createElement('input'));
+    element3.setAttribute('id', 'el3');
+    var idrefs = element3.id + ' ' + element.id;
+    fixture.appendChild(document.createElement('output')).setAttribute('for', idrefs);
+
+    var actual = rule.run({ scope: fixture });
+    equal(actual.result, axs.constants.AuditResult.FAIL);
+    deepEqual(actual.elements, [element, element2]);
+
+    element2.setAttribute('aria-hidden', 'true');
+    actual = rule.run({ scope: fixture });
+    equal(actual.result, axs.constants.AuditResult.PASS, 'aria-hidden elements should be ignored');
+    element2.removeAttribute('aria-hidden');
+
+    element2.setAttribute('hidden', 'hidden');
+    actual = rule.run({ scope: fixture });
+    equal(actual.result, axs.constants.AuditResult.PASS, 'hidden elements should be ignored');
+});
+
+test('Single duplicate ID, used in ARIA idref', function() {
+    var rule = axs.AuditRules.getRule('duplicateId');
+    var fixture = document.getElementById('qunit-fixture');
+    var container = fixture.appendChild(document.createElement('div'));
+    var element = container.appendChild(document.createElement('span'));
+    element.setAttribute('id', 'kungfu');
+    var element2 = container.appendChild(element.cloneNode());
+    container.setAttribute('aria-activedescendant', element.id);
+
+    var actual = rule.run({ scope: fixture });
+    equal(actual.result, axs.constants.AuditResult.FAIL);
+    deepEqual(actual.elements, [element, element2]);
+
+    element2.setAttribute('aria-hidden', 'true');
+    actual = rule.run({ scope: fixture });
+    equal(actual.result, axs.constants.AuditResult.PASS, 'aria-hidden elements should be ignored');
+    element2.removeAttribute('aria-hidden');
+
+    element2.setAttribute('hidden', 'hidden');
+    actual = rule.run({ scope: fixture });
+    equal(actual.result, axs.constants.AuditResult.PASS, 'hidden elements should be ignored');
+
+});
+
+test('Single duplicate ID, used in ARIA idrefs', function() {
+    var rule = axs.AuditRules.getRule('duplicateId');
+    var fixture = document.getElementById('qunit-fixture');
+    var container = fixture.appendChild(document.createElement('div'));
+    var element = fixture.appendChild(document.createElement('span'));
+    element.setAttribute('id', 'kungfu');
+    var element2 = fixture.appendChild(element.cloneNode());
+    var element3 = fixture.appendChild(document.createElement('input'));
+    element3.setAttribute('id', 'el3');
+    var idrefs = element3.id + ' ' + element.id;
+    container.setAttribute('aria-owns', idrefs);
+
+    var actual = rule.run({ scope: fixture });
+    equal(actual.result, axs.constants.AuditResult.FAIL);
+    deepEqual(actual.elements, [element, element2]);
+
+    element2.setAttribute('aria-hidden', 'true');
+    actual = rule.run({ scope: fixture });
+    equal(actual.result, axs.constants.AuditResult.PASS, 'aria-hidden elements should be ignored');
+    element2.removeAttribute('aria-hidden');
+
+    element2.setAttribute('hidden', 'hidden');
+    actual = rule.run({ scope: fixture });
+    equal(actual.result, axs.constants.AuditResult.PASS, 'hidden elements should be ignored');
 });
