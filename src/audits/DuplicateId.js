@@ -28,7 +28,9 @@ axs.AuditRules.addRule({
     relevantElementMatcher: function(element) {
         if (element.hasAttribute('id')) {
             var referrers = axs.utils.getIdReferrers(element);
-            return referrers.length > 0;
+            return referrers.some(function(referrer) {
+                return !axs.utils.isElementOrAncestorHidden(referrer);
+            });
         }
         return false;
     },
@@ -43,16 +45,7 @@ axs.AuditRules.addRule({
         var id = element.id;
         var selector = '[id=\'' + id.replace(/'/g, '\\\'') + '\']';
         var elementsWithId = element.ownerDocument.querySelectorAll(selector);
-        if (elementsWithId.length > 1) {
-            var visible = [];
-            for (var i = 0; i < elementsWithId.length; i++) {
-                if (!axs.utils.isElementOrAncestorHidden(elementsWithId[i])) {
-                    visible.push(elementsWithId[i]);
-                }
-            }
-            return visible.length > 1;
-        }
-        return false;
+        return (elementsWithId.length > 1);
     },
     code: 'AX_HTML_02'
 });

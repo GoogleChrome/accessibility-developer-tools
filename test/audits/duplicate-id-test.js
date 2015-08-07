@@ -82,20 +82,21 @@ test('Single duplicate ID, used in html idref', function() {
     var element = fixture.appendChild(document.createElement('input'));
     element.setAttribute('id', 'kungfu');
     var element2 = fixture.appendChild(element.cloneNode());
-    fixture.appendChild(document.createElement('label')).setAttribute('for', element.id);
+    var referrer = fixture.appendChild(document.createElement('label'));
+    referrer.setAttribute('for', element.id);
 
     var actual = rule.run({ scope: fixture });
     equal(actual.result, axs.constants.AuditResult.FAIL);
     deepEqual(actual.elements, [element, element2]);
 
-    element2.setAttribute('aria-hidden', 'true');
+    referrer.setAttribute('aria-hidden', 'true');
     actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.PASS, 'aria-hidden elements should be ignored');
-    element2.removeAttribute('aria-hidden');
+    equal(actual.result, axs.constants.AuditResult.NA, 'aria-hidden elements should be ignored');
+    referrer.removeAttribute('aria-hidden');
 
-    element2.setAttribute('hidden', 'hidden');
+    referrer.setAttribute('hidden', 'hidden');
     actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.PASS, 'hidden elements should be ignored');
+    equal(actual.result, axs.constants.AuditResult.NA, 'hidden elements should be ignored');
 
 });
 
@@ -109,20 +110,21 @@ test('Single duplicate ID, used in html idrefs', function() {
     var element3 = fixture.appendChild(document.createElement('input'));
     element3.setAttribute('id', 'el3');
     var idrefs = element3.id + ' ' + element.id;
-    fixture.appendChild(document.createElement('output')).setAttribute('for', idrefs);
+    var referrer = fixture.appendChild(document.createElement('output'));
+    referrer.setAttribute('for', idrefs);
 
     var actual = rule.run({ scope: fixture });
     equal(actual.result, axs.constants.AuditResult.FAIL);
     deepEqual(actual.elements, [element, element2]);
 
-    element2.setAttribute('aria-hidden', 'true');
+    referrer.setAttribute('aria-hidden', 'true');
     actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.PASS, 'aria-hidden elements should be ignored');
-    element2.removeAttribute('aria-hidden');
+    equal(actual.result, axs.constants.AuditResult.NA, 'aria-hidden elements should be ignored');
+    referrer.removeAttribute('aria-hidden');
 
-    element2.setAttribute('hidden', 'hidden');
+    referrer.setAttribute('hidden', 'hidden');
     actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.PASS, 'hidden elements should be ignored');
+    equal(actual.result, axs.constants.AuditResult.NA, 'hidden elements should be ignored');
 });
 
 test('Single duplicate ID, used in ARIA idref', function() {
@@ -138,14 +140,14 @@ test('Single duplicate ID, used in ARIA idref', function() {
     equal(actual.result, axs.constants.AuditResult.FAIL);
     deepEqual(actual.elements, [element, element2]);
 
-    element2.setAttribute('aria-hidden', 'true');
+    container.setAttribute('aria-hidden', 'true');
     actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.PASS, 'aria-hidden elements should be ignored');
-    element2.removeAttribute('aria-hidden');
+    equal(actual.result, axs.constants.AuditResult.NA, 'aria-hidden elements should be ignored');
+    container.removeAttribute('aria-hidden');
 
-    element2.setAttribute('hidden', 'hidden');
+    container.setAttribute('hidden', 'hidden');
     actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.PASS, 'hidden elements should be ignored');
+    equal(actual.result, axs.constants.AuditResult.NA, 'hidden elements should be ignored');
 
 });
 
@@ -165,12 +167,12 @@ test('Single duplicate ID, used in ARIA idrefs', function() {
     equal(actual.result, axs.constants.AuditResult.FAIL);
     deepEqual(actual.elements, [element, element2]);
 
-    element2.setAttribute('aria-hidden', 'true');
+    container.setAttribute('aria-hidden', 'true');
     actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.PASS, 'aria-hidden elements should be ignored');
-    element2.removeAttribute('aria-hidden');
+    equal(actual.result, axs.constants.AuditResult.NA, 'aria-hidden elements should be ignored');
+    container.removeAttribute('aria-hidden');
 
-    element2.setAttribute('hidden', 'hidden');
+    container.setAttribute('hidden', 'hidden');
     actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.PASS, 'hidden elements should be ignored');
+    equal(actual.result, axs.constants.AuditResult.NA, 'hidden elements should be ignored');
 });
