@@ -55,7 +55,7 @@ Work is underway to include the library in WebDriver and other automated testing
 
 ## The `axs.Audit.run()` method
 
-Once you have included `axs_testing.js`, you can call call `axs.Audit.run()`. This returns an object in the following form:
+Once you have included `axs_testing.js`, you can call `axs.Audit.run()`. This returns an object in the following form:
 
     {
       /** @type {axs.constants.AuditResult} */
