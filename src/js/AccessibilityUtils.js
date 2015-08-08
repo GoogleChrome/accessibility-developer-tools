@@ -1098,11 +1098,25 @@ axs.utils.getHtmlIdReferrers = function(element) {
     if (!id)
         return null;
     id = id.replace(/'/g, "\\'");  // make it safe to use in a selector
-    var selectorTemplates = ['[contextmenu=\'{id}\']', '[itemref~=\'{id}\']', 'button[form=\'{id}\']',
-        'button[menu=\'{id}\']', 'fieldset[form=\'{id}\']', 'input[form=\'{id}\']', 'input[list=\'{id}\']',
-        'keygen[form=\'{id}\']', 'label[for=\'{id}\']', 'label[form=\'{id}\']', 'menuitem[command=\'{id}\']',
-        'object[form=\'{id}\']', 'output[for~=\'{id}\']', 'output[form=\'{id}\']', 'select[form=\'{id}\']',
-        'td[headers~=\'{id}\']', 'textarea[form=\'{id}\']', 'tr[headers~=\'{id}\']'];
+    var selectorTemplates = [
+        '[contextmenu=\'{id}\']',
+        '[itemref~=\'{id}\']',
+        'button[form=\'{id}\']',
+        'button[menu=\'{id}\']',
+        'fieldset[form=\'{id}\']',
+        'input[form=\'{id}\']',
+        'input[list=\'{id}\']',
+        'keygen[form=\'{id}\']',
+        'label[for=\'{id}\']',
+        'label[form=\'{id}\']',
+        'menuitem[command=\'{id}\']',
+        'object[form=\'{id}\']',
+        'output[for~=\'{id}\']',
+        'output[form=\'{id}\']',
+        'select[form=\'{id}\']',
+        'td[headers~=\'{id}\']',
+        'textarea[form=\'{id}\']',
+        'tr[headers~=\'{id}\']'];
     var selectors = selectorTemplates.map(function(selector) {
         return selector.replace('\{id\}', id);
     });
