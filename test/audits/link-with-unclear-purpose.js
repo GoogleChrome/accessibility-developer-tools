@@ -123,3 +123,16 @@ test('a link with bg image and meaningful aria-label is good', function() {
         rule.run({scope: fixture}),
         { elements: [], result: axs.constants.AuditResult.PASS });
 });
+
+test('a hidden link should not be run against the audit', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var a = document.createElement('a');
+    a.hidden = true;
+    a.href = '#main';
+    a.textContent = 'Learn more about trout fishing';
+    fixture.appendChild(a);
+    var rule = axs.AuditRules.getRule('linkWithUnclearPurpose');
+    deepEqual(
+      rule.run({scope: fixture}),
+      { result: axs.constants.AuditResult.NA });
+});
