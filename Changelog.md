@@ -19,6 +19,7 @@
 * Handle edge cases in number parser, e.g. "+1", ".1", "01"
 * HTML button containing img with alt attribute now passes controlsWithoutLabel (#202)
 * Disabled elements should be ignored by low contrast audit (#205)
+* Fix input of type "text" did not find correct implied role (#225)
 
 ## 2.8.0 - 2015-07-24
 
