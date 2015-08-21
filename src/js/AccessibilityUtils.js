@@ -401,7 +401,7 @@ axs.utils.getParentBgColor = function(element) {
     /** @type {Element} */ var parent = element;
     var bgStack = [];
     var foundSolidColor = null;
-    while (parent = axs.utils.parentElement(parent)) {
+    while ((parent = axs.utils.parentElement(parent))) {
         var computedStyle = window.getComputedStyle(parent, null);
         if (!computedStyle)
             continue;
@@ -727,6 +727,7 @@ axs.utils.getAriaPropertyValue = function(propertyName, value, element) {
         result.valid = isValid.valid;
         result.reason = isValid.reason;
         result.idref = isValid.idref;
+        // falls through
     case "idref_list":
         var idrefValues = value.split(/\s+/);
         result.valid = true;
@@ -781,6 +782,7 @@ axs.utils.getAriaPropertyValue = function(propertyName, value, element) {
             result.reason = validTokenValue.reason;
             return result;
         }
+        // falls through
     case "token_list":
         var tokenValues = value.split(/\s+/);
         result.valid = true;
@@ -903,10 +905,10 @@ axs.utils.isValidNumber = function(value) {
         'value': value,
         'reason': '"' + value + '" is not a number'
     };
-    if(!value) {
+    if (!value) {
         return failResult;
     }
-    if(/^0x/i.test(value)) {
+    if (/^0x/i.test(value)) {
         failResult.reason = '"' + value + '" is not a decimal number';  // hex is not accepted
         return failResult;
     }

@@ -101,7 +101,7 @@ axs.AuditConfiguration = function(config) {
     goog.exportProperty(this, 'auditRulesToRun', this.auditRulesToRun);
     goog.exportProperty(this, 'auditRulesToIgnore', this.auditRulesToIgnore);
     goog.exportProperty(this, 'withConsoleApi', this.withConsoleApi);
-    goog.exportProperty(this, 'showUnsupportedRulesWarning', this.showUnsupportedRulesWarning );
+    goog.exportProperty(this, 'showUnsupportedRulesWarning', this.showUnsupportedRulesWarning);
 };
 goog.exportSymbol('axs.AuditConfiguration', axs.AuditConfiguration);
 
@@ -196,7 +196,7 @@ axs.Audit.unsupportedRulesWarningShown = false;
  * @return {Array.<String>}  A list of rules that cannot be run
  */
 axs.Audit.getRulesCannotRun = function(opt_configuration) {
-    if(opt_configuration.withConsoleApi) {
+    if (opt_configuration.withConsoleApi) {
         return [];
     }
     return axs.AuditRules.getRules().filter(function(rule) {
@@ -237,9 +237,9 @@ axs.Audit.run = function(opt_configuration) {
         }
     }
 
-    if(!axs.Audit.unsupportedRulesWarningShown && configuration.showUnsupportedRulesWarning) {
+    if (!axs.Audit.unsupportedRulesWarningShown && configuration.showUnsupportedRulesWarning) {
         var unsupportedRules = axs.Audit.getRulesCannotRun(configuration);
-        if(unsupportedRules.length > 0) {
+        if (unsupportedRules.length > 0) {
             console.warn("Some rules cannot be checked using the axs.Audit.run() method call. Use the Chrome plugin to check these rules: " + unsupportedRules.join(", "));
             console.warn("To remove this message, pass an AuditConfiguration object to axs.Audit.run() and set configuration.showUnsupportedRulesWarning = false.");
         }

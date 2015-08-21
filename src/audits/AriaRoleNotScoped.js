@@ -37,7 +37,7 @@ axs.AuditRules.addRule({
         var elementRole = axs.utils.getRoles(element);
         if (!elementRole || !elementRole.applied)
             return false;
-        var appliedRole  = elementRole.applied;
+        var appliedRole = elementRole.applied;
         var ariaRole = appliedRole.details;
         var requiredScope = ariaRole['scope'];
         if (!requiredScope || requiredScope.length === 0) {

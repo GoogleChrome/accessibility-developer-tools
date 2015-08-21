@@ -17,17 +17,17 @@ goog.require('axs.browserUtils');
 goog.require('axs.utils');
 
 axs.AuditRules.addRule({
-  name: "multipleLabelableElementsPerLabel",
-  heading: "A label element may not have labelable descendants other than its labeled control.",
-  url: "https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_03--labels-should-only-contain-one-labelable-element",
-  severity: axs.constants.Severity.SEVERE,
-  relevantElementMatcher: function(element) {
-    return axs.browserUtils.matchSelector(element, "label");
-  },
-  test: function(scope) {
-    var controls = scope.querySelectorAll(axs.utils.LABELABLE_ELEMENTS_SELECTOR);
-    if (controls.length > 1)
-      return true;
-  },
-  code: "AX_TEXT_03"
+    name: 'multipleLabelableElementsPerLabel',
+    heading: 'A label element may not have labelable descendants other than its labeled control.',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_03--labels-should-only-contain-one-labelable-element',
+    severity: axs.constants.Severity.SEVERE,
+    relevantElementMatcher: function(element) {
+        return axs.browserUtils.matchSelector(element, 'label');
+    },
+    test: function(scope) {
+        var controls = scope.querySelectorAll(axs.utils.LABELABLE_ELEMENTS_SELECTOR);
+        if (controls.length > 1)
+            return true;
+    },
+    code: 'AX_TEXT_03'
 });

@@ -76,6 +76,13 @@ module.exports = function(grunt) {
       }
     },
 
+    eslint: {
+        options: {
+            configFile: '.eslintrc'
+        },
+        target: ['./src/js/', './src/audits/']
+    },
+
     prompt: {
       'gh-release': {
         options: {
@@ -268,7 +275,7 @@ module.exports = function(grunt) {
     grunt.task.run('git-describe');
   });
 
-  grunt.registerTask('build', ['clean:local', 'save-revision', 'closurecompiler:minify']);
+  grunt.registerTask('build', ['clean:local', 'save-revision', 'eslint', 'closurecompiler:minify']);
   grunt.registerTask('test:unit', ['qunit']);
   grunt.registerTask('dist', ['clean:dist', 'build', 'copy:dist']);
   grunt.registerTask('travis', ['closurecompiler:minify', 'test:unit']);

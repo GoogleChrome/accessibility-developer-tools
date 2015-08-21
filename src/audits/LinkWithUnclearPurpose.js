@@ -39,7 +39,7 @@ axs.AuditRules.addRule({
     test: function(anchor, opt_config) {
         var config = opt_config || {};
         var blacklistPhrases = config['blacklistPhrases'] || [];
-        var whitespaceRE = /\s+/
+        var whitespaceRE = /\s+/;
         for (var i = 0; i < blacklistPhrases.length; i++) {
             // Match the blacklist phrase, case insensitively, as the whole string (allowing for
             // punctuation at the end).
