@@ -142,4 +142,30 @@
         var expected = { elements: [], result: axs.constants.AuditResult.PASS };
         deepEqual(rule.run({ scope: fixture }), expected);
     });
+
+    test('Input with no type attribute with no role and aria-required', function() {
+        var fixture = document.getElementById('qunit-fixture');
+        var widget = fixture.appendChild(document.createElement('input'));
+        widget.setAttribute('aria-required', 'true');
+        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
+        deepEqual(rule.run({ scope: fixture }), expected, 'An input with no type is a textbox');
+    });
+
+    test('Input with type=text attribute with no role and aria-required', function() {
+        var fixture = document.getElementById('qunit-fixture');
+        var widget = fixture.appendChild(document.createElement('input'));
+        widget.setAttribute('type', 'text');
+        widget.setAttribute('aria-required', 'true');
+        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
+        deepEqual(rule.run({ scope: fixture }), expected, 'A text input is a textbox');
+    });
+
+    test('Input with type=text property with no role and aria-required', function() {
+        var fixture = document.getElementById('qunit-fixture');
+        var widget = fixture.appendChild(document.createElement('input'));
+        widget.type = 'text';
+        widget.setAttribute('aria-required', 'true');
+        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
+        deepEqual(rule.run({ scope: fixture }), expected, 'A text input is a textbox');
+    });
 })();
