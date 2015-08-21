@@ -1,3 +1,5 @@
+## 2.9.0-rc.0 - 2015-08-21
+
 ### New rules
 
 * A label element may not have labelable descendants other than its labeled control (`src/audits/MultipleLabelableElementsPerLabel.js`)
