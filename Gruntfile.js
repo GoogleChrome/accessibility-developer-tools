@@ -275,7 +275,8 @@ module.exports = function(grunt) {
     grunt.task.run('git-describe');
   });
 
-  grunt.registerTask('build', ['clean:local', 'save-revision', 'eslint', 'closurecompiler:minify']);
+  grunt.registerTask('build', ['clean:local', 'save-revision', 'closurecompiler:minify']);
+  grunt.registerTask('lint', ['eslint']);
   grunt.registerTask('test:unit', ['qunit']);
   grunt.registerTask('dist', ['clean:dist', 'build', 'copy:dist']);
   grunt.registerTask('travis', ['closurecompiler:minify', 'test:unit']);
