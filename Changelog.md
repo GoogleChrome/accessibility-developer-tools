@@ -75,6 +75,7 @@
 * Elements with ARIA roles must ensure required owned elements are present (`src/audits/RequiredOwnedAriaRoleMissing.js`)
 * Avoid positive integer values for tabIndex (`src/audits/TabIndexGreaterThanZero.js`)
 * This element has an unsupported ARIA attribute (`src/audits/UnsupportedAriaAttribute.js`)
+* A tabpanel should be related to a tab via aria-controls or aria-labelledby (`src/audits/UncontrolledTabpanel.js)
 
 ### Enhancements:
 * Add configurable blacklist phrases and stop words to LinkWithUnclearPurpose (#99)
