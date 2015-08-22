@@ -29,5 +29,5 @@ var fn = (function() {
 if (typeof define !== 'undefined' && define.amd) {
   define([], fn);
 } else {
-  fn.call(this);
+  var axs = fn.call(this);
 }

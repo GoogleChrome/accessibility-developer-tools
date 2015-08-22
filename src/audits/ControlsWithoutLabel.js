@@ -59,7 +59,10 @@ axs.AuditRules.addRule({
             if (innerText.length)
                 return false;
         }
-        if (!axs.utils.hasLabel(control))
+        if (axs.utils.hasLabel(control))
+            return false;
+        var textAlternatives = axs.properties.findTextAlternatives(control, {});
+        if (textAlternatives === null || textAlternatives.trim() === '')
             return true;
         return false;
     },

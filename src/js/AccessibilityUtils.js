@@ -401,7 +401,7 @@ axs.utils.getParentBgColor = function(element) {
     /** @type {Element} */ var parent = element;
     var bgStack = [];
     var foundSolidColor = null;
-    while (parent = axs.utils.parentElement(parent)) {
+    while ((parent = axs.utils.parentElement(parent))) {
         var computedStyle = window.getComputedStyle(parent, null);
         if (!computedStyle)
             continue;
@@ -577,6 +577,43 @@ axs.utils.hasLabel = function(element) {
 };
 
 /**
+ * Determine if this element natively supports being disabled (i.e. via the `disabled` attribute.
+ * Disabled here means that the element should be considered disabled according to specification.
+ * This element may or may not be effectively disabled in practice as this is dependent on implementation.
+ *
+ * @param {Element} element An element to check.
+ * @return {boolean} true If the element supports being natively disabled.
+ */
+axs.utils.isNativelyDisableable = function(element) {
+    var tagName = element.tagName.toUpperCase();
+    return (tagName in axs.constants.NATIVELY_DISABLEABLE);
+};
+
+/**
+ * Determine if this element is disabled directly or indirectly by a disabled ancestor.
+ * Disabled here means that the element should be considered disabled according to specification.
+ * This element may or may not be effectively disabled in practice as this is dependent on implementation.
+ *
+ * @param {Element} element An element to check.
+ * @return {boolean} true if the element or one of its ancestors is disabled.
+ */
+axs.utils.isElementDisabled = function(element) {
+    if (axs.browserUtils.matchSelector(element, '[aria-disabled=true], [aria-disabled=true] *')) {
+        return true;
+    }
+    if(!axs.utils.isNativelyDisableable(element) ||
+            axs.browserUtils.matchSelector(element, 'fieldset>legend:first-of-type *')) {
+        return false;
+    }
+    for (var next = element; next !== null; next = axs.utils.parentElement(next)) {
+        if(axs.utils.isNativelyDisableable(next) && next.hasAttribute('disabled')) {
+            return true;
+        }
+    }
+    return false;
+};
+
+/**
  * @param {Element} element An element to check.
  * @return {boolean} True if the element is hidden from accessibility.
  */
@@ -690,6 +727,7 @@ axs.utils.getAriaPropertyValue = function(propertyName, value, element) {
         result.valid = isValid.valid;
         result.reason = isValid.reason;
         result.idref = isValid.idref;
+        // falls through
     case "idref_list":
         var idrefValues = value.split(/\s+/);
         result.valid = true;
@@ -744,6 +782,7 @@ axs.utils.getAriaPropertyValue = function(propertyName, value, element) {
             result.reason = validTokenValue.reason;
             return result;
         }
+        // falls through
     case "token_list":
         var tokenValues = value.split(/\s+/);
         result.valid = true;
@@ -854,21 +893,28 @@ axs.utils.isValidIDRefValue = function(value, element) {
 };
 
 /**
+ * Tests if a number is real number for a11y purposes.
+ * Must be a real, numerical, decimal value; heavily inspired by
+ *    http://www.w3.org/TR/wai-aria/states_and_properties#valuetype_number
  * @param {string} value
  * @return {!Object}
  */
 axs.utils.isValidNumber = function(value) {
-    try {
-        var parsedValue = JSON.parse(value);
-    } catch (ex) {
-        return { 'valid': false,
-                 'value': value,
-                 'reason': '"' + value + '" is not a number' };
+    var failResult = {
+        'valid': false,
+        'value': value,
+        'reason': '"' + value + '" is not a number'
+    };
+    if (!value) {
+        return failResult;
     }
-    if (typeof(parsedValue) != 'number') {
-        return { 'valid': false,
-                 'value': value,
-                 'reason': '"' + value + '" is not a number' };
+    if (/^0x/i.test(value)) {
+        failResult.reason = '"' + value + '" is not a decimal number';  // hex is not accepted
+        return failResult;
+    }
+    var parsedValue = value * 1;
+    if (!isFinite(parsedValue)) {
+        return failResult;
     }
     return { 'valid': true, 'value': parsedValue };
 };
@@ -1112,4 +1158,3 @@ axs.utils.findDescendantsWithRole = function(element, role) {
     }
     return result;
 };
-

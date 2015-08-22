@@ -29,7 +29,7 @@ axs.AuditRules.addRule({
      * @return {boolean}
      */
     relevantElementMatcher: function(element) {
-        return axs.browserUtils.matchSelector(element, 'a');
+        return axs.browserUtils.matchSelector(element, 'a') && !axs.utils.isElementOrAncestorHidden(element);
     },
     /**
      * @param {Element} anchor
@@ -39,7 +39,7 @@ axs.AuditRules.addRule({
     test: function(anchor, opt_config) {
         var config = opt_config || {};
         var blacklistPhrases = config['blacklistPhrases'] || [];
-        var whitespaceRE = /\s+/
+        var whitespaceRE = /\s+/;
         for (var i = 0; i < blacklistPhrases.length; i++) {
             // Match the blacklist phrase, case insensitively, as the whole string (allowing for
             // punctuation at the end).
@@ -56,7 +56,9 @@ axs.AuditRules.addRule({
         // all whitespace.
         var stopwords = config['stopwords'] ||
             ['click', 'tap', 'go', 'here', 'learn', 'more', 'this', 'page', 'link', 'about'];
-        var filteredText = anchor.textContent;
+        var filteredText = axs.properties.findTextAlternatives(anchor, {});
+        if (filteredText === null || filteredText.trim() === '')
+            return true;
         filteredText = filteredText.replace(/[^a-zA-Z ]/g, '');
         for (var i = 0; i < stopwords.length; i++) {
             var stopwordRE = new RegExp('\\b' + stopwords[i] + '\\b', 'ig');

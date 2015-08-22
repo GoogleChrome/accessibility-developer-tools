@@ -29,13 +29,13 @@ axs.AuditRules.addRule({
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_image_01',
     test: function(el) {
         if (el.textContent && el.textContent.length > 0) {
-          return false;
+            return false;
         }
         var style = window.getComputedStyle(el, null);
         var bgImage = style.backgroundImage;
         if (!bgImage || bgImage === 'undefined' || bgImage === 'none' ||
-            bgImage.indexOf('url') != 0) {
-          return false;
+                bgImage.indexOf('url') != 0) {
+            return false;
         }
         var width = parseInt(style.width, 10);
         var height = parseInt(style.height, 10);

@@ -407,14 +407,14 @@ axs.constants.ARIA_ROLES = {
     "tab": {
         "namefrom": [ "contents", "author" ],
         "parent": [ "sectionhead", "widget" ],
-        "properties": [ "aria-selected" ]
+        "properties": [ "aria-selected" ],
+        "scope": [ "tablist" ]
     },
     "tablist": {
         "mustcontain": [ "tab" ],
         "namefrom": [ "author" ],
         "parent": [ "composite", "directory" ],
-        "properties": [ "aria-level" ],
-        "scope": [ "tablist" ]
+        "properties": [ "aria-level" ]
     },
     "tabpanel": {
         "namefrom": [ "author" ],
@@ -1049,6 +1049,20 @@ axs.constants.InlineElements = {
     'BUTTON': true
  };
 
+ /** @enum {boolean} */
+axs.constants.NATIVELY_DISABLEABLE = {
+    // W3C and WHATWG https://html.spec.whatwg.org/#enabling-and-disabling-form-controls:-the-disabled-attribute
+    'BUTTON': true,
+    'INPUT': true,
+    'SELECT': true,
+    'TEXTAREA': true,
+    'FIELDSET': true,
+
+    // W3C http://www.w3.org/TR/html5/disabled-elements.html#disabled-elements
+    'OPTGROUP': true,
+    'OPTION': true
+};
+
 /**
  * Maps ARIA attributes to their exactly equivalent HTML attributes.
  * @type {Object.<string, string>}
@@ -1426,8 +1440,11 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         role: 'combobox',  // aria-owns is set to the same value as the list attribute
         selector: 'input[type="text"][list]'
     }, {
-        role: '',
+        role: 'textbox',
         selector: 'input[type="text"]:not([list])'
+    }, {
+        role: 'textbox',
+        selector: 'input:not([type])'
     }, {
         role: '',
         selector: 'input[type="time"]'

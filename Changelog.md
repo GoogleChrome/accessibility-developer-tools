@@ -1,11 +1,13 @@
-### Enhancements
-
-* Implement support for specifying audit configuration options through an object when initializing audits (#165).
-* Implement support for AMD loaders.
+## 2.9.0-rc.0 - 2015-08-21
 
 ### New rules
 
 * A label element may not have labelable descendants other than its labeled control (`src/audits/MultipleLabelableElementsPerLabel.js`)
+
+### Enhancements
+
+* Implement support for specifying audit configuration options through an object when initializing audits (#165).
+* Implement support for AMD loaders.
 
 ### Bug fixes:
 
@@ -14,7 +16,13 @@
 * Add a special case to handle color `"transparent"` to fix (#180).
 * Fix `matchSelector` not working properly in browser environments without vendor prefixes (#189).
 * Fix false positives on elements with no role for Unsupported ARIA Attribute rule (#178 and #199).
-* Fix `findTextAlternatives` not always correctly ignoring hidden elements (#217).
+* Fix ARIA `tablist` and ARIA `tab` scope (#204)
+* Fix link with clear purpose with text alternative (#156);
+* Handle edge cases in number parser, e.g. "+1", ".1", "01"
+* HTML button containing img with alt attribute now passes controlsWithoutLabel (#202)
+* Disabled elements should be ignored by low contrast audit (#205)
+* Fix input of type "text" did not find correct implied role (#225)
+* Hidden links are no longer relevant for meaningful link text rule.
 
 ## 2.8.0 - 2015-07-24
 
