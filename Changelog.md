@@ -1,3 +1,12 @@
+### New rules
+
+### Enhancements
+
+### Bug fixes:
+
+* Fix `findTextAlternatives` not always correctly ignoring hidden elements (#217).
+* `findTextAlternatives` now honors `alt` attribute of input type image
+
 ## 2.9.0-rc.0 - 2015-08-21
 
 ### New rules

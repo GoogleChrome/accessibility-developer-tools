@@ -53,6 +53,19 @@ test('Image with alt text', function() {
     equal('Smile!', textAlternatives.alt.text);
 });
 
+test('Input type image with alt text', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var img = fixture.appendChild(document.createElement('input'));
+    img.type = "image";
+    img.src = 'smile.jpg';
+    img.alt = 'Smile!';
+    var textAlternatives = {};
+    axs.properties.findTextAlternatives(img, textAlternatives);
+    equal(Object.keys(textAlternatives).length, 1, 'exactly one text alternative');
+    equal('alt' in textAlternatives, true, 'alt in textAlternatives');
+    equal('Smile!', textAlternatives.alt.text);
+});
+
 test('Image with aria label', function() {
     var fixture = document.getElementById('qunit-fixture');
     var img = fixture.appendChild(document.createElement('img'));
@@ -121,6 +134,22 @@ test('Link with aria-labelledby aria-hidden text', function() {
     equal(result, 'X');
 });
 
+test('Link with aria-labelledby element with aria-label', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var anchor = fixture.appendChild(document.createElement('a'));
+    anchor.href = '#';
+    anchor.setAttribute('aria-labelledby', 'foobar');
+    var label = fixture.appendChild(document.createElement('span'));
+    label.setAttribute('id', 'foobar');
+    label.setAttribute('aria-label', 'Learn more about trout fishing');
+    var textAlternatives = {};
+    var result = axs.properties.findTextAlternatives(anchor, textAlternatives);
+    equal(Object.keys(textAlternatives).length, 1, 'exactly one text alternative');
+    equal('ariaLabelledby' in textAlternatives, true, 'ariaLabelledby in textAlternatives');
+    equal(textAlternatives.ariaLabelledby.text, 'Learn more about trout fishing');
+    equal(result, 'Learn more about trout fishing');
+});
+
 module('getTextFromHostLanguageAttributes', {
     setup: function () {
         this.fixture_ = document.getElementById('qunit-fixture');
@@ -179,27 +208,27 @@ test('Get focus properties', function() {
 });
 
 module("getTextFromDescendantContent", {
-  setup: function () {
-    this.fixture_ = document.getElementById('qunit-fixture');
-  }
+    setup: function () {
+        this.fixture_ = document.getElementById('qunit-fixture');
+    }
 });
 test("returns text from the descendants of the element", function() {
-  var html = '<label>\n' +
-             '  <input type="radio" id="reason_Screenshot" name="reason" value="screenshot"></input>\n' +
-             '</label>'
-  this.fixture_.innerHTML = html;
-  var targetNode = this.fixture_.querySelector('label');
+    var html = '<label>\n' +
+            '  <input type="radio" id="reason_Screenshot" name="reason" value="screenshot"></input>\n' +
+            '</label>';
+    this.fixture_.innerHTML = html;
+    var targetNode = this.fixture_.querySelector('label');
 
-  try {
-    equal(axs.properties.getTextFromDescendantContent(targetNode), "");
-    return ok(true);
-  } catch( e ) {
-    return ok(false, "Threw exception: " + e);
-  }
+    try {
+        equal(axs.properties.getTextFromDescendantContent(targetNode), '');
+        return ok(true);
+    } catch(e) {
+        return ok(false, 'Threw exception: ' + e);
+    }
 });
 
 module('getImplicitRole', {
-    setup: function () {}
+    setup: function() {}
 });
 
 test('get implicit role for button', function() {

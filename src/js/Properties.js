@@ -386,7 +386,7 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
         if (role && (!role.namefrom || role.namefrom.indexOf('contents') < 0))
             canGetNameFromContents = false;
     }
-    var textFromContent = axs.properties.getTextFromDescendantContent(element);
+    var textFromContent = axs.properties.getTextFromDescendantContent(element, opt_force);
     if (textFromContent && canGetNameFromContents) {
         var textFromContentValue = {};
         textFromContentValue.type = 'text';
@@ -422,13 +422,15 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
 
 /**
  * @param {Element} element
+ * @param {boolean=} opt_force Whether to return text alternatives for this
+ *     element regardless of its hidden state.
  * @return {?string}
  */
-axs.properties.getTextFromDescendantContent = function(element) {
+axs.properties.getTextFromDescendantContent = function(element, opt_force) {
     var children = element.childNodes;
     var childrenTextContent = [];
     for (var i = 0; i < children.length; i++) {
-        var childTextContent = axs.properties.findTextAlternatives(children[i], {}, true);
+        var childTextContent = axs.properties.findTextAlternatives(children[i], {}, true, opt_force);
         if (childTextContent)
             childrenTextContent.push(childTextContent.trim());
     }
@@ -470,9 +472,9 @@ axs.properties.getTextFromAriaLabelledby = function(element, textAlternatives) {
             labelledby.errorMessage = { 'messageKey': 'noElementWithId', 'args': [labelledbyId] };
         } else {
             labelledby.valid = true;
-            labelledby.text = axs.properties.findTextAlternatives(labelledbyElement, {}, true);
+            labelledby.text = axs.properties.findTextAlternatives(labelledbyElement, {}, true, true);
             labelledby.lastWord = axs.properties.getLastWord(labelledby.text);
-            labelledbyText.push(labelledbyElement.textContent.trim());
+            labelledbyText.push(labelledby.text);
             labelledby.element = labelledbyElement;
         }
         labelledbyValues.push(labelledby);
@@ -575,6 +577,18 @@ axs.properties.getTextFromHostLanguageAttributes = function(element,
             else
                 computedName = labelWrappedValue.text;
             textAlternatives['labelWrapped'] = labelWrappedValue;
+        }
+        // If all else fails input of type image can fall back to its alt text
+        if (axs.browserUtils.matchSelector(element, 'input[type="image"]') && element.hasAttribute('alt')) {
+            var altValue = {};
+            altValue.type = 'string';
+            altValue.valid = true;
+            altValue.text = element.getAttribute('alt');
+            if (computedName)
+                altValue.unused = true;
+            else
+                computedName = altValue.text;
+            textAlternatives['alt'] = altValue;
         }
         if (!Object.keys(textAlternatives).length)
             textAlternatives['noLabel'] = true;
