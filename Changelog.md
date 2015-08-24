@@ -17,7 +17,7 @@
 ### New rules
 
 * A label element may not have labelable descendants other than its labeled control (`src/audits/MultipleLabelableElementsPerLabel.js`)
-* A data table must identify row and column headers (`src/audits/DataTableHeadersMissing.js`)
+* A data table must identify row and column headers (`src/audits/TableHasAppropriateHeaders.js`)
 
 ### Enhancements
 

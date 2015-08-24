@@ -1,4 +1,4 @@
-module('DataTableHeadersMissing');
+module('TableHasAppropriateHeaders');
 
 (function() {
     /**
@@ -62,7 +62,7 @@ module('DataTableHeadersMissing');
     }
 
     test('Table with a header row', function () {
-        var rule = axs.AuditRules.getRule('dataTableHeadersMissing');
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
         var fixture = document.getElementById('qunit-fixture');
 
         fixture.appendChild(buildTable(
@@ -79,7 +79,7 @@ module('DataTableHeadersMissing');
     });
 
     test('Table with an incomplete header row', function () {
-        var rule = axs.AuditRules.getRule('dataTableHeadersMissing');
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
         var fixture = document.getElementById('qunit-fixture');
 
         var table = fixture.appendChild(buildTable(
@@ -96,7 +96,7 @@ module('DataTableHeadersMissing');
     });
 
     test('Table with a header column', function () {
-        var rule = axs.AuditRules.getRule('dataTableHeadersMissing');
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
         var fixture = document.getElementById('qunit-fixture');
 
         fixture.appendChild(buildTable(
@@ -113,7 +113,7 @@ module('DataTableHeadersMissing');
     });
 
     test('Table with an incomplete header column', function () {
-        var rule = axs.AuditRules.getRule('dataTableHeadersMissing');
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
         var fixture = document.getElementById('qunit-fixture');
 
         var table = fixture.appendChild(buildTable(
@@ -130,7 +130,7 @@ module('DataTableHeadersMissing');
     });
 
     test('Table uses a grid layout', function () {
-        var rule = axs.AuditRules.getRule('dataTableHeadersMissing');
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
         var fixture = document.getElementById('qunit-fixture');
 
         fixture.appendChild(buildTable(
@@ -147,7 +147,7 @@ module('DataTableHeadersMissing');
     });
 
     test('Table with no headers at all', function () {
-        var rule = axs.AuditRules.getRule('dataTableHeadersMissing');
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
         var fixture = document.getElementById('qunit-fixture');
 
         var table = fixture.appendChild(buildTable(
@@ -164,7 +164,7 @@ module('DataTableHeadersMissing');
     });
 
     test('Table with thead and tbody that has a header row', function () {
-        var rule = axs.AuditRules.getRule('dataTableHeadersMissing');
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
         var fixture = document.getElementById('qunit-fixture');
 
         fixture.appendChild(buildTableWithThead(
@@ -181,7 +181,7 @@ module('DataTableHeadersMissing');
     });
 
     test('Table with thead and tbody with an incomplete header row', function () {
-        var rule = axs.AuditRules.getRule('dataTableHeadersMissing');
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
         var fixture = document.getElementById('qunit-fixture');
 
         var table = fixture.appendChild(buildTableWithThead(
@@ -198,7 +198,7 @@ module('DataTableHeadersMissing');
     });
 
     test('Table with thead and tbody that has a header column', function () {
-        var rule = axs.AuditRules.getRule('dataTableHeadersMissing');
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
         var fixture = document.getElementById('qunit-fixture');
 
         fixture.appendChild(buildTableWithThead(
@@ -215,7 +215,7 @@ module('DataTableHeadersMissing');
     });
 
     test('Table with thead and tbody with an incomplete header column', function () {
-        var rule = axs.AuditRules.getRule('dataTableHeadersMissing');
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
         var fixture = document.getElementById('qunit-fixture');
 
         var table = fixture.appendChild(buildTableWithThead(
@@ -232,7 +232,7 @@ module('DataTableHeadersMissing');
     });
 
     test('Table with thead and tbody using a grid layout', function () {
-        var rule = axs.AuditRules.getRule('dataTableHeadersMissing');
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
         var fixture = document.getElementById('qunit-fixture');
 
         fixture.appendChild(buildTableWithThead(
@@ -249,7 +249,7 @@ module('DataTableHeadersMissing');
     });
 
     test('Table with thead and tbody with no headers at all', function () {
-        var rule = axs.AuditRules.getRule('dataTableHeadersMissing');
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
         var fixture = document.getElementById('qunit-fixture');
 
         var table = fixture.appendChild(buildTableWithThead(
@@ -266,7 +266,7 @@ module('DataTableHeadersMissing');
     });
 
     test('Table used for layout with no headers at all', function () {
-        var rule = axs.AuditRules.getRule('dataTableHeadersMissing');
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
         var fixture = document.getElementById('qunit-fixture');
 
         var table = buildTable([
@@ -286,7 +286,7 @@ module('DataTableHeadersMissing');
     });
 
     test('Table used for layout with headers', function () {
-        var rule = axs.AuditRules.getRule('dataTableHeadersMissing');
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
         var fixture = document.getElementById('qunit-fixture');
 
         var table = buildTable([

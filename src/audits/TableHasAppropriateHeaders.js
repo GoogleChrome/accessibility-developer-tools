@@ -75,8 +75,8 @@ goog.require('axs.constants.Severity');
     }
 
     axs.AuditRules.addRule({
-        name: 'dataTableHeadersMissing',
-        heading: 'Data tables should have appropriate headers',
+        name: 'tableHasAppropriateHeaders',
+        heading: 'Tables should have appropriate headers',
         url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_table_01',
         severity: axs.constants.Severity.SEVERE,
         relevantElementMatcher: function (element) {
