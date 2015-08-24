@@ -25,7 +25,7 @@ function labeledByATab(element) {
 }
 
 function controlledByATab(element) {
-    var controlledBy = document.querySelectorAll('[role="tab"], [controls="' + element.id + '"]')
+    var controlledBy = document.querySelectorAll('[role="tab"][aria-controls="' + element.id + '"]')
     return element.id && (controlledBy.length === 1);
 }
 

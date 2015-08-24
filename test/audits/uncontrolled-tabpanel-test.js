@@ -92,6 +92,36 @@ test('Tabpanel which is controlled via aria-controls on the tab === PASS.', func
   );
 });
 
+// If tabpanels were added dynamically with JS, then a tab might not always have a tab panel. This
+// test ensures that the audit is only checking for a tabpanel without a tab, not a tab without a
+// tabpanel.
+test('Tabpanel which is controlled via aria-controls on its tab when there is more than one tab === PASS.', function() {
+  // Setup fixture
+  var fixture = document.getElementById('qunit-fixture');
+  var tabList = document.createElement('div');
+  tabList.setAttribute('role', 'tablist');
+  fixture.appendChild(tabList);
+
+  var tab1 = document.createElement('div');
+  tab1.setAttribute('role', 'tab');
+  tab1.setAttribute('aria-controls', 'tabpanelId');
+  tabList.appendChild(tab1);
+
+  var tab2 = document.createElement('div');
+  tab2.setAttribute('role', 'tab');
+  tabList.appendChild(tab2);
+
+  var tabPanel = document.createElement('div');
+  tabPanel.setAttribute('role', 'tabpanel');
+  tabPanel.setAttribute('id', 'tabpanelId');
+  fixture.appendChild(tabPanel);
+
+  deepEqual(
+    axs.AuditRules.getRule('uncontrolledTabpanel').run({ scope: fixture }),
+    { elements: [], result: axs.constants.AuditResult.PASS }
+  );
+});
+
 test('Tabpanel which is not controlled or labeled by a tab === FAIL.', function() {
   // Setup fixture
   var fixture = document.getElementById('qunit-fixture');
