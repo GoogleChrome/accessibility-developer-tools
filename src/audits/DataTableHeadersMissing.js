@@ -17,6 +17,12 @@ goog.require('axs.browserUtils');
 goog.require('axs.constants.Severity');
 
 (function () {
+    /**
+     * Checks for a header row in a table.
+     *
+     * @param {NodeList} rows tr elements
+     * @returns {boolean} Table does not have a complete header row
+     */
     function tableDoesNotHaveHeaderRow(rows) {
         var headerRow = rows[0];
 
@@ -30,6 +36,12 @@ goog.require('axs.constants.Severity');
         return false;
     }
 
+    /**
+     * Checks for a header column in a table.
+     *
+     * @param {NodeList} rows tr elements
+     * @returns {boolean} Table does not have a complete header column
+     */
     function tableDoesNotHaveHeaderColumn(rows) {
         for (var i = 0; i < rows.length; i++) {
             if (rows[i].children[0].tagName != 'TH') {
@@ -39,6 +51,12 @@ goog.require('axs.constants.Severity');
         return false;
     }
 
+    /**
+     * Checks whether a table has grid layout with both row and column headers.
+     *
+     * @param {NodeList} rows tr elements
+     * @returns {boolean} Table does not have a complete grid layout
+     */
     function tableDoesNotHaveGridLayout(rows) {
         var headerCells = rows[0].children;
 
