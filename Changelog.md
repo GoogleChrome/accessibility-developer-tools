@@ -1,3 +1,7 @@
+### Bug fixes:
+
+* Revert #150 which was causing the extension not to work.
+
 ## 2.9.0 - 2015-09-04
 
 ## 2.9.0-rc.0 - 2015-08-21
