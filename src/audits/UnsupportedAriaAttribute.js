@@ -45,9 +45,8 @@ goog.require('axs.utils');
             var role = axs.utils.getRoles(element, true);
             var supported;
             if (role && role.applied) {
-                supported = role.applied.details.propertiesSet;
-            }
-            else {
+                supported = /** @type {Object<string, boolean>} */ (role.applied.details.propertiesSet);
+            } else {
                 // This test ignores the fact that some HTML elements should not take even global attributes.
                 supported = axs.constants.GLOBAL_PROPERTIES;
             }

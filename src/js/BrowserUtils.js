@@ -15,6 +15,7 @@
 goog.provide('axs.browserUtils');
 
 /**
+ * Use Webkit matcher when matches() is not supported.
  * Use Firefox matcher when Webkit is not supported.
  * Use IE matcher when neither webkit nor Firefox supported.
  * @param {Element} element
@@ -22,6 +23,8 @@ goog.provide('axs.browserUtils');
  * @return {boolean} true if the element matches the selector
  */
 axs.browserUtils.matchSelector = function(element, selector) {
+    if (element.matches)
+        return element.matches(selector);
     if (element.webkitMatchesSelector)
         return element.webkitMatchesSelector(selector);
     if (element.mozMatchesSelector)

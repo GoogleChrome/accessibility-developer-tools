@@ -1,4 +1,4 @@
-// Copyright 2013 Google Inc.
+// Copyright 2014 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,24 +13,21 @@
 // limitations under the License.
 
 goog.require('axs.AuditRules');
-goog.require('axs.constants.Severity');
+goog.require('axs.browserUtils');
+goog.require('axs.utils');
 
 axs.AuditRules.addRule({
-    name: 'pageWithoutTitle',
-    heading: 'The web page should have a title that describes topic or purpose',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_title_01',
-    severity: axs.constants.Severity.WARNING,
+    name: 'multipleLabelableElementsPerLabel',
+    heading: 'A label element may not have labelable descendants other than its labeled control.',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_03--labels-should-only-contain-one-labelable-element',
+    severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {
-        return element.tagName.toLowerCase() == 'html';
+        return axs.browserUtils.matchSelector(element, 'label');
     },
     test: function(scope) {
-        var head = scope.querySelector('head');
-        if (!head)
-          return true;
-        var title = head.querySelector('title');
-        if (!title)
+        var controls = scope.querySelectorAll(axs.utils.LABELABLE_ELEMENTS_SELECTOR);
+        if (controls.length > 1)
             return true;
-        return !title.textContent;
     },
-    code: 'AX_TITLE_01'
+    code: 'AX_TEXT_03'
 });

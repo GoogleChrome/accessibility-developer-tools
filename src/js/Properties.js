@@ -137,9 +137,7 @@ axs.properties.hasDirectTextDescendant = function(element) {
     if (ownerDocument.evaluate) {
         return hasDirectTextDescendantXpath();
     }
-    else {  // IE
-        return hasDirectTextDescendantTreeWalker();
-    }
+    return hasDirectTextDescendantTreeWalker();
 
     /**
      * Determines whether element has a text node as a direct descendant.
@@ -342,7 +340,7 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
                 textAlternatives['controlValue'] = { 'text': element.getAttribute('aria-valuetext') };
             else if (element.hasAttribute('aria-valuenow'))
                 textAlternatives['controlValue'] = { 'value': element.getAttribute('aria-valuenow'),
-                                                     'text': '' + element.getAttribute('aria-valuenow')};
+                                                     'text': '' + element.getAttribute('aria-valuenow') };
         }
         // If the embedded control is a menu, use the text alternative of the chosen menu item.
         if (role == 'menu') {
@@ -617,7 +615,7 @@ axs.properties.getTextProperties = function(node) {
             textProperties['alt'] = altValue;
 
             var src = element.src;
-            if (typeof(src) == 'string') {
+            if (typeof src == 'string') {
                 var parts = src.split('/');
                 var filename = parts.pop();
                 var filenameValue = { text: filename };
@@ -660,8 +658,7 @@ axs.properties.getAriaProperties = function(element) {
     if (!roles) {
         if (Object.keys(ariaProperties).length)
             return ariaProperties;
-        else
-            return null;
+        return null;
     }
     ariaProperties['roles'] = roles;
     if (!roles.valid || !roles['roles'])
@@ -703,8 +700,7 @@ axs.properties.getAriaProperties = function(element) {
  */
 axs.properties.getGlobalAriaProperties = function(element) {
     var globalProperties = {};
-    for (var i = 0; i < axs.constants.GLOBAL_PROPERTIES.length; i++) {
-        var property = axs.constants.GLOBAL_PROPERTIES[i];
+    for (var property in axs.constants.GLOBAL_PROPERTIES) {
         if (element.hasAttribute(property)) {
             var propertyValue = element.getAttribute(property);
             globalProperties[property] =
@@ -901,8 +897,7 @@ axs.properties.getNativelySupportedAttributes = function(element) {
                     if (htmlInfo.role === role) {
                         if (htmlInfo.selector) {
                             selectors[selectors.length] = htmlInfo.selector;
-                        }
-                        else {
+                        } else {
                             selectors[selectors.length] = tagName;  // Selectors API is not case sensitive.
                             break;  // No need to continue adding selectors since we will match the tag itself.
                         }

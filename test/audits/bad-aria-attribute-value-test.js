@@ -32,3 +32,25 @@ test('Good number value is good', function() {
       { elements: [], result: axs.constants.AuditResult.PASS }
     );
 });
+
+test('Good decimal number value is good', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var div = document.createElement('div');
+    fixture.appendChild(div);
+    div.setAttribute('aria-valuenow', '0.5');
+    deepEqual(
+      axs.AuditRules.getRule('badAriaAttributeValue').run({ scope: fixture }),
+      { elements: [], result: axs.constants.AuditResult.PASS }
+    );
+});
+
+test('Good negative number value is good', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var div = document.createElement('div');
+    fixture.appendChild(div);
+    div.setAttribute('aria-valuenow', '-10');
+    deepEqual(
+      axs.AuditRules.getRule('badAriaAttributeValue').run({ scope: fixture }),
+      { elements: [], result: axs.constants.AuditResult.PASS }
+    );
+});

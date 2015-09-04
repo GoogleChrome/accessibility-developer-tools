@@ -16,7 +16,7 @@ goog.require('axs.AuditRule');
 
 goog.provide('axs.AuditRules');
 
-(function(){
+(function() {
     var auditRulesByName = {};
     var auditRulesByCode = {};
 
@@ -57,7 +57,7 @@ goog.provide('axs.AuditRules');
      */
     axs.AuditRules.getRules = function(opt_namesOnly) {
         var ruleNames = Object.keys(auditRulesByName);
-        if(opt_namesOnly)
+        if (opt_namesOnly)
             return ruleNames;
         return ruleNames.map(function(name) {
             return this.getRule(name);
