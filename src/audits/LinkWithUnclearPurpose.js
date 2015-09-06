@@ -29,7 +29,7 @@ axs.AuditRules.addRule({
      * @return {boolean}
      */
     relevantElementMatcher: function(element) {
-        return axs.browserUtils.matchSelector(element, 'a');
+        return axs.browserUtils.matchSelector(element, 'a') && !axs.utils.isElementOrAncestorHidden(element);
     },
     /**
      * @param {Element} anchor
@@ -39,7 +39,7 @@ axs.AuditRules.addRule({
     test: function(anchor, opt_config) {
         var config = opt_config || {};
         var blacklistPhrases = config['blacklistPhrases'] || [];
-        var whitespaceRE = /\s+/
+        var whitespaceRE = /\s+/;
         for (var i = 0; i < blacklistPhrases.length; i++) {
             // Match the blacklist phrase, case insensitively, as the whole string (allowing for
             // punctuation at the end).

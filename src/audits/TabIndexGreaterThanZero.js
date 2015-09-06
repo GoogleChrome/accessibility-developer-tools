@@ -17,17 +17,17 @@ goog.require('axs.browserUtils');
 goog.require('axs.constants.Severity');
 
 axs.AuditRules.addRule({
-    name: "tabIndexGreaterThanZero",
-    heading: "Avoid positive integer values for tabIndex",
-    url: "https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_03",
+    name: 'tabIndexGreaterThanZero',
+    heading: 'Avoid positive integer values for tabIndex',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_03',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
-      var selector = "[tabindex]";
-      return axs.browserUtils.matchSelector(element, selector);
+        var selector = '[tabindex]';
+        return axs.browserUtils.matchSelector(element, selector);
     },
     test: function(element) {
-      if(element.tabIndex > 0)
-        return true;
+        if (element.tabIndex > 0)
+            return true;
     },
     code: 'AX_FOCUS_03'
 });

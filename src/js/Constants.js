@@ -1440,8 +1440,11 @@ axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {
         role: 'combobox',  // aria-owns is set to the same value as the list attribute
         selector: 'input[type="text"][list]'
     }, {
-        role: '',
+        role: 'textbox',
         selector: 'input[type="text"]:not([list])'
+    }, {
+        role: 'textbox',
+        selector: 'input:not([type])'
     }, {
         role: '',
         selector: 'input[type="time"]'

@@ -183,13 +183,6 @@ axs.AuditRule.collectMatchingElements = function(node, matcher, collection,
         }
     }
 
-    //If it is a iframe, get the contentDocument
-    if (element && element.localName == 'iframe' && element.contentDocument) {
-        axs.AuditRule.collectMatchingElements(element.contentDocument,
-                                              matcher,
-                                              collection,
-                                              opt_shadowRoot);
-    }
     // If it is neither the parent of a ShadowRoot, a <content> element, nor
     // a <shadow> element recurse normally.
     var child = node.firstChild;
@@ -200,7 +193,7 @@ axs.AuditRule.collectMatchingElements = function(node, matcher, collection,
                                               opt_shadowRoot);
         child = child.nextSibling;
     }
-}
+};
 
 /**
  * @param {Object} options
@@ -228,8 +221,8 @@ axs.AuditRule.prototype.run = function(options) {
 
     function ignored(element) {
         for (var i = 0; i < ignoreSelectors.length; i++) {
-          if (axs.browserUtils.matchSelector(element, ignoreSelectors[i]))
-            return true;
+            if (axs.browserUtils.matchSelector(element, ignoreSelectors[i]))
+                return true;
         }
         return false;
     }
@@ -244,7 +237,7 @@ axs.AuditRule.prototype.run = function(options) {
             this.addElement(failingElements, element);
     }
     var result = failingElements.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS;
-    var results = { result: result, elements: failingElements};
+    var results = { result: result, elements: failingElements };
     if (i < relevantElements.length)
         results['resultsTruncated'] = true;
 

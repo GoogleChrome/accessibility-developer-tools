@@ -137,7 +137,7 @@ axs.color.luminanceRatio = function(luminance1, luminance2) {
  * @return {?axs.color.Color}
  */
 axs.color.parseColor = function(colorString) {
-    if(colorString === "transparent") {
+    if (colorString === "transparent") {
         return new axs.color.Color(0, 0, 0, 0);
     }
     var rgbRegex = /^rgb\((\d+), (\d+), (\d+)\)$/;
@@ -504,7 +504,7 @@ axs.color.scalarMultiplyMatrix = function(matrix, scalar) {
  * @return {Array.<number>} vector
  */
 axs.color.scalarMultiplyVector = function(vector, scalar) {
-    var result = []
+    var result = [];
     for (var i = 0; i < vector.length; i++)
         result[i] = vector[i] * scalar;
     return result;

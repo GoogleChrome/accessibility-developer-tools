@@ -137,9 +137,7 @@ axs.properties.hasDirectTextDescendant = function(element) {
     if (ownerDocument.evaluate) {
         return hasDirectTextDescendantXpath();
     }
-    else {  // IE
-        return hasDirectTextDescendantTreeWalker();
-    }
+    return hasDirectTextDescendantTreeWalker();
 
     /**
      * Determines whether element has a text node as a direct descendant.
@@ -243,7 +241,7 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
 
     // 1. Skip hidden elements unless the author specifies to use them via an aria-labelledby or
     // aria-describedby being used in the current computation.
-    if (!recursive && !opt_force && axs.utils.isElementOrAncestorHidden(element))
+    if (!opt_force && axs.utils.isElementOrAncestorHidden(element))
         return null;
 
     // if this is a text node, just return text content.
@@ -342,7 +340,7 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
                 textAlternatives['controlValue'] = { 'text': element.getAttribute('aria-valuetext') };
             else if (element.hasAttribute('aria-valuenow'))
                 textAlternatives['controlValue'] = { 'value': element.getAttribute('aria-valuenow'),
-                                                     'text': '' + element.getAttribute('aria-valuenow')};
+                                                     'text': '' + element.getAttribute('aria-valuenow') };
         }
         // If the embedded control is a menu, use the text alternative of the chosen menu item.
         if (role == 'menu') {
@@ -388,7 +386,7 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
         if (role && (!role.namefrom || role.namefrom.indexOf('contents') < 0))
             canGetNameFromContents = false;
     }
-    var textFromContent = axs.properties.getTextFromDescendantContent(element);
+    var textFromContent = axs.properties.getTextFromDescendantContent(element, opt_force);
     if (textFromContent && canGetNameFromContents) {
         var textFromContentValue = {};
         textFromContentValue.type = 'text';
@@ -424,13 +422,15 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
 
 /**
  * @param {Element} element
+ * @param {boolean=} opt_force Whether to return text alternatives for this
+ *     element regardless of its hidden state.
  * @return {?string}
  */
-axs.properties.getTextFromDescendantContent = function(element) {
+axs.properties.getTextFromDescendantContent = function(element, opt_force) {
     var children = element.childNodes;
     var childrenTextContent = [];
     for (var i = 0; i < children.length; i++) {
-        var childTextContent = axs.properties.findTextAlternatives(children[i], {}, true);
+        var childTextContent = axs.properties.findTextAlternatives(children[i], {}, true, opt_force);
         if (childTextContent)
             childrenTextContent.push(childTextContent.trim());
     }
@@ -472,9 +472,9 @@ axs.properties.getTextFromAriaLabelledby = function(element, textAlternatives) {
             labelledby.errorMessage = { 'messageKey': 'noElementWithId', 'args': [labelledbyId] };
         } else {
             labelledby.valid = true;
-            labelledby.text = axs.properties.findTextAlternatives(labelledbyElement, {}, true);
+            labelledby.text = axs.properties.findTextAlternatives(labelledbyElement, {}, true, true);
             labelledby.lastWord = axs.properties.getLastWord(labelledby.text);
-            labelledbyText.push(labelledbyElement.textContent.trim());
+            labelledbyText.push(labelledby.text);
             labelledby.element = labelledbyElement;
         }
         labelledbyValues.push(labelledby);
@@ -578,6 +578,18 @@ axs.properties.getTextFromHostLanguageAttributes = function(element,
                 computedName = labelWrappedValue.text;
             textAlternatives['labelWrapped'] = labelWrappedValue;
         }
+        // If all else fails input of type image can fall back to its alt text
+        if (axs.browserUtils.matchSelector(element, 'input[type="image"]') && element.hasAttribute('alt')) {
+            var altValue = {};
+            altValue.type = 'string';
+            altValue.valid = true;
+            altValue.text = element.getAttribute('alt');
+            if (computedName)
+                altValue.unused = true;
+            else
+                computedName = altValue.text;
+            textAlternatives['alt'] = altValue;
+        }
         if (!Object.keys(textAlternatives).length)
             textAlternatives['noLabel'] = true;
     }
@@ -617,7 +629,7 @@ axs.properties.getTextProperties = function(node) {
             textProperties['alt'] = altValue;
 
             var src = element.src;
-            if (typeof(src) == 'string') {
+            if (typeof src == 'string') {
                 var parts = src.split('/');
                 var filename = parts.pop();
                 var filenameValue = { text: filename };
@@ -660,8 +672,7 @@ axs.properties.getAriaProperties = function(element) {
     if (!roles) {
         if (Object.keys(ariaProperties).length)
             return ariaProperties;
-        else
-            return null;
+        return null;
     }
     ariaProperties['roles'] = roles;
     if (!roles.valid || !roles['roles'])
@@ -900,8 +911,7 @@ axs.properties.getNativelySupportedAttributes = function(element) {
                     if (htmlInfo.role === role) {
                         if (htmlInfo.selector) {
                             selectors[selectors.length] = htmlInfo.selector;
-                        }
-                        else {
+                        } else {
                             selectors[selectors.length] = tagName;  // Selectors API is not case sensitive.
                             break;  // No need to continue adding selectors since we will match the tag itself.
                         }

@@ -21,7 +21,7 @@ axs.AuditRules.addRule({
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_title_01',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
-        return element.tagName.toLowerCase() == "html";
+        return element.tagName.toLowerCase() == 'html';
     },
     test: function(scope) {
         var head = scope.querySelector('head');

@@ -1,12 +1,26 @@
+### New rules
+
 ### Enhancements
 
-* Implement support for specifying audit configuration options through an object when initializing audits (#165).
-* Implement support for AMD loaders.
+### Bug fixes:
+
+* Fix `findTextAlternatives` not always correctly ignoring hidden elements (#217).
+* `findTextAlternatives` now honors `alt` attribute of input type image
+* Revert #150 which was causing the extension not to work.
 * AX_HTML_02 (duplicate IDs) now only audits elements that are referenced by an IDREF (#141);
+
+## 2.9.0 - 2015-09-04
+
+## 2.9.0-rc.0 - 2015-08-21
 
 ### New rules
 
 * A label element may not have labelable descendants other than its labeled control (`src/audits/MultipleLabelableElementsPerLabel.js`)
+
+### Enhancements
+
+* Implement support for specifying audit configuration options through an object when initializing audits (#165).
+* Implement support for AMD loaders.
 
 ### Bug fixes:
 
@@ -20,6 +34,8 @@
 * Handle edge cases in number parser, e.g. "+1", ".1", "01"
 * HTML button containing img with alt attribute now passes controlsWithoutLabel (#202)
 * Disabled elements should be ignored by low contrast audit (#205)
+* Fix input of type "text" did not find correct implied role (#225)
+* Hidden links are no longer relevant for meaningful link text rule.
 
 ## 2.8.0 - 2015-07-24
 
