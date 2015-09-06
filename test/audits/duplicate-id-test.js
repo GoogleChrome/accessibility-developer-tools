@@ -55,7 +55,7 @@ test('Single duplicate ID, not used', function() {
     equal(actual.result, axs.constants.AuditResult.NA);
 });
 
-test('Single duplicate ID but it\'s in shadow DOM', function() {
+test('Single unused duplicate ID but it\'s in shadow DOM', function() {
     // Perhaps this test is overly paranoid...
     var rule = axs.AuditRules.getRule('duplicateId');
     var fixture = document.getElementById('qunit-fixture');
@@ -73,6 +73,28 @@ test('Single duplicate ID but it\'s in shadow DOM', function() {
 
     var actual = rule.run({ scope: fixture });
     equal(actual.result, axs.constants.AuditResult.NA);
+});
+
+test('Single used duplicate ID but it\'s in shadow DOM', function() {
+    var rule = axs.AuditRules.getRule('duplicateId');
+    var fixture = document.getElementById('qunit-fixture');
+    if (!fixture.createShadowRoot) {
+        expect(0);  // even Chrome (36 on Mac) seems to end up here...
+        return false;
+    }
+
+    var element = fixture.appendChild(document.createElement('div'));
+    element.setAttribute('id', 'kungfu');
+    var referrer = document.createElement('span');
+    referrer.setAttribute('aria-labelledby', element.id);
+    fixture.appendChild(referrer);
+
+    var element2 = fixture.appendChild(document.createElement('div'));
+    var shadowRoot = element2.createShadowRoot();
+    shadowRoot.appendChild(element.cloneNode());
+
+    var actual = rule.run({ scope: fixture });
+    equal(actual.result, axs.constants.AuditResult.PASS);
 });
 
 test('Single duplicate ID, used in html idref', function() {

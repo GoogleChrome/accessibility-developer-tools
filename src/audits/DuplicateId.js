@@ -22,7 +22,7 @@ goog.require('axs.utils');
  */
 axs.AuditRules.addRule({
     name: 'duplicateId',
-    heading: 'An element\'s ID must be unique in the DOM',
+    heading: 'Any ID referred to via an IDREF must be unique in the DOM',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_html_02',
     severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {

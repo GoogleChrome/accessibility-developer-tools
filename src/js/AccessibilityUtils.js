@@ -1131,18 +1131,13 @@ axs.utils.getHtmlIdReferrers = function(element) {
  */
 axs.utils.getIdReferrers = function(element) {
     var result = [];
-    var addReferrers = function() {
-        for (var i = 0; i < referrers.length; i++) {
-            result.push(referrers[i]);
-        }
-    };
     var referrers = axs.utils.getHtmlIdReferrers(element);
     if (referrers) {
-        addReferrers();
+        result = result.concat(Array.prototype.slice.call(referrers));
     }
     referrers = axs.utils.getAriaIdReferrers(element);
     if (referrers) {
-        addReferrers();
+        result = result.concat(Array.prototype.slice.call(referrers));
     }
     return result;
 };
