@@ -1,4 +1,5 @@
 ### New rules
+* A tabpanel should be related to a tab via aria-controls or aria-labelledby (`src/audits/UncontrolledTabpanel.js)
 
 ### Enhancements
 
