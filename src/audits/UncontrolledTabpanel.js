@@ -16,31 +16,44 @@ goog.require('axs.AuditRules');
 goog.require('axs.browserUtils');
 goog.require('axs.constants.Severity');
 
-function labeledByATab(element) {
-    if (element.hasAttribute('aria-labelledby')) {
-        var labelingElements = document.querySelectorAll('#' + element.getAttribute('aria-labelledby'));
-        return labelingElements.length === 1 && labelingElements[0].getAttribute('role') === 'tab';
+(function() {
+    /**
+     * Checks if the tabpanel is labeled by a tab
+     *
+     * @param {Element} element the tabpanel element
+     * @returns {boolean} the tabpanel has an aria-labelledby with the id of a tab
+     */
+    function labeledByATab(element) {
+        if (element.hasAttribute('aria-labelledby')) {
+            var labelingElements = document.querySelectorAll('#' + element.getAttribute('aria-labelledby'));
+            return labelingElements.length === 1 && labelingElements[0].getAttribute('role') === 'tab';
+        }
+        return false;
     }
-    return false;
-}
 
-function controlledByATab(element) {
-    var controlledBy = document.querySelectorAll('[role="tab"][aria-controls="' + element.id + '"]')
-    return element.id && (controlledBy.length === 1);
-}
+    /**
+     * Checks if the tabpanel is controlled by a tab
+     * @param {Element} element the tabpanel element
+     * @returns {*|boolean}
+     */
+    function controlledByATab(element) {
+        var controlledBy = document.querySelectorAll('[role="tab"][aria-controls="' + element.id + '"]')
+        return element.id && (controlledBy.length === 1);
+    }
 
-// This rule addresses the suggested relationship between a tabpanel and a tab here:
-// http://www.w3.org/TR/wai-aria/roles#tabpanel
-axs.AuditRules.addRule({
-    name: "uncontrolledTabpanel",
-    heading: "A tabpanel should be related to a tab via aria-controls or aria-labelledby",
-    url: "https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_13",
-    severity: axs.constants.Severity.WARNING,
-    relevantElementMatcher: function(element) {
-        return axs.browserUtils.matchSelector(element, '[role="tabpanel"]');
-    },
-    test: function(element) {
-        return !(controlledByATab(element) || labeledByATab(element));
-    },
-    code: 'AX_ARIA_13'
-});
+    // This rule addresses the suggested relationship between a tabpanel and a tab here:
+    // http://www.w3.org/TR/wai-aria/roles#tabpanel
+    axs.AuditRules.addRule({
+        name: "uncontrolledTabpanel",
+        heading: "A tabpanel should be related to a tab via aria-controls or aria-labelledby",
+        url: "https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_13",
+        severity: axs.constants.Severity.WARNING,
+        relevantElementMatcher: function(element) {
+            return axs.browserUtils.matchSelector(element, '[role="tabpanel"]');
+        },
+        test: function(element) {
+            return !(controlledByATab(element) || labeledByATab(element));
+        },
+        code: 'AX_ARIA_13'
+    });
+})();

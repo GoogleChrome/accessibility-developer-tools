@@ -14,15 +14,6 @@
 
 module('UncontrolledTabpanel');
 
-test('No elements === no problems.', function() {
-  // Setup fixture
-  var fixture = document.getElementById('qunit-fixture');
-  deepEqual(
-    axs.AuditRules.getRule('uncontrolledTabpanel').run({ scope: fixture }),
-    { result: axs.constants.AuditResult.NA }
-  );
-});
-
 test('No roles === NA.', function() {
   // Setup fixture
   var fixture = document.getElementById('qunit-fixture');
