@@ -1,4 +1,5 @@
 ### New rules
+* A tabpanel should be related to a tab via aria-controls or aria-labelledby (`src/audits/UncontrolledTabpanel.js)
 
 ### Enhancements
 
@@ -15,7 +16,6 @@
 ### New rules
 
 * A label element may not have labelable descendants other than its labeled control (`src/audits/MultipleLabelableElementsPerLabel.js`)
-* A tabpanel should be related to a tab via aria-controls or aria-labelledby (`src/audits/UncontrolledTabpanel.js)
 
 ### Enhancements
 
