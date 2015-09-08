@@ -26,7 +26,8 @@ axs.AuditRules.addRule({
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_02',
     severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {
-        return axs.browserUtils.matchSelector(element, '[role=tooltip]');
+        return axs.browserUtils.matchSelector(element, '[role=tooltip]') &&
+            !axs.utils.isElementOrAncestorHidden(element);
     },
     test: function(element) {
         return axs.utils.getIdReferrers('aria-describedby', element).length === 0;

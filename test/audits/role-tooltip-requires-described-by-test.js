@@ -59,3 +59,19 @@ test('role tooltip without a corresponding aria-describedby should fail', functi
         { elements: [tooltip], result: axs.constants.AuditResult.FAIL }
     );
 });
+
+test('a hidden tooltip without a corresponding aria-describedby should not fail', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var tooltip = document.createElement('div');
+    var trigger = document.createElement('div');
+    fixture.appendChild(tooltip);
+    fixture.appendChild(trigger);
+    tooltip.setAttribute('aria-hidden', true);
+    tooltip.setAttribute('role', 'tooltip');
+    tooltip.setAttribute('id', 'tooltip1');
+    trigger.setAttribute('aria-describedby', 'tooltip2');
+    deepEqual(
+        axs.AuditRules.getRule('roleTooltipRequiresDescribedby').run({ scope: fixture }),
+        { result: axs.constants.AuditResult.NA }
+    );
+});
