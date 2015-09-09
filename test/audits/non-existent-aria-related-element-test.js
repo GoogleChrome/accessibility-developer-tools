@@ -115,6 +115,6 @@ module('NonExistentAriaRelatedElement');
         var rule = axs.AuditRules.getRule('nonExistentAriaRelatedElement');
         var ignoreSelectors = ['#labelledbyElement2'];
         var result = rule.run({ ignoreSelectors: ignoreSelectors, scope: fixture });
-        equal(result.result, axs.constants.AuditResult.PASS);
+        equal(result.result, axs.constants.AuditResult.NA);
     });
 });
