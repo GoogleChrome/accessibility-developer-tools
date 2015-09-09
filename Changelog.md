@@ -1,5 +1,6 @@
 ### New rules
 * A tabpanel should be related to a tab via aria-controls or aria-labelledby (`src/audits/UncontrolledTabpanel.js)
+* A tooltip element should have an aria-describedby referring to it (`src/audits/RoleTooltipRequiresDescribedBy.js`).
 
 ### Enhancements
 
@@ -16,7 +17,6 @@
 ### New rules
 
 * A label element may not have labelable descendants other than its labeled control (`src/audits/MultipleLabelableElementsPerLabel.js`)
-* A tooltip element should have an aria-describedby referring to it (`src/audits/RoleTooltipRequiresDescribedBy.js`).
 
 ### Enhancements
 
