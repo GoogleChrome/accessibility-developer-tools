@@ -104,7 +104,6 @@
         var result = rule.run({
             ignoreSelectors: ignoreSelectors,
             scope: fixture });
-        equal(result.result, axs.constants.AuditResult.PASS);
-        deepEqual(result.elements, []);
+        equal(result.result, axs.constants.AuditResult.NA);
     });
 })();
