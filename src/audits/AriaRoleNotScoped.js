@@ -15,6 +15,7 @@
 goog.require('axs.AuditRules');
 goog.require('axs.browserUtils');
 goog.require('axs.constants');
+goog.require('axs.dom');
 goog.require('axs.utils');
 
 /**
@@ -44,7 +45,7 @@ axs.AuditRules.addRule({
             return false;
         }
         var parent = element;
-        while ((parent = parent.parentNode)) {
+        while (parent = axs.dom.parentElement(parent)) {
             var parentRole = axs.utils.getRoles(parent, true);
             if (parentRole && parentRole.applied) {
                 var appliedParentRole = parentRole.applied;

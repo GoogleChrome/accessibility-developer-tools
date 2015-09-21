@@ -15,6 +15,7 @@
 goog.require('axs.AuditRules');
 goog.require('axs.browserUtils');
 goog.require('axs.constants.Severity');
+goog.require('axs.dom');
 goog.require('axs.utils');
 
 /**
@@ -39,8 +40,8 @@ axs.AuditRules.addRule({
         // Ignore elements which have negative tabindex and an ancestor with a
         // widget role, since they can be accessed neither with tab nor with
         // a screen reader
-        for (var parent = axs.utils.parentElement(element); parent != null;
-             parent = axs.utils.parentElement(parent)) {
+        for (var parent = axs.dom.parentElement(element); parent != null;
+             parent = axs.dom.parentElement(parent)) {
             if (axs.utils.elementIsAriaWidget(parent))
                 return false;
         }

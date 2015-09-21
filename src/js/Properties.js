@@ -14,6 +14,7 @@
 
 goog.require('axs.browserUtils');
 goog.require('axs.color');
+goog.require('axs.dom');
 goog.require('axs.utils');
 
 goog.provide('axs.properties');
@@ -104,7 +105,7 @@ axs.properties.getHiddenReason = function(element) {
                      'on': element };
     }
 
-    return axs.properties.getHiddenReason(axs.utils.parentElement(element));
+    return axs.properties.getHiddenReason(axs.dom.parentElement(element));
 };
 
 
@@ -235,7 +236,7 @@ axs.properties.getContrastRatioProperties = function(element) {
 axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recursive, opt_force) {
     var recursive = opt_recursive || false;
 
-    /** @type {Element} */ var element = axs.utils.asElement(node);
+    /** @type {Element} */ var element = axs.dom.asElement(node);
     if (!element)
         return null;
 
@@ -556,7 +557,7 @@ axs.properties.getTextFromHostLanguageAttributes = function(element,
             }
         }
 
-        var parent = axs.utils.parentElement(element);
+        var parent = axs.dom.parentElement(element);
         var labelWrappedValue = {};
         while (parent) {
             if (parent.tagName.toLowerCase() == 'label') {
@@ -569,7 +570,7 @@ axs.properties.getTextFromHostLanguageAttributes = function(element,
                     break;
                 }
             }
-            parent = axs.utils.parentElement(parent);
+            parent = axs.dom.parentElement(parent);
         }
         if (labelWrappedValue.text) {
             if (computedName)
@@ -621,7 +622,7 @@ axs.properties.getTextProperties = function(node) {
     var computedName = axs.properties.findTextAlternatives(node, textProperties, false, true);
 
     if (Object.keys(textProperties).length == 0) {
-        /** @type {Element} */ var element = axs.utils.asElement(node);
+        /** @type {Element} */ var element = axs.dom.asElement(node);
         if (element && axs.browserUtils.matchSelector(element, 'img')) {
             var altValue = {};
             altValue.valid = false;
@@ -790,7 +791,7 @@ axs.properties.getTrackElements = function(element, kind) {
  * @return {Object.<string, Object>}
  */
 axs.properties.getAllProperties = function(node) {
-    /** @type {Element} */ var element = axs.utils.asElement(node);
+    /** @type {Element} */ var element = axs.dom.asElement(node);
     if (!element)
         return {};
 

@@ -4,11 +4,14 @@
 
 ### Enhancements
 
+* Pull DOM-related functionality out into `DOMUtils.js`
+
 ### Bug fixes:
 
 * Fix `findTextAlternatives` not always correctly ignoring hidden elements (#217).
 * `findTextAlternatives` now honors `alt` attribute of input type image
 * Revert #150 which was causing the extension not to work.
+* Fix #171 by being smarter about finding the composed parent node.
 
 ## 2.9.0 - 2015-09-04
 
