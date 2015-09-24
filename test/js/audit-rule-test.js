@@ -41,6 +41,31 @@
         equal(matched.length, DIV_COUNT);
     });
 
+    test("Simple DOM with an ignored selector", function () {
+        var container = document.getElementById('qunit-fixture');
+        container.appendChild(buildTestDom());
+        var fooElement = document.createElement('div');
+        fooElement.className = 'foo';
+        container.appendChild(fooElement);
+        var fooTest = document.createElement('div');
+        fooTest.className = 'test';
+        fooElement.appendChild(fooTest);
+        var matched = [];
+        var ignoredSelectors = ['.foo'];
+        axs.AuditRule.collectMatchingElements(container, matcher, matched, ignoredSelectors);
+        equal(matched.length, DIV_COUNT);
+    });
+
+    test("Iframe with simple DOM", function () {
+        var ifrm = document.createElement("IFRAME");
+        var container = document.getElementById('qunit-fixture');
+        container.appendChild(ifrm);
+        ifrm.contentDocument.body.appendChild(buildTestDom());
+        var matched = [];
+        axs.AuditRule.collectMatchingElements(container, matcher, matched);
+        equal(matched.length, DIV_COUNT);
+    });
+
     test("With shadow DOM with no content insertion point", function () {
         var container = document.getElementById('qunit-fixture');
         container.appendChild(buildTestDom());

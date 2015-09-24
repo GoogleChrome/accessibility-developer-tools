@@ -78,7 +78,7 @@
         var widget = fixture.appendChild(document.createElement('meta'));
         var ignoreSelectors = ['#' + (widget.id = 'ignoreMe')];
         widget.setAttribute('aria-hidden', 'false');  // global
-        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
+        var expected = { result: axs.constants.AuditResult.NA };
         deepEqual(rule.run({ scope: fixture, ignoreSelectors: ignoreSelectors }), expected, 'ignoreSelectors should skip this failing element');
     });
 
