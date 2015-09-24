@@ -30,7 +30,7 @@ axs.AuditRules.addRule({
             !axs.utils.isElementOrAncestorHidden(element);
     },
     test: function(element) {
-        return axs.utils.getIdReferrers('aria-describedby', element).length === 0;
+        return axs.utils.getAriaIdReferrers(element, 'aria-describedby').length === 0;
     },
     code: 'AX_TOOLTIP_01'
 });
