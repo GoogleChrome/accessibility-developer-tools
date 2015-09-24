@@ -1,4 +1,7 @@
 ### New rules
+* A tabpanel should be related to a tab via aria-controls or aria-labelledby (`src/audits/UncontrolledTabpanel.js`)
+* A data table must identify row and column headers (`src/audits/TableHasAppropriateHeaders.js`)
+* A tooltip element should have an aria-describedby referring to it (`src/audits/RoleTooltipRequiresDescribedBy.js`).
 
 ### Enhancements
 
