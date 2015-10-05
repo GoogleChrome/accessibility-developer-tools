@@ -550,12 +550,12 @@ axs.utils.isElementDisabled = function(element) {
     if (axs.browserUtils.matchSelector(element, '[aria-disabled=true], [aria-disabled=true] *')) {
         return true;
     }
-    if(!axs.utils.isNativelyDisableable(element) ||
+    if (!axs.utils.isNativelyDisableable(element) ||
             axs.browserUtils.matchSelector(element, 'fieldset>legend:first-of-type *')) {
         return false;
     }
     for (var next = element; next !== null; next = axs.dom.parentElement(next)) {
-        if(axs.utils.isNativelyDisableable(next) && next.hasAttribute('disabled')) {
+        if (axs.utils.isNativelyDisableable(next) && next.hasAttribute('disabled')) {
             return true;
         }
     }
@@ -992,27 +992,105 @@ axs.utils.getQuerySelectorText = function(obj) {
 };
 
 /**
- * Gets elements that refer to this element in an ARIA attribute that takes an
- * ID reference list or single ID reference.
- * @param {!string} attributeName Name of an ARIA attribute, e.g. 'aria-owns'.
+ * Gets elements that refer to this element in an ARIA attribute that takes an ID reference list or
+ * single ID reference.
  * @param {Element} element a potential referent.
+ * @param {string=} opt_attributeName Name of an ARIA attribute to limit the results to, e.g. 'aria-owns'.
  * @return {NodeList} The elements that refer to this element.
  */
-axs.utils.getIdReferrers = function(attributeName, element) {
+axs.utils.getAriaIdReferrers = function(element, opt_attributeName) {
+    var propertyToSelector = function(propertyKey) {
+        var propertyDetails = axs.constants.ARIA_PROPERTIES[propertyKey];
+        if (propertyDetails) {
+            if (propertyDetails.valueType === ('idref')) {
+                return '[aria-' + propertyKey + '=\'' + id + '\']';
+            } else if (propertyDetails.valueType === ('idref_list')) {
+                return '[aria-' + propertyKey + '~=\'' + id + '\']';
+            }
+        }
+        return '';
+    };
     if (!element)
         return null;
     var id = element.id;
-    var propertyKey = attributeName.replace(/^aria-/, '');
-    var property = axs.constants.ARIA_PROPERTIES[propertyKey];
-    if (!id || !property)
+    if (!id)
         return null;
-    var propertyType = property.valueType;
-    if (propertyType === 'idref_list' || propertyType === 'idref') {
-        id = id.replace(/'/g, "\\'");
-        var referrerQuery = "[" + attributeName + "~='" + id + "']";
-        return element.ownerDocument.querySelectorAll(referrerQuery);
+    id = id.replace(/'/g, "\\'");  // make it safe to use in a selector
+
+    if (opt_attributeName) {
+        var propertyKey = opt_attributeName.replace(/^aria-/, '');
+        var referrerQuery = propertyToSelector(propertyKey);
+        if (referrerQuery) {
+            return element.ownerDocument.querySelectorAll(referrerQuery);
+        }
+    } else {
+        var selectors = [];
+        for (var propertyKey in axs.constants.ARIA_PROPERTIES) {
+            var referrerQuery = propertyToSelector(propertyKey);
+            if (referrerQuery) {
+                selectors.push(referrerQuery);
+            }
+        }
+        return element.ownerDocument.querySelectorAll(selectors.join(','));
     }
     return null;
+};
+
+/**
+ * Gets elements that refer to this element in an HTML attribute that takes an ID reference list or
+ * single ID reference.
+ * @param {Element} element a potential referent.
+ * @return {NodeList} The elements that refer to this element.
+ */
+axs.utils.getHtmlIdReferrers = function(element) {
+    if (!element)
+        return null;
+    var id = element.id;
+    if (!id)
+        return null;
+    id = id.replace(/'/g, "\\'");  // make it safe to use in a selector
+    var selectorTemplates = [
+        '[contextmenu=\'{id}\']',
+        '[itemref~=\'{id}\']',
+        'button[form=\'{id}\']',
+        'button[menu=\'{id}\']',
+        'fieldset[form=\'{id}\']',
+        'input[form=\'{id}\']',
+        'input[list=\'{id}\']',
+        'keygen[form=\'{id}\']',
+        'label[for=\'{id}\']',
+        'label[form=\'{id}\']',
+        'menuitem[command=\'{id}\']',
+        'object[form=\'{id}\']',
+        'output[for~=\'{id}\']',
+        'output[form=\'{id}\']',
+        'select[form=\'{id}\']',
+        'td[headers~=\'{id}\']',
+        'textarea[form=\'{id}\']',
+        'tr[headers~=\'{id}\']'];
+    var selectors = selectorTemplates.map(function(selector) {
+        return selector.replace('\{id\}', id);
+    });
+    return element.ownerDocument.querySelectorAll(selectors.join(','));
+};
+
+/**
+ * Gets elements that refer to this element in an attribute that takes an ID reference list or
+ * single ID reference.
+ * @param {Element} element a potential referent.
+ * @return {Array<Element>} The elements that refer to this element.
+ */
+axs.utils.getIdReferrers = function(element) {
+    var result = [];
+    var referrers = axs.utils.getHtmlIdReferrers(element);
+    if (referrers) {
+        result = result.concat(Array.prototype.slice.call(referrers));
+    }
+    referrers = axs.utils.getAriaIdReferrers(element);
+    if (referrers) {
+        result = result.concat(Array.prototype.slice.call(referrers));
+    }
+    return result;
 };
 
 /**

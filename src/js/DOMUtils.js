@@ -47,7 +47,7 @@ function generateId() {
     var len = 40;
     var arr = new Uint8Array(len / 2);
     window.crypto.getRandomValues(arr);
-    return [].map.call(arr, function(n) { return n.toString(16); }).join("");
+    return [].map.call(arr, function(n) { return n.toString(16); }).join('');
 }
 
 /**
@@ -65,10 +65,14 @@ axs.dom.composedParentNode = function(node) {
     if (!parentNode)
         return null;
 
-    if (parentNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE)
-        return parentNode.host;
+    if (parentNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+        // If host exists, this is a Shadow DOM fragment.
+        if ('host' in parentNode)
+            return parentNode.host;
+        else
+            return null;
+    }
 
-    var shadowRoot = parentNode.shadowRoot;
     if (!parentNode.shadowRoot)
         return parentNode;
 
@@ -79,7 +83,7 @@ axs.dom.composedParentNode = function(node) {
        path = event.path;
        parentNode.removeEventListener(eventName, listener);
        return false;
-    })
+    });
     var event = new CustomEvent(eventName, { bubbles: true });
     node.dispatchEvent(event);
     for (var i = 1; i < path.length; i++) {
@@ -110,7 +114,7 @@ axs.dom.asElement = function(node) {
         if (element.localName == 'script' ||
             element.localName == 'template')
             return null;  // Skip script-supporting elements
-        return element;;
+        return element;
     case Node.DOCUMENT_FRAGMENT_NODE:
         return node.host;
     case Node.TEXT_NODE:
@@ -142,7 +146,7 @@ axs.dom.composedTreeSearch = function(node, end, callbacks, opt_shadowRoot) {
         var element = /** @type {Element} */ (node);
 
     if (element && callbacks.preorder)
-        callbacks.preorder.call(null, element);
+        callbacks.preorder(element);
 
     var found = false;
 
@@ -160,7 +164,7 @@ axs.dom.composedTreeSearch = function(node, end, callbacks, opt_shadowRoot) {
                                                callbacks,
                                                shadowRoot);
             if (element && callbacks.postorder && !found)
-                callbacks.postorder.call(null, element);
+                callbacks.postorder(element);
             return found;
         }
     }

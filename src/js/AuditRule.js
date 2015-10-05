@@ -128,7 +128,7 @@ axs.AuditRule.prototype.addElement = function(elements, element) {
   */
 axs.AuditRule.collectMatchingElements = function(scope, matcher, collection) {
     function relevantElementCollector(element) {
-        if (matcher.call(null, element))
+        if (matcher(element))
             collection.push(element);
     }
     axs.dom.composedTreeSearch(scope, null, { preorder: relevantElementCollector });

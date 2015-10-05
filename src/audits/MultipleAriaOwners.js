@@ -38,7 +38,7 @@ axs.AuditRules.addRule({
         var attr = 'aria-owns';
         var ownedElements = axs.utils.getIdReferents(attr, element);
         return ownedElements.some(function(ownedElement) {
-            var owners = axs.utils.getIdReferrers(attr, ownedElement);
+            var owners = axs.utils.getAriaIdReferrers(ownedElement, attr);
             return (owners.length > 1);
         });
     },

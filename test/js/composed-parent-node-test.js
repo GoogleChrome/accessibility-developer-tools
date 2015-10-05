@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-(function(){
-    module("composedParentNode");
+(function() {
+    module('composedParentNode');
 
-    test("No Shadow DOM", function() {
+    test('No Shadow DOM', function() {
         var fixture = document.getElementById('qunit-fixture');
         var parent = fixture.appendChild(document.createElement('div'));
         parent.id = 'parent';
@@ -26,7 +26,7 @@
         equal(axs.dom.composedParentNode(textNode), child);
     });
 
-    test("Shadow root parent", function () {
+    test('Shadow root parent', function() {
         var fixture = document.getElementById('qunit-fixture');
         var host = fixture.appendChild(document.createElement('div'));
         host.id = 'host';
@@ -34,73 +34,69 @@
             var root = host.createShadowRoot();
             equal(axs.dom.composedParentNode(root), host);
         } else {
-            console.warn("Test platform does not support shadow DOM");
+            console.warn('Test platform does not support shadow DOM');
             ok(true);
         }
     });
 
-    test("Distributed content parent", function () {
+    test('Distributed content parent', function() {
         var fixture = document.getElementById('qunit-fixture');
         var host = fixture.appendChild(document.createElement('div'));
         host.id = 'host';
         var testElement = host.appendChild(document.createElement('span'));
         if (host.createShadowRoot) {
-            var matched = [];
             var root = host.createShadowRoot();
             var content = document.createElement('content');
             root.appendChild(content);
             equal(axs.dom.composedParentNode(testElement), host);
         } else {
-            console.warn("Test platform does not support shadow DOM");
+            console.warn('Test platform does not support shadow DOM');
             ok(true);
         }
     });
 
-    test("Content not direct child of Shadow root", function() {
+    test('Content not direct child of Shadow root', function() {
         var fixture = document.getElementById('qunit-fixture');
         var host = fixture.appendChild(document.createElement('div'));
         host.id = 'host';
         var testElement = host.appendChild(document.createElement('span'));
         if (host.createShadowRoot) {
-            var matched = [];
             var root = host.createShadowRoot();
             var shadowParent = root.appendChild(document.createElement('div'));
             shadowParent.id = 'shadowParent';
             var content = shadowParent.appendChild(document.createElement('content'));
             equal(axs.dom.composedParentNode(testElement), shadowParent);
         } else {
-            console.warn("Test platform does not support shadow DOM");
+            console.warn('Test platform does not support shadow DOM');
             ok(true);
         }
     });
 
-    test("Content not selected", function() {
+    test('Content not selected', function() {
         var fixture = document.getElementById('qunit-fixture');
         var host = fixture.appendChild(document.createElement('div'));
         host.id = 'host';
         var testElement = host.appendChild(document.createElement('span'));
         testElement.id = 'test';
         if (host.createShadowRoot) {
-            var matched = [];
             var root = host.createShadowRoot();
             var content = root.appendChild(document.createElement('content'));
             content.select = 'div';
             // If something isn't projected, that's your problem.
             equal(axs.dom.composedParentNode(testElement), host);
         } else {
-            console.warn("Test platform does not support shadow DOM");
+            console.warn('Test platform does not support shadow DOM');
             ok(true);
         }
     });
 
-    test("Content selected", function() {
+    test('Content selected', function() {
         var fixture = document.getElementById('qunit-fixture');
         var host = fixture.appendChild(document.createElement('div'));
         host.id = 'host';
         var testElement = host.appendChild(document.createElement('span'));
         testElement.id = 'test';
         if (host.createShadowRoot) {
-            var matched = [];
             var root = host.createShadowRoot();
             var content1 = root.appendChild(document.createElement('content'));
             content1.select = 'div';
@@ -109,19 +105,18 @@
 
             equal(axs.dom.composedParentNode(testElement), host);
         } else {
-            console.warn("Test platform does not support shadow DOM");
+            console.warn('Test platform does not support shadow DOM');
             ok(true);
         }
     });
 
-    test("Content selected, content not direct child of shadow host", function() {
+    test('Content selected, content not direct child of shadow host', function() {
         var fixture = document.getElementById('qunit-fixture');
         var host = fixture.appendChild(document.createElement('div'));
         host.id = 'host';
         var testElement = host.appendChild(document.createElement('span'));
         testElement.id = 'test';
         if (host.createShadowRoot) {
-            var matched = [];
             var root = host.createShadowRoot();
             var shadowParent = root.appendChild(document.createElement('div'));
             shadowParent.id = 'shadowParent';
@@ -132,28 +127,28 @@
 
             equal(axs.dom.composedParentNode(testElement), shadowParent);
         } else {
-            console.warn("Test platform does not support shadow DOM");
+            console.warn('Test platform does not support shadow DOM');
             ok(true);
         }
     });
 
-    test("Nodes within shadow DOM parent", function () {
+    test('Nodes within shadow DOM parent', function() {
         var fixture = document.getElementById('qunit-fixture');
-        var host = fixture.appendChild(document.createElement("div"));
+        var host = fixture.appendChild(document.createElement('div'));
         host.id = 'host';
         if (host.createShadowRoot) {
             var root = host.createShadowRoot();
             var shadowChild = root.appendChild(document.createElement('div'));
             equal(axs.dom.composedParentNode(shadowChild), host);
         } else {
-            console.warn("Test platform does not support shadow DOM");
+            console.warn('Test platform does not support shadow DOM');
             ok(true);
         }
     });
 
-    test("Nodes within DOM and shadow DOM - no content distribution point", function () {
+    test('Nodes within DOM and shadow DOM - no content distribution point', function() {
         var fixture = document.getElementById('qunit-fixture');
-        var host = fixture.appendChild(document.createElement("div"));
+        var host = fixture.appendChild(document.createElement('div'));
         host.id = 'host';
         var lightChild = host.appendChild(document.createElement('span'));
         if (host.createShadowRoot) {
@@ -163,14 +158,14 @@
             // If something isn't projected, that's your problem.
             equal(axs.dom.composedParentNode(lightChild), host);
         } else {
-            console.warn("Test platform does not support shadow DOM");
+            console.warn('Test platform does not support shadow DOM');
             ok(true);
         }
     });
 
-    test("Nodes within DOM and shadow DOM with content element", function () {
+    test('Nodes within DOM and shadow DOM with content element', function() {
         var fixture = document.getElementById('qunit-fixture');
-        var host = fixture.appendChild(document.createElement("div"));
+        var host = fixture.appendChild(document.createElement('div'));
         host.id = 'host';
         var lightChild = host.appendChild(document.createElement('div'));
         if (host.createShadowRoot) {
@@ -182,7 +177,7 @@
             root.appendChild(content);
             equal(axs.dom.composedParentNode(lightChild), host);
         } else {
-            console.warn("Test platform does not support shadow DOM");
+            console.warn('Test platform does not support shadow DOM');
             ok(true);
         }
     });
