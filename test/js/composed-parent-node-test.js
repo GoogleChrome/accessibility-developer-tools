@@ -82,8 +82,7 @@
             var root = host.createShadowRoot();
             var content = root.appendChild(document.createElement('content'));
             content.select = 'div';
-            // If something isn't projected, that's your problem.
-            equal(axs.dom.composedParentNode(testElement), host);
+            equal(axs.dom.composedParentNode(testElement), null);
         } else {
             console.warn('Test platform does not support shadow DOM');
             ok(true);
@@ -155,8 +154,7 @@
             var root = host.createShadowRoot();
             var shadowChild = root.appendChild(document.createElement('div'));
             shadowChild.id = 'shadowChild';
-            // If something isn't projected, that's your problem.
-            equal(axs.dom.composedParentNode(lightChild), host);
+            equal(axs.dom.composedParentNode(lightChild), null);
         } else {
             console.warn('Test platform does not support shadow DOM');
             ok(true);

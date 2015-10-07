@@ -35,20 +35,19 @@ axs.dom.parentElement = function(node) {
     }
 };
 
-
-(function() {
-
 /**
- * Generate a random ID using crypto.getRandomValues().
- * Taken from http://stackoverflow.com/a/27747377
- * @return {string}
+ * Returns the shadow host of a document fragment if it is a Shadow DOM fragment
+ * otherwise returns `null`.
+ * @param {DocumentFragment} fragment
+ * @return {?Element}
  */
-function generateId() {
-    var len = 40;
-    var arr = new Uint8Array(len / 2);
-    window.crypto.getRandomValues(arr);
-    return [].map.call(arr, function(n) { return n.toString(16); }).join('');
-}
+axs.dom.shadowHost = function(fragment) {
+    // If host exists, this is a Shadow DOM fragment.
+    if ('host' in fragment)
+        return fragment.host;
+    else
+        return null;
+};
 
 /**
  * Returns the given Node's parent in the composed tree.
@@ -59,44 +58,24 @@ axs.dom.composedParentNode = function(node) {
     if (!node)
         return null;
     if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE)
-        return node.host;
+        return axs.dom.shadowHost(/** @type {DocumentFragment} */ (node));
 
     var parentNode = node.parentNode;
     if (!parentNode)
         return null;
 
-    if (parentNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-        // If host exists, this is a Shadow DOM fragment.
-        if ('host' in parentNode)
-            return parentNode.host;
-        else
-            return null;
-    }
+    if (parentNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE)
+        return axs.dom.shadowHost(/** @type {DocumentFragment} */ (parentNode));
 
     if (!parentNode.shadowRoot)
         return parentNode;
 
-    var eventName = generateId();
-    var path;
-    parentNode.addEventListener(eventName, function listener(event) {
-       event.stopPropagation();
-       path = event.path;
-       parentNode.removeEventListener(eventName, listener);
-       return false;
-    });
-    var event = new CustomEvent(eventName, { bubbles: true });
-    node.dispatchEvent(event);
-    for (var i = 1; i < path.length; i++) {
-        var pathNode = path[i];
-        if (pathNode.localName == 'content')
-            continue;
-        if (pathNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE)
-            continue;
-        return pathNode;
-    }
+    var insertionPoints = node.getDestinationInsertionPoints();
+    if (insertionPoints.length > 0)
+        return axs.dom.composedParentNode(insertionPoints[insertionPoints.length - 1]);
+
     return null;
 };
-})();
 
 /**
  * Return the corresponding element for the given node.
