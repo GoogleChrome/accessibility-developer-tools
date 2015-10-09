@@ -1,3 +1,5 @@
+## 2.10.0-rc.0 - 2015-10-09
+
 ### New rules
 * A tabpanel should be related to a tab via aria-controls or aria-labelledby (`src/audits/UncontrolledTabpanel.js`)
 * A data table must identify row and column headers (`src/audits/TableHasAppropriateHeaders.js`)
