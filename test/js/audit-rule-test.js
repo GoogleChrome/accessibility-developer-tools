@@ -28,6 +28,7 @@
         for (var i = 0; i < DIV_COUNT; i++) {
             var element = document.createElement("div");
             element.className = "test";
+            element.id = "test-" + i;
             result.appendChild(element);
         }
         return result;
