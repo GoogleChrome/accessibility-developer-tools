@@ -72,6 +72,27 @@
         }
     });
 
+    test('Content reprojected', function() {
+        var fixture = document.getElementById('qunit-fixture');
+        var host = fixture.appendChild(document.createElement('div'));
+        host.id = 'host';
+        var testElement = host.appendChild(document.createElement('span'));
+        if (host.createShadowRoot) {
+            var outerRoot = host.createShadowRoot();
+            var shadowGrandparent = outerRoot.appendChild(document.createElement('div'));
+            shadowGrandparent.id = 'shadowGrandparent';
+            var outerContent = shadowGrandparent.appendChild(document.createElement('content'));
+            var innerRoot = shadowGrandparent.createShadowRoot();
+            var shadowParent = innerRoot.appendChild(document.createElement('div'));
+            shadowParent.id = 'shadowParent';
+            var innerContent = shadowParent.appendChild(document.createElement('content'));
+            equal(axs.dom.composedParentNode(testElement), shadowParent);
+        } else {
+            console.warn('Test platform does not support shadow DOM');
+            ok(true);
+        }
+    });
+
     test('Content not selected', function() {
         var fixture = document.getElementById('qunit-fixture');
         var host = fixture.appendChild(document.createElement('div'));
