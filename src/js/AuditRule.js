@@ -125,11 +125,23 @@ axs.AuditRule.prototype.addElement = function(elements, element) {
   * @param {Node} scope
   * @param {function(Element): boolean} matcher
   * @param {Array.<Element>} collection
+  * @param {Array.<string>=} opt_ignoreSelectors
   */
-axs.AuditRule.collectMatchingElements = function(scope, matcher, collection) {
+axs.AuditRule.collectMatchingElements = function(scope, matcher, collection, opt_ignoreSelectors) {
+    /**
+     * @param {!Element} element
+     * @return boolean
+     */
     function relevantElementCollector(element) {
+        if (opt_ignoreSelectors) {
+            for (var i = 0; i < opt_ignoreSelectors.length; i++) {
+                if (axs.browserUtils.matchSelector(element, opt_ignoreSelectors[i]))
+                    return false;
+            }
+        }
         if (matcher(element))
             collection.push(element);
+        return true;
     }
     axs.dom.composedTreeSearch(scope, null, { preorder: relevantElementCollector });
 };
@@ -149,22 +161,13 @@ axs.AuditRule.collectMatchingElements = function(scope, matcher, collection) {
  */
 axs.AuditRule.prototype.run = function(options) {
     options = options || {};
-    var ignoreSelectors = 'ignoreSelectors' in options ? options['ignoreSelectors'] : [];
     var scope = 'scope' in options ? options['scope'] : document;
     var maxResults = 'maxResults' in options ? options['maxResults'] : null;
 
     var relevantElements = [];
-    axs.AuditRule.collectMatchingElements(scope, this.relevantElementMatcher_, relevantElements);
+    axs.AuditRule.collectMatchingElements(scope, this.relevantElementMatcher_, relevantElements, options['ignoreSelectors']);
 
     var failingElements = [];
-
-    function ignored(element) {
-        for (var i = 0; i < ignoreSelectors.length; i++) {
-            if (axs.browserUtils.matchSelector(element, ignoreSelectors[i]))
-                return true;
-        }
-        return false;
-    }
 
     if (!relevantElements.length)
         return { result: axs.constants.AuditResult.NA };
@@ -172,7 +175,7 @@ axs.AuditRule.prototype.run = function(options) {
         if (maxResults != null && failingElements.length >= maxResults)
             break;
         var element = relevantElements[i];
-        if (!ignored(element) && this.test_(element, options.config))
+        if (this.test_(element, options.config))
             this.addElement(failingElements, element);
     }
     var result = failingElements.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS;

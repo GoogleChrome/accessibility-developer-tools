@@ -108,11 +108,12 @@ axs.dom.asElement = function(node) {
  * Recursively walk the composed tree from |node|, aborting if |end| is encountered.
  * @param {Node} node
  * @param {?Node} end
- * @param {{preorder: (function (Node)|undefined),
+ * @param {{preorder: (function (Node):boolean|undefined),
  *          postorder: (function (Node)|undefined)}} callbacks
  *     Callbacks to be called for each element traversed, excluding
  *     |end|. Possible callbacks are |preorder|, called before descending into
  *     child nodes, and |postorder| called after all child nodes have been
+ *     traversed. If |preorder| returns false, its child nodes will not be
  *     traversed.
  * @param {ShadowRoot=} opt_shadowRoot The nearest ShadowRoot ancestor, if any.
  * @return {boolean} Whether |end| was found, if provided.
@@ -124,10 +125,12 @@ axs.dom.composedTreeSearch = function(node, end, callbacks, opt_shadowRoot) {
     if (node.nodeType == Node.ELEMENT_NODE)
         var element = /** @type {Element} */ (node);
 
-    if (element && callbacks.preorder)
-        callbacks.preorder(element);
-
     var found = false;
+
+    if (element && callbacks.preorder) {
+        if (!callbacks.preorder(element))
+            return found;
+    }
 
     // Descend into node:
     // If it has a ShadowRoot, ignore all child elements - these will be picked

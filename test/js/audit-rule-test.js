@@ -28,6 +28,7 @@
         for (var i = 0; i < DIV_COUNT; i++) {
             var element = document.createElement("div");
             element.className = "test";
+            element.id = "test-" + i;
             result.appendChild(element);
         }
         return result;
@@ -38,6 +39,21 @@
         container.appendChild(buildTestDom());
         var matched = [];
         axs.AuditRule.collectMatchingElements(container, matcher, matched);
+        equal(matched.length, DIV_COUNT);
+    });
+
+    test("Simple DOM with an ignored selector", function () {
+        var container = document.getElementById('qunit-fixture');
+        container.appendChild(buildTestDom());
+        var fooElement = document.createElement('div');
+        fooElement.className = 'foo';
+        container.appendChild(fooElement);
+        var fooTest = document.createElement('div');
+        fooTest.className = 'test';
+        fooElement.appendChild(fooTest);
+        var matched = [];
+        var ignoredSelectors = ['.foo'];
+        axs.AuditRule.collectMatchingElements(container, matcher, matched, ignoredSelectors);
         equal(matched.length, DIV_COUNT);
     });
 
