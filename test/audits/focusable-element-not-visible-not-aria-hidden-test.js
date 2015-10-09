@@ -18,12 +18,8 @@ module('FocusableElementNotVisibleAndNotAriaHidden', {
     document.getElementById('qunit-fixture').appendChild(fixture);
 
     this.fixture_ = fixture;
-    document.getElementById('qunit-fixture').style.top = 0;
-    document.getElementById('qunit-fixture').style.left = 0;
-  },
-  teardown: function() {
-    document.getElementById('qunit-fixture').style.removeProperty('top');
-    document.getElementById('qunit-fixture').style.removeProperty('left');
+    fixture.style.top = 0;
+    fixture.style.left = 0;
   }
 });
 

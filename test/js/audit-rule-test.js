@@ -74,24 +74,6 @@
         }
     });
 
-    test("With shadow DOM with shadow element", function () {
-        var container = document.getElementById('qunit-fixture');
-        container.appendChild(buildTestDom());
-        var wrapper = container.firstElementChild;
-        if (wrapper.createShadowRoot) {
-            var matched = [];
-            var root = wrapper.createShadowRoot();
-            var shadow = document.createElement('shadow');
-            root.appendChild(shadow);
-            axs.AuditRule.collectMatchingElements(wrapper, matcher, matched);
-            // <shadow> picks up content
-            equal(matched.length, DIV_COUNT);
-        } else {
-            console.warn("Test platform does not support shadow DOM");
-            ok(true);
-        }
-    });
-
     test("Nodes within shadow DOM", function () {
         var container = document.getElementById('qunit-fixture');
         var wrapper = container.appendChild(document.createElement("div"));
@@ -102,88 +84,6 @@
             axs.AuditRule.collectMatchingElements(container, matcher, matched);
             // Nodes in shadows are found
             equal(matched.length, DIV_COUNT);
-        } else {
-            console.warn("Test platform does not support shadow DOM");
-            ok(true);
-        }
-    });
-
-    test("With shadow DOM with olderShadowRoot but no shadow element", function () {
-        var container = document.getElementById('qunit-fixture');
-        var wrapper = container.appendChild(document.createElement('div'));
-        if (wrapper.createShadowRoot) {
-            var matched = [];
-            var olderShadowRoot = wrapper.createShadowRoot();
-            olderShadowRoot.appendChild(buildTestDom());
-            var root = wrapper.createShadowRoot();
-            axs.AuditRule.collectMatchingElements(wrapper, matcher, matched);
-            // New shadow root hides older shadow root
-            equal(matched.length, 0);
-        } else {
-            console.warn("Test platform does not support shadow DOM");
-            ok(true);
-        }
-    });
-
-    test("With shadow DOM with olderShadowRoot and shadow element", function () {
-        var container = document.getElementById('qunit-fixture');
-        var wrapper = container.appendChild(document.createElement('div'));
-        if (wrapper.createShadowRoot) {
-            var matched = [];
-            var olderShadowRoot = wrapper.createShadowRoot();
-            olderShadowRoot.appendChild(buildTestDom());
-            var root = wrapper.createShadowRoot();
-            var shadow = document.createElement('shadow');
-            root.appendChild(shadow);
-            axs.AuditRule.collectMatchingElements(wrapper, matcher, matched);
-            // <shadow> element picks up content from olderShadowRoot
-            equal(matched.length, DIV_COUNT);
-        } else {
-            console.warn("Test platform does not support shadow DOM");
-            ok(true);
-        }
-    });
-
-    test("With shadow DOM with olderShadowRoot, shadow element and child nodes but no content element", function () {
-        var container = document.getElementById('qunit-fixture');
-        container.appendChild(buildTestDom());
-        var wrapper = container.firstElementChild;
-        if (wrapper.createShadowRoot) {
-            var matched = [];
-            var olderShadowRoot = wrapper.createShadowRoot();
-            var olderShadowContent = document.createElement('div');
-            olderShadowContent.className = 'test';
-            olderShadowRoot.appendChild(olderShadowContent);
-            var root = wrapper.createShadowRoot();
-            var shadow = document.createElement('shadow');
-            root.appendChild(shadow);
-            axs.AuditRule.collectMatchingElements(wrapper, matcher, matched);
-            // <shadow> element picks up content from olderShadowRoot only
-            equal(matched.length, 1);
-        } else {
-            console.warn("Test platform does not support shadow DOM");
-            ok(true);
-        }
-    });
-
-    test("With shadow DOM with olderShadowRoot, shadow element and child nodes and content element", function () {
-        var container = document.getElementById('qunit-fixture');
-        container.appendChild(buildTestDom());
-        var wrapper = container.firstElementChild;
-        if (wrapper.createShadowRoot) {
-            var matched = [];
-            var olderShadowRoot = wrapper.createShadowRoot();
-            var olderShadowContent = document.createElement('div');
-            olderShadowContent.className = 'test';
-            olderShadowRoot.appendChild(olderShadowContent);
-            var root = wrapper.createShadowRoot();
-            var shadow = document.createElement('shadow');
-            root.appendChild(shadow);
-            var content = document.createElement('content');
-            root.appendChild(content);
-            axs.AuditRule.collectMatchingElements(wrapper, matcher, matched);
-            // <shadow> element picks up content from olderShadowRoot and child nodes
-            equal(matched.length, DIV_COUNT + 1);
         } else {
             console.warn("Test platform does not support shadow DOM");
             ok(true);
