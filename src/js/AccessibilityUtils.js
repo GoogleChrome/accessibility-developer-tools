@@ -103,16 +103,21 @@ axs.utils.elementIsOutsideScrollArea = function(element) {
 axs.utils.canScrollTo = function(element, container) {
     var rect = element.getBoundingClientRect();
     var containerRect = container.getBoundingClientRect();
-    var containerTop = containerRect.top;
-    var containerLeft = containerRect.left;
+    if (container == container.ownerDocument.body) {
+        var absoluteTop = containerRect.top;
+        var absoluteLeft = containerRect.left;
+    } else {
+        var absoluteTop = containerRect.top - container.scrollTop;
+        var absoluteLeft = containerRect.left - container.scrollLeft;
+    }
     var containerScrollArea =
-        { top: containerTop - container.scrollTop,
-          bottom: containerTop - container.scrollTop + container.scrollHeight,
-          left: containerLeft - container.scrollLeft,
-          right: containerLeft - container.scrollLeft + container.scrollWidth };
+        { top: absoluteTop,
+          bottom: absoluteTop + container.scrollHeight,
+          left: absoluteLeft,
+          right: absoluteLeft + container.scrollWidth };
 
     if (rect.right < containerScrollArea.left || rect.bottom < containerScrollArea.top ||
-            rect.left > containerScrollArea.right || rect.top > containerScrollArea.bottom) {
+        rect.left > containerScrollArea.right || rect.top > containerScrollArea.bottom) {
         return false;
     }
 
