@@ -132,3 +132,13 @@ test('a hidden link should not be run against the audit', function() {
       rule.run({scope: fixture}),
       { result: axs.constants.AuditResult.NA });
 });
+
+test('an anchor tag without href attribute is ignored', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    fixture.appendChild(document.createElement('a'));
+
+    var rule = axs.AuditRules.getRule('linkWithUnclearPurpose');
+    deepEqual(
+      rule.run({scope: fixture}),
+      { result: axs.constants.AuditResult.NA });
+});
