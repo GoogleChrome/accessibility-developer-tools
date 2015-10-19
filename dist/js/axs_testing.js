@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/55f83ba7d34402f43150e16d19c69b131894d2ae
+ * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/9da0231fc2c264712547d66438874c66269c98fa
  *
  * See project README for build steps.
  */
@@ -620,16 +620,25 @@ axs.color.multiplyMatrixVector = function(a, b) {
 axs.color.toYCbCr = function(a) {
   var b = a.red / 255, c = a.green / 255;
   a = a.blue / 255;
-  return new axs.color.YCbCr(axs.color.multiplyMatrixVector(axs.color.YCC_MATRIX, [.03928 >= b ? b / 12.92 : Math.pow((b + .055) / 1.055, 2.4), .03928 >= c ? c / 12.92 : Math.pow((c + .055) / 1.055, 2.4), .03928 >= a ? a / 12.92 : Math.pow((a + .055) / 1.055, 2.4)]));
+  b = .03928 >= b ? b / 12.92 : Math.pow((b + .055) / 1.055, 2.4);
+  c = .03928 >= c ? c / 12.92 : Math.pow((c + .055) / 1.055, 2.4);
+  a = .03928 >= a ? a / 12.92 : Math.pow((a + .055) / 1.055, 2.4);
+  return new axs.color.YCbCr(axs.color.multiplyMatrixVector(axs.color.YCC_MATRIX, [b, c, a]));
 };
 axs.color.fromYCbCr = function(a) {
   return axs.color.fromYCbCrArray([a.luma, a.Cb, a.Cr]);
 };
 axs.color.fromYCbCrArray = function(a) {
-  var b = axs.color.multiplyMatrixVector(axs.color.INVERTED_YCC_MATRIX, a);
-  a = b[0];
-  var c = b[1], b = b[2];
-  return new axs.color.Color(Math.min(Math.max(Math.round(255 * (.00303949 >= a ? 12.92 * a : 1.055 * Math.pow(a, 1 / 2.4) - .055)), 0), 255), Math.min(Math.max(Math.round(255 * (.00303949 >= c ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - .055)), 0), 255), Math.min(Math.max(Math.round(255 * (.00303949 >= b ? 12.92 * b : 1.055 * Math.pow(b, 1 / 2.4) - .055)), 0), 255), 1);
+  var b = axs.color.multiplyMatrixVector(axs.color.INVERTED_YCC_MATRIX, a), c = b[0];
+  a = b[1];
+  b = b[2];
+  c = .00303949 >= c ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - .055;
+  a = .00303949 >= a ? 12.92 * a : 1.055 * Math.pow(a, 1 / 2.4) - .055;
+  b = .00303949 >= b ? 12.92 * b : 1.055 * Math.pow(b, 1 / 2.4) - .055;
+  c = Math.min(Math.max(Math.round(255 * c), 0), 255);
+  a = Math.min(Math.max(Math.round(255 * a), 0), 255);
+  b = Math.min(Math.max(Math.round(255 * b), 0), 255);
+  return new axs.color.Color(c, a, b, 1);
 };
 axs.color.RGBToYCbCrMatrix = function(a, b) {
   return [[a, 1 - a - b, b], [-a / (2 - 2 * b), (a + b - 1) / (2 - 2 * b), (1 - b) / (2 - 2 * b)], [(1 - a) / (2 - 2 * a), (a + b - 1) / (2 - 2 * a), -b / (2 - 2 * a)]];
@@ -2018,7 +2027,7 @@ axs.AuditRules.addRule({name:"imagesWithoutAltText", heading:"Images should have
   return 0 == Object.keys(b).length ? !0 : !1;
 }, code:"AX_TEXT_02"});
 axs.AuditRules.addRule({name:"linkWithUnclearPurpose", heading:"The purpose of each link should be clear from the link text", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_04", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
-  return axs.browserUtils.matchSelector(a, "a") && !axs.utils.isElementOrAncestorHidden(a);
+  return axs.browserUtils.matchSelector(a, "a[href]") && !axs.utils.isElementOrAncestorHidden(a);
 }, test:function(a, b) {
   for (var c = b || {}, d = c.blacklistPhrases || [], e = /\s+/, f = 0;f < d.length;f++) {
     var g = "^\\s*" + d[f].trim().replace(e, "\\s*") + "s*[^a-z]$";

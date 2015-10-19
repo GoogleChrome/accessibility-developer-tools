@@ -1,3 +1,5 @@
+## 2.10.0-rc.1 - 2015-10-19
+
 ### Bug fixes:
 
 * `linkWithUnclearPurpose` should only look at links, not `<a>` without `href`. (#245)
