@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/9da0231fc2c264712547d66438874c66269c98fa
+ * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/404ede0f2186682fbbef624141e76ec2b601317d
  *
  * See project README for build steps.
  */
