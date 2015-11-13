@@ -15,6 +15,7 @@
 goog.require('axs.AuditRules');
 goog.require('axs.browserUtils');
 goog.require('axs.constants');
+goog.require('axs.dom');
 goog.require('axs.utils');
 
 /**
@@ -44,7 +45,7 @@ axs.AuditRules.addRule({
             return false;
         }
         var parent = element;
-        while ((parent = parent.parentNode)) {
+        while (parent = axs.dom.parentElement(parent)) {
             var parentRole = axs.utils.getRoles(parent, true);
             if (parentRole && parentRole.applied) {
                 var appliedParentRole = parentRole.applied;
@@ -54,7 +55,7 @@ axs.AuditRules.addRule({
         }
         // If we made it this far then no DOM ancestor has a required scope role.
         // Now we need to check if anything aria-owns this element.
-        var owners = axs.utils.getIdReferrers('aria-owns', element);  // there can only be ONE explicit owner but that's a different test
+        var owners = axs.utils.getAriaIdReferrers(element, 'aria-owns');  // there can only be ONE explicit owner but that's a different test
         if (owners) {
             for (var i = 0; i < owners.length; i++) {
                 var ownerRole = axs.utils.getRoles(owners[i], true);

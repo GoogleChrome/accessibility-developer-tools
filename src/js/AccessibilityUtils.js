@@ -16,6 +16,8 @@ goog.require('axs.browserUtils');
 goog.require('axs.color');
 goog.require('axs.color.Color');
 goog.require('axs.constants');
+goog.require('axs.dom');
+
 goog.provide('axs.utils');
 
 /**
@@ -46,60 +48,6 @@ axs.utils.LABELABLE_ELEMENTS_SELECTOR =
     'select,' +
     'textarea';
 
-/**
- * Returns the nearest ancestor which is an Element.
- * @param {Node} node
- * @return {Element}
- */
-axs.utils.parentElement = function(node) {
-    if (!node)
-        return null;
-    if (node.nodeType == Node.DOCUMENT_FRAGMENT_NODE)
-        return node.host;
-
-    var parentElement = node.parentElement;
-    if (parentElement)
-        return parentElement;
-
-    var parentNode = node.parentNode;
-    if (!parentNode)
-        return null;
-
-    switch (parentNode.nodeType) {
-    case Node.ELEMENT_NODE:
-        return /** @type {Element} */ (parentNode);
-    case Node.DOCUMENT_FRAGMENT_NODE:
-        return parentNode.host;
-    default:
-        return null;
-    }
-};
-
-/**
- * Return the corresponding element for the given node.
- * @param {Node} node
- * @return {Element}
- * @suppress {checkTypes}
- */
-axs.utils.asElement = function(node) {
-    /** @type {Element} */ var element;
-    switch (node.nodeType) {
-    case Node.COMMENT_NODE:
-        return null;  // Skip comments
-    case Node.ELEMENT_NODE:
-        element = /** (@type {Element}) */ node;
-        if (element.tagName.toLowerCase() == 'script')
-            return null;  // Skip script elements
-        break;
-    case Node.TEXT_NODE:
-        element = axs.utils.parentElement(node);
-        break;
-    default:
-        console.warn('Unhandled node type: ', node.nodeType);
-        return null;
-    }
-    return element;
-};
 
 /**
  * @param {Element} element
@@ -127,7 +75,7 @@ axs.utils.elementHasZeroArea = function(element) {
  * @return {boolean}
  */
 axs.utils.elementIsOutsideScrollArea = function(element) {
-    var parent = axs.utils.parentElement(element);
+    var parent = axs.dom.parentElement(element);
 
     var defaultView = element.ownerDocument.defaultView;
     while (parent != defaultView.document.body) {
@@ -137,7 +85,7 @@ axs.utils.elementIsOutsideScrollArea = function(element) {
         if (axs.utils.canScrollTo(element, parent) && !axs.utils.elementIsOutsideScrollArea(parent))
             return false;
 
-        parent = axs.utils.parentElement(parent);
+        parent = axs.dom.parentElement(parent);
     }
 
     return !axs.utils.canScrollTo(element, defaultView.document.body);
@@ -155,16 +103,21 @@ axs.utils.elementIsOutsideScrollArea = function(element) {
 axs.utils.canScrollTo = function(element, container) {
     var rect = element.getBoundingClientRect();
     var containerRect = container.getBoundingClientRect();
-    var containerTop = containerRect.top;
-    var containerLeft = containerRect.left;
+    if (container == container.ownerDocument.body) {
+        var absoluteTop = containerRect.top;
+        var absoluteLeft = containerRect.left;
+    } else {
+        var absoluteTop = containerRect.top - container.scrollTop;
+        var absoluteLeft = containerRect.left - container.scrollLeft;
+    }
     var containerScrollArea =
-        { top: containerTop - container.scrollTop,
-          bottom: containerTop - container.scrollTop + container.scrollHeight,
-          left: containerLeft - container.scrollLeft,
-          right: containerLeft - container.scrollLeft + container.scrollWidth };
+        { top: absoluteTop,
+          bottom: absoluteTop + container.scrollHeight,
+          left: absoluteLeft,
+          right: absoluteLeft + container.scrollWidth };
 
     if (rect.right < containerScrollArea.left || rect.bottom < containerScrollArea.top ||
-            rect.left > containerScrollArea.right || rect.top > containerScrollArea.bottom) {
+        rect.left > containerScrollArea.right || rect.top > containerScrollArea.bottom) {
         return false;
     }
 
@@ -224,7 +177,8 @@ axs.utils.isAncestor = function(ancestor, node) {
     if (node === ancestor)
         return true;
 
-    return axs.utils.isAncestor(ancestor, node.parentNode);
+    var parentNode = axs.dom.composedParentNode(node);
+    return axs.utils.isAncestor(ancestor, parentNode);
 };
 
 /**
@@ -401,7 +355,7 @@ axs.utils.getParentBgColor = function(element) {
     /** @type {Element} */ var parent = element;
     var bgStack = [];
     var foundSolidColor = null;
-    while ((parent = axs.utils.parentElement(parent))) {
+    while ((parent = axs.dom.parentElement(parent))) {
         var computedStyle = window.getComputedStyle(parent, null);
         if (!computedStyle)
             continue;
@@ -564,14 +518,14 @@ axs.utils.hasLabel = function(element) {
             return true;
     }
 
-    var parent = axs.utils.parentElement(element);
+    var parent = axs.dom.parentElement(element);
     while (parent) {
         if (parent.tagName.toLowerCase() == 'label') {
             var parentLabel = /** HTMLLabelElement */ parent;
             if (parentLabel.control == element)
                 return true;
         }
-        parent = axs.utils.parentElement(parent);
+        parent = axs.dom.parentElement(parent);
     }
     return false;
 };
@@ -601,12 +555,12 @@ axs.utils.isElementDisabled = function(element) {
     if (axs.browserUtils.matchSelector(element, '[aria-disabled=true], [aria-disabled=true] *')) {
         return true;
     }
-    if(!axs.utils.isNativelyDisableable(element) ||
+    if (!axs.utils.isNativelyDisableable(element) ||
             axs.browserUtils.matchSelector(element, 'fieldset>legend:first-of-type *')) {
         return false;
     }
-    for (var next = element; next !== null; next = axs.utils.parentElement(next)) {
-        if(axs.utils.isNativelyDisableable(next) && next.hasAttribute('disabled')) {
+    for (var next = element; next !== null; next = axs.dom.parentElement(next)) {
+        if (axs.utils.isNativelyDisableable(next) && next.hasAttribute('disabled')) {
             return true;
         }
     }
@@ -645,8 +599,8 @@ axs.utils.isElementOrAncestorHidden = function(element) {
     if (axs.utils.isElementHidden(element))
         return true;
 
-    if (axs.utils.parentElement(element))
-        return axs.utils.isElementOrAncestorHidden(axs.utils.parentElement(element));
+    if (axs.dom.parentElement(element))
+        return axs.utils.isElementOrAncestorHidden(axs.dom.parentElement(element));
     else
         return false;
 };
@@ -1043,27 +997,105 @@ axs.utils.getQuerySelectorText = function(obj) {
 };
 
 /**
- * Gets elements that refer to this element in an ARIA attribute that takes an
- * ID reference list or single ID reference.
- * @param {!string} attributeName Name of an ARIA attribute, e.g. 'aria-owns'.
+ * Gets elements that refer to this element in an ARIA attribute that takes an ID reference list or
+ * single ID reference.
  * @param {Element} element a potential referent.
+ * @param {string=} opt_attributeName Name of an ARIA attribute to limit the results to, e.g. 'aria-owns'.
  * @return {NodeList} The elements that refer to this element.
  */
-axs.utils.getIdReferrers = function(attributeName, element) {
+axs.utils.getAriaIdReferrers = function(element, opt_attributeName) {
+    var propertyToSelector = function(propertyKey) {
+        var propertyDetails = axs.constants.ARIA_PROPERTIES[propertyKey];
+        if (propertyDetails) {
+            if (propertyDetails.valueType === ('idref')) {
+                return '[aria-' + propertyKey + '=\'' + id + '\']';
+            } else if (propertyDetails.valueType === ('idref_list')) {
+                return '[aria-' + propertyKey + '~=\'' + id + '\']';
+            }
+        }
+        return '';
+    };
     if (!element)
         return null;
     var id = element.id;
-    var propertyKey = attributeName.replace(/^aria-/, '');
-    var property = axs.constants.ARIA_PROPERTIES[propertyKey];
-    if (!id || !property)
+    if (!id)
         return null;
-    var propertyType = property.valueType;
-    if (propertyType === 'idref_list' || propertyType === 'idref') {
-        id = id.replace(/'/g, "\\'");
-        var referrerQuery = "[" + attributeName + "~='" + id + "']";
-        return element.ownerDocument.querySelectorAll(referrerQuery);
+    id = id.replace(/'/g, "\\'");  // make it safe to use in a selector
+
+    if (opt_attributeName) {
+        var propertyKey = opt_attributeName.replace(/^aria-/, '');
+        var referrerQuery = propertyToSelector(propertyKey);
+        if (referrerQuery) {
+            return element.ownerDocument.querySelectorAll(referrerQuery);
+        }
+    } else {
+        var selectors = [];
+        for (var propertyKey in axs.constants.ARIA_PROPERTIES) {
+            var referrerQuery = propertyToSelector(propertyKey);
+            if (referrerQuery) {
+                selectors.push(referrerQuery);
+            }
+        }
+        return element.ownerDocument.querySelectorAll(selectors.join(','));
     }
     return null;
+};
+
+/**
+ * Gets elements that refer to this element in an HTML attribute that takes an ID reference list or
+ * single ID reference.
+ * @param {Element} element a potential referent.
+ * @return {NodeList} The elements that refer to this element.
+ */
+axs.utils.getHtmlIdReferrers = function(element) {
+    if (!element)
+        return null;
+    var id = element.id;
+    if (!id)
+        return null;
+    id = id.replace(/'/g, "\\'");  // make it safe to use in a selector
+    var selectorTemplates = [
+        '[contextmenu=\'{id}\']',
+        '[itemref~=\'{id}\']',
+        'button[form=\'{id}\']',
+        'button[menu=\'{id}\']',
+        'fieldset[form=\'{id}\']',
+        'input[form=\'{id}\']',
+        'input[list=\'{id}\']',
+        'keygen[form=\'{id}\']',
+        'label[for=\'{id}\']',
+        'label[form=\'{id}\']',
+        'menuitem[command=\'{id}\']',
+        'object[form=\'{id}\']',
+        'output[for~=\'{id}\']',
+        'output[form=\'{id}\']',
+        'select[form=\'{id}\']',
+        'td[headers~=\'{id}\']',
+        'textarea[form=\'{id}\']',
+        'tr[headers~=\'{id}\']'];
+    var selectors = selectorTemplates.map(function(selector) {
+        return selector.replace('\{id\}', id);
+    });
+    return element.ownerDocument.querySelectorAll(selectors.join(','));
+};
+
+/**
+ * Gets elements that refer to this element in an attribute that takes an ID reference list or
+ * single ID reference.
+ * @param {Element} element a potential referent.
+ * @return {Array<Element>} The elements that refer to this element.
+ */
+axs.utils.getIdReferrers = function(element) {
+    var result = [];
+    var referrers = axs.utils.getHtmlIdReferrers(element);
+    if (referrers) {
+        result = result.concat(Array.prototype.slice.call(referrers));
+    }
+    referrers = axs.utils.getAriaIdReferrers(element);
+    if (referrers) {
+        result = result.concat(Array.prototype.slice.call(referrers));
+    }
+    return result;
 };
 
 /**

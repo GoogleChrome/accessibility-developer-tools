@@ -14,6 +14,7 @@
 
 goog.require('axs.browserUtils');
 goog.require('axs.color');
+goog.require('axs.dom');
 goog.require('axs.utils');
 
 goog.provide('axs.properties');
@@ -104,7 +105,7 @@ axs.properties.getHiddenReason = function(element) {
                      'on': element };
     }
 
-    return axs.properties.getHiddenReason(axs.utils.parentElement(element));
+    return axs.properties.getHiddenReason(axs.dom.parentElement(element));
 };
 
 
@@ -235,13 +236,13 @@ axs.properties.getContrastRatioProperties = function(element) {
 axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recursive, opt_force) {
     var recursive = opt_recursive || false;
 
-    /** @type {Element} */ var element = axs.utils.asElement(node);
+    /** @type {Element} */ var element = axs.dom.asElement(node);
     if (!element)
         return null;
 
     // 1. Skip hidden elements unless the author specifies to use them via an aria-labelledby or
     // aria-describedby being used in the current computation.
-    if (!recursive && !opt_force && axs.utils.isElementOrAncestorHidden(element))
+    if (!opt_force && axs.utils.isElementOrAncestorHidden(element))
         return null;
 
     // if this is a text node, just return text content.
@@ -386,7 +387,7 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
         if (role && (!role.namefrom || role.namefrom.indexOf('contents') < 0))
             canGetNameFromContents = false;
     }
-    var textFromContent = axs.properties.getTextFromDescendantContent(element);
+    var textFromContent = axs.properties.getTextFromDescendantContent(element, opt_force);
     if (textFromContent && canGetNameFromContents) {
         var textFromContentValue = {};
         textFromContentValue.type = 'text';
@@ -422,13 +423,15 @@ axs.properties.findTextAlternatives = function(node, textAlternatives, opt_recur
 
 /**
  * @param {Element} element
+ * @param {boolean=} opt_force Whether to return text alternatives for this
+ *     element regardless of its hidden state.
  * @return {?string}
  */
-axs.properties.getTextFromDescendantContent = function(element) {
+axs.properties.getTextFromDescendantContent = function(element, opt_force) {
     var children = element.childNodes;
     var childrenTextContent = [];
     for (var i = 0; i < children.length; i++) {
-        var childTextContent = axs.properties.findTextAlternatives(children[i], {}, true);
+        var childTextContent = axs.properties.findTextAlternatives(children[i], {}, true, opt_force);
         if (childTextContent)
             childrenTextContent.push(childTextContent.trim());
     }
@@ -470,9 +473,9 @@ axs.properties.getTextFromAriaLabelledby = function(element, textAlternatives) {
             labelledby.errorMessage = { 'messageKey': 'noElementWithId', 'args': [labelledbyId] };
         } else {
             labelledby.valid = true;
-            labelledby.text = axs.properties.findTextAlternatives(labelledbyElement, {}, true);
+            labelledby.text = axs.properties.findTextAlternatives(labelledbyElement, {}, true, true);
             labelledby.lastWord = axs.properties.getLastWord(labelledby.text);
-            labelledbyText.push(labelledbyElement.textContent.trim());
+            labelledbyText.push(labelledby.text);
             labelledby.element = labelledbyElement;
         }
         labelledbyValues.push(labelledby);
@@ -554,7 +557,7 @@ axs.properties.getTextFromHostLanguageAttributes = function(element,
             }
         }
 
-        var parent = axs.utils.parentElement(element);
+        var parent = axs.dom.parentElement(element);
         var labelWrappedValue = {};
         while (parent) {
             if (parent.tagName.toLowerCase() == 'label') {
@@ -567,7 +570,7 @@ axs.properties.getTextFromHostLanguageAttributes = function(element,
                     break;
                 }
             }
-            parent = axs.utils.parentElement(parent);
+            parent = axs.dom.parentElement(parent);
         }
         if (labelWrappedValue.text) {
             if (computedName)
@@ -575,6 +578,18 @@ axs.properties.getTextFromHostLanguageAttributes = function(element,
             else
                 computedName = labelWrappedValue.text;
             textAlternatives['labelWrapped'] = labelWrappedValue;
+        }
+        // If all else fails input of type image can fall back to its alt text
+        if (axs.browserUtils.matchSelector(element, 'input[type="image"]') && element.hasAttribute('alt')) {
+            var altValue = {};
+            altValue.type = 'string';
+            altValue.valid = true;
+            altValue.text = element.getAttribute('alt');
+            if (computedName)
+                altValue.unused = true;
+            else
+                computedName = altValue.text;
+            textAlternatives['alt'] = altValue;
         }
         if (!Object.keys(textAlternatives).length)
             textAlternatives['noLabel'] = true;
@@ -607,7 +622,7 @@ axs.properties.getTextProperties = function(node) {
     var computedName = axs.properties.findTextAlternatives(node, textProperties, false, true);
 
     if (Object.keys(textProperties).length == 0) {
-        /** @type {Element} */ var element = axs.utils.asElement(node);
+        /** @type {Element} */ var element = axs.dom.asElement(node);
         if (element && axs.browserUtils.matchSelector(element, 'img')) {
             var altValue = {};
             altValue.valid = false;
@@ -776,7 +791,7 @@ axs.properties.getTrackElements = function(element, kind) {
  * @return {Object.<string, Object>}
  */
 axs.properties.getAllProperties = function(node) {
-    /** @type {Element} */ var element = axs.utils.asElement(node);
+    /** @type {Element} */ var element = axs.dom.asElement(node);
     if (!element)
         return {};
 

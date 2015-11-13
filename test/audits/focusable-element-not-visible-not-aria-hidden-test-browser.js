@@ -45,3 +45,23 @@ test('a focusable element that is hidden but shown on focus passes the audit', f
     rule.run({scope: this.fixture_}),
     { elements: [], result: axs.constants.AuditResult.PASS });
 });
+
+test('a focusable element inside of Shadow DOM is not "obscured" by the shadow host', function() {
+  var host = this.fixture_.appendChild(document.createElement("div"));
+  host.id = 'host';
+  if (host.createShadowRoot) {
+    var root = host.createShadowRoot();
+    var shadowLink = root.appendChild(document.createElement('a'));
+    shadowLink.href = '#main';
+    shadowLink.id = 'shadowLink';
+    shadowLink.textContent = 'Skip to content';
+    var rule = axs.AuditRules.getRule('focusableElementNotVisibleAndNotAriaHidden');
+    deepEqual(
+      rule.run({scope: this.fixture_}),
+      { elements: [], result: axs.constants.AuditResult.PASS });
+    deepEqual(axs.utils.overlappingElements(shadowLink), []);
+  } else {
+    console.warn("Test platform does not support shadow DOM");
+    ok(true);
+  }
+});
