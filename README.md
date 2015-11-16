@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/GoogleChrome/accessibility-developer-tools.svg?branch=master)](https://travis-ci.org/GoogleChrome/accessibility-developer-tools)
+[![npm version](https://img.shields.io/npm/v/accessibility-developer-tools.svg)](https://www.npmjs.com/package/accessibility-developer-tools)
+[![npm downloads](https://img.shields.io/npm/dm/accessibility-developer-tools.svg)](https://www.npmjs.com/package/accessibility-developer-tools)
+
 # Accessibility Developer Tools
 
 This is a library of accessibility-related testing and utility code.
