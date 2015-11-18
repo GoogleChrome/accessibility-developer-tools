@@ -1,3 +1,7 @@
+### Bug fixes:
+
+* Fixed `unsupportedAriaAttribute` which did not accept `tablist` with `aria-multiselectable`
+
 ## 2.10.0 - 2015-11-13
 
 ## 2.10.0-rc.1 - 2015-10-19
