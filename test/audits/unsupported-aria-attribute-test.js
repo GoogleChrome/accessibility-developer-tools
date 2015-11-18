@@ -28,6 +28,15 @@
         deepEqual(rule.run({ scope: fixture }), expected);
     });
 
+    test('Element with role and supported attributes', function() {
+        var fixture = document.getElementById('qunit-fixture');
+        var widget = fixture.appendChild(document.createElement('div'));
+        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
+        widget.setAttribute('role', 'tablist');
+        widget.setAttribute('aria-multiselectable', 'true');  // supported
+        deepEqual(rule.run({ scope: fixture }), expected);
+    });
+
     test('Element with no role and global attributes only', function() {
         var fixture = document.getElementById('qunit-fixture');
         var div = fixture.appendChild(document.createElement('div'));
