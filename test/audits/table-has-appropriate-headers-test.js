@@ -304,4 +304,17 @@ module('TableHasAppropriateHeaders');
         equal(actual.result, axs.constants.AuditResult.FAIL);
         deepEqual(actual.elements, [table]);
     });
+
+    test('Table without rows', function() {
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+        var fixture = document.getElementById('qunit-fixture');
+
+        var table = buildTable([]);
+
+        fixture.appendChild(table);
+
+        var actual = rule.run({ scope: fixture });
+        equal(actual.result, axs.constants.AuditResult.FAIL);
+        deepEqual(actual.elements, [table]);
+    });
 })();

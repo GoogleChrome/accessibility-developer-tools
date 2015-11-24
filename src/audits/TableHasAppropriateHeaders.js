@@ -88,6 +88,10 @@ goog.require('axs.constants.Severity');
                 return element.querySelectorAll('th').length != 0;
             } else {
                 var rows = element.querySelectorAll('tr');
+                if (rows.length === 0) {
+                    // table without any rows also does not have a header, etc.
+                    return true;
+                }
 
                 return tableDoesNotHaveHeaderRow(rows) &&
                     tableDoesNotHaveHeaderColumn(rows) &&
