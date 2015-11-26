@@ -585,3 +585,11 @@ test('first fieldset legend aria-disabled', function() {
     actual = axs.utils.isElementDisabled(widget);
     strictEqual(actual, true, 'ARIA widget should be disabled');
 });
+
+module('isLargeFont');
+
+test('should check if element has a large font', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var style = window.getComputedStyle(fixture, null);
+    ok(!axs.utils.isLargeFont(style));
+});

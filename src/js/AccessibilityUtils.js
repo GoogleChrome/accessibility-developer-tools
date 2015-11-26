@@ -283,7 +283,7 @@ axs.utils.isLargeFont = function(style) {
     var fontSize = style.fontSize;
     var bold = style.fontWeight == 'bold';
     var matches = fontSize.match(/(\d+)px/);
-    if (matches) {
+    if (matches && document.body) {
         var fontSizePx = parseInt(matches[1], 10);
         var bodyStyle = window.getComputedStyle(document.body, null);
         var bodyFontSize = bodyStyle.fontSize;
