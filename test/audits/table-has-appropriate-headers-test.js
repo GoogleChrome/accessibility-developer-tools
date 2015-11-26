@@ -61,6 +61,70 @@ module('TableHasAppropriateHeaders');
         return table;
     }
 
+    test('Table with no child elements', function () {
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+        var fixture = document.getElementById('qunit-fixture');
+
+        var table = document.createElement('table');
+
+        fixture.appendChild(table);
+
+        var actual = rule.run({scope: fixture});
+        equal(actual.result, axs.constants.AuditResult.NA);
+        deepEqual(actual.elements, [table]);
+    });
+
+    test('Table with only THEAD', function () {
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+        var fixture = document.getElementById('qunit-fixture');
+
+        var table = document.createElement('table');
+
+        var thead = document.createElement('thead');
+
+        table.appendChild(thead);
+
+        fixture.appendChild(table);
+
+        var actual = rule.run({scope: fixture});
+        equal(actual.result, axs.constants.AuditResult.NA);
+        deepEqual(actual.elements, [table]);
+    });
+
+    test('Table with only TFOOT', function () {
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+        var fixture = document.getElementById('qunit-fixture');
+
+        var table = document.createElement('table');
+
+        var tfoot = document.createElement('tfoot');
+
+        table.appendChild(tfoot);
+
+        fixture.appendChild(table);
+
+        var actual = rule.run({scope: fixture});
+        equal(actual.result, axs.constants.AuditResult.NA);
+        deepEqual(actual.elements, [table]);
+    });
+
+    test('Table with only TBODY', function () {
+        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+        var fixture = document.getElementById('qunit-fixture');
+
+        var table = document.createElement('table');
+
+        var tbody = document.createElement('tbody');
+
+        table.appendChild(tbody);
+
+        fixture.appendChild(table);
+
+        var actual = rule.run({scope: fixture});
+        equal(actual.result, axs.constants.AuditResult.NA);
+        deepEqual(actual.elements, [table]);
+    });
+
     test('Table with a header row', function () {
         var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
         var fixture = document.getElementById('qunit-fixture');

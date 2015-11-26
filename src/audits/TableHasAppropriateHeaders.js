@@ -73,6 +73,36 @@ goog.require('axs.constants.Severity');
         }
         return false;
     }
+	
+    /**
+     * Checks whether a table is a layout table.
+     *
+     * @returns {boolean} Table is a layout table
+     */
+    function isLayoutTable(element) {
+        if (element.childElementCount == 0) {
+            return true;
+        }
+
+        if (element.hasAttribute('role') && element.getAttribute('role') != 'presentation') {
+            return false;
+        }
+
+        if (element.getAttribute('role') == 'presentation') {
+            var tableChildren = element.querySelectorAll('*')
+
+            // layout tables should only contain TR and TD elements
+            for (var i = 0; i < tableChildren.length; i++) {
+                if (tableChildren[i].tagName != 'TR' && tableChildren[i].tagName != 'TD') {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
 
     axs.AuditRules.addRule({
         name: 'tableHasAppropriateHeaders',
@@ -80,19 +110,14 @@ goog.require('axs.constants.Severity');
         url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_table_01',
         severity: axs.constants.Severity.SEVERE,
         relevantElementMatcher: function (element) {
-            return axs.browserUtils.matchSelector(element, 'table');
+            return axs.browserUtils.matchSelector(element, 'table') && !isLayoutTable(element) && element.querySelectorAll('tr').length > 0;
         },
         test: function (element) {
-
-            if (element.getAttribute('role') == 'presentation') {
-                return element.querySelectorAll('th').length != 0;
-            } else {
                 var rows = element.querySelectorAll('tr');
 
                 return tableDoesNotHaveHeaderRow(rows) &&
                     tableDoesNotHaveHeaderColumn(rows) &&
                     tableDoesNotHaveGridLayout(rows);
-            }
         },
         code: 'AX_TABLE_01',
     });

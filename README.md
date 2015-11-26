@@ -45,7 +45,7 @@ You will need `node` and `grunt-cli` to build.
 
         % npm install
 
-4. Build using `grunt` (run from project root)
+4. (Rebuild if you make changes) Build using `grunt` (run from project root)
 
         % grunt
 
@@ -53,7 +53,9 @@ You will need `node` and `grunt-cli` to build.
 
 ## Including the library
 
-The simplest option is to include the generated `axs_testing.js` library on your page.
+The simplest option is to include the generated `axs_testing.js` library on your page. After you build, you will have two versions of `axs_testings.js`:
+* Distribution Build: project-root/dist/js/axs_testing.js
+* Local Build (use if you make changes): project-root/tmp/build/axs_testing.js
 
 Work is underway to include the library in WebDriver and other automated testing frameworks.
 
