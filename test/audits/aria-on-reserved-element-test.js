@@ -46,7 +46,7 @@
 
     test('Reserved element with role and aria- attributes', function() {
         var fixture = document.getElementById('qunit-fixture');
-        var widget = fixture.appendChild(document.createElement('meta'));
+        var widget = fixture.appendChild(document.createElement('map'));
         widget.setAttribute('role', 'spinbutton');
         widget.setAttribute('aria-hidden', 'false');  // global
         widget.setAttribute('aria-required', 'true');  // supported
@@ -59,7 +59,7 @@
 
     test('Reserved element with role only', function() {
         var fixture = document.getElementById('qunit-fixture');
-        var widget = fixture.appendChild(document.createElement('meta'));
+        var widget = fixture.appendChild(document.createElement('map'));
         widget.setAttribute('role', 'spinbutton');
         var expected = { elements: [widget], result: axs.constants.AuditResult.FAIL };
         deepEqual(rule.run({ scope: fixture }), expected, 'Reserved elements can\'t take any ARIA attributes.');
@@ -67,7 +67,7 @@
 
     test('Reserved element with aria-attributes only', function() {
         var fixture = document.getElementById('qunit-fixture');
-        var widget = fixture.appendChild(document.createElement('meta'));
+        var widget = fixture.appendChild(document.createElement('map'));
         widget.setAttribute('aria-hidden', 'false');  // global
         var expected = { elements: [widget], result: axs.constants.AuditResult.FAIL };
         deepEqual(rule.run({ scope: fixture }), expected, 'Reserved elements can\'t take any ARIA attributes.');
@@ -75,7 +75,7 @@
 
     test('Using ignoreSelectors, reserved element with aria-attributes only', function() {
         var fixture = document.getElementById('qunit-fixture');
-        var widget = fixture.appendChild(document.createElement('meta'));
+        var widget = fixture.appendChild(document.createElement('map'));
         var ignoreSelectors = ['#' + (widget.id = 'ignoreMe')];
         widget.setAttribute('aria-hidden', 'false');  // global
         var expected = { result: axs.constants.AuditResult.NA };
@@ -84,7 +84,7 @@
 
     test('Reserved element with no ARIA attributes', function() {
         var fixture = document.getElementById('qunit-fixture');
-        fixture.appendChild(document.createElement('meta'));
+        fixture.appendChild(document.createElement('map'));
         var expected = { elements: [], result: axs.constants.AuditResult.PASS };
         deepEqual(rule.run({ scope: fixture }), expected, 'A reserved element with no ARIA attributes should pass');
     });

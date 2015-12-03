@@ -66,7 +66,7 @@
      */
     test('Element with role and global but missing supported and required attributes', function() {
         var fixture = document.getElementById('qunit-fixture');
-        var widget = fixture.appendChild(document.createElement('meta'));  // note, a reserved HTML element
+        var widget = fixture.appendChild(document.createElement('map'));  // note, a reserved HTML element
         var expected = { elements: [], result: axs.constants.AuditResult.PASS };
         widget.setAttribute('role', 'spinbutton');
         widget.setAttribute('aria-hidden', 'false');  // global (so the audit will encounter this element)

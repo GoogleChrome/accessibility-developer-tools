@@ -430,9 +430,6 @@ axs.utils.getContrastRatioForElement = function(element) {
  * @return {?number}
  */
 axs.utils.getContrastRatioForElementWithComputedStyle = function(style, element) {
-    if (axs.utils.isElementHidden(element))
-        return null;
-
     var bgColor = axs.utils.getBgColor(style, element);
     if (!bgColor)
         return null;
@@ -569,22 +566,41 @@ axs.utils.isElementDisabled = function(element) {
 
 /**
  * @param {Element} element An element to check.
- * @return {boolean} True if the element is hidden from accessibility.
+ * @return {boolean} True if an element itself has a style attribute which causes it
+ *                   not to be visible.
  */
-axs.utils.isElementHidden = function(element) {
-    if (!(element instanceof element.ownerDocument.defaultView.HTMLElement))
-      return false;
-
-    if (element.hasAttribute('chromevoxignoreariahidden'))
-        var chromevoxignoreariahidden = true;
-
+axs.utils.elementHasNonVisibleStyle = function(element) {
     var style = window.getComputedStyle(element, null);
     if (style.display == 'none' || style.visibility == 'hidden')
         return true;
+    return false;
+}
 
+/**
+ * @param {Element} element An element to check.
+ * @return {boolean} True if the element is not visible to any user.
+ */
+axs.utils.elementIsNotVisible = function(element) {
+    if (axs.utils.elementHasNonVisibleStyle(element))
+        return true;
+    var boundingClientRect = element.getBoundingClientRect();
+    if (boundingClientRect.width === 0 && boundingClientRect.height === 0 &&
+        boundingClientRect.top === 0 && boundingClientRect.bottom === 0 &&
+        boundingClientRect.left === 0 && boundingClientRect.right === 0) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * @param {Element} element An element to check.
+ * @return {boolean} True if the element is hidden from accessibility.
+ */
+axs.utils.elementIsAriaHidden = function(element) {
     if (element.hasAttribute('aria-hidden') &&
-        element.getAttribute('aria-hidden').toLowerCase() == 'true') {
-        return !chromevoxignoreariahidden;
+        element.getAttribute('aria-hidden').toLowerCase() == 'true' &&
+        !document.documentElement.hasAttribute('chromevoxignoreariahidden')) {
+        return true;
     }
 
     return false;
@@ -596,7 +612,9 @@ axs.utils.isElementHidden = function(element) {
  *     hidden from accessibility.
  */
 axs.utils.isElementOrAncestorHidden = function(element) {
-    if (axs.utils.isElementHidden(element))
+    if (axs.utils.elementIsNotVisible(element))
+        return true;
+    if (axs.utils.elementIsAriaHidden(element))
         return true;
 
     if (axs.dom.parentElement(element))
