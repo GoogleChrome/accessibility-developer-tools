@@ -922,6 +922,17 @@ axs.utils.namedValues = function(obj) {
     return values;
 };
 
+/**
+* Escapes a given ID to be used in a CSS selector
+*
+* @private
+* @param {!String} id The ID to be escaped
+* @return {String} The escaped ID
+*/
+function escapeId(id) {
+    return id.replace(/[^a-zA-Z0-9_-]/g,function(match) { return '\\' + match; });
+}
+
 /** Gets a CSS selector text for a DOM object.
  * @param {Node} obj The DOM object.
  * @return {string} CSS selector text for the DOM object.
@@ -935,7 +946,7 @@ axs.utils.getQuerySelectorText = function(obj) {
 
   if (obj.hasAttribute) {
     if (obj.id) {
-      return '#' + obj.id;
+      return '#' + escapeId(obj.id);
     }
 
     if (obj.className) {
