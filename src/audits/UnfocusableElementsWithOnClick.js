@@ -24,12 +24,12 @@ axs.AuditRules.addRule({
     opt_requires: {
         consoleAPI: true
     },
-    relevantElementMatcher: function(element) {
+    relevantElementMatcher: function(element, flags) {
         // element.ownerDocument may not be current document if it is in an iframe
         if (element instanceof element.ownerDocument.defaultView.HTMLBodyElement) {
             return false;
         }
-        if (axs.utils.isElementOrAncestorHidden(element)) {
+        if (flags.hidden) {
             return false;
         }
         var eventListeners = getEventListeners(element);

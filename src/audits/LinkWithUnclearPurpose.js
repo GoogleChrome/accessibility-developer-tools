@@ -28,8 +28,8 @@ axs.AuditRules.addRule({
      * @param {Element} element
      * @return {boolean}
      */
-    relevantElementMatcher: function(element) {
-        return axs.browserUtils.matchSelector(element, 'a[href]') && !axs.utils.isElementOrAncestorHidden(element);
+    relevantElementMatcher: function(element, flags) {
+        return axs.browserUtils.matchSelector(element, 'a[href]') && !flags.hidden;
     },
     /**
      * @param {Element} anchor
