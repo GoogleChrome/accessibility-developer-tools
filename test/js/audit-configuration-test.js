@@ -48,7 +48,7 @@ test("Configure severity of an audit rule", function() {
 
 test("Specify configuration as an object", function() {
   var fixtures = document.getElementById('qunit-fixture');
-  
+
   var configPayload = {
     auditRulesToRun: ['badAriaRole'],
     scope: fixtures,
@@ -119,10 +119,10 @@ test("Unsupported Rules Warning shown first and only first time audit ran", func
   // because the unit tests run multiple times Audit.run()
   axs.Audit.unsupportedRulesWarningShown = false;
   __warnings = [];
-  axs.Audit.run();
+  axs.Audit.run(auditConfig);
 
   equal(2, __warnings.length);
-  axs.Audit.run();
+  axs.Audit.run(auditConfig);
   equal(2, __warnings.length);
 });
 

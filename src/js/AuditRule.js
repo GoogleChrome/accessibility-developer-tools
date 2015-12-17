@@ -47,6 +47,7 @@ axs.AuditRule = function(spec) {
     /**
      * Is this element relevant to this audit?
      * @param {Element} element A potential audit candidate.
+     * @param {Object} flags
      * @return {boolean} true if this element is relevant to this audit.
      */
     this.relevantElementMatcher_ = spec.relevantElementMatcher;
@@ -54,6 +55,7 @@ axs.AuditRule = function(spec) {
     /**
      * The actual audit function.
      * @param {Element} element The element under test.
+     * @param {Object} flags
      * @param {Object=} config
      * @return {boolean} true if this audit finds a problem.
      */
@@ -70,6 +72,9 @@ axs.AuditRule = function(spec) {
 
     /** @type {boolean} */
     this.requiresConsoleAPI = !!spec['opt_requiresConsoleAPI'];
+
+    /** @type {Array.<axs.AuditRule.RelevantElement>} */
+    this.relevantElements = [];
 };
 
 /** @typedef {{ name: string,
@@ -93,6 +98,13 @@ axs.AuditRule.SpecWithoutConsoleAPI;
 
 /** @typedef {(axs.AuditRule.SpecWithConsoleAPI|axs.AuditRule.SpecWithoutConsoleAPI)} */
 axs.AuditRule.Spec;
+
+/**
+ * When storing "relevant" or "related" elements during the DOM traversal phase
+ * also hold the flags for that element.
+ * @typedef {{element: Element, flags: Object}}
+ * */
+axs.AuditRule.RelevantElement;
 
 /**
  * @const
@@ -119,71 +131,96 @@ axs.AuditRule.prototype.addElement = function(elements, element) {
     elements.push(element);
 };
 
- /**
-  * Recursively collect elements which match |matcher| into |collection|,
-  * starting at |scope|.
-  * @param {Node} scope
-  * @param {function(Element): boolean} matcher
-  * @param {Array.<Element>} collection
-  * @param {Array.<string>=} opt_ignoreSelectors
+/**
+  * Collect elements relevant to this rule.
+  * @param {Element} element
+  * @param {Object} flags Fast lookup for various element states.
   */
-axs.AuditRule.collectMatchingElements = function(scope, matcher, collection, opt_ignoreSelectors) {
-    /**
-     * @param {!Element} element
-     * @return boolean
-     */
-    function relevantElementCollector(element) {
-        if (opt_ignoreSelectors) {
-            for (var i = 0; i < opt_ignoreSelectors.length; i++) {
-                if (axs.browserUtils.matchSelector(element, opt_ignoreSelectors[i]))
-                    return false;
-            }
-        }
-        if (matcher(element))
-            collection.push(element);
+axs.AuditRule.prototype.collectMatchingElement = function(element, flags) {
+    if (this.relevantElementMatcher_(element, flags) && flags.inScope) {
+        this.relevantElements.push({
+            element: element,
+            flags: flags
+        });
         return true;
     }
-    axs.dom.composedTreeSearch(scope, null, { preorder: relevantElementCollector });
+    return false;
 };
 
 /**
- * @param {Object} options
- *     Optional named parameters:
- *     ignoreSelectors: Selectors for parts of the page to ignore for this rule.
- *     scope: The scope in which the element selector should run.
- *         Defaults to `document`.
- *     maxResults: The maximum number of results to collect. If more than this
- *         number of results is found, 'resultsTruncated' is set to true in the
- *         returned object. If this is null or undefined, all results will be
- *         returned.
- *     config: Any per-rule configuration.
- * @return {?Object.<string, (axs.constants.AuditResult|?Array.<Element>|boolean)>}
+ * Determine if the current rule can be run based on the current configuration.
+ * @param {axs.AuditConfiguration} configuration Used to determine if this rule can run.
+ * @returns {boolean} true if the rule can run.
  */
-axs.AuditRule.prototype.run = function(options) {
-    options = options || {};
-    var scope = 'scope' in options ? options['scope'] : document;
-    var maxResults = 'maxResults' in options ? options['maxResults'] : null;
-
-    var relevantElements = [];
-    axs.AuditRule.collectMatchingElements(scope, this.relevantElementMatcher_, relevantElements, options['ignoreSelectors']);
-
-    var failingElements = [];
-
-    if (!relevantElements.length)
-        return { result: axs.constants.AuditResult.NA };
-    for (var i = 0; i < relevantElements.length; i++) {
-        if (maxResults != null && failingElements.length >= maxResults)
-            break;
-        var element = relevantElements[i];
-        if (this.test_(element, options.config))
-            this.addElement(failingElements, element);
+axs.AuditRule.prototype.canRun = function(configuration) {
+    if (this.disabled) {
+        return false;
     }
-    var result = failingElements.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS;
-    var results = { result: result, elements: failingElements };
-    if (i < relevantElements.length)
-        results['resultsTruncated'] = true;
-
-    return results;
+    if (!configuration.withConsoleApi && this.requiresConsoleAPI) {
+        return false;
+    }
+    return true;
 };
 
-// axs.AuditRule.specs = {};
+/**
+ * Represents the result of an AuditRule.
+ * @constructor
+ */
+axs.AuditRule.Result = function(configuration, auditRule) {
+    var ruleValues = axs.utils.namedValues(auditRule);
+    ruleValues.severity = configuration.getSeverity(auditRule.name) || ruleValues.severity;
+    this.rule = ruleValues;
+    this.maxResults = configuration.maxResults;
+    this.update(axs.constants.AuditResult.NA);
+};
+
+/**
+ * Process a new audit result and update the overall state consistent with the following constraints:
+ *    NA > PASS > FAIL
+ * In other words:
+ *    NA can become PASS or FAIL
+ *    PASS can become FAIL
+ *    FAIL cannot be changed
+ * @param {axs.constants.AuditResult} auditResult The result of the current test.
+ * @param {Element=} element The element responsible for the test result, required if the result is FAIL.
+ */
+axs.AuditRule.Result.prototype.update = function(auditResult, element) {
+    var result = this;
+    if (auditResult === axs.constants.AuditResult.FAIL) {
+        var failingElements = result.elements || (result.elements = []);
+        result.result = auditResult;  // If FAIL then we change the result to FAIL no matter what it is
+        if (this.maxResults && result.elements.length >= this.maxResults) {
+            result.resultsTruncated = true;
+        } else if (element) {
+            // element should always be defined here but testing first avoids pushing undefined onto the array
+            failingElements.push(element);
+        }
+    } else if (auditResult === axs.constants.AuditResult.PASS) {
+        if (!result.elements)
+            result.elements = [];
+        if (result.result !== axs.constants.AuditResult.FAIL)
+            result.result = auditResult;  // If PASS then we change result only if it is not already FAIL
+    } else if (!result.result) {
+        result.result = auditResult;
+    }
+};
+
+/**
+ * Run this AuditRule against any relevant elements it has collected during the DOM traversal phase.
+ * @param {axs.AuditConfiguration} configuration Configuration for this run.
+ * @return {axs.AuditRule.Result}
+ */
+axs.AuditRule.prototype.run = function(configuration) {
+    var options = this._options || {};
+    var result = new axs.AuditRule.Result(configuration, this);
+    var next;
+    while ((next = this.relevantElements.shift())) {
+        var element = next.element;
+        if (this.test_(element, options.config)) {
+            result.update(axs.constants.AuditResult.FAIL, element);
+        } else {
+            result.update(axs.constants.AuditResult.PASS, element);
+        }
+    }
+    return result;
+};

@@ -63,4 +63,27 @@ goog.provide('axs.AuditRules');
             return this.getRule(name);
         }, axs.AuditRules);
     };
+
+    /**
+     * Gets all registered audit rules which are not excluded by configuration.
+     * @param {axs.AuditConfiguration} configuration Used to determine ignored rules.
+     * @return {Array.<axs.AuditRule>}
+     */
+    axs.AuditRules.getActiveRules = function(configuration) {
+        var auditRules;
+        if (configuration.auditRulesToRun && configuration.auditRulesToRun.length > 0) {
+            auditRules = configuration.auditRulesToRun;
+        } else {
+            auditRules = axs.AuditRules.getRules(true);
+        }
+        if (configuration.auditRulesToIgnore) {
+            for (var i = 0; i < configuration.auditRulesToIgnore.length; i++) {
+                var auditRuleToIgnore = configuration.auditRulesToIgnore[i];
+                if (auditRules.indexOf(auditRuleToIgnore) < 0)
+                    continue;
+                auditRules.splice(auditRules.indexOf(auditRuleToIgnore), 1);
+            }
+        }
+        return auditRules.map(axs.AuditRules.getRule);
+    };
 })();
