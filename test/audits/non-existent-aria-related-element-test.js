@@ -1,4 +1,4 @@
-module('NonExistentAriaRelatedElement');
+module('NonExistentRelatedElement');
 [
   'aria-activedescendant',  // strictly speaking sometests do not apply to this
   'aria-controls',
@@ -18,7 +18,7 @@ module('NonExistentAriaRelatedElement');
         fixture.appendChild(refererElement);
 
         var config = {
-            ruleName: 'nonExistentAriaRelatedElement',
+            ruleName: 'nonExistentRelatedElement',
             expected: axs.constants.AuditResult.PASS,
             elements: []
         };
@@ -33,7 +33,7 @@ module('NonExistentAriaRelatedElement');
         fixture.appendChild(refererElement);
 
         var config = {
-            ruleName: 'nonExistentAriaRelatedElement',
+            ruleName: 'nonExistentRelatedElement',
             expected: axs.constants.AuditResult.FAIL,
             elements: [refererElement]
         };
@@ -49,7 +49,7 @@ module('NonExistentAriaRelatedElement');
         fixture.appendChild(refererElement);
 
         var config = {
-            ruleName: 'nonExistentAriaRelatedElement',
+            ruleName: 'nonExistentRelatedElement',
             expected: axs.constants.AuditResult.FAIL,
             elements: [refererElement]
         };
@@ -65,7 +65,7 @@ module('NonExistentAriaRelatedElement');
         fixture.appendChild(refererElement);
 
         var config = {
-            ruleName: 'nonExistentAriaRelatedElement',
+            ruleName: 'nonExistentRelatedElement',
             expected: axs.constants.AuditResult.FAIL,
             elements: [refererElement]
         };
@@ -89,7 +89,7 @@ module('NonExistentAriaRelatedElement');
         fixture.appendChild(refererElement);
 
         var config = {
-            ruleName: 'nonExistentAriaRelatedElement',
+            ruleName: 'nonExistentRelatedElement',
             expected: axs.constants.AuditResult.PASS,
             elements: []
         };
@@ -110,7 +110,7 @@ module('NonExistentAriaRelatedElement');
         fixture.appendChild(refererElement);
 
         var config = {
-            ruleName: 'nonExistentAriaRelatedElement',
+            ruleName: 'nonExistentRelatedElement',
             expected: axs.constants.AuditResult.FAIL,
             elements: [refererElement]
         };
@@ -131,7 +131,7 @@ module('NonExistentAriaRelatedElement');
         fixture.appendChild(refererElement);
 
         var config = {
-            ruleName: 'nonExistentAriaRelatedElement',
+            ruleName: 'nonExistentRelatedElement',
             expected: axs.constants.AuditResult.NA,
             ignoreSelectors: ['#labelledbyElement2']
         };

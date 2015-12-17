@@ -54,6 +54,17 @@ axs.AuditRule = function(spec) {
     this.relevantElementMatcher_ = spec.relevantElementMatcher;
 
     /**
+     * If the relevantElementMatcher is not enough to determine whether or not this rule should run
+     * then this function can be called (after DOM traversal is finished).
+     * @param {Element} element A potential audit candidate.
+     * @param {Object} flags
+     * @return {boolean} true if this element is relevant to this audit.
+     */
+    this.isRelevant_ = spec.isRelevant || function(element, flags) {  // eslint-disable-line no-unused-vars
+        return true;
+    };
+
+    /**
      * The actual audit function.
      * @param {Element} element The element under test.
      * @param {Object} flags
@@ -76,6 +87,9 @@ axs.AuditRule = function(spec) {
 
     /** @type {Array.<axs.AuditRule.RelevantElement>} */
     this.relevantElements = [];
+
+    /** @type {Array.<axs.AuditRule.RelevantElement>} */
+    this.relatedElements = [];
 
     /**
      * An audit can indicate that the DOM traversal should capture ID refs on its behalf.
@@ -226,17 +240,23 @@ axs.AuditRule.Result.prototype.update = function(auditResult, element) {
  * @return {axs.AuditRule.Result}
  */
 axs.AuditRule.prototype.run = function(configuration) {
-    var options = this._options || {};
-    var result = new axs.AuditRule.Result(configuration, this);
-    var next;
-    while ((next = this.relevantElements.shift())) {
-        var element = next.element;
-        var flags = next.flags;
-        if (this.test_(element, flags, options.config)) {
-            result.update(axs.constants.AuditResult.FAIL, element);
-        } else {
-            result.update(axs.constants.AuditResult.PASS, element);
+    try {
+        var options = this._options || {};
+        var result = new axs.AuditRule.Result(configuration, this);
+        var next;
+        while ((next = this.relevantElements.shift())) {
+            var element = next.element;
+            var flags = next.flags;
+            if (this.isRelevant_(element, flags)) {
+                if (this.test_(element, flags, options.config)) {
+                    result.update(axs.constants.AuditResult.FAIL, element);
+                } else {
+                    result.update(axs.constants.AuditResult.PASS, element);
+                }
+            }
         }
+        return result;
+    } finally {
+        this.relatedElements.length = 0;
     }
-    return result;
 };
