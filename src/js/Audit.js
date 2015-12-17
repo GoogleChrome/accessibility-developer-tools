@@ -250,6 +250,11 @@ axs.Audit.run = function(opt_configuration) {
 
     var auditRules = axs.AuditRules.getActiveRules(configuration);
 
+    // As a performance optimization set the collectIdRefs flag to false if none of the rules needs it.
+    configuration.collectIdRefs = auditRules.some(function(auditRule) {
+        return auditRule.collectIdRefs;
+    });
+
     if (!configuration.scope) {
         configuration.scope = document.documentElement;
     }
@@ -281,6 +286,7 @@ goog.exportSymbol('axs.Audit.run', axs.Audit.run);
     axs.Audit.collectMatchingElements = function(configuration, auditRules) {
         var rootFlags = {
             walkDom: configuration.walkDom,
+            collectIdRefs: configuration.collectIdRefs,
             level: 0,
             ignoring: {},
             disabled: false,

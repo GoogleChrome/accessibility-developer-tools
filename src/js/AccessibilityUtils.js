@@ -567,7 +567,7 @@ axs.utils.isElementDisabled = function(element, ignoreAncestors) {
         }
         if (ignoreAncestors) {
             return false;
-    }
+        }
     }
     return false;
 };
@@ -1082,6 +1082,79 @@ axs.utils.getHtmlIdReferrers = function(element) {
         return selector.replace('\{id\}', id);
     });
     return element.ownerDocument.querySelectorAll(selectors.join(','));
+};
+
+/**
+ * Gets a list of all IDs this element references in either ARIA or HTML attributes.
+ *
+ * @param {Element} element The element to check for idref attributes.
+ * @returns {Array.<string>} Any IDs this element references.
+ */
+axs.utils.getReferencedIds = function(element) {
+    var result = [];
+    var addResult = function(ids) {
+            if (ids) {
+                if (ids.indexOf(' ') > 0) {
+                    result = result.concat(attrib.value.split(' '));
+                } else {
+                    result.push(ids);
+                }
+            }
+        };
+    for (var i = 0; i < element.attributes.length; i++) {
+        var tagName = element.tagName.toLowerCase();
+        var attrib = element.attributes[i];
+        if (attrib.specified) {
+            var attribName = attrib.name;
+            var ariaAttr = attribName.match(/aria-(.+)/);
+            if (ariaAttr) {
+                var details = axs.constants.ARIA_PROPERTIES[ariaAttr[1]];
+                if (details && (details.valueType === ('idref') || details.valueType === ('idref_list'))) {
+                    addResult(attrib.value);
+                }
+                continue;
+            }
+            switch (attribName) {
+                case 'contextmenu':
+                case 'itemref':
+                    addResult(attrib.value);
+                    break;
+                case 'form':
+                    if (tagName == 'button' || tagName == 'fieldset' || tagName == 'input' ||
+                            tagName == 'keygen' || tagName == 'label' || tagName == 'object' ||
+                            tagName == 'output' || tagName == 'select' || tagName == 'textarea') {
+                        addResult(attrib.value);
+                    }
+                    break;
+                case 'for':
+                    if (tagName == 'label' || tagName == 'output') {
+                        addResult(attrib.value);
+                    }
+                    break;
+                case 'menu':
+                    if (tagName == 'button') {
+                        addResult(attrib.value);
+                    }
+                    break;
+                case 'list':
+                    if (tagName == 'input') {
+                        addResult(attrib.value);
+                    }
+                    break;
+                case 'command':
+                    if (tagName == 'menuitem') {
+                        addResult(attrib.value);
+                    }
+                    break;
+                case 'headers':
+                    if (tagName == 'td' || tagName == 'tr') {
+                        addResult(attrib.value);
+                    }
+                    break;
+            }
+        }
+    }
+    return result;
 };
 
 /**

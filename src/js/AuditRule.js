@@ -76,10 +76,20 @@ axs.AuditRule = function(spec) {
 
     /** @type {Array.<axs.AuditRule.RelevantElement>} */
     this.relevantElements = [];
+
+    /**
+     * An audit can indicate that the DOM traversal should capture ID refs on its behalf.
+     * This is a performance enhancement which prevents multiple audits from having to call
+     * `axs.utils.getReferencedIds` on the same element during DOM traversal.
+     *
+     * @type {boolean}
+     */
+    this.collectIdRefs = requires.idRefs || false;
 };
 
 /**
  * Note that opt_requires may have any of the following optional properties:
+ *    idRefs: boolean, (true if the rule needs idRefs collected for it)
  *    consoleAPI: boolean (true if the rule needs the console API)
  *
  * @typedef {{ name: string,
