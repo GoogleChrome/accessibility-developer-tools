@@ -24,6 +24,7 @@ goog.provide('axs.AuditRule.Spec');
  * @param {axs.AuditRule.Spec} spec
  */
 axs.AuditRule = function(spec) {
+    var requires = spec.opt_requires || {};
     var isValid = true;
     var missingFields = [];
     for (var i = 0; i < axs.AuditRule.requiredFields.length; i++) {
@@ -71,32 +72,36 @@ axs.AuditRule = function(spec) {
     this.url = spec.url || '';
 
     /** @type {boolean} */
-    this.requiresConsoleAPI = !!spec['opt_requiresConsoleAPI'];
+    this.requiresConsoleAPI = !!requires.consoleAPI;
 
     /** @type {Array.<axs.AuditRule.RelevantElement>} */
     this.relevantElements = [];
 };
 
-/** @typedef {{ name: string,
+/**
+ * Note that opt_requires may have any of the following optional properties:
+ *    consoleAPI: boolean (true if the rule needs the console API)
+ *
+ * @typedef {{ name: string,
  *              heading: string,
  *              url: string,
  *              severity: axs.constants.Severity,
- *              relevantElementMatcher: function(Element): boolean,
- *              test: function(Element, Object=): boolean,
+ *              relevantElementMatcher: function(Element, Object): boolean,
+ *              test: function(Element, Object, Object=): boolean,
  *              code: string,
- *              opt_requiresConsoleAPI: boolean }} */
-axs.AuditRule.SpecWithConsoleAPI;
+ *              opt_requires: Object }} */
+axs.AuditRule.SpecWithRequires;
 
 /** @typedef {{ name: string,
  *              heading: string,
  *              url: string,
  *              severity: axs.constants.Severity,
- *              relevantElementMatcher: function(Element): boolean,
- *              test: function(Element, Object=): boolean,
+ *              relevantElementMatcher: function(Element, Object): boolean,
+ *              test: function(Element, Object, Object=): boolean,
  *              code: string }} */
-axs.AuditRule.SpecWithoutConsoleAPI;
+axs.AuditRule.SpecWithoutRequires;
 
-/** @typedef {(axs.AuditRule.SpecWithConsoleAPI|axs.AuditRule.SpecWithoutConsoleAPI)} */
+/** @typedef {(axs.AuditRule.SpecWithRequires|axs.AuditRule.SpecWithoutRequires)} */
 axs.AuditRule.Spec;
 
 /**

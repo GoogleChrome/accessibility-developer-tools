@@ -21,7 +21,9 @@ axs.AuditRules.addRule({
     heading: 'Elements with onclick handlers must be focusable',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_02',
     severity: axs.constants.Severity.WARNING,
-    opt_requiresConsoleAPI: true,
+    opt_requires: {
+        consoleAPI: true
+    },
     relevantElementMatcher: function(element) {
         // element.ownerDocument may not be current document if it is in an iframe
         if (element instanceof element.ownerDocument.defaultView.HTMLBodyElement) {
