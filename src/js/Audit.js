@@ -30,6 +30,7 @@ goog.provide('axs.AuditConfiguration');
  *   - auditRulesToIgnore
  *   - maxResults
  *   - withConsoleApi
+ *   - walkDom
  *   - showUnsupportedRulesWarning
  */
 axs.AuditConfiguration = function(config) {
@@ -86,6 +87,23 @@ axs.AuditConfiguration = function(config) {
     this.withConsoleApi = false;
 
     /**
+     * By default the entire DOM tree is traversed regardless of the scope set in the configuration.
+     * This is to ensure that idrefs are collected and that disabled ancestors are considered.
+     *
+     * Setting this flag to false means that only the scope will be traversed and therefore only disabled
+     * ancestors, hidden ancestors and idrefs within the scope will be found.
+     *
+     * Examples of when to set this to `false` are:
+     *  - You are running unit tests in a browser and KNOW that the only part of the DOM you care about is
+     *  contiained within a particular fixture element.
+     *  - You are auditing a web app where you know for sure that everything you are interested in is scoped
+     *  within a particular container.
+     *
+     * @type {boolean}
+     */
+    this.walkDom = true;
+
+    /**
      * Do we want to show a warning that there are audit rules which are not supported in this configuration?
      * @type {boolean}
      */
@@ -101,6 +119,7 @@ axs.AuditConfiguration = function(config) {
     goog.exportProperty(this, 'auditRulesToRun', this.auditRulesToRun);
     goog.exportProperty(this, 'auditRulesToIgnore', this.auditRulesToIgnore);
     goog.exportProperty(this, 'withConsoleApi', this.withConsoleApi);
+    goog.exportProperty(this, 'walkDom', this.walkDom);
     goog.exportProperty(this, 'showUnsupportedRulesWarning', this.showUnsupportedRulesWarning);
 };
 goog.exportSymbol('axs.AuditConfiguration', axs.AuditConfiguration);
@@ -261,10 +280,13 @@ goog.exportSymbol('axs.Audit.run', axs.Audit.run);
      */
     axs.Audit.collectMatchingElements = function(configuration, auditRules) {
         var rootFlags = {
+            walkDom: configuration.walkDom,
             level: 0,
-            ignoring: {}
+            ignoring: {},
+            disabled: false,
+            hidden: false
         };
-        var root = document.documentElement;
+        var root = configuration.walkDom ? document.documentElement : configuration.scope;
         // Because 'related elements' could occur anywhere in the DOM we need to start at document.documentElement
         axs.dom.composedTreeSearch(root, null, { preorder: function(element, flags) {
             if (!flags.inScope)

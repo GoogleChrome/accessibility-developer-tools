@@ -16,7 +16,8 @@ QUnit.extend(QUnit.assert, {
         var ruleName = config.ruleName;
         var auditConfig = new axs.AuditConfiguration({
             auditRulesToRun: [ruleName],
-            scope: config.scope || document.getElementById('qunit-fixture')
+            scope: config.scope || document.getElementById('qunit-fixture'),
+            walkDom: false  // In QUnit tests we never need to walk the entire DOM
         });
         if (config.ignoreSelectors)
             auditConfig.ignoreSelectors(ruleName, config.ignoreSelectors);
