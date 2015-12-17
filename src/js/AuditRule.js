@@ -221,7 +221,8 @@ axs.AuditRule.prototype.run = function(configuration) {
     var next;
     while ((next = this.relevantElements.shift())) {
         var element = next.element;
-        if (this.test_(element, options.config)) {
+        var flags = next.flags;
+        if (this.test_(element, flags, options.config)) {
             result.update(axs.constants.AuditResult.FAIL, element);
         } else {
             result.update(axs.constants.AuditResult.PASS, element);

@@ -36,7 +36,7 @@ axs.AuditRules.addRule({
      * @param {Object=} opt_config
      * @return {boolean}
      */
-    test: function(anchor, opt_config) {
+    test: function(anchor, flags, opt_config) {
         var config = opt_config || {};
         var blacklistPhrases = config['blacklistPhrases'] || [];
         var whitespaceRE = /\s+/;

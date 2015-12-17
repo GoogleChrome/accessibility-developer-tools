@@ -135,6 +135,12 @@ axs.dom.composedTreeSearch = function(node, end, callbacks, parentFlags, opt_sha
     // ShadowRoot.
     if (element) {
         var localName = element.localName;
+        if (!flags.disabled || (localName === 'legend') && axs.browserUtils.matchSelector(element, 'fieldset>legend:first-of-type')) {
+            flags.disabled = axs.utils.isElementDisabled(element, true);
+        }
+        if (!flags.hidden) {
+            flags.hidden = axs.utils.isElementHidden(element);
+        }
         if (callbacks.preorder) {
             if (!callbacks.preorder(element, flags))
                 return found;

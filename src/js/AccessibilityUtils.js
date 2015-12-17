@@ -549,10 +549,12 @@ axs.utils.isNativelyDisableable = function(element) {
  * This element may or may not be effectively disabled in practice as this is dependent on implementation.
  *
  * @param {Element} element An element to check.
+ * @param {boolean=} ignoreAncestors If true do not check for disabled ancestors.
  * @return {boolean} true if the element or one of its ancestors is disabled.
  */
-axs.utils.isElementDisabled = function(element) {
-    if (axs.browserUtils.matchSelector(element, '[aria-disabled=true], [aria-disabled=true] *')) {
+axs.utils.isElementDisabled = function(element, ignoreAncestors) {
+    var selector = ignoreAncestors ? '[aria-disabled=true]' : '[aria-disabled=true], [aria-disabled=true] *';
+    if (axs.browserUtils.matchSelector(element, selector)) {
         return true;
     }
     if (!axs.utils.isNativelyDisableable(element) ||
@@ -560,9 +562,12 @@ axs.utils.isElementDisabled = function(element) {
         return false;
     }
     for (var next = element; next !== null; next = axs.dom.parentElement(next)) {
-        if (axs.utils.isNativelyDisableable(next) && next.hasAttribute('disabled')) {
+        if (next.hasAttribute('disabled')) {
             return true;
         }
+        if (ignoreAncestors) {
+            return false;
+    }
     }
     return false;
 };
