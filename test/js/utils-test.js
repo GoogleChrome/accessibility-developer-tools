@@ -121,6 +121,15 @@ test("nth-of-type does not refer to a selector but a tagName", function() {
   equal(lastLi, document.querySelector(selector),
         'selector "' + selector + '" does not match element');
 });
+test('special characters in IDs are properly escaped', function() {
+    var div = document.createElement('div');
+    div.id = 'some.id.with.special.chars';
+    this.fixture_.appendChild(div);
+    var selector = axs.utils.getQuerySelectorText(div);
+    equal(div, document.querySelector(selector),
+          'selector "' + selector + '" does not match element');
+});
+
 
 module("getIdReferrers", {
   setup: function () {
