@@ -926,8 +926,8 @@ axs.utils.namedValues = function(obj) {
 * Escapes a given ID to be used in a CSS selector
 *
 * @private
-* @param {!String} id The ID to be escaped
-* @return {String} The escaped ID
+* @param {!string} id The ID to be escaped
+* @return {string} The escaped ID
 */
 function escapeId(id) {
     return id.replace(/[^a-zA-Z0-9_-]/g,function(match) { return '\\' + match; });
