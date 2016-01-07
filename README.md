@@ -87,7 +87,7 @@ The runner will load the specified file or URL in a headless browser, inject axs
      val jse = driver.asInstanceOf[JavascriptExecutor]
      jse.executeScript(scala.io.Source.fromURL("https://raw.githubusercontent.com/GoogleChrome/" +
        "accessibility-developer-tools/stable/dist/js/axs_testing.js").mkString)
-     val report = js.executeScript("var results = axs.Audit.run();return axs.Audit.createReport(results);")
+     val report = jse.executeScript("var results = axs.Audit.run();return axs.Audit.createReport(results);")
      println(report)
 
 ### Run audit from Selenium WebDriver (Scala)(with caching):
