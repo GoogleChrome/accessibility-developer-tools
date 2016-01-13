@@ -1,3 +1,5 @@
+## 2.10.1-rc.0 - 2016-01-13
+
 ### Bug fixes:
 
 * Escape special characters to be used in a query selector string (PR #267)
