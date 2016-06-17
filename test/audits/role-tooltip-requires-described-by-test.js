@@ -89,3 +89,19 @@ test('a hidden tooltip without a corresponding aria-describedby should not fail'
     };
     assert.runRule(config);
 });
+
+// #269
+test('a tooltip without an ID doesn\'t cause an exception', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var tooltip = document.createElement('div');
+    fixture.appendChild(tooltip);
+    tooltip.setAttribute('role', 'tooltip');
+    try {
+        deepEqual(
+            axs.AuditRules.getRule('roleTooltipRequiresDescribedby').run({ scope: fixture }),
+            { elements: [tooltip], result: axs.constants.AuditResult.FAIL }
+        );
+    } catch (e) {
+        ok(false, 'Running roleTooltipRequiresDescribedby threw an exception: ' + e.message);
+    }
+});

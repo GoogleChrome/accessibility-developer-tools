@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Google Inc.
+ * Copyright 2016 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/404ede0f2186682fbbef624141e76ec2b601317d
+ * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/582ba71c124ed834d640ce2109dcd91b7864922f
  *
  * See project README for build steps.
  */
@@ -620,25 +620,16 @@ axs.color.multiplyMatrixVector = function(a, b) {
 axs.color.toYCbCr = function(a) {
   var b = a.red / 255, c = a.green / 255;
   a = a.blue / 255;
-  b = .03928 >= b ? b / 12.92 : Math.pow((b + .055) / 1.055, 2.4);
-  c = .03928 >= c ? c / 12.92 : Math.pow((c + .055) / 1.055, 2.4);
-  a = .03928 >= a ? a / 12.92 : Math.pow((a + .055) / 1.055, 2.4);
-  return new axs.color.YCbCr(axs.color.multiplyMatrixVector(axs.color.YCC_MATRIX, [b, c, a]));
+  return new axs.color.YCbCr(axs.color.multiplyMatrixVector(axs.color.YCC_MATRIX, [.03928 >= b ? b / 12.92 : Math.pow((b + .055) / 1.055, 2.4), .03928 >= c ? c / 12.92 : Math.pow((c + .055) / 1.055, 2.4), .03928 >= a ? a / 12.92 : Math.pow((a + .055) / 1.055, 2.4)]));
 };
 axs.color.fromYCbCr = function(a) {
   return axs.color.fromYCbCrArray([a.luma, a.Cb, a.Cr]);
 };
 axs.color.fromYCbCrArray = function(a) {
-  var b = axs.color.multiplyMatrixVector(axs.color.INVERTED_YCC_MATRIX, a), c = b[0];
-  a = b[1];
-  b = b[2];
-  c = .00303949 >= c ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - .055;
-  a = .00303949 >= a ? 12.92 * a : 1.055 * Math.pow(a, 1 / 2.4) - .055;
-  b = .00303949 >= b ? 12.92 * b : 1.055 * Math.pow(b, 1 / 2.4) - .055;
-  c = Math.min(Math.max(Math.round(255 * c), 0), 255);
-  a = Math.min(Math.max(Math.round(255 * a), 0), 255);
-  b = Math.min(Math.max(Math.round(255 * b), 0), 255);
-  return new axs.color.Color(c, a, b, 1);
+  var b = axs.color.multiplyMatrixVector(axs.color.INVERTED_YCC_MATRIX, a);
+  a = b[0];
+  var c = b[1], b = b[2];
+  return new axs.color.Color(Math.min(Math.max(Math.round(255 * (.00303949 >= a ? 12.92 * a : 1.055 * Math.pow(a, 1 / 2.4) - .055)), 0), 255), Math.min(Math.max(Math.round(255 * (.00303949 >= c ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - .055)), 0), 255), Math.min(Math.max(Math.round(255 * (.00303949 >= b ? 12.92 * b : 1.055 * Math.pow(b, 1 / 2.4) - .055)), 0), 255), 1);
 };
 axs.color.RGBToYCbCrMatrix = function(a, b) {
   return [[a, 1 - a - b, b], [-a / (2 - 2 * b), (a + b - 1) / (2 - 2 * b), (1 - b) / (2 - 2 * b)], [(1 - a) / (2 - 2 * a), (a + b - 1) / (2 - 2 * a), -b / (2 - 2 * a)]];
@@ -1133,6 +1124,11 @@ axs.utils.namedValues = function(a) {
   }
   return b;
 };
+function escapeId(a) {
+  return a.replace(/[^a-zA-Z0-9_-]/g, function(a) {
+    return "\\" + a;
+  });
+}
 axs.utils.getQuerySelectorText = function(a) {
   if (null == a || "HTML" == a.tagName) {
     return "html";
@@ -1142,7 +1138,7 @@ axs.utils.getQuerySelectorText = function(a) {
   }
   if (a.hasAttribute) {
     if (a.id) {
-      return "#" + a.id;
+      return "#" + escapeId(a.id);
     }
     if (a.className) {
       for (var b = "", c = 0;c < a.classList.length;c++) {
@@ -2166,7 +2162,8 @@ axs.AuditRules.addRule({name:"requiredAriaAttributeMissing", heading:"Elements w
 axs.AuditRules.addRule({name:"roleTooltipRequiresDescribedby", heading:"Elements with role=tooltip should have a corresponding element with aria-describedby", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_02", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
   return axs.browserUtils.matchSelector(a, "[role=tooltip]") && !axs.utils.isElementOrAncestorHidden(a);
 }, test:function(a) {
-  return 0 === axs.utils.getAriaIdReferrers(a, "aria-describedby").length;
+  a = axs.utils.getAriaIdReferrers(a, "aria-describedby");
+  return !a || 0 === a.length;
 }, code:"AX_TOOLTIP_01"});
 axs.AuditRules.addRule({name:"tabIndexGreaterThanZero", heading:"Avoid positive integer values for tabIndex", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_03", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
   return axs.browserUtils.matchSelector(a, "[tabindex]");
@@ -2176,54 +2173,69 @@ axs.AuditRules.addRule({name:"tabIndexGreaterThanZero", heading:"Avoid positive 
   }
 }, code:"AX_FOCUS_03"});
 (function() {
-  axs.AuditRules.addRule({name:"tableHasAppropriateHeaders", heading:"Tables should have appropriate headers", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_table_01", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
-    return axs.browserUtils.matchSelector(a, "table");
-  }, test:function(a) {
-    if ("presentation" == a.getAttribute("role")) {
-      return 0 != a.querySelectorAll("th").length;
+  function a(a) {
+    if (0 == a.childElementCount) {
+      return !0;
     }
+    if (a.hasAttribute("role") && "presentation" != a.getAttribute("role")) {
+      return !1;
+    }
+    if ("presentation" == a.getAttribute("role")) {
+      a = a.querySelectorAll("*");
+      for (var c = 0;c < a.length;c++) {
+        if ("TR" != a[c].tagName && "TD" != a[c].tagName) {
+          return !1;
+        }
+      }
+      return !0;
+    }
+    return !1;
+  }
+  axs.AuditRules.addRule({name:"tableHasAppropriateHeaders", heading:"Tables should have appropriate headers", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_table_01", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(b) {
+    return axs.browserUtils.matchSelector(b, "table") && !a(b) && 0 < b.querySelectorAll("tr").length;
+  }, test:function(a) {
     a = a.querySelectorAll("tr");
-    var b;
+    var c;
     a: {
-      b = a[0].children;
-      for (var c = 0;c < b.length;c++) {
-        if ("TH" != b[c].tagName) {
-          b = !0;
+      c = a[0].children;
+      for (var d = 0;d < c.length;d++) {
+        if ("TH" != c[d].tagName) {
+          c = !0;
           break a;
         }
       }
-      b = !1;
+      c = !1;
     }
-    if (b) {
+    if (c) {
       a: {
-        for (b = 0;b < a.length;b++) {
-          if ("TH" != a[b].children[0].tagName) {
-            b = !0;
-            break a;
-          }
-        }
-        b = !1;
-      }
-    }
-    if (b) {
-      a: {
-        b = a[0].children;
-        for (c = 1;c < b.length;c++) {
-          if ("TH" != b[c].tagName) {
-            b = !0;
-            break a;
-          }
-        }
-        for (c = 1;c < a.length;c++) {
+        for (c = 0;c < a.length;c++) {
           if ("TH" != a[c].children[0].tagName) {
-            b = !0;
+            c = !0;
             break a;
           }
         }
-        b = !1;
+        c = !1;
       }
     }
-    return b;
+    if (c) {
+      a: {
+        c = a[0].children;
+        for (d = 1;d < c.length;d++) {
+          if ("TH" != c[d].tagName) {
+            c = !0;
+            break a;
+          }
+        }
+        for (d = 1;d < a.length;d++) {
+          if ("TH" != a[d].children[0].tagName) {
+            c = !0;
+            break a;
+          }
+        }
+        c = !1;
+      }
+    }
+    return c;
   }, code:"AX_TABLE_01"});
 })();
 (function() {

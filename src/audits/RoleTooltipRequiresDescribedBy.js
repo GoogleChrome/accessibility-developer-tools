@@ -29,7 +29,8 @@ axs.AuditRules.addRule({
         return axs.browserUtils.matchSelector(element, '[role=tooltip]') && !flags.hidden;
     },
     test: function(element) {
-        return axs.utils.getAriaIdReferrers(element, 'aria-describedby').length === 0;
+        var referrers = axs.utils.getAriaIdReferrers(element, 'aria-describedby');
+        return !referrers || referrers.length === 0;
     },
     code: 'AX_TOOLTIP_01'
 });

@@ -1,8 +1,13 @@
 ### Enhancements
 
 * Performance enhancements (#263)
-* Expanded the scope of AX_ARIA_02 and rebadged it to AX_HTML_03. It now checks that elements referred to in vanilla HTML
-  are present as well as ARIA.
+
+## 2.10.1-rc.0 - 2016-01-13
+
+### Bug fixes:
+
+* Escape special characters to be used in a query selector string (PR #267)
+* Fix exception thrown by RoleTooltipRequiresDescribedBy.js (#269)
 
 ## 2.10.0 - 2015-11-13
 
