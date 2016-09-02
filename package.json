@@ -29,7 +29,7 @@
     "url": "https://github.com/GoogleChrome/accessibility-developer-tools/issues"
   },
   "homepage": "https://github.com/GoogleChrome/accessibility-developer-tools",
-  "main": "src/js/Audit.js",
+  "main": "dist/js/axs_testing.js",
   "directories": {
     "test": "test"
   },
