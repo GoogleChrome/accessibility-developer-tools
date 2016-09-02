@@ -81,7 +81,7 @@ module.exports = function(grunt) {
         options: {
             configFile: '.eslintrc'
         },
-        target: ['./src/js/', './src/audits/']
+        target: ['./src/js/', './src/audits/', './Gruntfile.js', './main.js']
     },
 
     prompt: {
