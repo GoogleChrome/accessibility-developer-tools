@@ -1012,7 +1012,7 @@ axs.utils.getQuerySelectorText = function(obj) {
  * single ID reference.
  * @param {Element} element a potential referent.
  * @param {string=} opt_attributeName Name of an ARIA attribute to limit the results to, e.g. 'aria-owns'.
- * @return {NodeList} The elements that refer to this element.
+ * @return {NodeList} The elements that refer to this element or null.
  */
 axs.utils.getAriaIdReferrers = function(element, opt_attributeName) {
     var propertyToSelector = function(propertyKey) {

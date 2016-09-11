@@ -91,3 +91,17 @@ test('a tooltip without an ID doesn\'t cause an exception', function() {
         ok(false, 'Running roleTooltipRequiresDescribedby threw an exception: ' + e.message);
     }
 });
+
+test('role tooltip with a corresponding describedby of a missing element id should fail', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var tooltip = document.createElement('div');
+    var trigger = document.createElement('div');
+    fixture.appendChild(tooltip);
+    fixture.appendChild(trigger);
+    tooltip.setAttribute('role', 'tooltip');
+    trigger.setAttribute('aria-describedby', 'tooltip1');
+    deepEqual(
+        axs.AuditRules.getRule('roleTooltipRequiresDescribedby').run({ scope: fixture }),
+        { elements: [tooltip], result: axs.constants.AuditResult.FAIL }
+    );
+});
