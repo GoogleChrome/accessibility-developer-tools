@@ -49,6 +49,11 @@ You will need `node` and `grunt-cli` to build.
 
         % grunt
 
+
+## Troubleshooting
+
+This project uses [Closure Compiler](https://github.com/google/closure-compiler) to build our releases. You may need to install a recent version of [JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) in order for builds to successfully complete.
+
 # Using the Audit API
 
 ## Including the library
