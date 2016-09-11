@@ -25,9 +25,8 @@ axs.AuditRules.addRule({
     heading: 'Text elements should have a reasonable contrast ratio',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_color_01',
     severity: axs.constants.Severity.WARNING,
-    relevantElementMatcher: function(element) {
-        return axs.properties.hasDirectTextDescendant(element) &&
-            !axs.utils.isElementDisabled(element);
+    relevantElementMatcher: function(element, flags) {
+        return !flags.disabled && axs.properties.hasDirectTextDescendant(element);
     },
     test: function(element) {
         var style = window.getComputedStyle(element, null);

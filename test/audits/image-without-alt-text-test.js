@@ -14,53 +14,78 @@
 
 (function() {
     module('ImageWithoutAltText');
-    var rule = axs.AuditRules.getRule('imagesWithoutAltText');
+    var RULE_NAME = 'imagesWithoutAltText';
 
-    test('Image with no text alternative', function() {
+    test('Image with no text alternative', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var img = fixture.appendChild(document.createElement('img'));
         img.src = 'smile.jpg';
-        var expected = { elements: [img], result: axs.constants.AuditResult.FAIL };
-        deepEqual(rule.run({ scope: fixture }), expected, 'Image has no text alternative');
+
+        var config = {
+            ruleName: RULE_NAME,
+            elements: [img],
+            expected: axs.constants.AuditResult.FAIL
+        };
+        assert.runRule(config, 'Image has no text alternative');
     });
 
-    test('Image with no text alternative and presentational role', function() {
+    test('Image with no text alternative and presentational role', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var img = fixture.appendChild(document.createElement('img'));
         img.src = 'smile.jpg';
         img.setAttribute('role', 'presentation');
-        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
-        deepEqual(rule.run({ scope: fixture }), expected, 'Image has presentational role');
+
+        var config = {
+            ruleName: RULE_NAME,
+            elements: [],
+            expected: axs.constants.AuditResult.PASS
+        };
+        assert.runRule(config, 'Image has presentational role');
     });
 
-    test('Image with alt text', function() {
+    test('Image with alt text', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var img = fixture.appendChild(document.createElement('img'));
         img.src = 'smile.jpg';
         img.alt = 'Smile!';
-        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
-        deepEqual(rule.run({ scope: fixture }), expected, 'Image has alt text');
+
+        var config = {
+            ruleName: RULE_NAME,
+            elements: [],
+            expected: axs.constants.AuditResult.PASS
+        };
+        assert.runRule(config, 'Image has alt text');
     });
 
-    test('Image with empty alt text', function() {
+    test('Image with empty alt text', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var img = fixture.appendChild(document.createElement('img'));
         img.src = 'smile.jpg';
         img.alt = '';
-        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
-        deepEqual(rule.run({ scope: fixture }), expected, 'Image has empty alt text');
+
+        var config = {
+            ruleName: RULE_NAME,
+            elements: [],
+            expected: axs.constants.AuditResult.PASS
+        };
+        assert.runRule(config, 'Image has empty alt text');
     });
 
-    test('Image with aria label', function() {
+    test('Image with aria label', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var img = fixture.appendChild(document.createElement('img'));
         img.src = 'smile.jpg';
         img.setAttribute('aria-label', 'Smile!');
-        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
-        deepEqual(rule.run({ scope: fixture }), expected, 'Image has aria label');
+
+        var config = {
+            ruleName: RULE_NAME,
+            elements: [],
+            expected: axs.constants.AuditResult.PASS
+        };
+        assert.runRule(config, 'Image has aria label');
     });
 
-    test('Image with aria labelledby', function() {
+    test('Image with aria labelledby', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var img = fixture.appendChild(document.createElement('img'));
         img.src = 'smile.jpg';
@@ -68,16 +93,26 @@
         label.textContent = 'Smile!';
         label.id = 'label';
         img.setAttribute('aria-labelledby', 'label');
-        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
-        deepEqual(rule.run({ scope: fixture }), expected, 'Image has aria labelledby');
+
+        var config = {
+            ruleName: RULE_NAME,
+            elements: [],
+            expected: axs.constants.AuditResult.PASS
+        };
+        assert.runRule(config, 'Image has aria labelledby');
     });
 
-    test('Image with title', function() {
+    test('Image with title', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var img = fixture.appendChild(document.createElement('img'));
         img.src = 'smile.jpg';
         img.setAttribute('title', 'Smile!');
-        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
-        deepEqual(rule.run({ scope: fixture }), expected, 'Image has title');
+
+        var config = {
+            ruleName: RULE_NAME,
+            elements: [],
+            expected: axs.constants.AuditResult.PASS
+        };
+        assert.runRule(config, 'Image has title');
     });
 })();

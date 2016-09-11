@@ -1,56 +1,66 @@
 module('BadAriaAttributeValue');
 
-test('Empty idref value is ok', function() {
+test('Empty idref value is ok', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var div = document.createElement('div');
     fixture.appendChild(div);
     div.setAttribute('aria-activedescendant', '');
-    deepEqual(
-      axs.AuditRules.getRule('badAriaAttributeValue').run({ scope: fixture }),
-      { elements: [], result: axs.constants.AuditResult.PASS }
-    );
+    var config = {
+        ruleName: 'badAriaAttributeValue',
+        expected: axs.constants.AuditResult.PASS,
+        elements: []
+    };
+    assert.runRule(config);
 });
 
-test('Bad number value doesn\'t cause crash', function() {
+test('Bad number value doesn\'t cause crash', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var div = document.createElement('div');
     fixture.appendChild(div);
     div.setAttribute('aria-valuenow', 'foo');
-    deepEqual(
-      axs.AuditRules.getRule('badAriaAttributeValue').run({ scope: fixture }),
-      { elements: [div], result: axs.constants.AuditResult.FAIL }
-    );
+    var config = {
+        ruleName: 'badAriaAttributeValue',
+        expected: axs.constants.AuditResult.FAIL,
+        elements: [div]
+    };
+    assert.runRule(config);
 });
 
-test('Good number value is good', function() {
+test('Good number value is good', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var div = document.createElement('div');
     fixture.appendChild(div);
     div.setAttribute('aria-valuenow', '10');
-    deepEqual(
-      axs.AuditRules.getRule('badAriaAttributeValue').run({ scope: fixture }),
-      { elements: [], result: axs.constants.AuditResult.PASS }
-    );
+    var config = {
+        ruleName: 'badAriaAttributeValue',
+        expected: axs.constants.AuditResult.PASS,
+        elements: []
+    };
+    assert.runRule(config);
 });
 
-test('Good decimal number value is good', function() {
+test('Good decimal number value is good', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var div = document.createElement('div');
     fixture.appendChild(div);
     div.setAttribute('aria-valuenow', '0.5');
-    deepEqual(
-      axs.AuditRules.getRule('badAriaAttributeValue').run({ scope: fixture }),
-      { elements: [], result: axs.constants.AuditResult.PASS }
-    );
+    var config = {
+        ruleName: 'badAriaAttributeValue',
+        expected: axs.constants.AuditResult.PASS,
+        elements: []
+    };
+    assert.runRule(config);
 });
 
-test('Good negative number value is good', function() {
+test('Good negative number value is good', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var div = document.createElement('div');
     fixture.appendChild(div);
     div.setAttribute('aria-valuenow', '-10');
-    deepEqual(
-      axs.AuditRules.getRule('badAriaAttributeValue').run({ scope: fixture }),
-      { elements: [], result: axs.constants.AuditResult.PASS }
-    );
+    var config = {
+        ruleName: 'badAriaAttributeValue',
+        expected: axs.constants.AuditResult.PASS,
+        elements: []
+    };
+    assert.runRule(config);
 });

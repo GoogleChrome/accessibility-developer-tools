@@ -1,20 +1,24 @@
 (function() {  // scope to avoid leaking helpers and variables to global namespace
-    var RULE_NAME = 'ariaOwnsDescendant';
-    // TODO(RickSBrown): Refactor tests, there is too much cut and paste reuse;
     module('AriaOwnsDescendant');
 
-    test('Element owns a sibling', function() {
+    var RULE_NAME = 'ariaOwnsDescendant';
+
+    test('Element owns a sibling', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var owned = fixture.appendChild(document.createElement('div'));
         owned.id = 'ownedElement';
         var owner = fixture.appendChild(document.createElement('div'));
         owner.setAttribute('aria-owns', owned.id);
-        var rule = axs.AuditRules.getRule(RULE_NAME);
-        deepEqual(rule.run({ scope: fixture }),
-                  { elements: [], result: axs.constants.AuditResult.PASS });
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
     });
 
-    test('Element owns multiple siblings', function() {
+    test('Element owns multiple siblings', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var owned = fixture.appendChild(document.createElement('div'));
         owned.id = 'ownedElement';
@@ -22,12 +26,16 @@
         owned2.id = 'ownedElement2';
         var owner = fixture.appendChild(document.createElement('div'));
         owner.setAttribute('aria-owns', owned.id + ' ' + owned2.id);
-        var rule = axs.AuditRules.getRule(RULE_NAME);
-        deepEqual(rule.run({ scope: fixture }),
-                  { elements: [], result: axs.constants.AuditResult.PASS });
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
     });
 
-    test('Element owns a descendant', function() {
+    test('Element owns a descendant', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var owner = fixture.appendChild(document.createElement('div'));
         var owned = owner.appendChild(document.createElement('div'));
@@ -35,13 +43,16 @@
             owned = owned.appendChild(document.createElement('div'));
         owned.id = 'ownedElement';
         owner.setAttribute('aria-owns', owned.id);
-        var rule = axs.AuditRules.getRule(RULE_NAME);
-        var result = rule.run({ scope: fixture });
-        equal(result.result, axs.constants.AuditResult.FAIL);
-        deepEqual(result.elements, [owner]);
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [owner]
+        };
+        assert.runRule(config);
     });
 
-    test('Element owns multiple descendants', function() {
+    test('Element owns multiple descendants', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var owner = fixture.appendChild(document.createElement('div'));
         var owned = owner.appendChild(document.createElement('div'));
@@ -51,13 +62,16 @@
         var owned2 = owner.appendChild(document.createElement('div'));
         owned2.id = 'ownedElement2';
         owner.setAttribute('aria-owns', owned.id + ' ' + owned2.id);
-        var rule = axs.AuditRules.getRule(RULE_NAME);
-        var result = rule.run({ scope: fixture });
-        equal(result.result, axs.constants.AuditResult.FAIL);
-        deepEqual(result.elements, [owner]);
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [owner]
+        };
+        assert.runRule(config);
     });
 
-    test('Element owns one sibling one descendant', function() {
+    test('Element owns one sibling one descendant', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var owner = fixture.appendChild(document.createElement('div'));
         var owned = owner.appendChild(document.createElement('div'));
@@ -67,13 +81,16 @@
         var owned2 = fixture.appendChild(document.createElement('div'));
         owned2.id = 'ownedElement2';
         owner.setAttribute('aria-owns', owned.id + ' ' + owned2.id);
-        var rule = axs.AuditRules.getRule(RULE_NAME);
-        var result = rule.run({ scope: fixture });
-        equal(result.result, axs.constants.AuditResult.FAIL);
-        deepEqual(result.elements, [owner]);
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [owner]
+        };
+        assert.runRule(config);
     });
 
-    test('Using ignoreSelectors - element owns a descendant', function() {
+    test('Using ignoreSelectors - element owns a descendant', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var owner = fixture.appendChild(document.createElement('div'));
         var owned = owner.appendChild(document.createElement('div'));
@@ -81,11 +98,12 @@
             owned = owned.appendChild(document.createElement('div'));
         owned.id = 'ownedElement';
         owner.setAttribute('aria-owns', owned.id);
-        var rule = axs.AuditRules.getRule(RULE_NAME);
-        var ignoreSelectors = ['#' + (owner.id = 'ownerElement')];
-        var result = rule.run({
-            ignoreSelectors: ignoreSelectors,
-            scope: fixture });
-        equal(result.result, axs.constants.AuditResult.NA);
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.NA,
+            ignoreSelectors: ['#' + (owner.id = 'ownerElement')]
+        };
+        assert.runRule(config, 'ignoreSelectors should skip this failing element');
     });
 })();

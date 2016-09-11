@@ -1,3 +1,7 @@
+### Enhancements
+
+* Performance enhancements (#263)
+
 ## 2.10.1-rc.0 - 2016-01-13
 
 ### Bug fixes:

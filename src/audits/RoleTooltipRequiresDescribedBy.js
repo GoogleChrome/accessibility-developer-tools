@@ -25,9 +25,8 @@ axs.AuditRules.addRule({
     heading: 'Elements with role=tooltip should have a corresponding element with aria-describedby',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_02',
     severity: axs.constants.Severity.SEVERE,
-    relevantElementMatcher: function(element) {
-        return axs.browserUtils.matchSelector(element, '[role=tooltip]') &&
-            !axs.utils.isElementOrAncestorHidden(element);
+    relevantElementMatcher: function(element, flags) {
+        return axs.browserUtils.matchSelector(element, '[role=tooltip]') && !flags.hidden;
     },
     test: function(element) {
         var referrers = axs.utils.getAriaIdReferrers(element, 'aria-describedby');
