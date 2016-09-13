@@ -1,27 +1,27 @@
 module('BadAriaRole');
 
-test('No elements === no problems.', function() {
-  // Setup fixture
-  var fixture = document.getElementById('qunit-fixture');
-  deepEqual(
-    axs.AuditRules.getRule('badAriaRole').run({ scope: fixture }),
-    { result: axs.constants.AuditResult.NA }
-  );
+test('No elements === no problems.', function(assert) {
+    var config = {
+        ruleName: 'badAriaRole',
+        expected: axs.constants.AuditResult.NA
+    };
+    assert.runRule(config);
 });
 
-test('No roles === no problems.', function() {
+test('No roles === no problems.', function(assert) {
   // Setup fixture
   var fixture = document.getElementById('qunit-fixture');
   for (var i = 0; i < 10; i++)
     fixture.appendChild(document.createElement('div'));
 
-  deepEqual(
-    axs.AuditRules.getRule('badAriaRole').run({ scope: fixture }),
-    { result: axs.constants.AuditResult.NA }
-  );
+    var config = {
+        ruleName: 'badAriaRole',
+        expected: axs.constants.AuditResult.NA
+    };
+    assert.runRule(config);
 });
 
-test('Good role === no problems.', function() {
+test('Good role === no problems.', function(assert) {
   // Setup fixture
   var fixture = document.getElementById('qunit-fixture');
   for (var r in axs.constants.ARIA_ROLES) {
@@ -32,33 +32,40 @@ test('Good role === no problems.', function() {
     }
   }
 
-  deepEqual(
-    axs.AuditRules.getRule('badAriaRole').run({ scope: fixture }),
-    { elements: [], result: axs.constants.AuditResult.PASS }
-  );
+    var config = {
+        ruleName: 'badAriaRole',
+        expected: axs.constants.AuditResult.PASS,
+        elements: []
+    };
+    assert.runRule(config);
 });
 
-test('Bad role == problem', function() {
+test('Bad role == problem', function(assert) {
   // Setup fixture
   var fixture = document.getElementById('qunit-fixture');
   var div = document.createElement('div');
   div.setAttribute('role', 'not-an-aria-role');
   fixture.appendChild(div);
-  deepEqual(
-    axs.AuditRules.getRule('badAriaRole').run({ scope: fixture }),
-    { elements: [div], result: axs.constants.AuditResult.FAIL }
-  );
 
+    var config = {
+        ruleName: 'badAriaRole',
+        expected: axs.constants.AuditResult.FAIL,
+        elements: [div]
+    };
+    assert.runRule(config);
 });
 
-test('Abstract role == problem', function() {
+test('Abstract role == problem', function(assert) {
   // Setup fixture
   var fixture = document.getElementById('qunit-fixture');
   var div = document.createElement('div');
   div.setAttribute('role', 'input');
   fixture.appendChild(div);
-  deepEqual(
-    axs.AuditRules.getRule('badAriaRole').run({ scope: fixture }),
-    { elements: [div], result: axs.constants.AuditResult.FAIL }
-  );
+
+    var config = {
+        ruleName: 'badAriaRole',
+        expected: axs.constants.AuditResult.FAIL,
+        elements: [div]
+    };
+    assert.runRule(config);
 });

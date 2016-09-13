@@ -46,7 +46,7 @@ axs.dom.shadowHost = function(fragment) {
     if ('host' in fragment)
         return fragment.host;
     else
-        return null;
+    return null;
 };
 
 /**
@@ -108,17 +108,18 @@ axs.dom.asElement = function(node) {
  * Recursively walk the composed tree from |node|, aborting if |end| is encountered.
  * @param {Node} node
  * @param {?Node} end
- * @param {{preorder: (function (Node):boolean|undefined),
- *          postorder: (function (Node)|undefined)}} callbacks
+ * @param {{preorder: (function (Node, Object):boolean|undefined),
+ *          postorder: (function (Node, Object)|undefined)}} callbacks
  *     Callbacks to be called for each element traversed, excluding
  *     |end|. Possible callbacks are |preorder|, called before descending into
  *     child nodes, and |postorder| called after all child nodes have been
  *     traversed. If |preorder| returns false, its child nodes will not be
  *     traversed.
+ * @param {Object} parentFlags
  * @param {ShadowRoot=} opt_shadowRoot The nearest ShadowRoot ancestor, if any.
  * @return {boolean} Whether |end| was found, if provided.
  */
-axs.dom.composedTreeSearch = function(node, end, callbacks, opt_shadowRoot) {
+axs.dom.composedTreeSearch = function(node, end, callbacks, parentFlags, opt_shadowRoot) {
     if (node === end)
         return true;
 
@@ -126,47 +127,62 @@ axs.dom.composedTreeSearch = function(node, end, callbacks, opt_shadowRoot) {
         var element = /** @type {Element} */ (node);
 
     var found = false;
-
-    if (element && callbacks.preorder) {
-        if (!callbacks.preorder(element))
-            return found;
-    }
+    var flags = Object.create(parentFlags);
 
     // Descend into node:
     // If it has a ShadowRoot, ignore all child elements - these will be picked
     // up by the <content> or <shadow> elements. Descend straight into the
     // ShadowRoot.
     if (element) {
+        var localName = element.localName;
+        if (flags.collectIdRefs) {
+            flags.idrefs = axs.utils.getReferencedIds(element);
+        }
+        if (!flags.disabled || (localName === 'legend') && axs.browserUtils.matchSelector(element, 'fieldset>legend:first-of-type')) {
+            flags.disabled = axs.utils.isElementDisabled(element, true);
+        }
+        if (!flags.hidden) {
+            flags.hidden = axs.utils.isElementHidden(element);
+        }
+        if (callbacks.preorder) {
+            if (!callbacks.preorder(element, flags))
+                return found;
+        }
         // NOTE: grunt qunit DOES NOT support Shadow DOM, so if changing this
         // code, be sure to run the tests in the browser before committing.
         var shadowRoot = element.shadowRoot || element.webkitShadowRoot;
         if (shadowRoot) {
+            flags.level++;
             found = axs.dom.composedTreeSearch(shadowRoot,
                                                end,
                                                callbacks,
+                                               flags,
                                                shadowRoot);
             if (element && callbacks.postorder && !found)
-                callbacks.postorder(element);
+                callbacks.postorder(element, flags);
+            return found;
+        }
+
+        // If it is a <content> element, descend into distributed elements - these
+        // are elements from outside the shadow root which are rendered inside the
+        // shadow DOM.
+        if (localName == 'content') {
+            var content = /** @type {HTMLContentElement} */ (element);
+            var distributedNodes = content.getDistributedNodes();
+            for (var i = 0; i < distributedNodes.length && !found; i++) {
+                found = axs.dom.composedTreeSearch(distributedNodes[i],
+                                                       end,
+                                                       callbacks,
+                                                       flags,
+                                                       opt_shadowRoot);
+            }
+            if (callbacks.postorder && !found)
+                callbacks.postorder.call(null, element, flags);
             return found;
         }
     }
 
-    // If it is a <content> element, descend into distributed elements - these
-    // are elements from outside the shadow root which are rendered inside the
-    // shadow DOM.
-    if (element && element.localName == 'content') {
-        var content = /** @type {HTMLContentElement} */ (element);
-        var distributedNodes = content.getDistributedNodes();
-        for (var i = 0; i < distributedNodes.length && !found; i++) {
-            found = axs.dom.composedTreeSearch(distributedNodes[i],
-                                                   end,
-                                                   callbacks,
-                                                   opt_shadowRoot);
-        }
-        if (element && callbacks.postorder && !found)
-            callbacks.postorder.call(null, element);
-        return found;
-    }
+
 
     // If it is neither the parent of a ShadowRoot, a <content> element, nor
     // a <shadow> element recurse normally.
@@ -175,11 +191,12 @@ axs.dom.composedTreeSearch = function(node, end, callbacks, opt_shadowRoot) {
         found = axs.dom.composedTreeSearch(child,
                                            end,
                                            callbacks,
+                                           flags,
                                            opt_shadowRoot);
         child = child.nextSibling;
     }
 
     if (element && callbacks.postorder && !found)
-        callbacks.postorder.call(null, element);
+        callbacks.postorder.call(null, element, flags);
     return found;
 };

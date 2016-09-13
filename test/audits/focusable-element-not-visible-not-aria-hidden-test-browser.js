@@ -27,7 +27,7 @@ module('FocusableElementNotVisibleAndNotAriaHiddenBrowser', {
   }
 });
 
-test('a focusable element that is hidden but shown on focus passes the audit', function() {
+test('a focusable element that is hidden but shown on focus passes the audit', function(assert) {
   var style = document.createElement('style');
   var skipLink = document.createElement('a');
 
@@ -40,25 +40,32 @@ test('a focusable element that is hidden but shown on focus passes the audit', f
   this.fixture_.appendChild(style);
   this.fixture_.appendChild(skipLink);
 
-  var rule = axs.AuditRules.getRule('focusableElementNotVisibleAndNotAriaHidden');
-  deepEqual(
-    rule.run({scope: this.fixture_}),
-    { elements: [], result: axs.constants.AuditResult.PASS });
+  var config = {
+    scope: this.fixture_,
+    ruleName: 'focusableElementNotVisibleAndNotAriaHidden',
+    expected: axs.constants.AuditResult.PASS,
+    elements: []
+  };
+  assert.runRule(config);
 });
 
-test('a focusable element inside of Shadow DOM is not "obscured" by the shadow host', function() {
+test('a focusable element inside of Shadow DOM is not "obscured" by the shadow host', function(assert) {
   var host = this.fixture_.appendChild(document.createElement("div"));
-  host.id = 'host';
+    host.id = 'host';
   if (host.createShadowRoot) {
     var root = host.createShadowRoot();
     var shadowLink = root.appendChild(document.createElement('a'));
     shadowLink.href = '#main';
     shadowLink.id = 'shadowLink';
     shadowLink.textContent = 'Skip to content';
-    var rule = axs.AuditRules.getRule('focusableElementNotVisibleAndNotAriaHidden');
-    deepEqual(
-      rule.run({scope: this.fixture_}),
-      { elements: [], result: axs.constants.AuditResult.PASS });
+
+    var config = {
+      scope: this.fixture_,
+      ruleName: 'focusableElementNotVisibleAndNotAriaHidden',
+      expected: axs.constants.AuditResult.PASS,
+      elements: []
+    };
+    assert.runRule(config);
     deepEqual(axs.utils.overlappingElements(shadowLink), []);
   } else {
     console.warn("Test platform does not support shadow DOM");

@@ -13,8 +13,7 @@
 // limitations under the License.
 module('DuplicateId');
 
-test('No duplicate ID, no used IDREF', function() {
-    var rule = axs.AuditRules.getRule('duplicateId');
+test('No duplicate ID, no used IDREF', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
 
     var element = fixture.appendChild(document.createElement('div'));
@@ -23,12 +22,15 @@ test('No duplicate ID, no used IDREF', function() {
     var element2 = fixture.appendChild(document.createElement('div'));
     element2.setAttribute('id', 'fukung');
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.NA);
+    var config = {
+        scope: fixture,
+        ruleName: 'duplicateId',
+        expected: axs.constants.AuditResult.NA
+    };
+    assert.runRule(config);
 });
 
-test('No duplicate ID with IDREF', function() {
-    var rule = axs.AuditRules.getRule('duplicateId');
+test('No duplicate ID with IDREF', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
 
     var element = fixture.appendChild(document.createElement('input'));
@@ -38,26 +40,32 @@ test('No duplicate ID with IDREF', function() {
     fixture.appendChild(document.createElement('label')).setAttribute('for', element.id);
     fixture.appendChild(document.createElement('label')).setAttribute('for', element2.id);
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.PASS);
-    deepEqual(actual.elements, []);
+    var config = {
+        scope: fixture,
+        ruleName: 'duplicateId',
+        expected: axs.constants.AuditResult.PASS,
+        elements: []
+    };
+    assert.runRule(config);
 });
 
-test('Single duplicate ID, not used', function() {
-    var rule = axs.AuditRules.getRule('duplicateId');
+test('Single duplicate ID, not used', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
 
     var element = fixture.appendChild(document.createElement('div'));
     element.setAttribute('id', 'kungfu');
     fixture.appendChild(element.cloneNode());
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.NA);
+    var config = {
+        scope: fixture,
+        ruleName: 'duplicateId',
+        expected: axs.constants.AuditResult.NA
+    };
+    assert.runRule(config);
 });
 
-test('Single unused duplicate ID but it\'s in shadow DOM', function() {
+test('Single unused duplicate ID but it\'s in shadow DOM', function(assert) {
     // Perhaps this test is overly paranoid...
-    var rule = axs.AuditRules.getRule('duplicateId');
     var fixture = document.getElementById('qunit-fixture');
     if (!fixture.createShadowRoot) {
         expect(0);  // even Chrome (36 on Mac) seems to end up here...
@@ -71,12 +79,15 @@ test('Single unused duplicate ID but it\'s in shadow DOM', function() {
     var shadowRoot = element2.createShadowRoot();
     shadowRoot.appendChild(element.cloneNode());
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.NA);
+    var config = {
+        scope: fixture,
+        ruleName: 'duplicateId',
+        expected: axs.constants.AuditResult.NA
+    };
+    assert.runRule(config);
 });
 
-test('Single used duplicate ID but it\'s in shadow DOM', function() {
-    var rule = axs.AuditRules.getRule('duplicateId');
+test('Single used duplicate ID but it\'s in shadow DOM', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     if (!fixture.createShadowRoot) {
         expect(0);  // even Chrome (36 on Mac) seems to end up here...
@@ -93,12 +104,17 @@ test('Single used duplicate ID but it\'s in shadow DOM', function() {
     var shadowRoot = element2.createShadowRoot();
     shadowRoot.appendChild(element.cloneNode());
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.PASS);
+    var config = {
+        scope: fixture,
+        ruleName: 'duplicateId',
+        expected: axs.constants.AuditResult.PASS,
+        elements: []
+    };
+
+    assert.runRule(config);
 });
 
-test('Single duplicate ID, used in html idref', function() {
-    var rule = axs.AuditRules.getRule('duplicateId');
+test('Single duplicate ID, used in html idref', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
 
     var element = fixture.appendChild(document.createElement('input'));
@@ -107,23 +123,31 @@ test('Single duplicate ID, used in html idref', function() {
     var referrer = fixture.appendChild(document.createElement('label'));
     referrer.setAttribute('for', element.id);
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.FAIL);
-    deepEqual(actual.elements, [element, element2]);
+    var config = {
+        scope: fixture,
+        ruleName: 'duplicateId',
+        expected: axs.constants.AuditResult.FAIL,
+        elements: [element, element2]
+    };
+
+    assert.runRule(config);
+
+    config = {
+        scope: fixture,
+        ruleName: 'duplicateId',
+        expected: axs.constants.AuditResult.NA
+    };
 
     referrer.setAttribute('aria-hidden', 'true');
-    actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.NA, 'aria-hidden elements should be ignored');
+    assert.runRule(config, 'aria-hidden elements should be ignored');
+
     referrer.removeAttribute('aria-hidden');
 
     referrer.setAttribute('hidden', 'hidden');
-    actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.NA, 'hidden elements should be ignored');
-
+    assert.runRule(config, 'hidden elements should be ignored');
 });
 
-test('Single duplicate ID, used in html idrefs', function() {
-    var rule = axs.AuditRules.getRule('duplicateId');
+test('Single duplicate ID, used in html idrefs', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
 
     var element = fixture.appendChild(document.createElement('input'));
@@ -135,22 +159,31 @@ test('Single duplicate ID, used in html idrefs', function() {
     var referrer = fixture.appendChild(document.createElement('output'));
     referrer.setAttribute('for', idrefs);
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.FAIL);
-    deepEqual(actual.elements, [element, element2]);
+    var config = {
+        scope: fixture,
+        ruleName: 'duplicateId',
+        expected: axs.constants.AuditResult.FAIL,
+        elements: [element, element2]
+    };
+
+    assert.runRule(config);
+
+    config = {
+        scope: fixture,
+        ruleName: 'duplicateId',
+        expected: axs.constants.AuditResult.NA
+    };
 
     referrer.setAttribute('aria-hidden', 'true');
-    actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.NA, 'aria-hidden elements should be ignored');
+    assert.runRule(config, 'aria-hidden elements should be ignored');
+
     referrer.removeAttribute('aria-hidden');
 
     referrer.setAttribute('hidden', 'hidden');
-    actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.NA, 'hidden elements should be ignored');
+    assert.runRule(config, 'hidden elements should be ignored');
 });
 
-test('Single duplicate ID, used in ARIA idref', function() {
-    var rule = axs.AuditRules.getRule('duplicateId');
+test('Single duplicate ID, used in ARIA idref', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('div'));
     var element = container.appendChild(document.createElement('span'));
@@ -158,23 +191,31 @@ test('Single duplicate ID, used in ARIA idref', function() {
     var element2 = container.appendChild(element.cloneNode());
     container.setAttribute('aria-activedescendant', element.id);
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.FAIL);
-    deepEqual(actual.elements, [element, element2]);
+    var config = {
+        scope: fixture,
+        ruleName: 'duplicateId',
+        expected: axs.constants.AuditResult.FAIL,
+        elements: [element, element2]
+    };
+
+    assert.runRule(config);
+
+    config = {
+        scope: fixture,
+        ruleName: 'duplicateId',
+        expected: axs.constants.AuditResult.NA
+    };
 
     container.setAttribute('aria-hidden', 'true');
-    actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.NA, 'aria-hidden elements should be ignored');
+    assert.runRule(config, 'aria-hidden elements should be ignored');
+
     container.removeAttribute('aria-hidden');
 
     container.setAttribute('hidden', 'hidden');
-    actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.NA, 'hidden elements should be ignored');
-
+    assert.runRule(config, 'hidden elements should be ignored');
 });
 
-test('Single duplicate ID, used in ARIA idrefs', function() {
-    var rule = axs.AuditRules.getRule('duplicateId');
+test('Single duplicate ID, used in ARIA idrefs', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('div'));
     var element = fixture.appendChild(document.createElement('span'));
@@ -185,16 +226,26 @@ test('Single duplicate ID, used in ARIA idrefs', function() {
     var idrefs = element3.id + ' ' + element.id;
     container.setAttribute('aria-owns', idrefs);
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.FAIL);
-    deepEqual(actual.elements, [element, element2]);
+    var config = {
+        scope: fixture,
+        ruleName: 'duplicateId',
+        expected: axs.constants.AuditResult.FAIL,
+        elements: [element, element2]
+    };
+
+    assert.runRule(config);
+
+    config = {
+        scope: fixture,
+        ruleName: 'duplicateId',
+        expected: axs.constants.AuditResult.NA
+    };
 
     container.setAttribute('aria-hidden', 'true');
-    actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.NA, 'aria-hidden elements should be ignored');
+    assert.runRule(config, 'aria-hidden elements should be ignored');
+
     container.removeAttribute('aria-hidden');
 
     container.setAttribute('hidden', 'hidden');
-    actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.NA, 'hidden elements should be ignored');
+    assert.runRule(config, 'hidden elements should be ignored');
 });
