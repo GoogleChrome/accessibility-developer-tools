@@ -91,22 +91,24 @@ test('a hidden tooltip without a corresponding aria-describedby should not fail'
 });
 
 // #269
-test('a tooltip without an ID doesn\'t cause an exception', function() {
+test('a tooltip without an ID doesn\'t cause an exception', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var tooltip = document.createElement('div');
     fixture.appendChild(tooltip);
     tooltip.setAttribute('role', 'tooltip');
     try {
-        deepEqual(
-            axs.AuditRules.getRule('roleTooltipRequiresDescribedby').run({ scope: fixture }),
-            { elements: [tooltip], result: axs.constants.AuditResult.FAIL }
-        );
+        var config = {
+            ruleName: 'roleTooltipRequiresDescribedby',
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [tooltip]
+        };
+        assert.runRule(config);
     } catch (e) {
         ok(false, 'Running roleTooltipRequiresDescribedby threw an exception: ' + e.message);
     }
 });
 
-test('role tooltip with a corresponding describedby of a missing element id should fail', function() {
+test('role tooltip with a corresponding describedby of a missing element id should fail', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var tooltip = document.createElement('div');
     var trigger = document.createElement('div');
@@ -114,8 +116,10 @@ test('role tooltip with a corresponding describedby of a missing element id shou
     fixture.appendChild(trigger);
     tooltip.setAttribute('role', 'tooltip');
     trigger.setAttribute('aria-describedby', 'tooltip1');
-    deepEqual(
-        axs.AuditRules.getRule('roleTooltipRequiresDescribedby').run({ scope: fixture }),
-        { elements: [tooltip], result: axs.constants.AuditResult.FAIL }
-    );
+    var config = {
+        ruleName: 'roleTooltipRequiresDescribedby',
+        expected: axs.constants.AuditResult.FAIL,
+        elements: [tooltip]
+    };
+    assert.runRule(config);
 });
