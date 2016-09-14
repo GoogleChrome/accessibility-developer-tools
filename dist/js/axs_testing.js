@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/33609ef68662ec4c2eac56a3b397f9460c5e0ee6
+ * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/7d778f7da58af341a47b3a6f6457c2842b24d4d8
  *
  * See project README for build steps.
  */
@@ -1006,36 +1006,43 @@ axs.dom.asElement = function(a) {
   }
   return null;
 };
-axs.dom.composedTreeSearch = function(a, b, c, d) {
+axs.dom.composedTreeSearch = function(a, b, c, d, e) {
   if (a === b) {
     return !0;
   }
   if (a.nodeType == Node.ELEMENT_NODE) {
-    var e = a
+    var f = a
   }
-  var f = !1;
-  if (e && c.preorder && !c.preorder(e)) {
-    return f;
-  }
-  if (e) {
-    var g = e.shadowRoot || e.webkitShadowRoot;
-    if (g) {
-      return f = axs.dom.composedTreeSearch(g, b, c, g), e && c.postorder && !f && c.postorder(e), f;
+  var g = !1;
+  d = Object.create(d);
+  if (f) {
+    var h = f.localName;
+    d.collectIdRefs && (d.idrefs = axs.utils.getReferencedIds(f));
+    if (!d.disabled || "legend" === h && axs.browserUtils.matchSelector(f, "fieldset>legend:first-of-type")) {
+      d.disabled = axs.utils.isElementDisabled(f, !0);
+    }
+    d.hidden || (d.hidden = axs.utils.isElementHidden(f));
+    if (c.preorder && !c.preorder(f, d)) {
+      return g;
+    }
+    var k = f.shadowRoot || f.webkitShadowRoot;
+    if (k) {
+      return d.level++, g = axs.dom.composedTreeSearch(k, b, c, d, k), f && c.postorder && !g && c.postorder(f, d), g;
+    }
+    if ("content" == h) {
+      a = f.getDistributedNodes();
+      for (h = 0;h < a.length && !g;h++) {
+        g = axs.dom.composedTreeSearch(a[h], b, c, d, e);
+      }
+      c.postorder && !g && c.postorder.call(null, f, d);
+      return g;
     }
   }
-  if (e && "content" == e.localName) {
-    a = e.getDistributedNodes();
-    for (g = 0;g < a.length && !f;g++) {
-      f = axs.dom.composedTreeSearch(a[g], b, c, d);
-    }
-    e && c.postorder && !f && c.postorder.call(null, e);
-    return f;
+  for (a = a.firstChild;null != a && !g;) {
+    g = axs.dom.composedTreeSearch(a, b, c, d, e), a = a.nextSibling;
   }
-  for (a = a.firstChild;null != a && !f;) {
-    f = axs.dom.composedTreeSearch(a, b, c, d), a = a.nextSibling;
-  }
-  e && c.postorder && !f && c.postorder.call(null, e);
-  return f;
+  f && c.postorder && !g && c.postorder.call(null, f, d);
+  return g;
 };
 axs.utils = {};
 axs.utils.FOCUSABLE_ELEMENTS_SELECTOR = "input:not([type=hidden]):not([disabled]),select:not([disabled]),textarea:not([disabled]),button:not([disabled]),a[href],iframe,[tabindex]";
@@ -1246,16 +1253,19 @@ axs.utils.hasLabel = function(a) {
 axs.utils.isNativelyDisableable = function(a) {
   return a.tagName.toUpperCase() in axs.constants.NATIVELY_DISABLEABLE;
 };
-axs.utils.isElementDisabled = function(a) {
-  if (axs.browserUtils.matchSelector(a, "[aria-disabled=true], [aria-disabled=true] *")) {
+axs.utils.isElementDisabled = function(a, b) {
+  if (axs.browserUtils.matchSelector(a, b ? "[aria-disabled=true]" : "[aria-disabled=true], [aria-disabled=true] *")) {
     return !0;
   }
   if (!axs.utils.isNativelyDisableable(a) || axs.browserUtils.matchSelector(a, "fieldset>legend:first-of-type *")) {
     return !1;
   }
-  for (;null !== a;a = axs.dom.parentElement(a)) {
-    if (axs.utils.isNativelyDisableable(a) && a.hasAttribute("disabled")) {
+  for (var c = a;null !== c;c = axs.dom.parentElement(c)) {
+    if (c.hasAttribute("disabled")) {
       return !0;
+    }
+    if (b) {
+      break;
     }
   }
   return !1;
@@ -1496,6 +1506,45 @@ axs.utils.getHtmlIdReferrers = function(a) {
     return a.replace("{id}", b);
   });
   return a.ownerDocument.querySelectorAll(c.join(","));
+};
+axs.utils.getReferencedIds = function(a) {
+  for (var b = [], c = function(a) {
+    a && (0 < a.indexOf(" ") ? b = b.concat(f.value.split(" ")) : b.push(a));
+  }, d = 0;d < a.attributes.length;d++) {
+    var e = a.tagName.toLowerCase(), f = a.attributes[d];
+    if (f.specified) {
+      var g = f.name, h = g.match(/aria-(.+)/);
+      if (h) {
+        e = axs.constants.ARIA_PROPERTIES[h[1]], !e || "idref" !== e.valueType && "idref_list" !== e.valueType || c(f.value);
+      } else {
+        switch(g) {
+          case "contextmenu":
+          ;
+          case "itemref":
+            c(f.value);
+            break;
+          case "form":
+            "button" != e && "fieldset" != e && "input" != e && "keygen" != e && "label" != e && "object" != e && "output" != e && "select" != e && "textarea" != e || c(f.value);
+            break;
+          case "for":
+            "label" != e && "output" != e || c(f.value);
+            break;
+          case "menu":
+            "button" == e && c(f.value);
+            break;
+          case "list":
+            "input" == e && c(f.value);
+            break;
+          case "command":
+            "menuitem" == e && c(f.value);
+            break;
+          case "headers":
+            "td" != e && "tr" != e || c(f.value);
+        }
+      }
+    }
+  }
+  return b;
 };
 axs.utils.getIdReferrers = function(a) {
   var b = [], c = axs.utils.getHtmlIdReferrers(a);
@@ -1918,55 +1967,65 @@ axs.properties.getNativelySupportedAttributes = function(a) {
   };
 })();
 axs.AuditRule = function(a) {
-  for (var b = !0, c = [], d = 0;d < axs.AuditRule.requiredFields.length;d++) {
-    var e = axs.AuditRule.requiredFields[d];
-    e in a || (b = !1, c.push(e));
+  for (var b = a.opt_requires || {}, c = !0, d = [], e = 0;e < axs.AuditRule.requiredFields.length;e++) {
+    var f = axs.AuditRule.requiredFields[e];
+    f in a || (c = !1, d.push(f));
   }
-  if (!b) {
-    throw "Invalid spec; the following fields were not specified: " + c.join(", ") + "\n" + JSON.stringify(a);
+  if (!c) {
+    throw "Invalid spec; the following fields were not specified: " + d.join(", ") + "\n" + JSON.stringify(a);
   }
   this.name = a.name;
   this.severity = a.severity;
   this.relevantElementMatcher_ = a.relevantElementMatcher;
+  this.isRelevant_ = a.isRelevant || function(a, b) {
+    return !0;
+  };
   this.test_ = a.test;
   this.code = a.code;
   this.heading = a.heading || "";
   this.url = a.url || "";
-  this.requiresConsoleAPI = !!a.opt_requiresConsoleAPI;
+  this.requiresConsoleAPI = !!b.consoleAPI;
+  this.relevantElements = [];
+  this.relatedElements = [];
+  this.collectIdRefs = b.idRefs || !1;
 };
 axs.AuditRule.requiredFields = "name severity relevantElementMatcher test code heading".split(" ");
 axs.AuditRule.NOT_APPLICABLE = {result:axs.constants.AuditResult.NA};
 axs.AuditRule.prototype.addElement = function(a, b) {
   a.push(b);
 };
-axs.AuditRule.collectMatchingElements = function(a, b, c, d) {
-  axs.dom.composedTreeSearch(a, null, {preorder:function(a) {
-    if (d) {
-      for (var f = 0;f < d.length;f++) {
-        if (axs.browserUtils.matchSelector(a, d[f])) {
-          return !1;
-        }
-      }
-    }
-    b(a) && c.push(a);
-    return !0;
-  }});
+axs.AuditRule.prototype.collectMatchingElement = function(a, b) {
+  return this.relevantElementMatcher_(a, b) && b.inScope ? (this.relevantElements.push({element:a, flags:b}), !0) : !1;
+};
+axs.AuditRule.prototype.canRun = function(a) {
+  return this.disabled || !a.withConsoleApi && this.requiresConsoleAPI ? !1 : !0;
+};
+axs.AuditRule.Result = function(a, b) {
+  var c = axs.utils.namedValues(b);
+  c.severity = a.getSeverity(b.name) || c.severity;
+  this.rule = c;
+  this.maxResults = a.maxResults;
+  this.update(axs.constants.AuditResult.NA);
+};
+axs.AuditRule.Result.prototype.update = function(a, b) {
+  if (a === axs.constants.AuditResult.FAIL) {
+    var c = this.elements || (this.elements = []);
+    this.result = a;
+    this.maxResults && this.elements.length >= this.maxResults ? this.resultsTruncated = !0 : b && c.push(b);
+  } else {
+    a === axs.constants.AuditResult.PASS ? (this.elements || (this.elements = []), this.result !== axs.constants.AuditResult.FAIL && (this.result = a)) : this.result || (this.result = a);
+  }
 };
 axs.AuditRule.prototype.run = function(a) {
-  a = a || {};
-  var b = "maxResults" in a ? a.maxResults : null, c = [];
-  axs.AuditRule.collectMatchingElements("scope" in a ? a.scope : document, this.relevantElementMatcher_, c, a.ignoreSelectors);
-  var d = [];
-  if (!c.length) {
-    return {result:axs.constants.AuditResult.NA};
+  try {
+    for (var b = this._options || {}, c = new axs.AuditRule.Result(a, this), d;d = this.relevantElements.shift();) {
+      var e = d.element, f = d.flags;
+      this.isRelevant_(e, f) && (this.test_(e, f, b.config) ? c.update(axs.constants.AuditResult.FAIL, e) : c.update(axs.constants.AuditResult.PASS, e));
+    }
+    return c;
+  } finally {
+    this.relatedElements.length = 0;
   }
-  for (var e = 0;e < c.length && !(null != b && d.length >= b);e++) {
-    var f = c[e];
-    this.test_(f, a.config) && this.addElement(d, f);
-  }
-  a = {result:d.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS, elements:d};
-  e < c.length && (a.resultsTruncated = !0);
-  return a;
 };
 axs.AuditRules = {};
 (function() {
@@ -1991,6 +2050,17 @@ axs.AuditRules = {};
     return b ? d : d.map(function(a) {
       return this.getRule(a);
     }, axs.AuditRules);
+  };
+  axs.AuditRules.getActiveRules = function(a) {
+    var b;
+    b = a.auditRulesToRun && 0 < a.auditRulesToRun.length ? a.auditRulesToRun : axs.AuditRules.getRules(!0);
+    if (a.auditRulesToIgnore) {
+      for (var e = 0;e < a.auditRulesToIgnore.length;e++) {
+        var f = a.auditRulesToIgnore[e];
+        0 > b.indexOf(f) || b.splice(b.indexOf(f), 1);
+      }
+    }
+    return b.map(axs.AuditRules.getRule);
   };
 })();
 axs.AuditResults = function() {
@@ -2039,7 +2109,7 @@ axs.AuditConfiguration = function(a) {
   this.rules_ = {};
   this.maxResults = this.auditRulesToIgnore = this.auditRulesToRun = this.scope = null;
   this.withConsoleApi = !1;
-  this.showUnsupportedRulesWarning = !0;
+  this.showUnsupportedRulesWarning = this.walkDom = !0;
   for (var b in this) {
     this.hasOwnProperty(b) && b in a && (this[b] = a[b]);
   }
@@ -2047,6 +2117,7 @@ axs.AuditConfiguration = function(a) {
   goog.exportProperty(this, "auditRulesToRun", this.auditRulesToRun);
   goog.exportProperty(this, "auditRulesToIgnore", this.auditRulesToIgnore);
   goog.exportProperty(this, "withConsoleApi", this.withConsoleApi);
+  goog.exportProperty(this, "walkDom", this.walkDom);
   goog.exportProperty(this, "showUnsupportedRulesWarning", this.showUnsupportedRulesWarning);
 };
 goog.exportSymbol("axs.AuditConfiguration", axs.AuditConfiguration);
@@ -2079,36 +2150,56 @@ axs.Audit.getRulesCannotRun = function(a) {
 };
 axs.Audit.run = function(a) {
   a = a || new axs.AuditConfiguration;
-  var b = a.withConsoleApi, c = [], d;
-  d = a.auditRulesToRun && 0 < a.auditRulesToRun.length ? a.auditRulesToRun : axs.AuditRules.getRules(!0);
-  if (a.auditRulesToIgnore) {
-    for (var e = 0;e < a.auditRulesToIgnore.length;e++) {
-      var f = a.auditRulesToIgnore[e];
-      0 > d.indexOf(f) || d.splice(d.indexOf(f), 1);
-    }
+  if (!axs.Audit.unsupportedRulesWarningShown && a.showUnsupportedRulesWarning) {
+    var b = axs.Audit.getRulesCannotRun(a);
+    0 < b.length && (console.warn("Some rules cannot be checked using the axs.Audit.run() method call. Use the Chrome plugin to check these rules: " + b.join(", ")), console.warn("To remove this message, pass an AuditConfiguration object to axs.Audit.run() and set configuration.showUnsupportedRulesWarning = false."));
+    axs.Audit.unsupportedRulesWarningShown = !0;
   }
-  !axs.Audit.unsupportedRulesWarningShown && a.showUnsupportedRulesWarning && (e = axs.Audit.getRulesCannotRun(a), 0 < e.length && (console.warn("Some rules cannot be checked using the axs.Audit.run() method call. Use the Chrome plugin to check these rules: " + e.join(", ")), console.warn("To remove this message, pass an AuditConfiguration object to axs.Audit.run() and set configuration.showUnsupportedRulesWarning = false.")), axs.Audit.unsupportedRulesWarningShown = !0);
-  for (e = 0;e < d.length;e++) {
-    var f = d[e], g = axs.AuditRules.getRule(f);
-    if (g && !g.disabled && (b || !g.requiresConsoleAPI)) {
-      var h = {}, k = a.getIgnoreSelectors(g.name);
-      if (0 < k.length || a.scope) {
-        h.ignoreSelectors = k;
-      }
-      k = a.getRuleConfig(g.name);
-      null != k && (h.config = k);
-      a.scope && (h.scope = a.scope);
-      a.maxResults && (h.maxResults = a.maxResults);
-      h = g.run.call(g, h);
-      g = axs.utils.namedValues(g);
-      g.severity = a.getSeverity(f) || g.severity;
-      h.rule = g;
-      c.push(h);
-    }
+  b = axs.AuditRules.getActiveRules(a);
+  a.collectIdRefs = b.some(function(a) {
+    return a.collectIdRefs;
+  });
+  a.scope || (a.scope = document.documentElement);
+  axs.Audit.collectMatchingElements(a, b);
+  for (var c = [], d = 0;d < b.length;d++) {
+    var e = b[d];
+    e.canRun(a) && c.push(e.run(a));
   }
   return c;
 };
 goog.exportSymbol("axs.Audit.run", axs.Audit.run);
+(function() {
+  function a(a, c) {
+    var d = a.getIgnoreSelectors(c.name);
+    if (0 < d.length || a.scope) {
+      this.ignoreSelectors = d;
+    }
+    if (d = a.getRuleConfig(c.name)) {
+      this.config = d;
+    }
+  }
+  axs.Audit.collectMatchingElements = function(b, c) {
+    axs.dom.composedTreeSearch(b.walkDom ? document.documentElement : b.scope, null, {preorder:function(d, e) {
+      e.inScope || (e.inScope = d === b.scope);
+      for (var f = 0;f < c.length;f++) {
+        var g = c[f];
+        g.canRun(b) && (g._options = new a(b, g), e.ignoring[g.name] || (e.ignoring[g.name] = g._options.shouldIgnore(d)) || g.collectMatchingElement(d, e));
+      }
+      return !0;
+    }}, {walkDom:b.walkDom, collectIdRefs:b.collectIdRefs, level:0, ignoring:{}, disabled:!1, hidden:!1});
+  };
+  a.prototype.shouldIgnore = function(a) {
+    var c = this.ignoreSelectors;
+    if (c) {
+      for (var d = 0;d < c.length;d++) {
+        if (axs.browserUtils.matchSelector(a, c[d])) {
+          return !0;
+        }
+      }
+    }
+    return !1;
+  };
+})();
 axs.Audit.auditResults = function(a) {
   for (var b = new axs.AuditResults, c = 0;c < a.length;c++) {
     var d = a[c];
@@ -2234,17 +2325,22 @@ axs.AuditRules.addRule({name:"controlsWithoutLabel", heading:"Controls and media
     }
   }
   return !0;
-}, test:function(a) {
-  if (axs.utils.isElementOrAncestorHidden(a) || "input" == a.tagName.toLowerCase() && "button" == a.type && a.value.length || "button" == a.tagName.toLowerCase() && a.textContent.replace(/^\s+|\s+$/g, "").length || axs.utils.hasLabel(a)) {
+}, test:function(a, b) {
+  if (b.hidden || "input" == a.tagName.toLowerCase() && "button" == a.type && a.value.length || "button" == a.tagName.toLowerCase() && a.textContent.replace(/^\s+|\s+$/g, "").length || axs.utils.hasLabel(a)) {
     return !1;
   }
-  a = axs.properties.findTextAlternatives(a, {});
-  return null === a || "" === a.trim() ? !0 : !1;
+  var c = axs.properties.findTextAlternatives(a, {});
+  return null === c || "" === c.trim() ? !0 : !1;
 }, code:"AX_TEXT_01", ruleName:"Controls and media elements should have labels"});
-axs.AuditRules.addRule({name:"duplicateId", heading:"Any ID referred to via an IDREF must be unique in the DOM", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_html_02", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
-  return a.hasAttribute("id") ? axs.utils.getIdReferrers(a).some(function(a) {
-    return !axs.utils.isElementOrAncestorHidden(a);
-  }) : !1;
+axs.AuditRules.addRule({name:"duplicateId", heading:"Any ID referred to via an IDREF must be unique in the DOM", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_html_02", severity:axs.constants.Severity.SEVERE, opt_requires:{idRefs:!0}, relevantElementMatcher:function(a, b) {
+  b.idrefs.length && !b.hidden && this.relatedElements.push({element:a, flags:b});
+  return a.hasAttribute("id") ? !0 : !1;
+}, isRelevant:function(a, b) {
+  var c = a.id, d = b.level;
+  return this.relatedElements.some(function(a) {
+    var b = a.flags.idrefs;
+    return a.flags.level === d && 0 <= b.indexOf(c);
+  });
 }, test:function(a) {
   var b = "[id='" + a.id.replace(/'/g, "\\'") + "']";
   return 1 < a.ownerDocument.querySelectorAll(b).length;
@@ -2263,8 +2359,8 @@ axs.AuditRules.addRule({name:"focusableElementNotVisibleAndNotAriaHidden", headi
   }
   a = axs.properties.findTextAlternatives(a, {});
   return null === a || "" === a.trim() ? !1 : !0;
-}, test:function(a) {
-  if (axs.utils.isElementOrAncestorHidden(a)) {
+}, test:function(a, b) {
+  if (b.hidden) {
     return !1;
   }
   a.focus();
@@ -2275,8 +2371,8 @@ axs.AuditRules.addRule({name:"humanLangMissing", heading:"The web page should ha
 }, test:function(a) {
   return a.lang ? !1 : !0;
 }, code:"AX_HTML_01"});
-axs.AuditRules.addRule({name:"imagesWithoutAltText", heading:"Images should have a text alternative or presentational role", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_02", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
-  return axs.browserUtils.matchSelector(a, "img") && !axs.utils.isElementOrAncestorHidden(a);
+axs.AuditRules.addRule({name:"imagesWithoutAltText", heading:"Images should have a text alternative or presentational role", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_02", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a, b) {
+  return axs.browserUtils.matchSelector(a, "img") && !b.hidden;
 }, test:function(a) {
   if (a.hasAttribute("alt") && "" == a.alt || "presentation" == a.getAttribute("role")) {
     return !1;
@@ -2285,30 +2381,32 @@ axs.AuditRules.addRule({name:"imagesWithoutAltText", heading:"Images should have
   axs.properties.findTextAlternatives(a, b);
   return 0 == Object.keys(b).length ? !0 : !1;
 }, code:"AX_TEXT_02"});
-axs.AuditRules.addRule({name:"linkWithUnclearPurpose", heading:"The purpose of each link should be clear from the link text", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_04", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
-  return axs.browserUtils.matchSelector(a, "a[href]") && !axs.utils.isElementOrAncestorHidden(a);
-}, test:function(a, b) {
-  for (var c = b || {}, d = c.blacklistPhrases || [], e = /\s+/, f = 0;f < d.length;f++) {
-    var g = "^\\s*" + d[f].trim().replace(e, "\\s*") + "s*[^a-z]$";
-    if ((new RegExp(g, "i")).test(a.textContent)) {
+axs.AuditRules.addRule({name:"linkWithUnclearPurpose", heading:"The purpose of each link should be clear from the link text", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_04", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a, b) {
+  return axs.browserUtils.matchSelector(a, "a[href]") && !b.hidden;
+}, test:function(a, b, c) {
+  c = c || {};
+  var d = c.blacklistPhrases || [], e = /\s+/;
+  for (b = 0;b < d.length;b++) {
+    var f = "^\\s*" + d[b].trim().replace(e, "\\s*") + "s*[^a-z]$";
+    if ((new RegExp(f, "i")).test(a.textContent)) {
       return !0;
     }
   }
   c = c.stopwords || "click tap go here learn more this page link about".split(" ");
-  d = axs.properties.findTextAlternatives(a, {});
-  if (null === d || "" === d.trim()) {
+  a = axs.properties.findTextAlternatives(a, {});
+  if (null === a || "" === a.trim()) {
     return !0;
   }
-  d = d.replace(/[^a-zA-Z ]/g, "");
-  for (f = 0;f < c.length;f++) {
-    if (d = d.replace(new RegExp("\\b" + c[f] + "\\b", "ig"), ""), "" == d.trim()) {
+  a = a.replace(/[^a-zA-Z ]/g, "");
+  for (b = 0;b < c.length;b++) {
+    if (a = a.replace(new RegExp("\\b" + c[b] + "\\b", "ig"), ""), "" == a.trim()) {
       return !0;
     }
   }
   return !1;
 }, code:"AX_TEXT_04"});
-axs.AuditRules.addRule({name:"lowContrastElements", heading:"Text elements should have a reasonable contrast ratio", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_color_01", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
-  return axs.properties.hasDirectTextDescendant(a) && !axs.utils.isElementDisabled(a);
+axs.AuditRules.addRule({name:"lowContrastElements", heading:"Text elements should have a reasonable contrast ratio", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_color_01", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a, b) {
+  return !b.disabled && axs.properties.hasDirectTextDescendant(a);
 }, test:function(a) {
   var b = window.getComputedStyle(a, null);
   return (a = axs.utils.getContrastRatioForElementWithComputedStyle(b, a)) && axs.utils.isLowContrast(a, b);
@@ -2322,8 +2420,8 @@ axs.AuditRules.addRule({name:"mainRoleOnInappropriateElement", heading:"role=mai
   a = axs.properties.getTextFromDescendantContent(a);
   return !a || 50 > a.length ? !0 : !1;
 }, code:"AX_ARIA_05"});
-axs.AuditRules.addRule({name:"elementsWithMeaningfulBackgroundImage", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
-  return !axs.utils.isElementOrAncestorHidden(a);
+axs.AuditRules.addRule({name:"elementsWithMeaningfulBackgroundImage", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a, b) {
+  return !b.hidden;
 }, heading:"Meaningful images should not be used in element backgrounds", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_image_01", test:function(a) {
   if (a.textContent && 0 < a.textContent.length) {
     return !1;
@@ -2351,21 +2449,13 @@ axs.AuditRules.addRule({name:"multipleLabelableElementsPerLabel", heading:"A lab
     return !0;
   }
 }, code:"AX_TEXT_03"});
-axs.AuditRules.addRule({name:"nonExistentAriaRelatedElement", heading:"ARIA attributes which refer to other elements by ID should refer to elements which exist in the DOM", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_02", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
-  var b = axs.utils.getAriaPropertiesByValueType(["idref", "idref_list"]), b = axs.utils.getSelectorForAriaProperties(b);
-  return axs.browserUtils.matchSelector(a, b);
-}, test:function(a) {
-  for (var b = axs.utils.getAriaPropertiesByValueType(["idref", "idref_list"]), b = axs.utils.getSelectorForAriaProperties(b).split(","), c = 0, d = b.length;c < d;c++) {
-    var e = b[c];
-    if (axs.browserUtils.matchSelector(a, e)) {
-      var e = e.match(/aria-[^\]]+/)[0], f = a.getAttribute(e);
-      if (!axs.utils.getAriaPropertyValue(e, f, a).valid) {
-        return !0;
-      }
-    }
-  }
-  return !1;
-}, code:"AX_ARIA_02"});
+axs.AuditRules.addRule({name:"nonExistentRelatedElement", heading:"Attributes which refer to other elements by ID should refer to elements which exist in the DOM", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_html_03", severity:axs.constants.Severity.SEVERE, opt_requires:{idRefs:!0}, relevantElementMatcher:function(a, b) {
+  return 0 < b.idrefs.length;
+}, test:function(a, b) {
+  return b.idrefs.some(function(a) {
+    return !document.getElementById(a);
+  });
+}, code:"AX_HTML_03"});
 axs.AuditRules.addRule({name:"pageWithoutTitle", heading:"The web page should have a title that describes topic or purpose", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_title_01", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
   return "html" == a.tagName.toLowerCase();
 }, test:function(a) {
@@ -2422,8 +2512,8 @@ axs.AuditRules.addRule({name:"requiredAriaAttributeMissing", heading:"Elements w
     return !0;
   }, code:"AX_ARIA_08"});
 })();
-axs.AuditRules.addRule({name:"roleTooltipRequiresDescribedby", heading:"Elements with role=tooltip should have a corresponding element with aria-describedby", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_02", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {
-  return axs.browserUtils.matchSelector(a, "[role=tooltip]") && !axs.utils.isElementOrAncestorHidden(a);
+axs.AuditRules.addRule({name:"roleTooltipRequiresDescribedby", heading:"Elements with role=tooltip should have a corresponding element with aria-describedby", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_02", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a, b) {
+  return axs.browserUtils.matchSelector(a, "[role=tooltip]") && !b.hidden;
 }, test:function(a) {
   a = axs.utils.getAriaIdReferrers(a, "aria-describedby");
   return !a || 0 === a.length;
@@ -2511,8 +2601,8 @@ axs.AuditRules.addRule({name:"tabIndexGreaterThanZero", heading:"Avoid positive 
     return !b;
   }, code:"AX_ARIA_13"});
 })();
-axs.AuditRules.addRule({name:"unfocusableElementsWithOnClick", heading:"Elements with onclick handlers must be focusable", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_02", severity:axs.constants.Severity.WARNING, opt_requiresConsoleAPI:!0, relevantElementMatcher:function(a) {
-  return a instanceof a.ownerDocument.defaultView.HTMLBodyElement || axs.utils.isElementOrAncestorHidden(a) ? !1 : "click" in getEventListeners(a) ? !0 : !1;
+axs.AuditRules.addRule({name:"unfocusableElementsWithOnClick", heading:"Elements with onclick handlers must be focusable", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_02", severity:axs.constants.Severity.WARNING, opt_requires:{consoleAPI:!0}, relevantElementMatcher:function(a, b) {
+  return a instanceof a.ownerDocument.defaultView.HTMLBodyElement || b.hidden ? !1 : "click" in getEventListeners(a) ? !0 : !1;
 }, test:function(a) {
   return !a.hasAttribute("tabindex") && !axs.utils.isElementImplicitlyFocusable(a) && !a.disabled;
 }, code:"AX_FOCUS_02"});

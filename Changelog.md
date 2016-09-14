@@ -1,3 +1,5 @@
+## 2.11.0 - 2016-09-14
+
 ### Enhancements
 
 * Performance enhancements (#263)
