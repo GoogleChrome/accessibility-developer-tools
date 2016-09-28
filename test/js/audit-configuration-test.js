@@ -111,6 +111,32 @@ test('Configure audit rules to ignore', function() {
 
 });
 
+test("Check that selectors are returned in the results", function() {
+  var fixture = document.getElementById('qunit-fixture');
+  var div = document.createElement('div');
+  div.setAttribute('role', 'not-an-aria-role');
+  fixture.appendChild(div);
+  var div2 = document.createElement('div');
+  div2.setAttribute('role', 'also-not-an-aria-role');
+  fixture.appendChild(div2);
+  var auditConfig = new axs.AuditConfiguration();
+  auditConfig.auditRulesToRun = ['badAriaRole'];
+  auditConfig.scope = fixture;  // limit scope to just fixture element
+  auditConfig.walkDom = false;
+
+  var results = axs.Audit.run(auditConfig);
+  equal(results.length, 1);
+  equal(results[0].selectors.length, 2);
+  equal(results[0].selectors[0], '#qunit-fixture > DIV');
+  equal(results[0].selectors[1], '#qunit-fixture > DIV:nth-of-type(2)');
+
+  auditConfig.maxResults = 1;
+  results = axs.Audit.run(auditConfig);
+  equal(results.length, 1);
+  equal(results[0].selectors.length, 1);
+  equal(results[0].selectors[0], '#qunit-fixture > DIV');
+});
+
 var __warnings = [];
 console.warn = function(msg) {
   __warnings.push(msg);
