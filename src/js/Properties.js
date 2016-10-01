@@ -508,7 +508,7 @@ axs.properties.getTextFromHostLanguageAttributes = function(element,
                                                             existingComputedname,
                                                             recursive) {
     var computedName = existingComputedname;
-    if (axs.browserUtils.matchSelector(element, 'img') && element.hasAttribute('alt')) {
+    if (axs.browserUtils.matchSelector(element, 'img,input[type="image"]') && element.hasAttribute('alt')) {
         var altValue = {};
         altValue.type = 'string';
         altValue.valid = true;
@@ -520,7 +520,7 @@ axs.properties.getTextFromHostLanguageAttributes = function(element,
         textAlternatives['alt'] = altValue;
     }
 
-    var controlsSelector = ['input:not([type="hidden"]):not([disabled])',
+    var controlsSelector = ['input:not([type="hidden"]):not([type="image"]):not([disabled])',
                             'select:not([disabled])',
                             'textarea:not([disabled])',
                             'button:not([disabled])',
@@ -579,18 +579,7 @@ axs.properties.getTextFromHostLanguageAttributes = function(element,
                 computedName = labelWrappedValue.text;
             textAlternatives['labelWrapped'] = labelWrappedValue;
         }
-        // If all else fails input of type image can fall back to its alt text
-        if (axs.browserUtils.matchSelector(element, 'input[type="image"]') && element.hasAttribute('alt')) {
-            var altValue = {};
-            altValue.type = 'string';
-            altValue.valid = true;
-            altValue.text = element.getAttribute('alt');
-            if (computedName)
-                altValue.unused = true;
-            else
-                computedName = altValue.text;
-            textAlternatives['alt'] = altValue;
-        }
+
         if (!Object.keys(textAlternatives).length)
             textAlternatives['noLabel'] = true;
     }
@@ -623,7 +612,7 @@ axs.properties.getTextProperties = function(node) {
 
     if (Object.keys(textProperties).length == 0) {
         /** @type {Element} */ var element = axs.dom.asElement(node);
-        if (element && axs.browserUtils.matchSelector(element, 'img')) {
+        if (element && axs.browserUtils.matchSelector(element, 'img,input[type="image"]')) {
             var altValue = {};
             altValue.valid = false;
             altValue.errorMessage = 'No alt value provided';
