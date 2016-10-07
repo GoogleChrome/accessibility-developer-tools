@@ -2342,7 +2342,7 @@ axs.AuditRules.addRule({name:"duplicateId", heading:"Any ID referred to via an I
     return a.flags.level === d && 0 <= b.indexOf(c);
   });
 }, test:function(a) {
-  var b = "[id='" + a.id.replace(/g, "\\") + "]";
+  var b = "[id='" + a.id+"']";
   return 1 < a.ownerDocument.querySelectorAll(b).length;
 }, code:"AX_HTML_02"});
 axs.AuditRules.addRule({name:"focusableElementNotVisibleAndNotAriaHidden", heading:"These elements are focusable but either invisible or obscured by another element", url:"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_01", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {
@@ -2640,4 +2640,3 @@ if (typeof define !== 'undefined' && define.amd) {
 } else {
   var axs = fn.call(this);
 }
-
