@@ -70,13 +70,15 @@ axs.dom.composedParentNode = function(node) {
     if (!parentNode.shadowRoot)
         return parentNode;
 
+    // Shadow DOM v1
     if (node.nodeType === Node.ELEMENT_NODE || node.nodeType === Node.TEXT_NODE) {
       var assignedSlot = node.assignedSlot;
-      if (assignedSlot)
+      if (HTMLSlotElement && assignedSlot instanceof HTMLSlotElement)
           return axs.dom.composedParentNode(assignedSlot);
     }
 
-    if ('getDestinationInsertionPoints' in node) {
+    // Shadow DOM v0
+    if (typeof node.getDestinationInsertionPoints === 'function') {
         var insertionPoints = node.getDestinationInsertionPoints();
         if (insertionPoints.length > 0)
             return axs.dom.composedParentNode(insertionPoints[insertionPoints.length - 1]);
