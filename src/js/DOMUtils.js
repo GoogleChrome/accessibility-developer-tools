@@ -70,9 +70,19 @@ axs.dom.composedParentNode = function(node) {
     if (!parentNode.shadowRoot)
         return parentNode;
 
-    var insertionPoints = node.getDestinationInsertionPoints();
-    if (insertionPoints.length > 0)
-        return axs.dom.composedParentNode(insertionPoints[insertionPoints.length - 1]);
+    // Shadow DOM v1
+    if (node.nodeType === Node.ELEMENT_NODE || node.nodeType === Node.TEXT_NODE) {
+      var assignedSlot = node.assignedSlot;
+      if (HTMLSlotElement && assignedSlot instanceof HTMLSlotElement)
+          return axs.dom.composedParentNode(assignedSlot);
+    }
+
+    // Shadow DOM v0
+    if (typeof node.getDestinationInsertionPoints === 'function') {
+        var insertionPoints = node.getDestinationInsertionPoints();
+        if (insertionPoints.length > 0)
+            return axs.dom.composedParentNode(insertionPoints[insertionPoints.length - 1]);
+    }
 
     return null;
 };

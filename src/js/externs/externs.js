@@ -30,3 +30,19 @@ ShadowRoot.prototype.olderShadowRoot;
  * @type {HTMLShadowElement}
  */
 HTMLElement.prototype.webkitShadowRoot;
+
+/**
+ * @constructor
+ * @extends {HTMLElement}
+ */
+function HTMLSlotElement() {}
+
+/**
+ * @return {?HTMLSlotElement}
+ */
+Element.prototype.assignedSlot = function() {};
+
+/**
+ * @return {?HTMLSlotElement}
+ */
+Text.prototype.assignedSlot = function() {};
