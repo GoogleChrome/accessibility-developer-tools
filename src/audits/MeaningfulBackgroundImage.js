@@ -12,31 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 goog.require('axs.utils');
 
 /**
- * @type {axs.AuditRule.Spec}
+ * Meaningful images should not be used in element backgrounds.
  */
-axs.AuditRule.specs.elementsWithMeaningfulBackgroundImage = {
+axs.AuditRules.addRule({
     name: 'elementsWithMeaningfulBackgroundImage',
     severity: axs.constants.Severity.WARNING,
-    relevantElementMatcher: function(element) {
-        return !axs.utils.isElementOrAncestorHidden(element);
+    relevantElementMatcher: function(element, flags) {
+        return !flags.hidden;
     },
     heading: 'Meaningful images should not be used in element backgrounds',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_image_01--meaningful-images-should-not-be-used-in-element-backgrounds',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_image_01',
     test: function(el) {
         if (el.textContent && el.textContent.length > 0) {
-          return false;
+            return false;
         }
         var style = window.getComputedStyle(el, null);
         var bgImage = style.backgroundImage;
         if (!bgImage || bgImage === 'undefined' || bgImage === 'none' ||
-            bgImage.indexOf('url') != 0) {
-          return false;
+                bgImage.indexOf('url') != 0) {
+            return false;
         }
         var width = parseInt(style.width, 10);
         var height = parseInt(style.height, 10);
@@ -44,4 +43,4 @@ axs.AuditRule.specs.elementsWithMeaningfulBackgroundImage = {
         return width < 150 && height < 150;
     },
     code: 'AX_IMAGE_01'
-};
+});

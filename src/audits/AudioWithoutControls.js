@@ -12,16 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
+goog.require('axs.AuditRules');
+goog.require('axs.browserUtils');
 goog.require('axs.constants.Severity');
 
 /**
- * @type {axs.AuditRule.Spec}
+ * This audit flags any audio elements that do not have controls.
  */
-axs.AuditRule.specs.audioWithoutControls = {
+axs.AuditRules.addRule({
     name: 'audioWithoutControls',
     heading: 'Audio elements should have controls',
-    url: '',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_audio_01',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
         return axs.browserUtils.matchSelector(element, 'audio[autoplay]');
@@ -31,4 +32,4 @@ axs.AuditRule.specs.audioWithoutControls = {
         return !controls.length && audio.duration > 3;
     },
     code: 'AX_AUDIO_01'
-};
+});

@@ -19,19 +19,19 @@ goog.provide('axs.AuditResults');
  * @constructor
  */
 axs.AuditResults = function() {
-  /**
-   * The errors received from the audit run.
-   * @type {Array.<string>}
-   * @private
-   */
-  this.errors_ = [];
+    /**
+     * The errors received from the audit run.
+     * @type {Array.<string>}
+     * @private
+     */
+    this.errors_ = [];
 
-  /**
-   * The warnings receive from the audit run.
-   * @type {Array.<string>}
-   * @private
-   */
-  this.warnings_ = [];
+    /**
+     * The warnings receive from the audit run.
+     * @type {Array.<string>}
+     * @private
+     */
+    this.warnings_ = [];
 };
 goog.exportSymbol('axs.AuditResults', axs.AuditResults);
 
@@ -40,9 +40,9 @@ goog.exportSymbol('axs.AuditResults', axs.AuditResults);
  * @param {string} errorMessage The error message to add.
  */
 axs.AuditResults.prototype.addError = function(errorMessage) {
-  if (errorMessage != '') {
-    this.errors_.push(errorMessage);
-  }
+    if (errorMessage != '') {
+        this.errors_.push(errorMessage);
+    }
 
 };
 goog.exportProperty(axs.AuditResults.prototype, 'addError',
@@ -53,9 +53,9 @@ goog.exportProperty(axs.AuditResults.prototype, 'addError',
  * @param {string} warningMessage The Warning message to add.
  */
 axs.AuditResults.prototype.addWarning = function(warningMessage) {
-  if (warningMessage != '') {
-    this.warnings_.push(warningMessage);
-  }
+    if (warningMessage != '') {
+        this.warnings_.push(warningMessage);
+    }
 
 };
 goog.exportProperty(axs.AuditResults.prototype, 'addWarning',
@@ -66,7 +66,7 @@ goog.exportProperty(axs.AuditResults.prototype, 'addWarning',
  * @return {number} The number of errors in the AuditResults object.
  */
 axs.AuditResults.prototype.numErrors = function() {
-  return this.errors_.length;
+    return this.errors_.length;
 };
 goog.exportProperty(axs.AuditResults.prototype, 'numErrors',
                     axs.AuditResults.prototype.numErrors);
@@ -76,7 +76,7 @@ goog.exportProperty(axs.AuditResults.prototype, 'numErrors',
  * @return {number} The number of warnings in the AuditResults object.
  */
 axs.AuditResults.prototype.numWarnings = function() {
-  return this.warnings_.length;
+    return this.warnings_.length;
 };
 goog.exportProperty(axs.AuditResults.prototype, 'numWarnings',
                     axs.AuditResults.prototype.numWarnings);
@@ -86,7 +86,7 @@ goog.exportProperty(axs.AuditResults.prototype, 'numWarnings',
  * @return {Array.<string>} An array of the audit errors.
  */
 axs.AuditResults.prototype.getErrors = function() {
-  return this.errors_;
+    return this.errors_;
 };
 goog.exportProperty(axs.AuditResults.prototype, 'getErrors',
                     axs.AuditResults.prototype.getErrors);
@@ -96,7 +96,7 @@ goog.exportProperty(axs.AuditResults.prototype, 'getErrors',
  * @return {Array.<string>} An array of the audit warnings.
  */
 axs.AuditResults.prototype.getWarnings = function() {
-  return this.warnings_;
+    return this.warnings_;
 };
 goog.exportProperty(axs.AuditResults.prototype, 'getWarnings',
                     axs.AuditResults.prototype.getWarnings);
@@ -106,24 +106,22 @@ goog.exportProperty(axs.AuditResults.prototype, 'getWarnings',
  * @return {string} A string representation of the AuditResults object.
  */
 axs.AuditResults.prototype.toString = function() {
-  var message = '';
-  for (var i = 0; i < this.errors_.length; i++) {
-    if (i == 0) {
-      message += '\nErrors:\n';
+    var message = '';
+    for (var i = 0; i < this.errors_.length; i++) {
+        if (i == 0) {
+            message += '\nErrors:\n';
+        }
+        var result = this.errors_[i];
+        message += result + '\n\n';
     }
-    var result = this.errors_[i];
-    message += result + '\n\n';
-  }
-  for (var i = 0; i < this.warnings_.length; i++) {
-    if (i == 0) {
-      message += '\nWarnings:\n';
+    for (var i = 0; i < this.warnings_.length; i++) {
+        if (i == 0) {
+            message += '\nWarnings:\n';
+        }
+        var result = this.warnings_[i];
+        message += result + '\n\n';
     }
-    var result = this.warnings_[i];
-    message += result + '\n\n';
-  }
-  return message;
+    return message;
 };
 goog.exportProperty(axs.AuditResults.prototype, 'toString',
                     axs.AuditResults.prototype.toString);
-
-

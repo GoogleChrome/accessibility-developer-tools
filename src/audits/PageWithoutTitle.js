@@ -12,19 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
+goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 
-/**
- * @type {axs.AuditRule.Spec}
- */
-axs.AuditRule.specs.pageWithoutTitle = {
+axs.AuditRules.addRule({
     name: 'pageWithoutTitle',
     heading: 'The web page should have a title that describes topic or purpose',
-    url: '',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_title_01',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
-        return element.tagName.toLowerCase() == "html";
+        return element.tagName.toLowerCase() == 'html';
     },
     test: function(scope) {
         var head = scope.querySelector('head');
@@ -36,4 +33,4 @@ axs.AuditRule.specs.pageWithoutTitle = {
         return !title.textContent;
     },
     code: 'AX_TITLE_01'
-};
+});

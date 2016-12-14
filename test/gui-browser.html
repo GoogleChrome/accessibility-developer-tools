@@ -10,6 +10,8 @@
     <script src="../src/js/axs.js"></script>
     <script src="../src/js/BrowserUtils.js"></script>
     <script src="../src/js/Constants.js"></script>
+    <script src="../src/js/Color.js"></script>
+    <script src="../src/js/DOMUtils.js"></script>
     <script src="../src/js/AccessibilityUtils.js"></script>
     <script src="../src/js/Properties.js"></script>
     <script src="../src/js/AuditRule.js"></script>
@@ -18,8 +20,11 @@
     <script src="../src/js/Audit.js"></script>
     <script src="../src/audits/FocusableElementNotVisibleAndNotAriaHidden.js"></script>
 <!-- Tests -->
-    <script src="./audits/focusable-element-not-visible-not-aria-hidden-test.js"></script>
+    <script src="./audits/focusable-element-not-visible-not-aria-hidden-test-browser.js"></script>
     <script src="./js/gui-utils-test.js"></script>
+<!-- Shadow DOM dependent tests -->
+    <script src="./js/audit-rule-test.js"></script>
+    <script src="./js/composed-parent-node-test.js"></script>
   </head>
   <body>
     <h1 id="qunit-header">Test Accessibility Extension</h1>

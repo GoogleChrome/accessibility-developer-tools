@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
+goog.require('axs.browserUtils');
 goog.require('axs.properties');
 goog.require('axs.utils');
 
 /**
- * @type {axs.AuditRule.Spec}
+ * role=main should only appear on significant elements
  */
-axs.AuditRule.specs.mainRoleOnInappropriateElement = {
+axs.AuditRules.addRule({
     name: 'mainRoleOnInappropriateElement',
     heading: 'role=main should only appear on significant elements',
-    url: '',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_05',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
         return axs.browserUtils.matchSelector(element, '[role~=main]');
@@ -37,5 +37,5 @@ axs.AuditRule.specs.mainRoleOnInappropriateElement = {
 
         return false;
     },
-    code: 'AX_ARIA_04'
-};
+    code: 'AX_ARIA_05'
+});

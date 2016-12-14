@@ -12,17 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
+goog.require('axs.browserUtils');
 goog.require('axs.constants');
+goog.require('axs.properties');
+goog.require('axs.utils');
 
-/**
- * @type {axs.AuditRule.Spec}
- */
-axs.AuditRule.specs.requiredAriaAttributeMissing = {
+axs.AuditRules.addRule({
     name: 'requiredAriaAttributeMissing',
     heading: 'Elements with ARIA roles must have all required attributes for that role',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_aria_03--elements-with-aria-roles-must-have-all-required-attributes-for-that-role',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_03',
     severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {
         return axs.browserUtils.matchSelector(element, '[role]');
@@ -39,10 +38,14 @@ axs.AuditRule.specs.requiredAriaAttributeMissing = {
                 var propertyDetails = axs.constants.ARIA_PROPERTIES[propertyKey];
                 if ('defaultValue' in propertyDetails)
                     continue;
-                if (!element.hasAttribute(property))
-                    return true;
+                if (!element.hasAttribute(property)) {
+                    var nativelySupported = axs.properties.getNativelySupportedAttributes(element);
+                    if (nativelySupported.indexOf(property) < 0) {
+                        return true;
+                    }
+                }
             }
         }
     },
     code: 'AX_ARIA_03'
-};
+});

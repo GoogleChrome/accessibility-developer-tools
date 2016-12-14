@@ -16,6 +16,9 @@ var page = require('webpage').create(),
     system = require('system'),
     url;
 
+// disabling so we can get the document root from iframes (http -> https)
+page.settings.webSecurityEnabled = false;
+
 if (system.args.length !== 2) {
   console.log('Usage: phantomjs audit.js URL');
   phantom.exit();
@@ -30,7 +33,14 @@ if (system.args.length !== 2) {
         );
       phantom.exit();
     } else {
-      page.injectJs('../../gen/axs_testing.js');
+      page.evaluate(function() {
+        // if target website has an AMD loader, we need to make sure
+        // that window.axs is still available
+        if (typeof define !== 'undefined' && define.amd) {
+            define.amd = false;
+        }
+      });
+      page.injectJs('../../dist/js/axs_testing.js');
       var report = page.evaluate(function() {
         var results = axs.Audit.run();
         return axs.Audit.createReport(results);

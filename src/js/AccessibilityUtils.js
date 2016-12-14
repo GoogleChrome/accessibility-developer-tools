@@ -12,12 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+goog.require('axs.browserUtils');
+goog.require('axs.color');
+goog.require('axs.color.Color');
 goog.require('axs.constants');
+goog.require('axs.dom');
+
 goog.provide('axs.utils');
-goog.provide('axs.utils.Color');
 
 /**
- * @constant
+ * @const
  * @type {string}
  */
 axs.utils.FOCUSABLE_ELEMENTS_SELECTOR =
@@ -30,107 +34,20 @@ axs.utils.FOCUSABLE_ELEMENTS_SELECTOR =
     '[tabindex]';
 
 /**
- * @constructor
- * @param {number} red
- * @param {number} green
- * @param {number} blue
- * @param {number} alpha
+ * Elements that can have labels: https://html.spec.whatwg.org/multipage/forms.html#category-label
+ * @const
+ * @type {string}
  */
-axs.utils.Color = function(red, green, blue, alpha) {
-    /** @type {number} */
-    this.red = red;
+axs.utils.LABELABLE_ELEMENTS_SELECTOR =
+    'button,' +
+    'input:not([type=hidden]),' +
+    'keygen,' +
+    'meter,' +
+    'output,' +
+    'progress,' +
+    'select,' +
+    'textarea';
 
-    /** @type {number} */
-    this.green = green;
-
-    /** @type {number} */
-    this.blue = blue;
-
-    /** @type {number} */
-    this.alpha = alpha;
-};
-
-/**
- * Calculate the contrast ratio between the two given colors. Returns the ratio
- * to 1, for example for two two colors with a contrast ratio of 21:1, this
- * function will return 21.
- * @param {axs.utils.Color} fgColor
- * @param {axs.utils.Color} bgColor
- * @return {?number}
- */
-axs.utils.calculateContrastRatio = function(fgColor, bgColor) {
-    if (!fgColor || !bgColor)
-        return null;
-
-    if (fgColor.alpha < 1)
-        fgColor = axs.utils.flattenColors(fgColor, bgColor);
-
-    var fgLuminance = axs.utils.calculateLuminance(fgColor);
-    var bgLuminance = axs.utils.calculateLuminance(bgColor);
-    var contrastRatio = (Math.max(fgLuminance, bgLuminance) + 0.05) /
-        (Math.min(fgLuminance, bgLuminance) + 0.05);
-    return contrastRatio;
-};
-
-axs.utils.luminanceRatio = function(luminance1, luminance2) {
-    return (Math.max(luminance1, luminance2) + 0.05) /
-        (Math.min(luminance1, luminance2) + 0.05);
-}
-
-/**
- * Returns the nearest ancestor which is an Element.
- * @param {Node} node
- * @return {Element}
- */
-axs.utils.parentElement = function(node) {
-    if (!node)
-        return null;
-    if (node.nodeType == Node.DOCUMENT_FRAGMENT_NODE)
-        return node.host;
-
-    var parentElement = node.parentElement;
-    if (parentElement)
-        return parentElement;
-
-    var parentNode = node.parentNode;
-    if (!parentNode)
-        return null;
-
-    switch (parentNode.nodeType) {
-    case Node.ELEMENT_NODE:
-        return /** @type {Element} */ (parentNode);
-    case Node.DOCUMENT_FRAGMENT_NODE:
-        return parentNode.host;
-    default:
-        return null;
-    }
-};
-
-/**
- * Return the corresponding element for the given node.
- * @param {Node} node
- * @return {Element}
- * @suppress {checkTypes}
- */
-axs.utils.asElement = function(node) {
-    /** @type {Element} */ var element;
-    switch (node.nodeType) {
-    case Node.COMMENT_NODE:
-        return null;  // Skip comments
-    case Node.ELEMENT_NODE:
-        element = /** (@type {Element}) */ node;
-        if (element.tagName.toLowerCase() == 'script')
-            return null;  // Skip script elements
-        break;
-    case Node.TEXT_NODE:
-        element = axs.utils.parentElement(node);
-        break;
-    default:
-        console.warn('Unhandled node type: ', node.nodeType);
-        return null;
-    }
-    return element;
-}
 
 /**
  * @param {Element} element
@@ -158,7 +75,7 @@ axs.utils.elementHasZeroArea = function(element) {
  * @return {boolean}
  */
 axs.utils.elementIsOutsideScrollArea = function(element) {
-    var parent = axs.utils.parentElement(element);
+    var parent = axs.dom.parentElement(element);
 
     var defaultView = element.ownerDocument.defaultView;
     while (parent != defaultView.document.body) {
@@ -168,7 +85,7 @@ axs.utils.elementIsOutsideScrollArea = function(element) {
         if (axs.utils.canScrollTo(element, parent) && !axs.utils.elementIsOutsideScrollArea(parent))
             return false;
 
-        parent = axs.utils.parentElement(parent);
+        parent = axs.dom.parentElement(parent);
     }
 
     return !axs.utils.canScrollTo(element, defaultView.document.body);
@@ -186,16 +103,21 @@ axs.utils.elementIsOutsideScrollArea = function(element) {
 axs.utils.canScrollTo = function(element, container) {
     var rect = element.getBoundingClientRect();
     var containerRect = container.getBoundingClientRect();
-    var containerTop = containerRect.top;
-    var containerLeft = containerRect.left;
+    if (container == container.ownerDocument.body) {
+        var absoluteTop = containerRect.top;
+        var absoluteLeft = containerRect.left;
+    } else {
+        var absoluteTop = containerRect.top - container.scrollTop;
+        var absoluteLeft = containerRect.left - container.scrollLeft;
+    }
     var containerScrollArea =
-        { top: containerTop - container.scrollTop,
-          bottom: containerTop - container.scrollTop + container.scrollHeight,
-          left: containerLeft - container.scrollLeft,
-          right: containerLeft - container.scrollLeft + container.scrollWidth };
+        { top: absoluteTop,
+          bottom: absoluteTop + container.scrollHeight,
+          left: absoluteLeft,
+          right: absoluteLeft + container.scrollWidth };
 
     if (rect.right < containerScrollArea.left || rect.bottom < containerScrollArea.top ||
-            rect.left > containerScrollArea.right || rect.top > containerScrollArea.bottom) {
+        rect.left > containerScrollArea.right || rect.top > containerScrollArea.bottom) {
         return false;
     }
 
@@ -255,8 +177,9 @@ axs.utils.isAncestor = function(ancestor, node) {
     if (node === ancestor)
         return true;
 
-    return axs.utils.isAncestor(ancestor, node.parentNode);
-}
+    var parentNode = axs.dom.composedParentNode(node);
+    return axs.utils.isAncestor(ancestor, parentNode);
+};
 
 /**
  * @param {Element} element
@@ -298,7 +221,7 @@ axs.utils.overlappingElements = function(element) {
 
 /**
  * @param {Element} element
- * @return boolean
+ * @return {boolean}
  */
 axs.utils.elementIsHtmlControl = function(element) {
     var defaultView = element.ownerDocument.defaultView;
@@ -318,7 +241,7 @@ axs.utils.elementIsHtmlControl = function(element) {
 
 /**
  * @param {Element} element
- * @return boolean
+ * @return {boolean}
  */
 axs.utils.elementIsAriaWidget = function(element) {
     if (element.hasAttribute('role')) {
@@ -331,7 +254,7 @@ axs.utils.elementIsAriaWidget = function(element) {
         }
     }
     return false;
-}
+};
 
 /**
  * @param {Element} element
@@ -402,23 +325,23 @@ axs.utils.isLargeFont = function(style) {
 /**
  * @param {CSSStyleDeclaration} style
  * @param {Element} element
- * @return {?axs.utils.Color}
+ * @return {?axs.color.Color}
  */
 axs.utils.getBgColor = function(style, element) {
     var bgColorString = style.backgroundColor;
-    var bgColor = axs.utils.parseColor(bgColorString);
+    var bgColor = axs.color.parseColor(bgColorString);
     if (!bgColor)
         return null;
 
     if (style.opacity < 1)
-        bgColor.alpha = bgColor.alpha * style.opacity
+        bgColor.alpha = bgColor.alpha * style.opacity;
 
     if (bgColor.alpha < 1) {
         var parentBg = axs.utils.getParentBgColor(element);
         if (parentBg == null)
             return null;
 
-        bgColor = axs.utils.flattenColors(bgColor, parentBg);
+        bgColor = axs.color.flattenColors(bgColor, parentBg);
     }
     return bgColor;
 };
@@ -426,18 +349,18 @@ axs.utils.getBgColor = function(style, element) {
 /**
  * Gets the effective background color of the parent of |element|.
  * @param {Element} element
- * @return {?axs.utils.Color}
+ * @return {?axs.color.Color}
  */
 axs.utils.getParentBgColor = function(element) {
     /** @type {Element} */ var parent = element;
     var bgStack = [];
     var foundSolidColor = null;
-    while (parent = axs.utils.parentElement(parent)) {
+    while ((parent = axs.dom.parentElement(parent))) {
         var computedStyle = window.getComputedStyle(parent, null);
         if (!computedStyle)
             continue;
 
-        var parentBg = axs.utils.parseColor(computedStyle.backgroundColor);
+        var parentBg = axs.color.parseColor(computedStyle.backgroundColor);
         if (!parentBg)
             continue;
 
@@ -456,419 +379,41 @@ axs.utils.getParentBgColor = function(element) {
     }
 
     if (!foundSolidColor)
-        bgStack.push(new axs.utils.Color(255, 255, 255, 1));
+        bgStack.push(new axs.color.Color(255, 255, 255, 1));
 
     var bg = bgStack.pop();
     while (bgStack.length) {
         var fg = bgStack.pop();
-        bg = axs.utils.flattenColors(fg, bg);
+        bg = axs.color.flattenColors(fg, bg);
     }
     return bg;
-}
+};
 
 /**
  * @param {CSSStyleDeclaration} style
- * @param {axs.utils.Color} bgColor The background color, which may come from
+ * @param {Element} element
+ * @param {axs.color.Color} bgColor The background color, which may come from
  *    another element (such as a parent element), for flattening into the
  *    foreground color.
- * @return {?axs.utils.Color}
+ * @return {?axs.color.Color}
  */
 axs.utils.getFgColor = function(style, element, bgColor) {
     var fgColorString = style.color;
-    var fgColor = axs.utils.parseColor(fgColorString);
+    var fgColor = axs.color.parseColor(fgColorString);
     if (!fgColor)
         return null;
 
     if (fgColor.alpha < 1)
-        fgColor = axs.utils.flattenColors(fgColor, bgColor);
+        fgColor = axs.color.flattenColors(fgColor, bgColor);
 
     if (style.opacity < 1) {
         var parentBg = axs.utils.getParentBgColor(element);
         fgColor.alpha = fgColor.alpha * style.opacity;
-        fgColor = axs.utils.flattenColors(fgColor, parentBg);
+        fgColor = axs.color.flattenColors(fgColor, parentBg);
     }
 
     return fgColor;
 };
-
-/**
- * @param {string} colorString The color string from CSS.
- * @return {?axs.utils.Color}
- */
-axs.utils.parseColor = function(colorString) {
-    var rgbRegex = /^rgb\((\d+), (\d+), (\d+)\)$/;
-    var match = colorString.match(rgbRegex);
-
-    if (match) {
-        var r = parseInt(match[1], 10);
-        var g = parseInt(match[2], 10);
-        var b = parseInt(match[3], 10);
-        var a = 1
-        return new axs.utils.Color(r, g, b, a);
-    }
-
-    var rgbaRegex = /^rgba\((\d+), (\d+), (\d+), (\d+(\.\d+)?)\)/;
-    match = colorString.match(rgbaRegex);
-    if (match) {
-        var a = parseInt(match[4], 10);
-        var r = parseInt(match[1], 10);
-        var g = parseInt(match[2], 10);
-        var b = parseInt(match[3] ,10);
-        return new axs.utils.Color(r, g, b, a);
-    }
-
-    return null;
-};
-
-/**
- * @param {number} value The value of a color channel, 0 <= value <= 0xFF
- * @return {string}
- */
-axs.utils.colorChannelToString = function(value) {
-    value = Math.round(value);
-    if (value <= 0xF)
-        return '0' + value.toString(16);
-    return value.toString(16);
-};
-
-/**
- * @param {axs.utils.Color} color
- * @return {string}
- */
-axs.utils.colorToString = function(color) {
-    if (color.alpha == 1) {
-         return '#' + axs.utils.colorChannelToString(color.red) +
-         axs.utils.colorChannelToString(color.green) + axs.utils.colorChannelToString(color.blue);
-    }
-    else
-        return 'rgba(' + [color.red, color.green, color.blue, color.alpha].join(',') + ')';
-};
-
-axs.utils.luminanceFromContrastRatio = function(luminance, contrast, higher) {
-    if (higher) {
-        var newLuminance = (luminance + 0.05) * contrast - 0.05;
-        return newLuminance;
-    } else {
-        var newLuminance = (luminance + 0.05) / contrast - 0.05;
-        return newLuminance;
-    }
-};
-
-axs.utils.translateColor = function(ycc, luminance) {
-    var oldLuminance = ycc[0];
-    if (oldLuminance > luminance)
-        var endpoint = 0
-    else
-        var endpoint = 1;
-
-    var d = luminance - oldLuminance;
-    var scale = d / (endpoint - oldLuminance)
-
-    /** @type {Array.<number>} */ var translatedColor = [ luminance,
-                                                          ycc[1] - ycc[1] * scale,
-                                                          ycc[2] - ycc[2] * scale ];
-    var rgb = axs.utils.fromYCC(translatedColor);
-    return rgb;
-};
-
-/**
- * @param {axs.utils.Color} fgColor
- * @param {axs.utils.Color} bgColor
- * @param {number} contrastRatio
- * @param {CSSStyleDeclaration} style
- * @return {Object}
- */
-axs.utils.suggestColors = function(bgColor, fgColor, contrastRatio, style) {
-    if (!axs.utils.isLowContrast(contrastRatio, style, true))
-        return null;
-    var colors = {};
-    var bgLuminance = axs.utils.calculateLuminance(bgColor);
-    var fgLuminance = axs.utils.calculateLuminance(fgColor);
-
-    var levelAAContrast = axs.utils.isLargeFont(style) ? 3.0 : 4.5;
-    var levelAAAContrast = axs.utils.isLargeFont(style) ? 4.5 : 7.0;
-    var fgLuminanceIsHigher = fgLuminance > bgLuminance;
-    var desiredFgLuminanceAA = axs.utils.luminanceFromContrastRatio(bgLuminance, levelAAContrast + 0.02, fgLuminanceIsHigher);
-    var desiredFgLuminanceAAA = axs.utils.luminanceFromContrastRatio(bgLuminance, levelAAAContrast + 0.02, fgLuminanceIsHigher);
-    var fgYCC = axs.utils.toYCC(fgColor);
-
-    if (axs.utils.isLowContrast(contrastRatio, style, false) &&
-        desiredFgLuminanceAA <= 1 && desiredFgLuminanceAA >= 0) {
-        var newFgColorAA = axs.utils.translateColor(fgYCC, desiredFgLuminanceAA);
-        var newContrastRatioAA = axs.utils.calculateContrastRatio(newFgColorAA, bgColor);
-        var newLuminance = axs.utils.calculateLuminance(newFgColorAA);
-        var suggestedColorsAA = {}
-        suggestedColorsAA['fg'] = axs.utils.colorToString(newFgColorAA);
-        suggestedColorsAA['bg'] = axs.utils.colorToString(bgColor);
-        suggestedColorsAA['contrast'] = newContrastRatioAA.toFixed(2);
-        colors['AA'] = suggestedColorsAA;
-    }
-    if (axs.utils.isLowContrast(contrastRatio, style, true) &&
-        desiredFgLuminanceAAA <= 1 && desiredFgLuminanceAAA >= 0) {
-        var newFgColorAAA = axs.utils.translateColor(fgYCC, desiredFgLuminanceAAA);
-        var newContrastRatioAAA = axs.utils.calculateContrastRatio(newFgColorAAA, bgColor);
-        var suggestedColorsAAA = {};
-        suggestedColorsAAA['fg'] = axs.utils.colorToString(newFgColorAAA);
-        suggestedColorsAAA['bg'] = axs.utils.colorToString(bgColor);
-        suggestedColorsAAA['contrast'] = newContrastRatioAAA.toFixed(2);
-        colors['AAA'] = suggestedColorsAAA;
-    }
-    var desiredBgLuminanceAA = axs.utils.luminanceFromContrastRatio(fgLuminance, levelAAContrast + 0.02, !fgLuminanceIsHigher);
-    var desiredBgLuminanceAAA = axs.utils.luminanceFromContrastRatio(fgLuminance, levelAAAContrast + 0.02, !fgLuminanceIsHigher);
-    var bgLuminanceBoundary = fgLuminanceIsHigher ? 0 : 1;
-    var bgYCC = axs.utils.toYCC(bgColor);
-
-    if (!('AA' in colors) && axs.utils.isLowContrast(contrastRatio, style, false) &&
-        desiredBgLuminanceAA <= 1 && desiredBgLuminanceAA >= 0) {
-        var newBgColorAA = axs.utils.translateColor(bgYCC, desiredBgLuminanceAA);
-        var newContrastRatioAA = axs.utils.calculateContrastRatio(fgColor, newBgColorAA);
-        var suggestedColorsAA = {};
-        suggestedColorsAA['bg'] = axs.utils.colorToString(newBgColorAA);
-        suggestedColorsAA['fg'] = axs.utils.colorToString(fgColor);
-        suggestedColorsAA['contrast'] = newContrastRatioAA.toFixed(2);
-        colors['AA'] = suggestedColorsAA;
-    }
-    if (!('AAA' in colors) && axs.utils.isLowContrast(contrastRatio, style, true) &&
-        desiredBgLuminanceAAA <= 1 && desiredBgLuminanceAAA >= 0) {
-        var newBgColorAAA = axs.utils.translateColor(bgYCC, desiredBgLuminanceAAA);
-        var newContrastRatioAAA = axs.utils.calculateContrastRatio(fgColor, newBgColorAAA);
-        var suggestedColorsAAA = {};
-        suggestedColorsAAA['bg'] = axs.utils.colorToString(newBgColorAAA);
-        suggestedColorsAAA['fg'] = axs.utils.colorToString(fgColor);
-        suggestedColorsAAA['contrast'] = newContrastRatioAAA.toFixed(2);
-        colors['AAA'] = suggestedColorsAAA;
-    }
-    return colors;
-}
-
-/**
- * Combine the two given color according to alpha blending.
- * @param {axs.utils.Color} fgColor
- * @param {axs.utils.Color} bgColor
- * @return {axs.utils.Color}
- */
-axs.utils.flattenColors = function(fgColor, bgColor) {
-    var alpha = fgColor.alpha;
-    var r = ((1 - alpha) * bgColor.red) + (alpha * fgColor.red);
-    var g  = ((1 - alpha) * bgColor.green) + (alpha * fgColor.green);
-    var b = ((1 - alpha) * bgColor.blue) + (alpha * fgColor.blue);
-    var a = fgColor.alpha + (bgColor.alpha * (1 - fgColor.alpha));
-
-    return new axs.utils.Color(r, g, b, a);
-};
-
-/**
- * Calculate the luminance of the given color using the WCAG algorithm.
- * @param {axs.utils.Color} color
- * @return {number}
- */
-axs.utils.calculateLuminance = function(color) {
-/*    var rSRGB = color.red / 255;
-    var gSRGB = color.green / 255;
-    var bSRGB = color.blue / 255;
-
-    var r = rSRGB <= 0.03928 ? rSRGB / 12.92 : Math.pow(((rSRGB + 0.055)/1.055), 2.4);
-    var g = gSRGB <= 0.03928 ? gSRGB / 12.92 : Math.pow(((gSRGB + 0.055)/1.055), 2.4);
-    var b = bSRGB <= 0.03928 ? bSRGB / 12.92 : Math.pow(((bSRGB + 0.055)/1.055), 2.4);
-
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b; */
-    var ycc = axs.utils.toYCC(color);
-    return ycc[0];
-};
-
-/**
- * Returns an RGB to YCC conversion matrix for the given kR, kB constants.
- * @param {number} kR
- * @param {number} kB
- * @return {Array.<Array.<number>>}
- */
-axs.utils.RGBToYCCMatrix = function(kR, kB) {
-    return [
-        [
-            kR,
-            (1 - kR - kB),
-            kB
-        ],
-        [
-            -kR/(2 - 2*kB),
-            (kR + kB - 1)/(2 - 2*kB),
-            (1 - kB)/(2 - 2*kB)
-        ],
-        [
-            (1 - kR)/(2 - 2*kR),
-            (kR + kB - 1)/(2 - 2*kR),
-            -kB/(2 - 2*kR)
-        ]
-    ];
-}
-
-/**
- * Return the inverse of the given 3x3 matrix.
- * @param {Array.<Array.<number>>} matrix
- * @return Array.<Array.<number>> The inverse of the given matrix.
- */
-axs.utils.invert3x3Matrix = function(matrix) {
-    var a = matrix[0][0];
-    var b = matrix[0][1];
-    var c = matrix[0][2];
-    var d = matrix[1][0];
-    var e = matrix[1][1];
-    var f = matrix[1][2];
-    var g = matrix[2][0];
-    var h = matrix[2][1];
-    var k = matrix[2][2];
-
-    var A = (e*k - f*h);
-    var B = (f*g - d*k);
-    var C = (d*h - e*g);
-    var D = (c*h - b*k);
-    var E = (a*k - c*g);
-    var F = (g*b - a*h);
-    var G = (b*f - c*e);
-    var H = (c*d - a*f);
-    var K = (a*e - b*d);
-
-    var det = a * (e*k - f*h) - b * (k*d - f*g) + c * (d*h - e*g);
-    var z = 1/det;
-
-    return axs.utils.scalarMultiplyMatrix([
-        [ A, D, G ],
-        [ B, E, H ],
-        [ C, F, K ]
-    ], z);
-};
-
-axs.utils.scalarMultiplyMatrix = function(matrix, scalar) {
-    var result = [];
-    result[0] = [];
-    result[1] = [];
-    result[2] = [];
-
-    for (var i = 0; i < 3; i++) {
-        for (var j = 0; j < 3; j++) {
-            result[i][j] = matrix[i][j] * scalar;
-        }
-    }
-
-    return result;
-}
-
-axs.utils.kR = 0.2126;
-axs.utils.kB = 0.0722;
-axs.utils.YCC_MATRIX = axs.utils.RGBToYCCMatrix(axs.utils.kR, axs.utils.kB);
-axs.utils.INVERTED_YCC_MATRIX = axs.utils.invert3x3Matrix(axs.utils.YCC_MATRIX);
-
-/**
- * Multiply the given color vector by the given transformation matrix.
- * @param {Array.<Array.<number>>} matrix A 3x3 conversion matrix
- * @param {Array.<number>} vector A 3-element color vector
- * @return {Array.<number>} A 3-element color vector
- */
-axs.utils.convertColor = function(matrix, vector) {
-    var a = matrix[0][0];
-    var b = matrix[0][1];
-    var c = matrix[0][2];
-    var d = matrix[1][0];
-    var e = matrix[1][1];
-    var f = matrix[1][2];
-    var g = matrix[2][0];
-    var h = matrix[2][1];
-    var k = matrix[2][2];
-
-    var x = vector[0];
-    var y = vector[1];
-    var z = vector[2];
-
-    return [
-        a*x + b*y + c*z,
-        d*x + e*y + f*z,
-        g*x + h*y + k*z
-    ];
-};
-
-axs.utils.multiplyMatrices = function(matrix1, matrix2) {
-    var result = [];
-    result[0] = [];
-    result[1] = [];
-    result[2] = [];
-
-    for (var i = 0; i < 3; i++) {
-        for (var j = 0; j < 3; j++) {
-            result[i][j] = matrix1[i][0] * matrix2[0][j] +
-                           matrix1[i][1] * matrix2[1][j] +
-                           matrix1[i][2] * matrix2[2][j];
-        }
-    }
-    return result;
-}
-
-/**
- * Convert a given RGB color to YCC.
- */
-axs.utils.toYCC = function(color) {
-    var rSRGB = color.red / 255;
-    var gSRGB = color.green / 255;
-    var bSRGB = color.blue / 255;
-
-    var r = rSRGB <= 0.03928 ? rSRGB / 12.92 : Math.pow(((rSRGB + 0.055)/1.055), 2.4);
-    var g = gSRGB <= 0.03928 ? gSRGB / 12.92 : Math.pow(((gSRGB + 0.055)/1.055), 2.4);
-    var b = bSRGB <= 0.03928 ? bSRGB / 12.92 : Math.pow(((bSRGB + 0.055)/1.055), 2.4);
-
-    return axs.utils.convertColor(axs.utils.YCC_MATRIX, [r, g, b]);
-};
-
-/**
- * Convert a color from a YCC color (as a vector) to an RGB color
- * @param {Array.<number>} yccColor
- * @return {axs.utils.Color}
- */
-axs.utils.fromYCC = function(yccColor) {
-    var rgb = axs.utils.convertColor(axs.utils.INVERTED_YCC_MATRIX, yccColor);
-
-    var r = rgb[0];
-    var g = rgb[1];
-    var b = rgb[2];
-    var rSRGB = r <= 0.00303949 ? (r * 12.92) : (Math.pow(r, (1/2.4)) * 1.055) - 0.055;
-    var gSRGB = g <= 0.00303949 ? (g * 12.92) : (Math.pow(g, (1/2.4)) * 1.055) - 0.055;
-    var bSRGB = b <= 0.00303949 ? (b * 12.92) : (Math.pow(b, (1/2.4)) * 1.055) - 0.055;
-
-    var red = Math.min(Math.max(Math.round(rSRGB * 255), 0), 255);
-    var green = Math.min(Math.max(Math.round(gSRGB * 255), 0), 255);
-    var blue = Math.min(Math.max(Math.round(bSRGB * 255), 0), 255);
-
-    return new axs.utils.Color(red, green, blue, 1);
-};
-
-axs.utils.scalarMultiplyMatrix = function(matrix, scalar) {
-    var result = [];
-    result[0] = [];
-    result[1] = [];
-    result[2] = [];
-
-    for (var i = 0; i < 3; i++) {
-        for (var j = 0; j < 3; j++) {
-            result[i][j] = matrix[i][j] * scalar;
-        }
-    }
-
-    return result;
-}
-
-axs.utils.multiplyMatrices = function(matrix1, matrix2) {
-    var result = [];
-    result[0] = [];
-    result[1] = [];
-    result[2] = [];
-
-    for (var i = 0; i < 3; i++) {
-        for (var j = 0; j < 3; j++) {
-            result[i][j] = matrix1[i][0] * matrix2[0][j] +
-                           matrix1[i][1] * matrix2[1][j] +
-                           matrix1[i][2] * matrix2[2][j];
-        }
-    }
-    return result;
-}
 
 /**
  * @param {Element} element
@@ -896,7 +441,7 @@ axs.utils.getContrastRatioForElementWithComputedStyle = function(style, element)
     if (!fgColor)
         return null;
 
-    return axs.utils.calculateContrastRatio(fgColor, bgColor);
+    return axs.color.calculateContrastRatio(fgColor, bgColor);
 };
 
 /**
@@ -967,23 +512,62 @@ axs.utils.hasLabel = function(element) {
     if (element.hasAttribute('aria-labelledby'))
         return true;
 
-    if (axs.utils.isNativeTextElement(element) && element.hasAttribute('placeholder'))
-        return true;
-
     if (element.hasAttribute('id')) {
         var labelsFor = document.querySelectorAll('label[for="' + element.id + '"]');
         if (labelsFor.length > 0)
             return true;
     }
 
-    var parent = axs.utils.parentElement(element);
+    var parent = axs.dom.parentElement(element);
     while (parent) {
         if (parent.tagName.toLowerCase() == 'label') {
             var parentLabel = /** HTMLLabelElement */ parent;
             if (parentLabel.control == element)
                 return true;
         }
-        parent = axs.utils.parentElement(parent);
+        parent = axs.dom.parentElement(parent);
+    }
+    return false;
+};
+
+/**
+ * Determine if this element natively supports being disabled (i.e. via the `disabled` attribute.
+ * Disabled here means that the element should be considered disabled according to specification.
+ * This element may or may not be effectively disabled in practice as this is dependent on implementation.
+ *
+ * @param {Element} element An element to check.
+ * @return {boolean} true If the element supports being natively disabled.
+ */
+axs.utils.isNativelyDisableable = function(element) {
+    var tagName = element.tagName.toUpperCase();
+    return (tagName in axs.constants.NATIVELY_DISABLEABLE);
+};
+
+/**
+ * Determine if this element is disabled directly or indirectly by a disabled ancestor.
+ * Disabled here means that the element should be considered disabled according to specification.
+ * This element may or may not be effectively disabled in practice as this is dependent on implementation.
+ *
+ * @param {Element} element An element to check.
+ * @param {boolean=} ignoreAncestors If true do not check for disabled ancestors.
+ * @return {boolean} true if the element or one of its ancestors is disabled.
+ */
+axs.utils.isElementDisabled = function(element, ignoreAncestors) {
+    var selector = ignoreAncestors ? '[aria-disabled=true]' : '[aria-disabled=true], [aria-disabled=true] *';
+    if (axs.browserUtils.matchSelector(element, selector)) {
+        return true;
+    }
+    if (!axs.utils.isNativelyDisableable(element) ||
+            axs.browserUtils.matchSelector(element, 'fieldset>legend:first-of-type *')) {
+        return false;
+    }
+    for (var next = element; next !== null; next = axs.dom.parentElement(next)) {
+        if (next.hasAttribute('disabled')) {
+            return true;
+        }
+        if (ignoreAncestors) {
+            return false;
+        }
     }
     return false;
 };
@@ -1020,8 +604,8 @@ axs.utils.isElementOrAncestorHidden = function(element) {
     if (axs.utils.isElementHidden(element))
         return true;
 
-    if (axs.utils.parentElement(element))
-        return axs.utils.isElementOrAncestorHidden(axs.utils.parentElement(element));
+    if (axs.dom.parentElement(element))
+        return axs.utils.isElementOrAncestorHidden(axs.dom.parentElement(element));
     else
         return false;
 };
@@ -1034,30 +618,43 @@ axs.utils.isElementOrAncestorHidden = function(element) {
 axs.utils.isInlineElement = function(element) {
     var tagName = element.tagName.toUpperCase();
     return axs.constants.InlineElements[tagName];
-}
+};
 
 /**
- * @param {Element} element
- * @return {Object|boolean}
+ *
+ * Gets role details from an element.
+ * @param {Element} element The DOM element whose role we want.
+ * @param {boolean=} implicit if true then implicit semantics will be considered if there is no role attribute.
+ *
+ * @return {Object}
  */
-axs.utils.getRoles = function(element) {
-    if (!element.hasAttribute('role'))
-        return false;
+axs.utils.getRoles = function(element, implicit) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE || (!element.hasAttribute('role') && !implicit))
+        return null;
     var roleValue = element.getAttribute('role');
+    if (!roleValue && implicit)
+        roleValue = axs.properties.getImplicitRole(element);
+    if (!roleValue)  // role='' or implicit role came up empty
+        return null;
     var roleNames = roleValue.split(' ');
-    var roles = []
-    var valid = true;
+    var result = { roles: [], valid: false };
     for (var i = 0; i < roleNames.length; i++) {
         var role = roleNames[i];
-        if (axs.constants.ARIA_ROLES[role])
-            roles.push({'name': role, 'details': axs.constants.ARIA_ROLES[role], 'valid': true});
-        else {
-            roles.push({'name': role, 'valid': false});
-            valid = false;
+        var ariaRole = axs.constants.ARIA_ROLES[role];
+        var roleObject = { 'name': role };
+        if (ariaRole && !ariaRole.abstract) {
+            roleObject.details = ariaRole;
+            if (!result.applied) {
+                result.applied = roleObject;
+            }
+            roleObject.valid = result.valid = true;
+        } else {
+            roleObject.valid = false;
         }
+        result.roles.push(roleObject);
     }
 
-    return { 'roles': roles, 'valid': valid };
+    return result;
 };
 
 /**
@@ -1089,6 +686,7 @@ axs.utils.getAriaPropertyValue = function(propertyName, value, element) {
         result.valid = isValid.valid;
         result.reason = isValid.reason;
         result.idref = isValid.idref;
+        // falls through
     case "idref_list":
         var idrefValues = value.split(/\s+/);
         result.valid = true;
@@ -1103,14 +701,13 @@ axs.utils.getAriaPropertyValue = function(propertyName, value, element) {
         }
         return result;
     case "integer":
-    case "decimal":
         var validNumber = axs.utils.isValidNumber(value);
         if (!validNumber.valid) {
             result.valid = false;
             result.reason = validNumber.reason;
             return result;
         }
-        if (Math.floor(validNumber.value) != validNumber.value) {
+        if (Math.floor(validNumber.value) !== validNumber.value) {
             result.valid = false;
             result.reason = '' + value + ' is not a whole integer';
         } else {
@@ -1118,12 +715,16 @@ axs.utils.getAriaPropertyValue = function(propertyName, value, element) {
             result.value = validNumber.value;
         }
         return result;
+    case "decimal":
     case "number":
         var validNumber = axs.utils.isValidNumber(value);
-        if (validNumber.valid) {
-            result.valid = true;
-            result.value = validNumber.value;
+        result.valid = validNumber.valid;
+        if (!validNumber.valid) {
+            result.reason = validNumber.reason;
+            return result;
         }
+        result.value = validNumber.value;
+        return result;
     case "string":
         result.valid = true;
         result.value = value;
@@ -1140,6 +741,7 @@ axs.utils.getAriaPropertyValue = function(propertyName, value, element) {
             result.reason = validTokenValue.reason;
             return result;
         }
+        // falls through
     case "token_list":
         var tokenValues = value.split(/\s+/);
         result.valid = true;
@@ -1185,7 +787,7 @@ axs.utils.getAriaPropertyValue = function(propertyName, value, element) {
         }
         return result;
     }
-    result.valid = false
+    result.valid = false;
     result.reason = 'Not a valid ARIA property';
     return result;
 };
@@ -1205,6 +807,7 @@ axs.utils.isValidTokenValue = function(propertyName, value) {
 /**
  * @param {string} value
  * @param {Object.<string, boolean>} possibleValues
+ * @param {string} propertyName The name of the property.
  * @return {!Object}
  */
 axs.utils.isPossibleValue = function(value, possibleValues, propertyName) {
@@ -1249,21 +852,28 @@ axs.utils.isValidIDRefValue = function(value, element) {
 };
 
 /**
+ * Tests if a number is real number for a11y purposes.
+ * Must be a real, numerical, decimal value; heavily inspired by
+ *    http://www.w3.org/TR/wai-aria/states_and_properties#valuetype_number
  * @param {string} value
  * @return {!Object}
  */
 axs.utils.isValidNumber = function(value) {
-    try {
-        var parsedValue = JSON.parse(value);
-    } catch (ex) {
-        return { 'valid': false,
-                 'value': value,
-                 'reason': '"' + value + '" is not a number' };
+    var failResult = {
+        'valid': false,
+        'value': value,
+        'reason': '"' + value + '" is not a number'
+    };
+    if (!value) {
+        return failResult;
     }
-    if (typeof(parsedValue) != 'number') {
-        return { 'valid': false,
-                 'value': value,
-                 'reason': '"' + value + '" is not a number' };
+    if (/^0x/i.test(value)) {
+        failResult.reason = '"' + value + '" is not a decimal number';  // hex is not accepted
+        return failResult;
+    }
+    var parsedValue = value * 1;
+    if (!isFinite(parsedValue)) {
+        return failResult;
     }
     return { 'valid': true, 'value': parsedValue };
 };
@@ -1314,8 +924,19 @@ axs.utils.namedValues = function(obj) {
         if (obj.hasOwnProperty(key) && typeof obj[key] != 'function')
             values[key] = obj[key];
     }
-    return values
+    return values;
 };
+
+/**
+* Escapes a given ID to be used in a CSS selector
+*
+* @private
+* @param {!string} id The ID to be escaped
+* @return {string} The escaped ID
+*/
+function escapeId(id) {
+    return id.replace(/[^a-zA-Z0-9_-]/g,function(match) { return '\\' + match; });
+}
 
 /** Gets a CSS selector text for a DOM object.
  * @param {Node} obj The DOM object.
@@ -1330,7 +951,7 @@ axs.utils.getQuerySelectorText = function(obj) {
 
   if (obj.hasAttribute) {
     if (obj.id) {
-      return '#' + obj.id;
+      return '#' + escapeId(obj.id);
     }
 
     if (obj.className) {
@@ -1354,9 +975,6 @@ axs.utils.getQuerySelectorText = function(obj) {
       if (total == 1) {
         return axs.utils.getQuerySelectorText(obj.parentNode) +
                ' > ' + selector;
-      } else {
-        return axs.utils.getQuerySelectorText(obj.parentNode) +
-               ' > ' + selector + ':nth-of-type(' + total + ')';
       }
     }
 
@@ -1392,4 +1010,272 @@ axs.utils.getQuerySelectorText = function(obj) {
   }
 
   return '';
+};
+
+/**
+ * Gets elements that refer to this element in an ARIA attribute that takes an ID reference list or
+ * single ID reference.
+ * @param {Element} element a potential referent.
+ * @param {string=} opt_attributeName Name of an ARIA attribute to limit the results to, e.g. 'aria-owns'.
+ * @return {NodeList} The elements that refer to this element or null.
+ */
+axs.utils.getAriaIdReferrers = function(element, opt_attributeName) {
+    var propertyToSelector = function(propertyKey) {
+        var propertyDetails = axs.constants.ARIA_PROPERTIES[propertyKey];
+        if (propertyDetails) {
+            if (propertyDetails.valueType === ('idref')) {
+                return '[aria-' + propertyKey + '=\'' + id + '\']';
+            } else if (propertyDetails.valueType === ('idref_list')) {
+                return '[aria-' + propertyKey + '~=\'' + id + '\']';
+            }
+        }
+        return '';
+    };
+    if (!element)
+        return null;
+    var id = element.id;
+    if (!id)
+        return null;
+    id = id.replace(/'/g, "\\'");  // make it safe to use in a selector
+
+    if (opt_attributeName) {
+        var propertyKey = opt_attributeName.replace(/^aria-/, '');
+        var referrerQuery = propertyToSelector(propertyKey);
+        if (referrerQuery) {
+            return element.ownerDocument.querySelectorAll(referrerQuery);
+        }
+    } else {
+        var selectors = [];
+        for (var propertyKey in axs.constants.ARIA_PROPERTIES) {
+            var referrerQuery = propertyToSelector(propertyKey);
+            if (referrerQuery) {
+                selectors.push(referrerQuery);
+            }
+        }
+        return element.ownerDocument.querySelectorAll(selectors.join(','));
+    }
+    return null;
+};
+
+/**
+ * Gets elements that refer to this element in an HTML attribute that takes an ID reference list or
+ * single ID reference.
+ * @param {Element} element a potential referent.
+ * @return {NodeList} The elements that refer to this element.
+ */
+axs.utils.getHtmlIdReferrers = function(element) {
+    if (!element)
+        return null;
+    var id = element.id;
+    if (!id)
+        return null;
+    id = id.replace(/'/g, "\\'");  // make it safe to use in a selector
+    var selectorTemplates = [
+        '[contextmenu=\'{id}\']',
+        '[itemref~=\'{id}\']',
+        'button[form=\'{id}\']',
+        'button[menu=\'{id}\']',
+        'fieldset[form=\'{id}\']',
+        'input[form=\'{id}\']',
+        'input[list=\'{id}\']',
+        'keygen[form=\'{id}\']',
+        'label[for=\'{id}\']',
+        'label[form=\'{id}\']',
+        'menuitem[command=\'{id}\']',
+        'object[form=\'{id}\']',
+        'output[for~=\'{id}\']',
+        'output[form=\'{id}\']',
+        'select[form=\'{id}\']',
+        'td[headers~=\'{id}\']',
+        'textarea[form=\'{id}\']',
+        'tr[headers~=\'{id}\']'];
+    var selectors = selectorTemplates.map(function(selector) {
+        return selector.replace('\{id\}', id);
+    });
+    return element.ownerDocument.querySelectorAll(selectors.join(','));
+};
+
+/**
+ * Gets a list of all IDs this element references in either ARIA or HTML attributes.
+ *
+ * @param {Element} element The element to check for idref attributes.
+ * @returns {Array.<string>} Any IDs this element references.
+ */
+axs.utils.getReferencedIds = function(element) {
+    var result = [];
+    var addResult = function(ids) {
+            if (ids) {
+                if (ids.indexOf(' ') > 0) {
+                    result = result.concat(attrib.value.split(' '));
+                } else {
+                    result.push(ids);
+                }
+            }
+        };
+    for (var i = 0; i < element.attributes.length; i++) {
+        var tagName = element.tagName.toLowerCase();
+        var attrib = element.attributes[i];
+        if (attrib.specified) {
+            var attribName = attrib.name;
+            var ariaAttr = attribName.match(/aria-(.+)/);
+            if (ariaAttr) {
+                var details = axs.constants.ARIA_PROPERTIES[ariaAttr[1]];
+                if (details && (details.valueType === ('idref') || details.valueType === ('idref_list'))) {
+                    addResult(attrib.value);
+                }
+                continue;
+            }
+            switch (attribName) {
+                case 'contextmenu':
+                case 'itemref':
+                    addResult(attrib.value);
+                    break;
+                case 'form':
+                    if (tagName == 'button' || tagName == 'fieldset' || tagName == 'input' ||
+                            tagName == 'keygen' || tagName == 'label' || tagName == 'object' ||
+                            tagName == 'output' || tagName == 'select' || tagName == 'textarea') {
+                        addResult(attrib.value);
+                    }
+                    break;
+                case 'for':
+                    if (tagName == 'label' || tagName == 'output') {
+                        addResult(attrib.value);
+                    }
+                    break;
+                case 'menu':
+                    if (tagName == 'button') {
+                        addResult(attrib.value);
+                    }
+                    break;
+                case 'list':
+                    if (tagName == 'input') {
+                        addResult(attrib.value);
+                    }
+                    break;
+                case 'command':
+                    if (tagName == 'menuitem') {
+                        addResult(attrib.value);
+                    }
+                    break;
+                case 'headers':
+                    if (tagName == 'td' || tagName == 'tr') {
+                        addResult(attrib.value);
+                    }
+                    break;
+            }
+        }
+    }
+    return result;
+};
+
+/**
+ * Gets elements that refer to this element in an attribute that takes an ID reference list or
+ * single ID reference.
+ * @param {Element} element a potential referent.
+ * @return {Array<Element>} The elements that refer to this element.
+ */
+axs.utils.getIdReferrers = function(element) {
+    var result = [];
+    var referrers = axs.utils.getHtmlIdReferrers(element);
+    if (referrers) {
+        result = result.concat(Array.prototype.slice.call(referrers));
+    }
+    referrers = axs.utils.getAriaIdReferrers(element);
+    if (referrers) {
+        result = result.concat(Array.prototype.slice.call(referrers));
+    }
+    return result;
+};
+
+/**
+ * Gets elements which this element refers to in the given attribute.
+ * @param {!string} attributeName Name of an ARIA attribute, e.g. 'aria-owns'.
+ * @param {Element} element The DOM element which has the ARIA attribute.
+ * @return {!Array.<Element>} An array of elements that are referred to by this element.
+ * @example
+ *    var owner = document.body.appendChild(document.createElement("div"));
+ *    var owned = document.body.appendChild(document.createElement("div"));
+ *    owner.setAttribute("aria-owns", "kungfu");
+ *    owned.setAttribute("id", "kungfu");
+ *    console.log(axs.utils.getIdReferents("aria-owns", owner)[0] === owned);  // This will log 'true'
+ */
+axs.utils.getIdReferents = function(attributeName, element) {
+    var result = [];
+    var propertyKey = attributeName.replace(/^aria-/, '');
+    var property = axs.constants.ARIA_PROPERTIES[propertyKey];
+    if (!property || !element.hasAttribute(attributeName))
+        return result;
+    var propertyType = property.valueType;
+    if (propertyType === 'idref_list' || propertyType === 'idref') {
+        var ownerDocument = element.ownerDocument;
+        var ids = element.getAttribute(attributeName);
+        ids = ids.split(/\s+/);
+        for (var i = 0, len = ids.length; i < len; i++) {
+            var next = ownerDocument.getElementById(ids[i]);
+            if (next) {
+                result[result.length] = next;
+            }
+        }
+    }
+    return result;
+};
+
+/**
+ * Gets a subset of 'axs.constants.ARIA_PROPERTIES' filtered by 'valueType'.
+ * @param {!Array.<string>} valueTypes Types to match, e.g. ['idref_list'].
+ * @return {Object.<string, Object>} axs.constants.ARIA_PROPERTIES which match.
+ */
+axs.utils.getAriaPropertiesByValueType = function(valueTypes) {
+    var result = {};
+    for (var propertyName in axs.constants.ARIA_PROPERTIES) {
+        var property = axs.constants.ARIA_PROPERTIES[propertyName];
+        if (property && valueTypes.indexOf(property.valueType) >= 0) {
+            result[propertyName] = property;
+        }
+    }
+    return result;
+};
+
+/**
+ * Builds a selector that matches an element with any of these ARIA properties.
+ * @param {Object.<string, Object>} ariaProperties axs.constants.ARIA_PROPERTIES
+ * @return {!string} The selector.
+ */
+axs.utils.getSelectorForAriaProperties = function(ariaProperties) {
+    var propertyNames = Object.keys(/** @type {!Object} */(ariaProperties));
+    var result = propertyNames.map(function(propertyName) {
+        return '[aria-' + propertyName + ']';
+    });
+    result.sort();  // facilitates reading long selectors and unit testing
+    return result.join(',');
+};
+
+/**
+ * Finds descendants of this element which implement the given ARIA role.
+ * Will look for descendants with implicit or explicit role.
+ * @param {Element} element an HTML DOM element.
+ * @param {string} role The role you seek.
+ * @return {!Array.<Element>} An array of matching elements.
+ * @example
+ *    var container = document.createElement("div");
+ *    var button = document.createElement("button");
+ *    var span = document.createElement("span");
+ *    span.setAttribute("role", "button");
+ *    container.appendChild(button);
+ *    container.appendChild(span);
+ *    var result = axs.utils.findDescendantsWithRole(container, "button");  // result is an array containing both 'button' and 'span'
+ */
+axs.utils.findDescendantsWithRole = function(element, role) {
+    if (!(element && role))
+        return [];
+    var selector = axs.properties.getSelectorForRole(role);
+    if (!selector)
+        return [];
+    var result = element.querySelectorAll(selector);
+    if (result) {  // Convert NodeList to Array; methinks 80/20 that's what callers want.
+        result = Array.prototype.map.call(result, function(item) { return item; });
+    } else {
+        return [];
+    }
+    return result;
 };

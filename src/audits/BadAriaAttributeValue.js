@@ -12,24 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
+goog.require('axs.browserUtils');
 goog.require('axs.constants');
 goog.require('axs.utils');
 
 /**
- * @type {axs.AuditRule.Spec}
+ * This audit checks the values of ARIA states and properties to ensure they are valid.
  */
-axs.AuditRule.specs.badAriaAttributeValue = {
+axs.AuditRules.addRule({
     name: 'badAriaAttributeValue',
     heading: 'ARIA state and property values must be valid',
-    url: '',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_04',
     severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {
-        var selector = '';
-        for (var property in axs.constants.ARIA_PROPERTIES)
-            selector += '[aria-' + property + '],';
-        selector = selector.substring(0, selector.length - 1);  // trailing comma
+        var selector = axs.utils.getSelectorForAriaProperties(axs.constants.ARIA_PROPERTIES);
         return axs.browserUtils.matchSelector(element, selector);
     },
     test: function(element) {
@@ -45,4 +42,4 @@ axs.AuditRule.specs.badAriaAttributeValue = {
         return false;
     },
     code: 'AX_ARIA_04'
-};
+});

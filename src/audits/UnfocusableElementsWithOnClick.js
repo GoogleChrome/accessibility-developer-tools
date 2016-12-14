@@ -12,26 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 goog.require('axs.utils');
 
-/**
- * @type {axs.AuditRule.Spec}
- */
-axs.AuditRule.specs.unfocusableElementsWithOnClick = {
+axs.AuditRules.addRule({
     name: 'unfocusableElementsWithOnClick',
     heading: 'Elements with onclick handlers must be focusable',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_focus_02--elements-with-onclick-handlers-must-be-focusable',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_02',
     severity: axs.constants.Severity.WARNING,
-    opt_requiresConsoleAPI: true,
-    relevantElementMatcher: function(element) {
+    opt_requires: {
+        consoleAPI: true
+    },
+    relevantElementMatcher: function(element, flags) {
         // element.ownerDocument may not be current document if it is in an iframe
         if (element instanceof element.ownerDocument.defaultView.HTMLBodyElement) {
             return false;
         }
-        if (axs.utils.isElementOrAncestorHidden(element)) {
+        if (flags.hidden) {
             return false;
         }
         var eventListeners = getEventListeners(element);
@@ -46,4 +44,4 @@ axs.AuditRule.specs.unfocusableElementsWithOnClick = {
                !element.disabled;
     },
     code: 'AX_FOCUS_02'
-};
+});

@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/GoogleChrome/accessibility-developer-tools.svg?branch=master)](https://travis-ci.org/GoogleChrome/accessibility-developer-tools)
+[![npm version](https://img.shields.io/npm/v/accessibility-developer-tools.svg)](https://www.npmjs.com/package/accessibility-developer-tools)
+[![npm downloads](https://img.shields.io/npm/dm/accessibility-developer-tools.svg)](https://www.npmjs.com/package/accessibility-developer-tools)
+
 # Accessibility Developer Tools
 
 This is a library of accessibility-related testing and utility code.
@@ -15,10 +19,10 @@ To include just the javascript rules, require the following file:
 
     https://raw.github.com/GoogleChrome/accessibility-developer-tools/stable/dist/js/axs_testing.js
 
-  `git 1.6.5` or later: 
+  `git 1.6.5` or later:
 
     % git clone --recursive https://github.com/GoogleChrome/accessibility-developer-tools.git
-    
+
   Before `git 1.6.5`:
 
     % git clone https://github.com/GoogleChrome/accessibility-developer-tools.git
@@ -41,21 +45,28 @@ You will need `node` and `grunt-cli` to build.
 
         % npm install
 
-4. Build using `grunt` (run from project root)
+4. (Rebuild if you make changes) Build using `grunt` (run from project root)
 
         % grunt
+
+
+## Troubleshooting
+
+This project uses [Closure Compiler](https://github.com/google/closure-compiler) to build our releases. You may need to install a recent version of [JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) in order for builds to successfully complete.
 
 # Using the Audit API
 
 ## Including the library
 
-The simplest option is to include the generated `axs_testing.js` library on your page.
+The simplest option is to include the generated `axs_testing.js` library on your page. After you build, you will have two versions of `axs_testings.js`:
+* Distribution Build: project-root/dist/js/axs_testing.js
+* Local Build (use if you make changes): project-root/tmp/build/axs_testing.js
 
 Work is underway to include the library in WebDriver and other automated testing frameworks.
 
 ## The `axs.Audit.run()` method
 
-Once you have included `axs_testing.js`, you can call call `axs.Audit.run()`. This returns an object in the following form:
+Once you have included `axs_testing.js`, you can call `axs.Audit.run()`. This returns an object in the following form:
 
     {
       /** @type {axs.constants.AuditResult} */
@@ -75,6 +86,33 @@ The Accessibility Developer Tools project includes a command line runner for the
     $ phantomjs tools/runner/audit.js <url-or-filepath>
 
 The runner will load the specified file or URL in a headless browser, inject axs_testing.js, run the audit and output the report text.
+
+### Run audit from Selenium WebDriver (Scala):
+     val driver = org.openqa.selenium.firefox.FirefoxDriver //use driver of your choice
+     val jse = driver.asInstanceOf[JavascriptExecutor]
+     jse.executeScript(scala.io.Source.fromURL("https://raw.githubusercontent.com/GoogleChrome/" +
+       "accessibility-developer-tools/stable/dist/js/axs_testing.js").mkString)
+     val report = jse.executeScript("var results = axs.Audit.run();return axs.Audit.createReport(results);")
+     println(report)
+
+### Run audit from Selenium WebDriver (Scala)(with caching):
+     val cache = collection.mutable.Map[String, String]()
+     val driver = org.openqa.selenium.firefox.FirefoxDriver //use driver of your choice
+     val jse = driver.asInstanceOf[JavascriptExecutor]
+     def getUrlSource(arg: String): String = cache get arg match {
+        case Some(result) => result
+        case None =>
+          val result: String = scala.io.Source.fromURL(arg).mkString
+          cache(arg) = result
+          result
+      }
+     jse.executeScript(getUrlSource("https://raw.githubusercontent.com/GoogleChrome/" +
+       "accessibility-developer-tools/stable/dist/js/axs_testing.js"))
+     val report = js.executeScript("var results = axs.Audit.run();return axs.Audit.createReport(results);")
+     println(report)
+
+If println() outputs nothing, check if you need to set DesiredCapabilities for your WebDriver (such as loggingPrefs):
+https://code.google.com/p/selenium/wiki/DesiredCapabilities
 
 ## Using the results
 
@@ -155,7 +193,18 @@ You can set a `scope` on the `AuditConfiguration` object like this:
     var configuration = new axs.AuditConfiguration();
     configuration.scope = document.querySelector('main');  // or however you wish to choose your scope element
     axs.Audit.run(configuration);
-    
+
+You may also specify a configuration payload while instantiating the `axs.AuditConfiguration`,
+which allows you to provide multiple configuration options at once.
+
+    var configuration = new axs.AuditConfiguration({
+      auditRulesToRun: ['badAriaRole'],
+      scope: document.querySelector('main'),
+      maxResults: 5
+    });
+
+    axs.Audit.run(configuration);
+
 ## License
 
 Copyright 2013 Google Inc. All Rights Reserved.

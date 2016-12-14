@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.browserUtils');
 goog.require('axs.constants.Severity');
+goog.require('axs.dom');
 goog.require('axs.utils');
 
 /**
- * @type {axs.AuditRule.Spec}
+ * This audit checks for elements that are focusable but invisible or obscured by another element.
  */
-axs.AuditRule.specs.focusableElementNotVisibleAndNotAriaHidden = {
+axs.AuditRules.addRule({
     name: 'focusableElementNotVisibleAndNotAriaHidden',
     heading: 'These elements are focusable but either invisible or obscured by another element',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_focus_01--these-elements-are-focusable-but-either-invisible-or-obscured-by-another-element',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_01',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
         var isFocusable = axs.browserUtils.matchSelector(
@@ -36,19 +36,25 @@ axs.AuditRule.specs.focusableElementNotVisibleAndNotAriaHidden = {
         // Ignore elements which have negative tabindex and an ancestor with a
         // widget role, since they can be accessed neither with tab nor with
         // a screen reader
-        for (var parent = axs.utils.parentElement(element); parent != null;
-             parent = axs.utils.parentElement(parent)) {
+        for (var parent = axs.dom.parentElement(element); parent != null;
+             parent = axs.dom.parentElement(parent)) {
             if (axs.utils.elementIsAriaWidget(parent))
                 return false;
         }
+        // Ignore elements which have a negative tabindex and no text content,
+        // as they will be skipped by assistive technology
+        var textAlternatives = axs.properties.findTextAlternatives(element, {});
+        if (textAlternatives === null || textAlternatives.trim() === '')
+            return false;
+
         return true;
 
     },
-    test: function(element) {
-        if (axs.utils.isElementOrAncestorHidden(element))
+    test: function(element, flags) {
+        if (flags.hidden)
             return false;
         element.focus();
-        return !axs.utils.elementIsVisible(element)
+        return !axs.utils.elementIsVisible(element);
     },
     code: 'AX_FOCUS_01'
-};
+});

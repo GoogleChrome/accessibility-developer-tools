@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.require('axs.AuditRule');
 goog.require('axs.AuditRules');
 goog.require('axs.browserUtils');
 goog.require('axs.constants.Severity');
+goog.require('axs.dom');
 goog.require('axs.utils');
 
 /**
- * @type {axs.AuditRule.Spec}
+ * This audit checks that form controls and media elements have labels.
  */
-axs.AuditRule.specs.controlsWithoutLabel = {
+axs.AuditRules.addRule({
     name: 'controlsWithoutLabel',
     heading: 'Controls and media elements should have labels',
-    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_01--controls-and-media-elements-should-have-labels',
+    url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_01',
     severity: axs.constants.Severity.SEVERE,
     relevantElementMatcher: function(element) {
         var controlsSelector = ['input:not([type="hidden"]):not([disabled])',
@@ -33,22 +33,22 @@ axs.AuditRule.specs.controlsWithoutLabel = {
                                 'button:not([disabled])',
                                 'video:not([disabled])'].join(', ');
         var isControl = axs.browserUtils.matchSelector(element, controlsSelector);
-        if (!isControl)
+        if (!isControl || element.getAttribute('role') == 'presentation')
             return false;
         if (element.tabIndex >= 0)
             return true;
         // Ignore elements which have negative tabindex and an ancestor with a
         // widget role, since they can be accessed neither with tab nor with
         // a screen reader
-        for (var parent = axs.utils.parentElement(element); parent != null;
-             parent = axs.utils.parentElement(parent)) {
+        for (var parent = axs.dom.parentElement(element); parent != null;
+             parent = axs.dom.parentElement(parent)) {
             if (axs.utils.elementIsAriaWidget(parent))
                 return false;
         }
         return true;
     },
-    test: function(control) {
-        if (axs.utils.isElementOrAncestorHidden(control))
+    test: function(control, flags) {
+        if (flags.hidden)
             return false;
         if (control.tagName.toLowerCase() == 'input' &&
             control.type == 'button' &&
@@ -60,10 +60,13 @@ axs.AuditRule.specs.controlsWithoutLabel = {
             if (innerText.length)
                 return false;
         }
-        if (!axs.utils.hasLabel(control))
+        if (axs.utils.hasLabel(control))
+            return false;
+        var textAlternatives = axs.properties.findTextAlternatives(control, {});
+        if (textAlternatives === null || textAlternatives.trim() === '')
             return true;
         return false;
     },
     code: 'AX_TEXT_01',
     ruleName: 'Controls and media elements should have labels'
-};
+});
