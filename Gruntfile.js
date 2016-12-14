@@ -281,6 +281,6 @@ module.exports = function(grunt) {
   grunt.registerTask('lint', ['eslint']);
   grunt.registerTask('test:unit', ['qunit']);
   grunt.registerTask('dist', ['clean:dist', 'build', 'copy:dist']);
-  grunt.registerTask('travis', ['closurecompiler:minify', 'test:unit']);
+  grunt.registerTask('travis', ['closure-compiler:minify', 'test:unit']);
   grunt.registerTask('default', ['build', 'test:unit']);
 };
