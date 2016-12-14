@@ -38,6 +38,15 @@ HTMLElement.prototype.webkitShadowRoot;
 function HTMLSlotElement() {}
 
 /**
+ * @constructor
+ */
+function Slotable() {};
+
+/**
  * @return {?HTMLSlotElement}
  */
-HTMLElement.prototype.assignedSlot = function() {};
+Slotable.prototype.assignedSlot = function() {};
+
+Element.prototype.assignedSlot = Slotable.prototype.assignedSlot;
+
+Text.prototype.assignedSlot = Slotable.prototype.assignedSlot;

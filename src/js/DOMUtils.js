@@ -70,9 +70,11 @@ axs.dom.composedParentNode = function(node) {
     if (!parentNode.shadowRoot)
         return parentNode;
 
-    var assignedSlot = node.assignedSlot;
-    if (assignedSlot)
-        return axs.dom.composedParentNode(assignedSlot);
+    if (node.nodeType === Node.ELEMENT_NODE || node.nodeType === Node.TEXT_NODE) {
+      var assignedSlot = node.assignedSlot;
+      if (assignedSlot)
+          return axs.dom.composedParentNode(assignedSlot);
+    }
 
     if ('getDestinationInsertionPoints' in node) {
         var insertionPoints = node.getDestinationInsertionPoints();
