@@ -4,4 +4,4 @@
 
 var library = require('./dist/js/axs_testing'); // eslint-disable-line no-undef
 
-module.exports = library.axs; // eslint-disable-line no-undef
+module.exports = library; // eslint-disable-line no-undef
