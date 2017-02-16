@@ -17,6 +17,19 @@ test("Find text descendants in an iframe.", function() {
     equal(axs.properties.hasDirectTextDescendant(foo), true);
 });
 
+test("Find text descendants in a DocumentFragment.", function() {
+    // Setup fixture
+    var fixture = document.getElementById('qunit-fixture');
+
+    var frag = document.createDocumentFragment();
+    var foo = document.createElement('div');
+    foo.textContent = 'bar';
+    frag.appendChild(foo);
+    fixture.appendChild(frag);
+
+    equal(axs.properties.hasDirectTextDescendant(foo), true);
+});
+
 module('findTextAlternatives', {
     setup: function () {
         this.fixture_ = document.getElementById('qunit-fixture');
