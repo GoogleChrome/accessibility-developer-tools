@@ -14,7 +14,7 @@
 
 module("multipleLabelableElementsPerLabel");
 
-test("one labelable element within a label tag", function() {
+test("one labelable element within a label tag", function(assert) {
   var fixture = document.getElementById("qunit-fixture");
   var label = document.createElement("label");
   var input = document.createElement("input");
@@ -22,17 +22,15 @@ test("one labelable element within a label tag", function() {
   fixture.appendChild(label);
   label.appendChild(input);
 
-  var rule = axs.AuditRules.getRule("multipleLabelableElementsPerLabel");
-  var result = rule.run({ scope: fixture });
-  var expected = {
-    elements: [],
-    result: axs.constants.AuditResult.PASS
+  var config = {
+    ruleName: "multipleLabelableElementsPerLabel",
+    expected: axs.constants.AuditResult.PASS,
+    elements: []
   };
-
-  deepEqual(result, expected, "passes the audit with no matching elements");
+  assert.runRule(config, "passes the audit with no matching elements");
 });
 
-test("multiple labelable elements within a label tag", function() {
+test("multiple labelable elements within a label tag", function(assert) {
   var fixture = document.getElementById("qunit-fixture");
   var label = document.createElement("label");
   var input1 = document.createElement("input");
@@ -42,12 +40,10 @@ test("multiple labelable elements within a label tag", function() {
   label.appendChild(input1);
   label.appendChild(input2);
 
-  var rule = axs.AuditRules.getRule("multipleLabelableElementsPerLabel");
-  var result = rule.run({ scope: fixture });
-  var expected = {
-    elements: [label],
-    result: axs.constants.AuditResult.FAIL
+  var config = {
+    ruleName: "multipleLabelableElementsPerLabel",
+    expected: axs.constants.AuditResult.FAIL,
+    elements: [label]
   };
-
-  deepEqual(result, expected, "fails the audit on that label");
+  assert.runRule(config, "fails the audit on that label");
 });

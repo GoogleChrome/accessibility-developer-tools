@@ -30,7 +30,12 @@
         var fixture = document.getElementById('qunit-fixture');
         var host = fixture.appendChild(document.createElement('div'));
         host.id = 'host';
-        if (host.createShadowRoot) {
+        if (host.attachShadow) {
+            // Shadow DOM v1
+            var root = host.attachShadow({mode: 'open'});
+            equal(axs.dom.composedParentNode(root), host);
+        } else if (host.createShadowRoot) {
+            // Shadow DOM v0
             var root = host.createShadowRoot();
             equal(axs.dom.composedParentNode(root), host);
         } else {
@@ -44,7 +49,14 @@
         var host = fixture.appendChild(document.createElement('div'));
         host.id = 'host';
         var testElement = host.appendChild(document.createElement('span'));
-        if (host.createShadowRoot) {
+        if (host.attachShadow) {
+            // Shadow DOM v1
+            var root = host.attachShadow({mode: 'open'});
+            var slot = document.createElement('slot');
+            root.appendChild(slot);
+            equal(axs.dom.composedParentNode(testElement), host);
+        } else if (host.createShadowRoot) {
+            // Shadow DOM v0
             var root = host.createShadowRoot();
             var content = document.createElement('content');
             root.appendChild(content);
@@ -60,7 +72,15 @@
         var host = fixture.appendChild(document.createElement('div'));
         host.id = 'host';
         var testElement = host.appendChild(document.createElement('span'));
-        if (host.createShadowRoot) {
+        if (host.attachShadow) {
+            // Shadow DOM v1
+            var root = host.attachShadow({mode: 'open'});
+            var shadowParent = root.appendChild(document.createElement('div'));
+            shadowParent.id = 'shadowParent';
+            var slot = shadowParent.appendChild(document.createElement('slot'));
+            equal(axs.dom.composedParentNode(testElement), shadowParent);
+        } else if (host.createShadowRoot) {
+            // Shadow DOM v0
             var root = host.createShadowRoot();
             var shadowParent = root.appendChild(document.createElement('div'));
             shadowParent.id = 'shadowParent';
@@ -77,7 +97,19 @@
         var host = fixture.appendChild(document.createElement('div'));
         host.id = 'host';
         var testElement = host.appendChild(document.createElement('span'));
-        if (host.createShadowRoot) {
+        if (host.attachShadow) {
+            // Shadow DOM v1
+            var outerRoot = host.attachShadow({mode: 'open'});
+            var shadowGrandparent = outerRoot.appendChild(document.createElement('div'));
+            shadowGrandparent.id = 'shadowGrandparent';
+            var outerSlot = shadowGrandparent.appendChild(document.createElement('slot'));
+            var innerRoot = shadowGrandparent.attachShadow({mode: 'open'});
+            var shadowParent = innerRoot.appendChild(document.createElement('div'));
+            shadowParent.id = 'shadowParent';
+            var innerSlot = shadowParent.appendChild(document.createElement('slot'));
+            equal(axs.dom.composedParentNode(testElement), shadowParent);
+        } else if (host.createShadowRoot) {
+            // Shadow DOM v0
             var outerRoot = host.createShadowRoot();
             var shadowGrandparent = outerRoot.appendChild(document.createElement('div'));
             shadowGrandparent.id = 'shadowGrandparent';
@@ -99,7 +131,15 @@
         host.id = 'host';
         var testElement = host.appendChild(document.createElement('span'));
         testElement.id = 'test';
-        if (host.createShadowRoot) {
+        if (host.attachShadow) {
+            // Shadow DOM v1
+            var root = host.attachShadow({mode: 'open'});
+            var slot = root.appendChild(document.createElement('slot'));
+            slot.name = 'A';
+            testElement.slot = 'B';
+            equal(axs.dom.composedParentNode(testElement), null);
+        } else if (host.createShadowRoot) {
+            // Shadow DOM v0
             var root = host.createShadowRoot();
             var content = root.appendChild(document.createElement('content'));
             content.select = 'div';
@@ -116,7 +156,18 @@
         host.id = 'host';
         var testElement = host.appendChild(document.createElement('span'));
         testElement.id = 'test';
-        if (host.createShadowRoot) {
+        if (host.attachShadow) {
+            // Shadow DOM v1
+            var root = host.attachShadow({mode: 'open'});
+            var slot1 = root.appendChild(document.createElement('slot'));
+            slot1.name = 'A';
+            var slot2 = root.appendChild(document.createElement('slot'));
+            slot2.name = 'B';
+            testElement.slot = 'B';
+
+            equal(axs.dom.composedParentNode(testElement), host);
+        } else if (host.createShadowRoot) {
+            // Shadow DOM v0
             var root = host.createShadowRoot();
             var content1 = root.appendChild(document.createElement('content'));
             content1.select = 'div';
@@ -136,7 +187,20 @@
         host.id = 'host';
         var testElement = host.appendChild(document.createElement('span'));
         testElement.id = 'test';
-        if (host.createShadowRoot) {
+        if (host.attachShadow) {
+            // Shadow DOM v1
+            var root = host.attachShadow({mode: 'open'});
+            var shadowParent = root.appendChild(document.createElement('div'));
+            shadowParent.id = 'shadowParent';
+            var slot1 = root.appendChild(document.createElement('slot'));
+            slot1.name = 'A';
+            var slot2 = shadowParent.appendChild(document.createElement('slot'));
+            slot2.name = 'B';
+            testElement.slot = 'B';
+
+            equal(axs.dom.composedParentNode(testElement), shadowParent);
+        } else if (host.createShadowRoot) {
+            // Shadow DOM v0
             var root = host.createShadowRoot();
             var shadowParent = root.appendChild(document.createElement('div'));
             shadowParent.id = 'shadowParent';
@@ -156,7 +220,13 @@
         var fixture = document.getElementById('qunit-fixture');
         var host = fixture.appendChild(document.createElement('div'));
         host.id = 'host';
-        if (host.createShadowRoot) {
+        if (host.attachShadow) {
+            // Shadow DOM v1
+            var root = host.attachShadow({mode: 'open'});
+            var shadowChild = root.appendChild(document.createElement('div'));
+            equal(axs.dom.composedParentNode(shadowChild), host);
+        } else if (host.createShadowRoot) {
+            // Shadow DOM v0
             var root = host.createShadowRoot();
             var shadowChild = root.appendChild(document.createElement('div'));
             equal(axs.dom.composedParentNode(shadowChild), host);
@@ -171,11 +241,20 @@
         var host = fixture.appendChild(document.createElement('div'));
         host.id = 'host';
         var lightChild = host.appendChild(document.createElement('span'));
-        if (host.createShadowRoot) {
+        if (host.attachShadow) {
+            // Shadow DOM v1
+            var root = host.attachShadow({mode: 'open'});
+            var shadowChild = root.appendChild(document.createElement('div'));
+            shadowChild.id = 'shadowChild';
+            equal(axs.dom.composedParentNode(lightChild), null);
+            equal(axs.dom.composedParentNode(shadowChild), host);
+        } else if (host.createShadowRoot) {
+            // Shadow DOM v0
             var root = host.createShadowRoot();
             var shadowChild = root.appendChild(document.createElement('div'));
             shadowChild.id = 'shadowChild';
             equal(axs.dom.composedParentNode(lightChild), null);
+            equal(axs.dom.composedParentNode(shadowChild), host);
         } else {
             console.warn('Test platform does not support shadow DOM');
             ok(true);
@@ -187,7 +266,17 @@
         var host = fixture.appendChild(document.createElement('div'));
         host.id = 'host';
         var lightChild = host.appendChild(document.createElement('div'));
-        if (host.createShadowRoot) {
+        if (host.attachShadow) {
+            // Shadow DOM v1
+            var root = host.attachShadow({mode: 'open'});
+            var shadowChild = document.createElement('div');
+            shadowChild.id = 'shadowChild';
+            root.appendChild(shadowChild);
+            var slot = document.createElement('slot');
+            root.appendChild(slot);
+            equal(axs.dom.composedParentNode(lightChild), host);
+        } else if (host.createShadowRoot) {
+            // Shadow DOM v0
             var root = host.createShadowRoot();
             var shadowChild = document.createElement('div');
             shadowChild.id = 'shadowChild';
