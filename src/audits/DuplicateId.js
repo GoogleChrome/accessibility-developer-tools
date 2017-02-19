@@ -25,14 +25,34 @@ axs.AuditRules.addRule({
     heading: 'Any ID referred to via an IDREF must be unique in the DOM',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_html_02',
     severity: axs.constants.Severity.SEVERE,
-    relevantElementMatcher: function(element) {
-        if (element.hasAttribute('id')) {
-            var referrers = axs.utils.getIdReferrers(element);
-            return referrers.some(function(referrer) {
-                return !axs.utils.isElementOrAncestorHidden(referrer);
+    opt_requires: {
+        idRefs: true
+    },
+    /**
+     * @this {axs.AuditRule}
+     */
+    relevantElementMatcher: function(element, flags) {
+        if (flags.idrefs.length && !flags.hidden) {
+            this.relatedElements.push({
+                element: element,
+                flags: flags
             });
         }
+        if (element.hasAttribute('id')) {
+            return true;
+        }
         return false;
+    },
+    /**
+     * @this {axs.AuditRule}
+     */
+    isRelevant: function(element, flags) {
+        var id = element.id;
+        var level = flags.level;
+        return this.relatedElements.some(function(related) {
+            var idrefs = related.flags.idrefs;
+            return related.flags.level === level && idrefs.indexOf(id) >= 0;
+        });
     },
     test: function(element) {
         /*

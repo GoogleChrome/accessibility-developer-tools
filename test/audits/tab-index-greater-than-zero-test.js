@@ -14,8 +14,7 @@
 
 module("tabIndex values");
 
-test("tabIndex is 0 or -1 passes the audit", function() {
-  var rule = axs.AuditRules.getRule("tabIndexGreaterThanZero");
+test("tabIndex is 0 or -1 passes the audit", function(assert) {
   var fixture = document.getElementById('qunit-fixture');
 
   var listItem = document.createElement("li");
@@ -25,19 +24,25 @@ test("tabIndex is 0 or -1 passes the audit", function() {
   listItem.tabIndex = -1;
   heading.tabIndex = 0;
 
-  var output = rule.run({ scope: fixture });
-  equal(output.result, axs.constants.AuditResult.PASS);
+    var config = {
+        ruleName: 'tabIndexGreaterThanZero',
+        expected: axs.constants.AuditResult.PASS,
+        elements: []
+    };
+    assert.runRule(config);
 });
 
-test("tabIndex with a positive integer fails the audit", function() {
-  var rule = axs.AuditRules.getRule("tabIndexGreaterThanZero");
+test("tabIndex with a positive integer fails the audit", function(assert) {
   var fixture = document.getElementById('qunit-fixture');
 
   var listItem = document.createElement("li");
   fixture.appendChild(listItem);
   listItem.tabIndex = 1;
 
-  var output = rule.run({ scope: fixture });
-  equal(output.result, axs.constants.AuditResult.FAIL);
-  deepEqual(output.elements, [listItem]);
+    var config = {
+        ruleName: 'tabIndexGreaterThanZero',
+        expected: axs.constants.AuditResult.FAIL,
+        elements: [listItem]
+    };
+    assert.runRule(config);
 });

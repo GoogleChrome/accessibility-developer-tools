@@ -14,63 +14,73 @@
 
 module('MainRoleOnInappropriateElement');
 
-test('No role=main -> no relevant elements', function() {
+test('No role=main -> no relevant elements', function(assert) {
   var fixture = document.getElementById('qunit-fixture');
   var div = document.createElement('div');
   fixture.appendChild(div);
 
-  deepEqual(
-    axs.AuditRules.getRule('mainRoleOnInappropriateElement').run({ scope: fixture }),
-    { result: axs.constants.AuditResult.NA }
-  );
+    var config = {
+        ruleName: 'mainRoleOnInappropriateElement',
+        expected: axs.constants.AuditResult.NA
+    };
+    assert.runRule(config);
 });
 
-test('role=main on empty element === fail', function() {
+test('role=main on empty element === fail', function(assert) {
   var fixture = document.getElementById('qunit-fixture');
   var div = document.createElement('div');
   div.setAttribute('role', 'main');
   fixture.appendChild(div);
 
-  deepEqual(
-    axs.AuditRules.getRule('mainRoleOnInappropriateElement').run({ scope: fixture }),
-    { elements: [div], result: axs.constants.AuditResult.FAIL }
-  );
+    var config = {
+        ruleName: 'mainRoleOnInappropriateElement',
+        expected: axs.constants.AuditResult.FAIL,
+        elements: [div]
+    };
+    assert.runRule(config);
 });
 
-test('role=main on element with textContent < 50 characters === pass', function() {
+test('role=main on element with textContent < 50 characters === pass', function(assert) {
   var fixture = document.getElementById('qunit-fixture');
   var div = document.createElement('div');
   div.setAttribute('role', 'main');
   div.textContent = 'Lorem ipsum dolor sit amet.';
   fixture.appendChild(div);
 
-  deepEqual(
-    axs.AuditRules.getRule('mainRoleOnInappropriateElement').run({ scope: fixture }),
-    { elements: [div], result: axs.constants.AuditResult.FAIL }
-  );
+    var config = {
+        ruleName: 'mainRoleOnInappropriateElement',
+        expected: axs.constants.AuditResult.FAIL,
+        elements: [div]
+    };
+    assert.runRule(config);
 });
 
-test('role=main on element with textContent >= 50 characters === pass', function() {
+test('role=main on element with textContent >= 50 characters === pass', function(assert) {
   var fixture = document.getElementById('qunit-fixture');
   var div = document.createElement('div');
   div.setAttribute('role', 'main');
   div.textContent = 'Lorem ipsum dolor sit amet, consectetur cras amet.';
   fixture.appendChild(div);
 
-  deepEqual(
-    axs.AuditRules.getRule('mainRoleOnInappropriateElement').run({ scope: fixture }),
-    { elements: [], result: axs.constants.AuditResult.PASS }
-  );
+    var config = {
+        ruleName: 'mainRoleOnInappropriateElement',
+        expected: axs.constants.AuditResult.PASS,
+        elements: []
+    };
+    assert.runRule(config);
 });
 
-test('role=main on inline element === fail', function() {
+test('role=main on inline element === fail', function(assert) {
   var fixture = document.getElementById('qunit-fixture');
   var span = document.createElement('span');
   span.setAttribute('role', 'main');
   span.textContent = 'Lorem ipsum dolor sit amet, consectetur cras amet.';
   fixture.appendChild(span);
 
-  deepEqual(
-    axs.AuditRules.getRule('mainRoleOnInappropriateElement').run({ scope: fixture }),
-    { elements: [span], result: axs.constants.AuditResult.FAIL });
+    var config = {
+        ruleName: 'mainRoleOnInappropriateElement',
+        expected: axs.constants.AuditResult.FAIL,
+        elements: [span]
+    };
+    assert.runRule(config);
 });

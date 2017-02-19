@@ -13,8 +13,7 @@
 // limitations under the License.
 module('RequiredOwnedAriaRoleMissing');
 
-test('Explicit role on container and required elements all explicitly present', function() {
-    var rule = axs.AuditRules.getRule('requiredOwnedAriaRoleMissing');
+test('Explicit role on container and required elements all explicitly present', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('div'));
     container.setAttribute('role', 'list');
@@ -23,13 +22,15 @@ test('Explicit role on container and required elements all explicitly present', 
         item.setAttribute('role', 'listitem');
     }
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.PASS);
-    deepEqual(actual.elements, []);
+    var config = {
+        ruleName: 'requiredOwnedAriaRoleMissing',
+        expected: axs.constants.AuditResult.PASS,
+        elements: []
+    };
+    assert.runRule(config);
 });
 
-test('Explicit role on container and required elements all explicitly present via aria-owns', function() {
-    var rule = axs.AuditRules.getRule('requiredOwnedAriaRoleMissing');
+test('Explicit role on container and required elements all explicitly present via aria-owns', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('div'));
     var siblingContainer = fixture.appendChild(document.createElement('div'));
@@ -42,38 +43,45 @@ test('Explicit role on container and required elements all explicitly present vi
         item.setAttribute('id', id);
     }
     container.setAttribute('aria-owns', ids.join(' '));
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.PASS);
-    deepEqual(actual.elements, []);
+
     equal(container.childNodes.length, 0);  // paranoid check to ensure the test itself is correct
+    var config = {
+        ruleName: 'requiredOwnedAriaRoleMissing',
+        expected: axs.constants.AuditResult.PASS,
+        elements: []
+    };
+    assert.runRule(config);
 });
 
-test('Explicit role on container and required elements missing', function() {
-    var rule = axs.AuditRules.getRule('requiredOwnedAriaRoleMissing');
+test('Explicit role on container and required elements missing', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('div'));
     container.setAttribute('role', 'list');
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.FAIL);
-    deepEqual(actual.elements, [container]);
+    var config = {
+        ruleName: 'requiredOwnedAriaRoleMissing',
+        expected: axs.constants.AuditResult.FAIL,
+        elements: [container]
+    };
+    assert.runRule(config);
 });
 
-test('Explicit role on aria-busy container and required elements missing', function() {
-    var rule = axs.AuditRules.getRule('requiredOwnedAriaRoleMissing');
+test('Explicit role on aria-busy container and required elements missing', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('div'));
     container.setAttribute('role', 'list');
     container.setAttribute('aria-busy', 'true');
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.PASS);
-    deepEqual(actual.elements, []);
+    var config = {
+        ruleName: 'requiredOwnedAriaRoleMissing',
+        expected: axs.constants.AuditResult.PASS,
+        elements: []
+    };
+    assert.runRule(config);
 });
 
 
-test('Explicit role on container and required elements all implicitly present', function() {
-    var rule = axs.AuditRules.getRule('requiredOwnedAriaRoleMissing');
+test('Explicit role on container and required elements all implicitly present', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('ul'));
     container.setAttribute('role', 'list');  // This is bad practice (redundant role) but that's a different test
@@ -81,26 +89,33 @@ test('Explicit role on container and required elements all implicitly present', 
         container.appendChild(document.createElement('li'));
     }
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.PASS);
-    deepEqual(actual.elements, []);
+    var config = {
+        ruleName: 'requiredOwnedAriaRoleMissing',
+        expected: axs.constants.AuditResult.PASS,
+        elements: []
+    };
+    assert.runRule(config);
 });
 
-test('No role', function() {
-    var rule = axs.AuditRules.getRule('requiredOwnedAriaRoleMissing');
+test('No role', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     fixture.appendChild(document.createElement('div'));
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.NA);
+    var config = {
+        ruleName: 'requiredOwnedAriaRoleMissing',
+        expected: axs.constants.AuditResult.NA
+    };
+    assert.runRule(config);
 });
 
-test('Role with no required elements', function() {
-    var rule = axs.AuditRules.getRule('requiredOwnedAriaRoleMissing');
+test('Role with no required elements', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('div'));
     container.setAttribute('role', 'checkbox');
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.NA);
+    var config = {
+        ruleName: 'requiredOwnedAriaRoleMissing',
+        expected: axs.constants.AuditResult.NA
+    };
+    assert.runRule(config);
 });
