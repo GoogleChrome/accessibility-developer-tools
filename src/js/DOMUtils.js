@@ -176,7 +176,7 @@ axs.dom.composedTreeSearch = function(node, end, callbacks, parentFlags, opt_sha
         // If it is a <content> element, descend into distributed elements - these
         // are elements from outside the shadow root which are rendered inside the
         // shadow DOM.
-        if (localName == 'content') {
+        if (localName == 'content' && typeof element.getDistributedNodes === 'function') {
             var content = /** @type {HTMLContentElement} */ (element);
             var distributedNodes = content.getDistributedNodes();
             for (var i = 0; i < distributedNodes.length && !found; i++) {
