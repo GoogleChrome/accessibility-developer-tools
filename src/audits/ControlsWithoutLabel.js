@@ -47,8 +47,8 @@ axs.AuditRules.addRule({
         }
         return true;
     },
-    test: function(control) {
-        if (axs.utils.isElementOrAncestorHidden(control))
+    test: function(control, flags) {
+        if (flags.hidden)
             return false;
         if (control.tagName.toLowerCase() == 'input' &&
             control.type == 'button' &&

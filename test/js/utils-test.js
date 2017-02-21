@@ -121,6 +121,15 @@ test("nth-of-type does not refer to a selector but a tagName", function() {
   equal(lastLi, document.querySelector(selector),
         'selector "' + selector + '" does not match element');
 });
+test('special characters in IDs are properly escaped', function() {
+    var div = document.createElement('div');
+    div.id = 'some.id.with.special.chars';
+    this.fixture_.appendChild(div);
+    var selector = axs.utils.getQuerySelectorText(div);
+    equal(div, document.querySelector(selector),
+          'selector "' + selector + '" does not match element');
+});
+
 
 module("getIdReferrers", {
   setup: function () {
@@ -586,10 +595,41 @@ test('first fieldset legend aria-disabled', function() {
     strictEqual(actual, true, 'ARIA widget should be disabled');
 });
 
+test('composedTreeSearch should ignore distributed nodes if browser does not support them', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    if (fixture.createShadowRoot) {
+        var div = document.createElement('div');
+        fixture.appendChild(div);
+
+        // behave as if we don't have getDistributedNodes available in this browser
+        var r = HTMLContentElement.prototype.getDistributedNodes;
+        HTMLContentElement.prototype.getDistributedNodes = null;
+
+        var shadowroot = div.createShadowRoot();
+        shadowroot.innerHTML = '<content id="x" select="p"></content>';
+        var content = shadowroot.getElementById('x');
+
+        var found = [];
+        axs.dom.composedTreeSearch(div, null, {
+            preorder: function(e) {
+                found.push(e);
+                return true;
+            }
+        });
+
+        HTMLContentElement.prototype.getDistributedNodes = r;
+        ok(found.length === 2);
+        strictEqual(found[0], div);
+        strictEqual(found[1], content);
+    } else {
+        console.warn('Test platform does not support shadow DOM');
+        ok(true);
+    }
+});
+
 module('isLargeFont');
 
 test('should check if element has a large font', function() {
     var fixture = document.getElementById('qunit-fixture');
     var style = window.getComputedStyle(fixture, null);
     ok(!axs.utils.isLargeFont(style));
-});

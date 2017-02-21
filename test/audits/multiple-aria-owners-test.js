@@ -35,75 +35,102 @@
         return fixture;
     }
 
-    test('Element owned once only', function() {
+    test('Element owned once only', function(assert) {
         var fixture = setup(['theOwned']);
-        var rule = axs.AuditRules.getRule(RULE_NAME);
-        deepEqual(rule.run({ scope: fixture }),
-                  { elements: [], result: axs.constants.AuditResult.PASS });
+        var config = {
+            scope: fixture,
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
     });
 
-    test('Multiple elements owned once only', function() {
+    test('Multiple elements owned once only', function(assert) {
         var fixture = setup(['theOwnedElement', 'theOtherOwnedElement']);
-        var rule = axs.AuditRules.getRule(RULE_NAME);
-        deepEqual(rule.run({ scope: fixture }),
-                  { elements: [], result: axs.constants.AuditResult.PASS });
+        var config = {
+            scope: fixture,
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
     });
 
-    test('Element owned once only but not found in DOM', function() {
+    test('Element owned once only but not found in DOM', function(assert) {
         var id = 'theOwnedElement';
         var fixture = setup([id]);
         var element = document.getElementById(id);
-        var rule = axs.AuditRules.getRule(RULE_NAME);
         element.parentNode.removeChild(element);
-        deepEqual(rule.run({ scope: fixture }),
-                  { elements: [], result: axs.constants.AuditResult.PASS });
+        var config = {
+            scope: fixture,
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
     });
 
-    test('Element owned multiple times', function() {
+    test('Element owned multiple times', function(assert) {
         var ownerIds = ['owner1', 'owner2'];
         var fixture = setup(['theOwned'], ownerIds);
         var elements = ownerIds.map(function(id) {
             return document.getElementById(id);
         });
-        var rule = axs.AuditRules.getRule(RULE_NAME);
-        var result = rule.run({ scope: fixture });
-        equal(result.result, axs.constants.AuditResult.FAIL);
-        deepEqual(result.elements, elements);
+
+        var config = {
+            scope: fixture,
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: elements
+        };
+        assert.runRule(config);
     });
 
-    test('Multiple elements owned multiple times', function() {
+    test('Multiple elements owned multiple times', function(assert) {
         var ownerIds = ['owner1', 'owner2', 'owner3'];
         var fixture = setup(['theOwnedElement', 'theOtherOwnedElement'], ownerIds);
         var elements = ownerIds.map(function(id) {
             return document.getElementById(id);
         });
-        var rule = axs.AuditRules.getRule(RULE_NAME);
-        var result = rule.run({ scope: fixture });
-        equal(result.result, axs.constants.AuditResult.FAIL);
-        deepEqual(result.elements, elements);
+
+        var config = {
+            scope: fixture,
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: elements
+        };
+        assert.runRule(config);
     });
 
 
-    test('Multiple elements one owned multiple times', function() {
+    test('Multiple elements one owned multiple times', function(assert) {
         var ownerIds = ['owner1', 'owner2'];
         var ownedElements = ['theOwnedElement', 'theOtherOwnedElement'];
         var fixture = setup(ownedElements, ownerIds, ownedElements[0]);
         var elements = ownerIds.map(function(id) {
             return document.getElementById(id);
         });
-        var rule = axs.AuditRules.getRule(RULE_NAME);
-        var result = rule.run({ scope: fixture });
-        equal(result.result, axs.constants.AuditResult.FAIL);
-        deepEqual(result.elements, elements);
+
+        var config = {
+            scope: fixture,
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: elements
+        };
+        assert.runRule(config);
     });
 
-    test('Using ignoreSelectors', function() {
+    test('Using ignoreSelectors', function(assert) {
         var fixture = setup(['theOwned'], ['owner1', 'owner2']);
-        var rule = axs.AuditRules.getRule(RULE_NAME);
         var ignoreSelectors = ['#owner1', '#owner2'];
-        var result = rule.run({
+
+        var config = {
             ignoreSelectors: ignoreSelectors,
-            scope: fixture });
-        equal(result.result, axs.constants.AuditResult.NA);
+            scope: fixture,
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.NA
+        };
+        assert.runRule(config);
     });
 })();

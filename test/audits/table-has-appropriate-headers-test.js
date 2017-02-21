@@ -1,6 +1,7 @@
 module('TableHasAppropriateHeaders');
 
 (function() {
+    var RULE_NAME = 'tableHasAppropriateHeaders';
     /**
      * Builds a tr with the given cell tags
      *
@@ -61,8 +62,79 @@ module('TableHasAppropriateHeaders');
         return table;
     }
 
-    test('Table with a header row', function () {
-        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+    test('Table with no child elements', function(assert) {
+        var fixture = document.getElementById('qunit-fixture');
+
+        var table = document.createElement('table');
+
+        fixture.appendChild(table);
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.NA,
+            elements: [table]  // Yeah this is weird but that's how the test used to be
+        };
+        assert.runRule(config);
+    });
+
+    test('Table with only THEAD', function(assert) {
+        var fixture = document.getElementById('qunit-fixture');
+
+        var table = document.createElement('table');
+
+        var thead = document.createElement('thead');
+
+        table.appendChild(thead);
+
+        fixture.appendChild(table);
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.NA,
+            elements: [table]
+        };
+        assert.runRule(config);
+    });
+
+    test('Table with only TFOOT', function(assert) {
+        var fixture = document.getElementById('qunit-fixture');
+
+        var table = document.createElement('table');
+
+        var tfoot = document.createElement('tfoot');
+
+        table.appendChild(tfoot);
+
+        fixture.appendChild(table);
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.NA,
+            elements: [table]
+        };
+        assert.runRule(config);
+    });
+
+    test('Table with only TBODY', function(assert) {
+        var fixture = document.getElementById('qunit-fixture');
+
+        var table = document.createElement('table');
+
+        var tbody = document.createElement('tbody');
+
+        table.appendChild(tbody);
+
+        fixture.appendChild(table);
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.NA,
+            elements: [table]
+        };
+        assert.runRule(config);
+    });
+
+    test('Table with a header row', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         fixture.appendChild(buildTable(
@@ -73,13 +145,15 @@ module('TableHasAppropriateHeaders');
           ]
         ));
 
-        var actual = rule.run({scope: fixture});
-        equal(actual.result, axs.constants.AuditResult.PASS);
-        deepEqual(actual.elements, []);
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
     });
 
-    test('Table with an incomplete header row', function () {
-        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+    test('Table with an incomplete header row', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         var table = fixture.appendChild(buildTable(
@@ -90,13 +164,15 @@ module('TableHasAppropriateHeaders');
           ]
         ));
 
-        var actual = rule.run({scope: fixture});
-        equal(actual.result, axs.constants.AuditResult.FAIL);
-        deepEqual(actual.elements, [table]);
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [table]
+        };
+        assert.runRule(config);
     });
 
-    test('Table with a header column', function () {
-        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+    test('Table with a header column', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         fixture.appendChild(buildTable(
@@ -107,13 +183,15 @@ module('TableHasAppropriateHeaders');
           ]
         ));
 
-        var actual = rule.run({scope: fixture});
-        equal(actual.result, axs.constants.AuditResult.PASS);
-        deepEqual(actual.elements, []);
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
     });
 
-    test('Table with an incomplete header column', function () {
-        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+    test('Table with an incomplete header column', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         var table = fixture.appendChild(buildTable(
@@ -124,13 +202,15 @@ module('TableHasAppropriateHeaders');
           ]
         ));
 
-        var actual = rule.run({scope: fixture});
-        equal(actual.result, axs.constants.AuditResult.FAIL);
-        deepEqual(actual.elements, [table]);
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [table]
+        };
+        assert.runRule(config);
     });
 
-    test('Table uses a grid layout', function () {
-        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+    test('Table uses a grid layout', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         fixture.appendChild(buildTable(
@@ -141,13 +221,15 @@ module('TableHasAppropriateHeaders');
           ]
         ));
 
-        var actual = rule.run({scope: fixture});
-        equal(actual.result, axs.constants.AuditResult.PASS);
-        deepEqual(actual.elements, []);
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
     });
 
-    test('Table with no headers at all', function () {
-        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+    test('Table with no headers at all', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         var table = fixture.appendChild(buildTable(
@@ -158,13 +240,15 @@ module('TableHasAppropriateHeaders');
           ]
         ));
 
-        var actual = rule.run({scope: fixture});
-        equal(actual.result, axs.constants.AuditResult.FAIL);
-        deepEqual(actual.elements, [table]);
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [table]
+        };
+        assert.runRule(config);
     });
 
-    test('Table with thead and tbody that has a header row', function () {
-        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+    test('Table with thead and tbody that has a header row', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         fixture.appendChild(buildTableWithThead(
@@ -175,13 +259,15 @@ module('TableHasAppropriateHeaders');
           ]
         ));
 
-        var actual = rule.run({scope: fixture});
-        equal(actual.result, axs.constants.AuditResult.PASS);
-        deepEqual(actual.elements, []);
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
     });
 
-    test('Table with thead and tbody with an incomplete header row', function () {
-        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+    test('Table with thead and tbody with an incomplete header row', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         var table = fixture.appendChild(buildTableWithThead(
@@ -192,13 +278,15 @@ module('TableHasAppropriateHeaders');
           ]
         ));
 
-        var actual = rule.run({scope: fixture});
-        equal(actual.result, axs.constants.AuditResult.FAIL);
-        deepEqual(actual.elements, [table]);
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [table]
+        };
+        assert.runRule(config);
     });
 
-    test('Table with thead and tbody that has a header column', function () {
-        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+    test('Table with thead and tbody that has a header column', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         fixture.appendChild(buildTableWithThead(
@@ -209,13 +297,15 @@ module('TableHasAppropriateHeaders');
           ]
         ));
 
-        var actual = rule.run({scope: fixture});
-        equal(actual.result, axs.constants.AuditResult.PASS);
-        deepEqual(actual.elements, []);
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
     });
 
-    test('Table with thead and tbody with an incomplete header column', function () {
-        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+    test('Table with thead and tbody with an incomplete header column', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         var table = fixture.appendChild(buildTableWithThead(
@@ -226,13 +316,15 @@ module('TableHasAppropriateHeaders');
           ]
         ));
 
-        var actual = rule.run({scope: fixture});
-        equal(actual.result, axs.constants.AuditResult.FAIL);
-        deepEqual(actual.elements, [table]);
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [table]
+        };
+        assert.runRule(config);
     });
 
-    test('Table with thead and tbody using a grid layout', function () {
-        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+    test('Table with thead and tbody using a grid layout', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         fixture.appendChild(buildTableWithThead(
@@ -243,13 +335,15 @@ module('TableHasAppropriateHeaders');
           ]
         ));
 
-        var actual = rule.run({scope: fixture});
-        equal(actual.result, axs.constants.AuditResult.PASS);
-        deepEqual(actual.elements, []);
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
     });
 
-    test('Table with thead and tbody with no headers at all', function () {
-        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+    test('Table with thead and tbody with no headers at all', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         var table = fixture.appendChild(buildTableWithThead(
@@ -260,13 +354,15 @@ module('TableHasAppropriateHeaders');
           ]
         ));
 
-        var actual = rule.run({scope: fixture});
-        equal(actual.result, axs.constants.AuditResult.FAIL);
-        deepEqual(actual.elements, [table]);
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [table]
+        };
+        assert.runRule(config);
     });
 
-    test('Table used for layout with no headers at all', function () {
-        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+    test('Table used for layout with no headers at all', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         var table = buildTable([
@@ -280,13 +376,15 @@ module('TableHasAppropriateHeaders');
 
         fixture.appendChild(table);
 
-        var actual = rule.run({scope: fixture});
-        equal(actual.result, axs.constants.AuditResult.PASS);
-        deepEqual(actual.elements, []);
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
     });
 
-    test('Table used for layout with headers', function () {
-        var rule = axs.AuditRules.getRule('tableHasAppropriateHeaders');
+    test('Table used for layout with headers', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         var table = buildTable([
@@ -300,8 +398,11 @@ module('TableHasAppropriateHeaders');
 
         fixture.appendChild(table);
 
-        var actual = rule.run({scope: fixture});
-        equal(actual.result, axs.constants.AuditResult.FAIL);
-        deepEqual(actual.elements, [table]);
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [table]
+        };
+        assert.runRule(config);
     });
 })();

@@ -549,10 +549,12 @@ axs.utils.isNativelyDisableable = function(element) {
  * This element may or may not be effectively disabled in practice as this is dependent on implementation.
  *
  * @param {Element} element An element to check.
+ * @param {boolean=} ignoreAncestors If true do not check for disabled ancestors.
  * @return {boolean} true if the element or one of its ancestors is disabled.
  */
-axs.utils.isElementDisabled = function(element) {
-    if (axs.browserUtils.matchSelector(element, '[aria-disabled=true], [aria-disabled=true] *')) {
+axs.utils.isElementDisabled = function(element, ignoreAncestors) {
+    var selector = ignoreAncestors ? '[aria-disabled=true]' : '[aria-disabled=true], [aria-disabled=true] *';
+    if (axs.browserUtils.matchSelector(element, selector)) {
         return true;
     }
     if (!axs.utils.isNativelyDisableable(element) ||
@@ -560,8 +562,11 @@ axs.utils.isElementDisabled = function(element) {
         return false;
     }
     for (var next = element; next !== null; next = axs.dom.parentElement(next)) {
-        if (axs.utils.isNativelyDisableable(next) && next.hasAttribute('disabled')) {
+        if (next.hasAttribute('disabled')) {
             return true;
+        }
+        if (ignoreAncestors) {
+            return false;
         }
     }
     return false;
@@ -922,6 +927,17 @@ axs.utils.namedValues = function(obj) {
     return values;
 };
 
+/**
+* Escapes a given ID to be used in a CSS selector
+*
+* @private
+* @param {!string} id The ID to be escaped
+* @return {string} The escaped ID
+*/
+function escapeId(id) {
+    return id.replace(/[^a-zA-Z0-9_-]/g,function(match) { return '\\' + match; });
+}
+
 /** Gets a CSS selector text for a DOM object.
  * @param {Node} obj The DOM object.
  * @return {string} CSS selector text for the DOM object.
@@ -935,7 +951,7 @@ axs.utils.getQuerySelectorText = function(obj) {
 
   if (obj.hasAttribute) {
     if (obj.id) {
-      return '#' + obj.id;
+      return '#' + escapeId(obj.id);
     }
 
     if (obj.className) {
@@ -1001,7 +1017,7 @@ axs.utils.getQuerySelectorText = function(obj) {
  * single ID reference.
  * @param {Element} element a potential referent.
  * @param {string=} opt_attributeName Name of an ARIA attribute to limit the results to, e.g. 'aria-owns'.
- * @return {NodeList} The elements that refer to this element.
+ * @return {NodeList} The elements that refer to this element or null.
  */
 axs.utils.getAriaIdReferrers = function(element, opt_attributeName) {
     var propertyToSelector = function(propertyKey) {
@@ -1077,6 +1093,79 @@ axs.utils.getHtmlIdReferrers = function(element) {
         return selector.replace('\{id\}', id);
     });
     return element.ownerDocument.querySelectorAll(selectors.join(','));
+};
+
+/**
+ * Gets a list of all IDs this element references in either ARIA or HTML attributes.
+ *
+ * @param {Element} element The element to check for idref attributes.
+ * @returns {Array.<string>} Any IDs this element references.
+ */
+axs.utils.getReferencedIds = function(element) {
+    var result = [];
+    var addResult = function(ids) {
+            if (ids) {
+                if (ids.indexOf(' ') > 0) {
+                    result = result.concat(attrib.value.split(' '));
+                } else {
+                    result.push(ids);
+                }
+            }
+        };
+    for (var i = 0; i < element.attributes.length; i++) {
+        var tagName = element.tagName.toLowerCase();
+        var attrib = element.attributes[i];
+        if (attrib.specified) {
+            var attribName = attrib.name;
+            var ariaAttr = attribName.match(/aria-(.+)/);
+            if (ariaAttr) {
+                var details = axs.constants.ARIA_PROPERTIES[ariaAttr[1]];
+                if (details && (details.valueType === ('idref') || details.valueType === ('idref_list'))) {
+                    addResult(attrib.value);
+                }
+                continue;
+            }
+            switch (attribName) {
+                case 'contextmenu':
+                case 'itemref':
+                    addResult(attrib.value);
+                    break;
+                case 'form':
+                    if (tagName == 'button' || tagName == 'fieldset' || tagName == 'input' ||
+                            tagName == 'keygen' || tagName == 'label' || tagName == 'object' ||
+                            tagName == 'output' || tagName == 'select' || tagName == 'textarea') {
+                        addResult(attrib.value);
+                    }
+                    break;
+                case 'for':
+                    if (tagName == 'label' || tagName == 'output') {
+                        addResult(attrib.value);
+                    }
+                    break;
+                case 'menu':
+                    if (tagName == 'button') {
+                        addResult(attrib.value);
+                    }
+                    break;
+                case 'list':
+                    if (tagName == 'input') {
+                        addResult(attrib.value);
+                    }
+                    break;
+                case 'command':
+                    if (tagName == 'menuitem') {
+                        addResult(attrib.value);
+                    }
+                    break;
+                case 'headers':
+                    if (tagName == 'td' || tagName == 'tr') {
+                        addResult(attrib.value);
+                    }
+                    break;
+            }
+        }
+    }
+    return result;
 };
 
 /**
