@@ -114,6 +114,34 @@ The runner will load the specified file or URL in a headless browser, inject axs
 If println() outputs nothing, check if you need to set DesiredCapabilities for your WebDriver (such as loggingPrefs):
 https://code.google.com/p/selenium/wiki/DesiredCapabilities
 
+### Run audit from Selenium WebDriver (Javascript):
+    const fs = require('fs');
+    const https = require("https");
+    const webdriver = require('selenium-webdriver');
+
+    const driver = new webdriver.Builder()
+        .forBrowser('chrome')
+        .build();
+
+    const runAuditScript = 'var results = axs.Audit.run();' +
+        'return axs.Audit.createReport(results);';
+    var accessibilityScript = '';
+
+    https.get('https://raw.githubusercontent.com/GoogleChrome/' +
+        'accessibility-developer-tools/stable/dist/js/axs_testing.js', function (response) {
+
+        response.on('data', function (chunk) {
+            accessibilityScript += chunk;
+        });
+        response.on('end', function () {
+            driver.get('http://www.google.com');
+            driver.executeScript(accessibilityScript);
+            driver.executeScript(runAuditScript).then(function (errors) {
+                console.log(errors);
+            });
+        });
+    });
+
 ## Using the results
 
 ### Interpreting the result
