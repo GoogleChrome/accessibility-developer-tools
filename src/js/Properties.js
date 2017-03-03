@@ -175,8 +175,9 @@ axs.properties.hasDirectTextDescendant = function(element) {
         while (treeWalker.nextNode()) {
             var resultElement = treeWalker.currentNode;
             var parent = resultElement.parentNode;
-            // parent might not be an Element (e.g. DocumentFragment).
-            var tagName = (parent.tagName || '').toLowerCase();
+            // Handle elements hosted in <template>.content.
+            parent = parent.host || parent;
+            var tagName = parent.tagName.toLowerCase();
             var value = resultElement.nodeValue.trim();
             if (value && tagName !== 'script' && element !== resultElement)
                 return true;
