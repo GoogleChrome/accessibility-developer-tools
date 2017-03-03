@@ -175,7 +175,7 @@ axs.properties.hasDirectTextDescendant = function(element) {
         while (treeWalker.nextNode()) {
             var resultElement = treeWalker.currentNode;
             var parent = resultElement.parentNode;
-            // Handle elements hosted in <template>.content.
+            // Handle elements hosted in ShadowRoots.
             parent = parent.host || parent;
             var tagName = parent.tagName.toLowerCase();
             var value = resultElement.nodeValue.trim();
