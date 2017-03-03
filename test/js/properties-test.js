@@ -20,7 +20,8 @@ test("Find text descendants in an iframe.", function() {
 test("Find text descendants in a <template>.", function() {
     var templ = document.createElement('template');
     // <template> not supported.
-    if (!templ.content) this.skip();
+    if (!templ.content) return;
+
     templ.innerHTML = '<div>bar</div>';
     var foo = templ.content.firstElementChild;
     equal(axs.properties.hasDirectTextDescendant(foo), true);
