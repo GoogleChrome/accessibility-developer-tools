@@ -17,6 +17,14 @@ test("Find text descendants in an iframe.", function() {
     equal(axs.properties.hasDirectTextDescendant(foo), true);
 });
 
+test("Find text descendants in a <template>.", function() {
+    var templ = document.createElement('template');
+    templ.innerHTML = '<div>bar</div>';
+    // <template> might not be supported by the browser, test anyway.
+    var foo = (templ.content || templ).firstChild;
+    equal(axs.properties.hasDirectTextDescendant(foo), true);
+});
+
 module('findTextAlternatives', {
     setup: function () {
         this.fixture_ = document.getElementById('qunit-fixture');
