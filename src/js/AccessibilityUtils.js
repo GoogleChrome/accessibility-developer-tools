@@ -282,14 +282,15 @@ axs.utils.elementIsVisible = function(element) {
 axs.utils.isLargeFont = function(style) {
     var fontSize = style.fontSize;
     var bold = style.fontWeight == 'bold';
-    var matches = fontSize.match(/(\d+)px/);
+    var matches = fontSize.match(/(\d+(\.\d+)?)px/);
+
     if (matches) {
-        var fontSizePx = parseInt(matches[1], 10);
+        var fontSizePx = parseFloat(matches[1]);
         var bodyStyle = window.getComputedStyle(document.body, null);
         var bodyFontSize = bodyStyle.fontSize;
-        matches = bodyFontSize.match(/(\d+)px/);
+        matches = bodyFontSize.match(/(\d+(\.\d+)?)px/);
         if (matches) {
-            var bodyFontSizePx = parseInt(matches[1], 10);
+            var bodyFontSizePx = parseFloat(matches[1]);
             var boldLarge = bodyFontSizePx * 1.2;
             var large = bodyFontSizePx * 1.5;
         } else {
@@ -298,23 +299,23 @@ axs.utils.isLargeFont = function(style) {
         }
         return (bold && fontSizePx >= boldLarge || fontSizePx >= large);
     }
-    matches = fontSize.match(/(\d+)em/);
+    matches = fontSize.match(/(\d+(\.\d+)?)em/);
     if (matches) {
-        var fontSizeEm = parseInt(matches[1], 10);
+        var fontSizeEm = parseFloat(matches[1]);
         if (bold && fontSizeEm >= 1.2 || fontSizeEm >= 1.5)
             return true;
         return false;
     }
-    matches = fontSize.match(/(\d+)%/);
+    matches = fontSize.match(/(\d+(\.\d+)?)%/);
     if (matches) {
-        var fontSizePercent = parseInt(matches[1], 10);
+        var fontSizePercent = parseFloat(matches[1]);
         if (bold && fontSizePercent >= 120 || fontSizePercent >= 150)
             return true;
         return false;
     }
-    matches = fontSize.match(/(\d+)pt/);
+    matches = fontSize.match(/(\d+(\.\d+)?)pt/);
     if (matches) {
-        var fontSizePt = parseInt(matches[1], 10);
+        var fontSizePt = parseFloat(matches[1]);
         if (bold && fontSizePt >= 14 || fontSizePt >= 18)
             return true;
         return false;
