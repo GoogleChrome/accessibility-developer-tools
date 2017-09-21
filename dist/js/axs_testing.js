@@ -2386,7 +2386,7 @@ axs.AuditRules.addRule({name:"duplicateId", heading:"Any ID referred to via an I
     return a.flags.level === d && 0 <= b.indexOf(c);
   });
 }, test:function(a) {
-  var b = "[id='" + a.id.replace(/'/g, "\\'") + "']";
+  var b = "[id='" + a.id+"']";
   return 1 < a.ownerDocument.querySelectorAll(b).length;
 }, code:"AX_HTML_02"});
 
@@ -2399,4 +2399,3 @@ if (typeof define !== 'undefined' && define.amd) {
 } else {
   var axs = fn.call(this);
 }
-
