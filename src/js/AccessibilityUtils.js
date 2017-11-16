@@ -633,7 +633,7 @@ axs.utils.getRoles = function(element, implicit) {
         return null;
     var roleValue = element.getAttribute('role');
     if (!roleValue && implicit)
-        roleValue = axs.properties.getImplicitRole(element);
+        roleValue = axs.utils.getImplicitRole(element);
     if (!roleValue)  // role='' or implicit role came up empty
         return null;
     var roleNames = roleValue.split(' ');
@@ -642,7 +642,7 @@ axs.utils.getRoles = function(element, implicit) {
         var role = roleNames[i];
         var ariaRole = axs.constants.ARIA_ROLES[role];
         var roleObject = { 'name': role };
-        if (ariaRole && !ariaRole.abstract) {
+        if (ariaRole && !ariaRole['abstract']) {
             roleObject.details = ariaRole;
             if (!result.applied) {
                 result.applied = roleObject;
@@ -656,6 +656,61 @@ axs.utils.getRoles = function(element, implicit) {
 
     return result;
 };
+
+(function() {
+    /**
+     * Helper for implicit semantic functionality.
+     * Can be made part of the public API if need be.
+     * @param {Element} element
+     * @return {?axs.constants.HtmlInfo}
+     */
+    function getHtmlInfo(element) {
+        if (!element)
+            return null;
+        var tagName = element.tagName;
+        if (!tagName)
+            return null;
+        tagName = tagName.toUpperCase();
+        var infos = axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO[tagName];
+        if (!infos || !infos.length)
+            return null;
+        var defaultInfo = null;  // will contain the info with no specific selector if no others match
+        for (var i = 0, len = infos.length; i < len; i++) {
+            var htmlInfo = infos[i];
+            if (htmlInfo.selector) {
+                if (axs.browserUtils.matchSelector(element, htmlInfo.selector))
+                    return htmlInfo;
+            } else {
+                defaultInfo = htmlInfo;
+            }
+        }
+        return defaultInfo;
+    }
+
+    /**
+     * @param {Element} element
+     * @return {string} role
+     */
+    axs.utils.getImplicitRole = function(element) {
+        var htmlInfo = getHtmlInfo(element);
+        if (htmlInfo)
+            return htmlInfo.role;
+        return '';
+    };
+
+    /**
+     * Determine if this element can take ANY ARIA attributes including roles, state and properties.
+     * If false then even global attributes should not be used.
+     * @param {Element} element
+     * @return {boolean}
+     */
+    axs.utils.canTakeAriaAttributes = function(element) {
+        var htmlInfo = getHtmlInfo(element);
+        if (htmlInfo)
+            return !htmlInfo.reserved;
+        return true;
+    };
+})();
 
 /**
  * @param {!string} propertyName
@@ -1250,6 +1305,42 @@ axs.utils.getSelectorForAriaProperties = function(ariaProperties) {
     return result.join(',');
 };
 
+(function() {
+    var roleToSelectorCache = {};  // performance optimization, cache results from getSelectorForRole
+
+    /**
+     * Build a selector that will match elements which implicity or explicitly have this role.
+     * Note that the selector will probably not look elegant but it will work.
+     * @param {string} role
+     * @return {string} selector
+     */
+    axs.utils.getSelectorForRole = function(role) {
+        if (!role)
+            return '';
+        if (roleToSelectorCache[role] && roleToSelectorCache.hasOwnProperty(role))
+            return roleToSelectorCache[role];
+        var selectors = ['[role="' + role + '"]'];
+        var tagNames = Object.keys(/** @type {!Object} */(axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO));
+        tagNames.forEach(function(tagName) {
+            var htmlInfos = axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO[tagName];
+            if (htmlInfos && htmlInfos.length) {
+                for (var i = 0; i < htmlInfos.length; i++) {
+                    var htmlInfo = htmlInfos[i];
+                    if (htmlInfo.role === role) {
+                        if (htmlInfo.selector) {
+                            selectors[selectors.length] = htmlInfo.selector;
+                        } else {
+                            selectors[selectors.length] = tagName;  // Selectors API is not case sensitive.
+                            break;  // No need to continue adding selectors since we will match the tag itself.
+                        }
+                    }
+                }
+            }
+        });
+        return (roleToSelectorCache[role] = selectors.join(','));
+    };
+})();
+
 /**
  * Finds descendants of this element which implement the given ARIA role.
  * Will look for descendants with implicit or explicit role.
@@ -1268,7 +1359,7 @@ axs.utils.getSelectorForAriaProperties = function(ariaProperties) {
 axs.utils.findDescendantsWithRole = function(element, role) {
     if (!(element && role))
         return [];
-    var selector = axs.properties.getSelectorForRole(role);
+    var selector = axs.utils.getSelectorForRole(role);
     if (!selector)
         return [];
     var result = element.querySelectorAll(selector);

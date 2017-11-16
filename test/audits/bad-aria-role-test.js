@@ -25,7 +25,7 @@ test('Good role === no problems.', function(assert) {
   // Setup fixture
   var fixture = document.getElementById('qunit-fixture');
   for (var r in axs.constants.ARIA_ROLES) {
-    if (axs.constants.ARIA_ROLES.hasOwnProperty(r) && !axs.constants.ARIA_ROLES[r].abstract) {
+    if (axs.constants.ARIA_ROLES.hasOwnProperty(r) && !axs.constants.ARIA_ROLES[r]['abstract']) {
       var div = document.createElement('div');
       div.setAttribute('role', r);
       fixture.appendChild(div);
