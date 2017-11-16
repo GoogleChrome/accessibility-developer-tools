@@ -235,51 +235,6 @@ test("returns text from the descendants of the element", function() {
     }
 });
 
-module('getImplicitRole', {
-    setup: function() {}
-});
-
-test('get implicit role for button', function() {
-    var element = document.createElement('button');
-    var actual = axs.properties.getImplicitRole(element);
-    equal(actual, 'button');
-});
-
-test('get implicit role for input type=button', function() {
-    var element = document.createElement('input');
-    element.setAttribute('type', 'button');
-    var actual = axs.properties.getImplicitRole(element);
-    equal(actual, 'button');
-});
-
-test('get implicit role for input type=range', function() {
-    var element = document.createElement('input');
-    element.setAttribute('type', 'range');
-    var actual = axs.properties.getImplicitRole(element);
-    equal(actual, 'slider');
-});
-
-test('get implicit role for li out of context', function() {
-    var element = document.createElement('li');
-    var actual = axs.properties.getImplicitRole(element);
-    strictEqual(actual, '');
-});
-
-test('get implicit role for li child of ul', function() {
-    var element = document.createElement('ul');
-    element = element.appendChild(document.createElement('li'));
-    var actual = axs.properties.getImplicitRole(element);
-    equal(actual, 'listitem');
-});
-
-test('get implicit role for li descendant of ul', function() {
-    var element = document.createElement('ul');
-    element = element.appendChild(document.createElement('div'));  // bad html i know but good for test
-    element = element.appendChild(document.createElement('li'));
-    var actual = axs.properties.getImplicitRole(element);
-    strictEqual(actual, '');
-});
-
 module('getTextProperties', {});
 test('Image with no text alternative', function() {
     var fixture = document.getElementById('qunit-fixture');
