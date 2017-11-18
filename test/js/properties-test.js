@@ -248,3 +248,17 @@ test('Image with no text alternative', function() {
     equal('computedText' in textProperties, true, 'computedText in textProperties');
     equal(textProperties.computedText, 'smile.jpg');
 });
+
+test('Input type image with no text alternative', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    var input = fixture.appendChild(document.createElement('input'));
+    input.type = 'image';
+    input.src = 'smile.jpg';
+    var textProperties = axs.properties.getTextProperties(input);
+    equal('alt' in textProperties, true, 'alt in textProperties');
+    equal(textProperties.alt.valid, false, 'alt is not valid');
+    equal('filename' in textProperties, true, 'filename in textProperties');
+    equal(textProperties.filename.text, 'smile.jpg');
+    equal('computedText' in textProperties, true, 'computedText in textProperties');
+    equal(textProperties.computedText, 'smile.jpg');
+});
