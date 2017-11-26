@@ -4,4 +4,5 @@ extension/Handlebar.js
 upload.py
 gen/
 node_modules/
-.tmp/
+.tmp/ 
+.log/log-id
