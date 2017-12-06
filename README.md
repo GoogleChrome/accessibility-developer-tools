@@ -114,6 +114,23 @@ The runner will load the specified file or URL in a headless browser, inject axs
 If println() outputs nothing, check if you need to set DesiredCapabilities for your WebDriver (such as loggingPrefs):
 https://code.google.com/p/selenium/wiki/DesiredCapabilities
 
+### Run audit from Selenium WebDriver (Java):
+    try {
+        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+        URL url = new URL("https://raw.githubusercontent.com/GoogleChrome/" +
+                "accessibility-developer-tools/stable/dist/js/axs_testing.js");
+        String script = IOUtils.toString(url.openStream(), StandardCharsets.UTF_8);
+        jsExecutor.executeScript(script);
+        String report = (String) jsExecutor.executeScript("var results = axs.Audit.run();" +
+                            "return axs.Audit.createReport(results);");
+        System.out.println(report);
+
+    } catch (MalformedURLException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
 ## Using the results
 
 ### Interpreting the result
