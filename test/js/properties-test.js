@@ -17,11 +17,14 @@ test("Find text descendants in an iframe.", function() {
     equal(axs.properties.hasDirectTextDescendant(foo), true);
 });
 
-test("Find text descendants in a <template>.", function() {
-    var templ = document.createElement('template');
-    templ.innerHTML = '<div>bar</div>';
-    // <template> might not be supported by the browser, test anyway.
-    var foo = (templ.content || templ).firstChild;
+test("Find text descendants in a ShadowRoot.", function() {
+    var host = document.createElement('div');
+    if (host.attachShadow) {
+        host = host.attachShadow({mode: 'open'});
+    }
+    var foo = document.createElement('div');
+    foo.textContent = 'bar';
+    host.appendChild(foo);
     equal(axs.properties.hasDirectTextDescendant(foo), true);
 });
 
