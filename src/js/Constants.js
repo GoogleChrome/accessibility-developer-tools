@@ -30,7 +30,7 @@ axs.constants.ARIA_ROLES = {
     "application": {
         "namefrom": [ "author" ],
         "namerequired": true,
-        "parent": [ "landmark" ]
+        "parent": [ "structure" ]
     },
     "article": {
         "namefrom": [ "author" ],
@@ -47,6 +47,13 @@ axs.constants.ARIA_ROLES = {
         "parent": [ "command" ],
         "properties": [ "aria-expanded", "aria-pressed" ]
     },
+    "cell": {
+        "namefrom": [ "contents", "author" ],
+        "namerequired": true,
+        "parent": [ "section" ],
+        "properties": [ "aria-colindex", "aria-colspan", "aria-rowindex", "aria-rowspan" ],
+        "scope": [ "row" ]
+    },
     "checkbox": {
         "namefrom": [ "contents", "author" ],
         "namerequired": true,
@@ -57,7 +64,7 @@ axs.constants.ARIA_ROLES = {
     "columnheader": {
         "namefrom": [ "contents", "author" ],
         "namerequired": true,
-        "parent": [ "gridcell", "sectionhead", "widget" ],
+        "parent": [ "cell", "gridcell", "sectionhead" ],
         "properties": [ "aria-sort" ],
         "scope": [ "row" ]
     },
@@ -107,6 +114,12 @@ axs.constants.ARIA_ROLES = {
         "namerequired": true,
         "parent": [ "structure" ],
         "properties": [ "aria-expanded" ]
+    },
+    "feed": {
+        "mustcontain": [ "article" ],
+        "namefrom": [ "author" ],
+        "namerequired": false,
+        "parent": [ "list" ]
     },
     "form": {
         "namefrom": [ "author" ],
@@ -233,6 +246,9 @@ axs.constants.ARIA_ROLES = {
         "namefrom": [ "author" ],
         "parent": [ "landmark" ]
     },
+    "none": {
+        "parent": [ "structure" ]
+    },
     "note": {
         "namefrom": [ "author" ],
         "parent": [ "section" ]
@@ -310,18 +326,18 @@ axs.constants.ARIA_ROLES = {
         "namefrom": [ "contents", "author" ],
         "parent": [ "group", "widget" ],
         "properties": [ "aria-level", "aria-selected" ],
-        "scope": [ "grid", "rowgroup", "treegrid" ]
+        "scope": [ "grid", "rowgroup", "table", "treegrid" ]
     },
     "rowgroup": {
         "mustcontain": [ "row" ],
         "namefrom": [ "contents", "author" ],
-        "parent": [ "group" ],
-        "scope": [ "grid" ]
+        "parent": [ "group", "widget" ],
+        "scope": [ "grid", "table", "treegrid" ]
     },
     "rowheader": {
         "namefrom": [ "contents", "author" ],
         "namerequired": true,
-        "parent": [ "gridcell", "sectionhead", "widget" ],
+        "parent": [ "cell", "gridcell", "sectionhead" ],
         "properties": [ "aria-sort" ],
         "scope": [ "row" ]
     },
@@ -404,11 +420,25 @@ axs.constants.ARIA_ROLES = {
         "abstract": true,
         "parent": [ "roletype" ]
     },
+    "switch": {
+        "childpresentational": true,  
+        "namefrom": [ "author" ],
+        "namerequired": true,
+        "parent": [ "checkbox" ],
+        "requiredProperties": [ "aria-checked" ],
+    },
     "tab": {
         "namefrom": [ "contents", "author" ],
         "parent": [ "sectionhead", "widget" ],
         "properties": [ "aria-selected" ],
         "scope": [ "tablist" ]
+    },
+    "table": {
+        "mustcontain": [ "row", "rowgroup" ],
+        "namefrom": [ "author" ],
+        "namerequired": true,
+        "parent": [ "section" ],
+        "properties": [ "aria-colcount", "aria-rowcount" ]
     },
     "tablist": {
         "mustcontain": [ "tab" ],
