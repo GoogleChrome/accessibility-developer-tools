@@ -10,6 +10,7 @@
 
 * Escape special characters to be used in a query selector string (PR #267)
 * Fix exception thrown by RoleTooltipRequiresDescribedBy.js (#269)
+* Fixed `unsupportedAriaAttribute` which did not accept `tablist` with `aria-multiselectable`
 
 ## 2.10.0 - 2015-11-13
 

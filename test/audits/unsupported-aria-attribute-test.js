@@ -33,6 +33,20 @@
         assert.runRule(config);
     });
 
+    test('Element with role and supported attributes', function(assert) {
+        var fixture = document.getElementById('qunit-fixture');
+        var widget = fixture.appendChild(document.createElement('div'));
+        widget.setAttribute('role', 'tablist');
+        widget.setAttribute('aria-multiselectable', 'true');  // supported
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
+    });
+
     test('Element with no role and global attributes only', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var div = fixture.appendChild(document.createElement('div'));
