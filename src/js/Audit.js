@@ -232,6 +232,7 @@ axs.Audit.getRulesCannotRun = function(opt_configuration) {
  *     {
  *       result,    // @type {axs.constants.AuditResult}
  *       elements,  // @type {Array.<Element>}
+ *       selectors, // @type {Array.<String>}
  *       rule       // @type {axs.AuditRule} - data only (name, severity, code)
  *     }
  */

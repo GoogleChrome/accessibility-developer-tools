@@ -217,12 +217,14 @@ axs.AuditRule.Result.prototype.update = function(auditResult, element) {
     var result = this;
     if (auditResult === axs.constants.AuditResult.FAIL) {
         var failingElements = result.elements || (result.elements = []);
+        var failingSelectors = result.selectors || (result.selectors = []);
         result.result = auditResult;  // If FAIL then we change the result to FAIL no matter what it is
         if (this.maxResults && result.elements.length >= this.maxResults) {
             result.resultsTruncated = true;
         } else if (element) {
             // element should always be defined here but testing first avoids pushing undefined onto the array
             failingElements.push(element);
+            failingSelectors.push(axs.utils.getQuerySelectorText(element))
         }
     } else if (auditResult === axs.constants.AuditResult.PASS) {
         if (!result.elements)
