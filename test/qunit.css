@@ -1,4 +1,4 @@
-/**
+﻿/**
  * QUnit v1.7.0pre - A JavaScript Unit Testing Framework
  *
  * http://docs.jquery.com/QUnit
@@ -201,7 +201,7 @@
 	-webkit-border-bottom-left-radius: 15px;
 }
 
-#qunit-tests .fail                          { color: #000000; background-color: #EE5757; }
+#qunit-tests .fail                          { color: #000000; background-color: #b7b7b7;}
 #qunit-tests .fail .test-name,
 #qunit-tests .fail .module-name             { color: #000000; }
 
