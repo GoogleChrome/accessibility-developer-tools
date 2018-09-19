@@ -11,7 +11,7 @@ Its main component is the accessibility audit: a collection of audit rules check
 There is also a collection of accessibility-related utility code, including but not limited to:
 * contrast ratio calculation and color suggestions
 * retrieving and validating ARIA attributes and states
-* accessible name calculation using the algorithm at [http://www.w3.org/TR/wai-aria/roles#textalternativecomputation](http://www.w3.org/TR/wai-aria/roles#textalternativecomputation)
+* accessible name calculation using the algorithm at [https://www.w3.org/TR/wai-aria-1.0/roles#textalternativecomputation](https://www.w3.org/TR/wai-aria-1.0/roles#textalternativecomputation)
 
 # Getting the code
 
