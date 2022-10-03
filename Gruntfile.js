@@ -27,6 +27,7 @@ module.exports = function(grunt) {
               './src/js/AuditRules.js',
               './src/js/AuditResults.js',
               './src/js/Audit.js',
+              './src/audits/PageWithoutSignLanguageWidget.js',
               './src/audits/*'
           ]
         },
