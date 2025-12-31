@@ -121,6 +121,15 @@ test("nth-of-type does not refer to a selector but a tagName", function() {
   equal(lastLi, document.querySelector(selector),
         'selector "' + selector + '" does not match element');
 });
+test('special characters in IDs are properly escaped', function() {
+    var div = document.createElement('div');
+    div.id = 'some.id.with.special.chars';
+    this.fixture_.appendChild(div);
+    var selector = axs.utils.getQuerySelectorText(div);
+    equal(div, document.querySelector(selector),
+          'selector "' + selector + '" does not match element');
+});
+
 
 module("getIdReferrers", {
   setup: function () {
@@ -214,7 +223,7 @@ module("getRoles", {
 
 test("getRoles on element with valid role.", function() {
     for (var role in axs.constants.ARIA_ROLES) {
-        if (axs.constants.ARIA_ROLES.hasOwnProperty(role) && !axs.constants.ARIA_ROLES[role].abstract) {
+        if (axs.constants.ARIA_ROLES.hasOwnProperty(role) && !axs.constants.ARIA_ROLES[role]['abstract']) {
             var appliedRole = { name: role, valid: true, details: axs.constants.ARIA_ROLES[role] };
             var expected = {
                 valid: true,
@@ -268,7 +277,7 @@ test("getRoles on element with no role and options.implicit.", function() {
 
 test("getRoles on element with abstract role.", function() {
     for (var role in axs.constants.ARIA_ROLES) {
-        if (axs.constants.ARIA_ROLES.hasOwnProperty(role) && axs.constants.ARIA_ROLES[role].abstract) {
+        if (axs.constants.ARIA_ROLES.hasOwnProperty(role) && axs.constants.ARIA_ROLES[role]['abstract']) {
             var expected = {
                 valid: false,
                 roles: [{ name: role, valid: false }]
@@ -287,7 +296,7 @@ test("getRoles on element with abstract role.", function() {
      * @return The 'role detail' object.
      */
     function createExpectedRoleObject(role) {
-        var valid = (axs.constants.ARIA_ROLES.hasOwnProperty(role) && !axs.constants.ARIA_ROLES[role].abstract);
+        var valid = (axs.constants.ARIA_ROLES.hasOwnProperty(role) && !axs.constants.ARIA_ROLES[role]['abstract']);
         var result = { name: role, valid: valid };
         if (valid) {
             result.details = axs.constants.ARIA_ROLES[role];
@@ -585,3 +594,81 @@ test('first fieldset legend aria-disabled', function() {
     actual = axs.utils.isElementDisabled(widget);
     strictEqual(actual, true, 'ARIA widget should be disabled');
 });
+
+test('composedTreeSearch should ignore distributed nodes if browser does not support them', function() {
+    var fixture = document.getElementById('qunit-fixture');
+    if (fixture.createShadowRoot) {
+        var div = document.createElement('div');
+        fixture.appendChild(div);
+
+        // behave as if we don't have getDistributedNodes available in this browser
+        var r = HTMLContentElement.prototype.getDistributedNodes;
+        HTMLContentElement.prototype.getDistributedNodes = null;
+
+        var shadowroot = div.createShadowRoot();
+        shadowroot.innerHTML = '<content id="x" select="p"></content>';
+        var content = shadowroot.getElementById('x');
+
+        var found = [];
+        axs.dom.composedTreeSearch(div, null, {
+            preorder: function(e) {
+                found.push(e);
+                return true;
+            }
+        });
+
+        HTMLContentElement.prototype.getDistributedNodes = r;
+        ok(found.length === 2);
+        strictEqual(found[0], div);
+        strictEqual(found[1], content);
+    } else {
+        console.warn('Test platform does not support shadow DOM');
+        ok(true);
+    }
+});
+
+module('getImplicitRole', {
+    setup: function() {}
+});
+
+test('get implicit role for button', function() {
+    var element = document.createElement('button');
+    var actual = axs.utils.getImplicitRole(element);
+    equal(actual, 'button');
+});
+
+test('get implicit role for input type=button', function() {
+    var element = document.createElement('input');
+    element.setAttribute('type', 'button');
+    var actual = axs.utils.getImplicitRole(element);
+    equal(actual, 'button');
+});
+
+test('get implicit role for input type=range', function() {
+    var element = document.createElement('input');
+    element.setAttribute('type', 'range');
+    var actual = axs.utils.getImplicitRole(element);
+    equal(actual, 'slider');
+});
+
+test('get implicit role for li out of context', function() {
+    var element = document.createElement('li');
+    var actual = axs.utils.getImplicitRole(element);
+    strictEqual(actual, '');
+});
+
+test('get implicit role for li child of ul', function() {
+    var element = document.createElement('ul');
+    element = element.appendChild(document.createElement('li'));
+    var actual = axs.utils.getImplicitRole(element);
+    equal(actual, 'listitem');
+});
+
+test('get implicit role for li descendant of ul', function() {
+    var element = document.createElement('ul');
+    element = element.appendChild(document.createElement('div'));  // bad html i know but good for test
+    element = element.appendChild(document.createElement('li'));
+    var actual = axs.utils.getImplicitRole(element);
+    strictEqual(actual, '');
+});
+

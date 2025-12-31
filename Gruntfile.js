@@ -2,6 +2,7 @@ module.exports = function(grunt) {
   'use strict';
 
   require('load-grunt-tasks')(grunt);
+  require('google-closure-compiler').grunt(grunt);
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -9,7 +10,7 @@ module.exports = function(grunt) {
 
     'gh-release': {},
 
-    closurecompiler: {
+    'closure-compiler': {
       minify: {
         requiresConfig: 'git-revision',
         files: {
@@ -81,7 +82,7 @@ module.exports = function(grunt) {
         options: {
             configFile: '.eslintrc'
         },
-        target: ['./src/js/', './src/audits/']
+        target: ['./src/js/', './src/audits/', './Gruntfile.js', './main.js']
     },
 
     prompt: {
@@ -276,10 +277,10 @@ module.exports = function(grunt) {
     grunt.task.run('git-describe');
   });
 
-  grunt.registerTask('build', ['clean:local', 'save-revision', 'closurecompiler:minify']);
+  grunt.registerTask('build', ['clean:local', 'save-revision', 'closure-compiler:minify']);
   grunt.registerTask('lint', ['eslint']);
   grunt.registerTask('test:unit', ['qunit']);
   grunt.registerTask('dist', ['clean:dist', 'build', 'copy:dist']);
-  grunt.registerTask('travis', ['closurecompiler:minify', 'test:unit']);
+  grunt.registerTask('travis', ['closure-compiler:minify', 'test:unit']);
   grunt.registerTask('default', ['build', 'test:unit']);
 };

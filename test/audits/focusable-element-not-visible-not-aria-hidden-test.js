@@ -23,38 +23,45 @@ module('FocusableElementNotVisibleAndNotAriaHidden', {
   }
 });
 
-test('a focusable element that is visible passes the audit', function() {
+test('a focusable element that is visible passes the audit', function(assert) {
   var input = document.createElement('input');
 
   this.fixture_.appendChild(input);
-  var rule = axs.AuditRules.getRule('focusableElementNotVisibleAndNotAriaHidden');
-  deepEqual(
-    rule.run({scope: this.fixture_}),
-    { elements: [], result: axs.constants.AuditResult.PASS }
-  );
+
+    var config = {
+        scope: this.fixture_,
+        ruleName: 'focusableElementNotVisibleAndNotAriaHidden',
+        elements: [],
+        expected: axs.constants.AuditResult.PASS
+    };
+    assert.runRule(config);
 });
 
-test('a focusable element that is hidden fails the audit', function() {
+test('a focusable element that is hidden fails the audit', function(assert) {
   var input = document.createElement('input');
   input.style.opacity = '0';
 
   this.fixture_.appendChild(input);
 
-  var rule = axs.AuditRules.getRule('focusableElementNotVisibleAndNotAriaHidden');
-  deepEqual(
-    rule.run({scope: this.fixture_}),
-    { elements: [input], result: axs.constants.AuditResult.FAIL }
-  );
+    var config = {
+        scope: this.fixture_,
+        ruleName: 'focusableElementNotVisibleAndNotAriaHidden',
+        elements: [input],
+        expected: axs.constants.AuditResult.FAIL
+    };
+    assert.runRule(config);
 });
 
-test('an element with negative tabindex and empty computed text is ignored', function() {
+test('an element with negative tabindex and empty computed text is ignored', function(assert) {
   var emptyDiv = document.createElement('div');
   emptyDiv.tabIndex = '-1';
   this.fixture_.appendChild(emptyDiv);
 
-  var rule = axs.AuditRules.getRule('focusableElementNotVisibleAndNotAriaHidden');
-  deepEqual(
-    rule.run({scope: this.fixture_}),
-    { result: axs.constants.AuditResult.NA });
+    var config = {
+        scope: this.fixture_,
+        ruleName: 'focusableElementNotVisibleAndNotAriaHidden',
+        expected: axs.constants.AuditResult.NA
+    };
+    assert.runRule(config);
 });
 

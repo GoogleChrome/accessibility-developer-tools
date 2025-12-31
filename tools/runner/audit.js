@@ -33,6 +33,13 @@ if (system.args.length !== 2) {
         );
       phantom.exit();
     } else {
+      page.evaluate(function() {
+        // if target website has an AMD loader, we need to make sure
+        // that window.axs is still available
+        if (typeof define !== 'undefined' && define.amd) {
+            define.amd = false;
+        }
+      });
       page.injectJs('../../dist/js/axs_testing.js');
       var report = page.evaluate(function() {
         var results = axs.Audit.run();

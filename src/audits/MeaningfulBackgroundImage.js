@@ -22,8 +22,8 @@ goog.require('axs.utils');
 axs.AuditRules.addRule({
     name: 'elementsWithMeaningfulBackgroundImage',
     severity: axs.constants.Severity.WARNING,
-    relevantElementMatcher: function(element) {
-        return !axs.utils.isElementOrAncestorHidden(element);
+    relevantElementMatcher: function(element, flags) {
+        return !flags.hidden;
     },
     heading: 'Meaningful images should not be used in element backgrounds',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_image_01',

@@ -30,6 +30,7 @@ goog.provide('axs.AuditConfiguration');
  *   - auditRulesToIgnore
  *   - maxResults
  *   - withConsoleApi
+ *   - walkDom
  *   - showUnsupportedRulesWarning
  */
 axs.AuditConfiguration = function(config) {
@@ -86,6 +87,23 @@ axs.AuditConfiguration = function(config) {
     this.withConsoleApi = false;
 
     /**
+     * By default the entire DOM tree is traversed regardless of the scope set in the configuration.
+     * This is to ensure that idrefs are collected and that disabled ancestors are considered.
+     *
+     * Setting this flag to false means that only the scope will be traversed and therefore only disabled
+     * ancestors, hidden ancestors and idrefs within the scope will be found.
+     *
+     * Examples of when to set this to `false` are:
+     *  - You are running unit tests in a browser and KNOW that the only part of the DOM you care about is
+     *  contiained within a particular fixture element.
+     *  - You are auditing a web app where you know for sure that everything you are interested in is scoped
+     *  within a particular container.
+     *
+     * @type {boolean}
+     */
+    this.walkDom = true;
+
+    /**
      * Do we want to show a warning that there are audit rules which are not supported in this configuration?
      * @type {boolean}
      */
@@ -101,6 +119,7 @@ axs.AuditConfiguration = function(config) {
     goog.exportProperty(this, 'auditRulesToRun', this.auditRulesToRun);
     goog.exportProperty(this, 'auditRulesToIgnore', this.auditRulesToIgnore);
     goog.exportProperty(this, 'withConsoleApi', this.withConsoleApi);
+    goog.exportProperty(this, 'walkDom', this.walkDom);
     goog.exportProperty(this, 'showUnsupportedRulesWarning', this.showUnsupportedRulesWarning);
 };
 goog.exportSymbol('axs.AuditConfiguration', axs.AuditConfiguration);
@@ -218,24 +237,6 @@ axs.Audit.getRulesCannotRun = function(opt_configuration) {
  */
 axs.Audit.run = function(opt_configuration) {
     var configuration = opt_configuration || new axs.AuditConfiguration();
-    var withConsoleApi = configuration.withConsoleApi;
-    var results = [];
-
-    var auditRules;
-    if (configuration.auditRulesToRun &&
-        configuration.auditRulesToRun.length > 0) {
-        auditRules = configuration.auditRulesToRun;
-    } else
-        auditRules = axs.AuditRules.getRules(true);
-
-    if (configuration.auditRulesToIgnore) {
-        for (var i = 0; i < configuration.auditRulesToIgnore.length; i++) {
-            var auditRuleToIgnore = configuration.auditRulesToIgnore[i];
-            if (auditRules.indexOf(auditRuleToIgnore) < 0)
-                continue;
-            auditRules.splice(auditRules.indexOf(auditRuleToIgnore), 1);
-        }
-    }
 
     if (!axs.Audit.unsupportedRulesWarningShown && configuration.showUnsupportedRulesWarning) {
         var unsupportedRules = axs.Audit.getRulesCannotRun(configuration);
@@ -247,39 +248,104 @@ axs.Audit.run = function(opt_configuration) {
         axs.Audit.unsupportedRulesWarningShown = true;
     }
 
-    for (var i = 0; i < auditRules.length; i++) {
-        var auditRuleName = auditRules[i];
-        var auditRule = axs.AuditRules.getRule(auditRuleName);
-        if (!auditRule)
-            continue; // Shouldn't happen, but fail silently if it does.
-        if (auditRule.disabled)
-            continue;
-        if (!withConsoleApi && auditRule.requiresConsoleAPI)
-            continue;
+    var auditRules = axs.AuditRules.getActiveRules(configuration);
 
-        var options = {};
-        var ignoreSelectors = configuration.getIgnoreSelectors(auditRule.name);
-        if (ignoreSelectors.length > 0 || configuration.scope)
-            options['ignoreSelectors'] = ignoreSelectors;
-        var ruleConfig = configuration.getRuleConfig(auditRule.name);
-        if (ruleConfig != null)
-            options['config' ] = ruleConfig;
-        if (configuration.scope)
-            options['scope'] = configuration.scope;
-        if (configuration.maxResults)
-            options['maxResults'] = configuration.maxResults;
-        var result = auditRule.run.call(auditRule, options);
-        var ruleValues = axs.utils.namedValues(auditRule);
-        ruleValues.severity = configuration.getSeverity(auditRuleName) ||
-                              ruleValues.severity;
-        result.rule = ruleValues;
-        results.push(result);
+    // As a performance optimization set the collectIdRefs flag to false if none of the rules needs it.
+    configuration.collectIdRefs = auditRules.some(function(auditRule) {
+        return auditRule.collectIdRefs;
+    });
+
+    if (!configuration.scope) {
+        configuration.scope = document.documentElement;
     }
 
+    axs.Audit.collectMatchingElements(configuration, auditRules);
+
+    var results = [];
+    for (var i = 0; i < auditRules.length; i++) {
+        var auditRule = auditRules[i];
+        if (!auditRule.canRun(configuration))
+            continue;
+        results.push(auditRule.run(configuration));
+    }
     return results;
 };
 goog.exportSymbol('axs.Audit.run', axs.Audit.run);
 
+(function() {
+    /**
+     * Runs the element collection phase of the audit.
+     * This performs a complete traversal of the relevant DOM tree.
+     *    Each registered AudtRule is given the opportunity to examine each DOM element
+     *    to determine if it is "relevant" or "interesting".
+     *
+     * Since the DOM may change over time it is recommended to run the Audits in the same event loop as this call.
+     * @param {axs.AuditConfiguration} configuration Configuration for this run.
+     * @param {Array.<axs.AuditRule>} auditRules The active audit rules.
+     */
+    axs.Audit.collectMatchingElements = function(configuration, auditRules) {
+        var rootFlags = {
+            walkDom: configuration.walkDom,
+            collectIdRefs: configuration.collectIdRefs,
+            level: 0,
+            ignoring: {},
+            disabled: false,
+            hidden: false
+        };
+        var root = configuration.walkDom ? document.documentElement : configuration.scope;
+        // Because 'related elements' could occur anywhere in the DOM we need to start at document.documentElement
+        axs.dom.composedTreeSearch(root, null, { preorder: function(element, flags) {
+            if (!flags.inScope)
+                flags.inScope = element === configuration.scope;
+            for (var i = 0; i < auditRules.length; i++) {
+                var auditRule = auditRules[i];
+                if (!auditRule.canRun(configuration))
+                    continue;
+                auditRule._options = new AuditOptions(configuration, auditRule);  // always rebuild this, it could change each run
+                var ignore = flags.ignoring[auditRule.name] ||
+                        (flags.ignoring[auditRule.name] = auditRule._options.shouldIgnore(element));
+                if (!ignore) {
+                    auditRule.collectMatchingElement(element, flags);
+                }
+            }
+            return true;
+        } }, rootFlags);
+    };
+
+    /**
+     * Represents options pertaining to a specific AuditRule.
+     * Instances may have the following optional named parameters:
+     *     ignoreSelectors: Selectors for parts of the page to ignore for this rule.
+     *     config: Any per-rule configuration.
+     * @param {axs.AuditConfiguration} configuration Config for the audits.
+     * @param {axs.AuditRule} auditRule The AuditRule whose options we want.
+     * @constructor
+     */
+    function AuditOptions(configuration, auditRule) {
+        var ignoreSelectors = configuration.getIgnoreSelectors(auditRule.name);
+        if (ignoreSelectors.length > 0 || configuration.scope)
+            this.ignoreSelectors = ignoreSelectors;
+        var ruleConfig = configuration.getRuleConfig(auditRule.name);
+        if (ruleConfig)
+            this.config = ruleConfig;
+    }
+
+    /**
+     * Determine if this element should be ignored by the AuditRule.
+     * @param {Element} element An audit candidate.
+     * @returns {boolean} true if this element should be ignored by this AuditRule.
+     */
+    AuditOptions.prototype.shouldIgnore = function(element) {
+        var ignoreSelectors = this.ignoreSelectors;
+        if (ignoreSelectors) {
+            for (var i = 0; i < ignoreSelectors.length; i++) {
+                if (axs.browserUtils.matchSelector(element, ignoreSelectors[i]))
+                    return true;
+            }
+        }
+        return false;
+    };
+})();
 /**
  * Create an AuditResults object citing failures and warnings, for use in
  * continuous builds.

@@ -14,32 +14,34 @@
 
 module('UncontrolledTabpanel');
 
-test('No roles === NA.', function() {
+test('No roles === NA.', function(assert) {
   // Setup fixture
   var fixture = document.getElementById('qunit-fixture');
   for (var i = 0; i < 10; i++)
     fixture.appendChild(document.createElement('div'));
 
-  deepEqual(
-    axs.AuditRules.getRule('uncontrolledTabpanel').run({ scope: fixture }),
-    { result: axs.constants.AuditResult.NA }
-  );
+  var config = {
+    ruleName: 'uncontrolledTabpanel',
+    expected: axs.constants.AuditResult.NA
+  };
+  assert.runRule(config);
 });
 
-test('No elements with role tabpanel === NA.', function() {
+test('No elements with role tabpanel === NA.', function(assert) {
   // Setup fixture
   var fixture = document.getElementById('qunit-fixture');
   var div = document.createElement('div');
   div.setAttribute('role', 'tablist');
   fixture.appendChild(div);
 
-  deepEqual(
-    axs.AuditRules.getRule('uncontrolledTabpanel').run({ scope: fixture }),
-    { result: axs.constants.AuditResult.NA }
-  );
+  var config = {
+    ruleName: 'uncontrolledTabpanel',
+    expected: axs.constants.AuditResult.NA
+  };
+  assert.runRule(config);
 });
 
-test('Tabpanel with aria-labelledby === PASS.', function() {
+test('Tabpanel with aria-labelledby === PASS.', function(assert) {
   // Setup fixture
   var fixture = document.getElementById('qunit-fixture');
   var tabList = document.createElement('div');
@@ -55,13 +57,15 @@ test('Tabpanel with aria-labelledby === PASS.', function() {
   tabPanel.setAttribute('aria-labelledby', 'tabId');
   fixture.appendChild(tabPanel);
 
-  deepEqual(
-    axs.AuditRules.getRule('uncontrolledTabpanel').run({ scope: fixture }),
-    { elements: [], result: axs.constants.AuditResult.PASS }
-  );
+  var config = {
+    ruleName: 'uncontrolledTabpanel',
+    expected: axs.constants.AuditResult.PASS,
+    elements: []
+  };
+  assert.runRule(config);
 });
 
-test('Tabpanel which is controlled via aria-controls on the tab === PASS.', function() {
+test('Tabpanel which is controlled via aria-controls on the tab === PASS.', function(assert) {
   // Setup fixture
   var fixture = document.getElementById('qunit-fixture');
   var tabList = document.createElement('div');
@@ -77,16 +81,18 @@ test('Tabpanel which is controlled via aria-controls on the tab === PASS.', func
   tabPanel.setAttribute('id', 'tabpanelId');
   fixture.appendChild(tabPanel);
 
-  deepEqual(
-    axs.AuditRules.getRule('uncontrolledTabpanel').run({ scope: fixture }),
-    { elements: [], result: axs.constants.AuditResult.PASS }
-  );
+  var config = {
+    ruleName: 'uncontrolledTabpanel',
+    expected: axs.constants.AuditResult.PASS,
+    elements: []
+  };
+  assert.runRule(config);
 });
 
 // If tabpanels were added dynamically with JS, then a tab might not always have a tab panel. This
 // test ensures that the audit is only checking for a tabpanel without a tab, not a tab without a
 // tabpanel.
-test('Tabpanel which is controlled via aria-controls on its tab when there is more than one tab === PASS.', function() {
+test('Tabpanel which is controlled via aria-controls on its tab when there is more than one tab === PASS.', function(assert) {
   // Setup fixture
   var fixture = document.getElementById('qunit-fixture');
   var tabList = document.createElement('div');
@@ -107,13 +113,15 @@ test('Tabpanel which is controlled via aria-controls on its tab when there is mo
   tabPanel.setAttribute('id', 'tabpanelId');
   fixture.appendChild(tabPanel);
 
-  deepEqual(
-    axs.AuditRules.getRule('uncontrolledTabpanel').run({ scope: fixture }),
-    { elements: [], result: axs.constants.AuditResult.PASS }
-  );
+  var config = {
+    ruleName: 'uncontrolledTabpanel',
+    expected: axs.constants.AuditResult.PASS,
+    elements: []
+  };
+  assert.runRule(config);
 });
 
-test('Tabpanel which is not controlled or labeled by a tab === FAIL.', function() {
+test('Tabpanel which is not controlled or labeled by a tab === FAIL.', function(assert) {
   // Setup fixture
   var fixture = document.getElementById('qunit-fixture');
   var tabList = document.createElement('div');
@@ -127,13 +135,15 @@ test('Tabpanel which is not controlled or labeled by a tab === FAIL.', function(
   tabPanel.setAttribute('role', 'tabpanel');
   fixture.appendChild(tabPanel);
 
-  deepEqual(
-    axs.AuditRules.getRule('uncontrolledTabpanel').run({ scope: fixture }),
-    { elements: [tabPanel], result: axs.constants.AuditResult.FAIL }
-  );
+  var config = {
+    ruleName: 'uncontrolledTabpanel',
+    expected: axs.constants.AuditResult.FAIL,
+    elements: [tabPanel]
+  };
+  assert.runRule(config);
 });
 
-test('Tabpanel which is labeled by something other than a tab and not controlled by a tab == FAIL.', function() {
+test('Tabpanel which is labeled by something other than a tab and not controlled by a tab == FAIL.', function(assert) {
   // Setup fixture
   var fixture = document.getElementById('qunit-fixture');
 
@@ -146,8 +156,10 @@ test('Tabpanel which is labeled by something other than a tab and not controlled
   notATab.setAttribute('id', 'not-a-tab');
   fixture.appendChild(notATab);
 
-  deepEqual(
-    axs.AuditRules.getRule('uncontrolledTabpanel').run({ scope: fixture }),
-    { elements: [tabPanel], result: axs.constants.AuditResult.FAIL }
-  );
+  var config = {
+    ruleName: 'uncontrolledTabpanel',
+    expected: axs.constants.AuditResult.FAIL,
+    elements: [tabPanel]
+  };
+  assert.runRule(config);
 });

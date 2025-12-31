@@ -1,4 +1,4 @@
-module('NonExistentAriaRelatedElement');
+module('NonExistentRelatedElement');
 [
   'aria-activedescendant',  // strictly speaking sometests do not apply to this
   'aria-controls',
@@ -6,7 +6,7 @@ module('NonExistentAriaRelatedElement');
   'aria-flowto',
   'aria-labelledby',
   'aria-owns'].forEach(function(testProp) {
-    test('Element exists, single ' + testProp + ' value', function() {
+    test('Element exists, single ' + testProp + ' value', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var referentElement = document.createElement('div');
         referentElement.textContent = 'label';
@@ -17,50 +17,62 @@ module('NonExistentAriaRelatedElement');
         refererElement.setAttribute(testProp, 'theLabel');
         fixture.appendChild(refererElement);
 
-        var rule = axs.AuditRules.getRule('nonExistentAriaRelatedElement');
-        deepEqual(rule.run({ scope: fixture }),
-                  { elements: [], result: axs.constants.AuditResult.PASS });
+        var config = {
+            ruleName: 'nonExistentRelatedElement',
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
     });
 
-    test('Element doesn\'t exist, single ' + testProp + ' value', function() {
+    test('Element doesn\'t exist, single ' + testProp + ' value', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         var refererElement = document.createElement('div');
         refererElement.setAttribute(testProp, 'notALabel');
         fixture.appendChild(refererElement);
-        var rule = axs.AuditRules.getRule('nonExistentAriaRelatedElement');
-        var result = rule.run({ scope: fixture });
-        equal(result.result, axs.constants.AuditResult.FAIL);
-        deepEqual(result.elements, [refererElement]);
+
+        var config = {
+            ruleName: 'nonExistentRelatedElement',
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [refererElement]
+        };
+        assert.runRule(config);
     });
 
-    test('Element doesn\'t exist, single ' + testProp + ' value with aria-busy', function() {
+    test('Element doesn\'t exist, single ' + testProp + ' value with aria-busy', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         var refererElement = document.createElement('div');
         refererElement.setAttribute(testProp, 'notALabel');
         refererElement.setAttribute('aria-busy', 'true');
         fixture.appendChild(refererElement);
-        var rule = axs.AuditRules.getRule('nonExistentAriaRelatedElement');
-        var result = rule.run({ scope: fixture });
-        equal(result.result, axs.constants.AuditResult.FAIL);
-        deepEqual(result.elements, [refererElement]);
+
+        var config = {
+            ruleName: 'nonExistentRelatedElement',
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [refererElement]
+        };
+        assert.runRule(config);
     });
 
-    test('Element doesn\'t exist, single ' + testProp + ' value with aria-hidden', function() {
+    test('Element doesn\'t exist, single ' + testProp + ' value with aria-hidden', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         var refererElement = document.createElement('div');
         refererElement.setAttribute(testProp, 'notALabel');
         refererElement.setAttribute('aria-hidden', 'true');
         fixture.appendChild(refererElement);
-        var rule = axs.AuditRules.getRule('nonExistentAriaRelatedElement');
-        var result = rule.run({ scope: fixture });
-        equal(result.result, axs.constants.AuditResult.FAIL);
-        deepEqual(result.elements, [refererElement]);
+
+        var config = {
+            ruleName: 'nonExistentRelatedElement',
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [refererElement]
+        };
+        assert.runRule(config);
     });
 
-    test('Multiple referent elements exist with ' + testProp, function() {
+    test('Multiple referent elements exist with ' + testProp, function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var referentElement = document.createElement('div');
         referentElement.textContent = 'label';
@@ -76,13 +88,16 @@ module('NonExistentAriaRelatedElement');
         refererElement.setAttribute(testProp, 'theLabel theOtherLabel');
         fixture.appendChild(refererElement);
 
-        var rule = axs.AuditRules.getRule('nonExistentAriaRelatedElement');
-        deepEqual(rule.run({ scope: fixture }),
-                  { elements: [], result: axs.constants.AuditResult.PASS });
+        var config = {
+            ruleName: 'nonExistentRelatedElement',
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
 
     });
 
-    test('One element doesn\'t exist, multiple ' + testProp, function() {
+    test('One element doesn\'t exist, multiple ' + testProp, function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         var referentElement = document.createElement('div');
@@ -93,13 +108,16 @@ module('NonExistentAriaRelatedElement');
         var refererElement = document.createElement('div');
         refererElement.setAttribute(testProp, 'theLabel notALabel');
         fixture.appendChild(refererElement);
-        var rule = axs.AuditRules.getRule('nonExistentAriaRelatedElement');
-        var result = rule.run({ scope: fixture });
-        equal(result.result, axs.constants.AuditResult.FAIL);
-        deepEqual(result.elements, [refererElement]);
+
+        var config = {
+            ruleName: 'nonExistentRelatedElement',
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [refererElement]
+        };
+        assert.runRule(config);
     });
 
-    test('Using ignoreSelectors with ' + testProp, function() {
+    test('Using ignoreSelectors with ' + testProp, function(assert) {
         var fixture = document.getElementById('qunit-fixture');
 
         var referentElement = document.createElement('div');
@@ -112,9 +130,11 @@ module('NonExistentAriaRelatedElement');
         refererElement.setAttribute(testProp, 'theLabel2 notALabel2');
         fixture.appendChild(refererElement);
 
-        var rule = axs.AuditRules.getRule('nonExistentAriaRelatedElement');
-        var ignoreSelectors = ['#labelledbyElement2'];
-        var result = rule.run({ ignoreSelectors: ignoreSelectors, scope: fixture });
-        equal(result.result, axs.constants.AuditResult.NA);
+        var config = {
+            ruleName: 'nonExistentRelatedElement',
+            expected: axs.constants.AuditResult.NA,
+            ignoreSelectors: ['#labelledbyElement2']
+        };
+        assert.runRule(config);
     });
 });

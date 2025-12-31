@@ -15,6 +15,7 @@
 goog.require('axs.AuditRules');
 goog.require('axs.constants.Severity');
 goog.require('axs.properties');
+goog.require('axs.utils');
 
 /**
  * Based on recommendations in document: http://www.w3.org/TR/aria-in-html/
@@ -25,7 +26,7 @@ axs.AuditRules.addRule({
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_12',
     severity: axs.constants.Severity.WARNING,
     relevantElementMatcher: function(element) {
-        return !axs.properties.canTakeAriaAttributes(element);
+        return !axs.utils.canTakeAriaAttributes(element);
     },
     test: function(element) {
         return axs.properties.getAriaProperties(element) !== null;

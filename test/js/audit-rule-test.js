@@ -12,15 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 (function(){
-    module("collectMatchingElements");
+    module("collectMatchingElements", {
+        setup: function() {
+            // Recreate the dummy objects before each test to ensure there are no carried over results
+            dummyRule = new axs.AuditRule({
+                name: 'badFishingHole',
+                heading: 'Tests if this is a good place to go fishing',
+                url: 'http://www.example.com/troutfishing',
+                severity: axs.constants.Severity.SEVERE,
+                relevantElementMatcher: function(element) {
+                    var tagName = element.tagName;
+                    if (!tagName)
+                        return false;
+                    return (tagName.toLowerCase() === 'div' && element.classList.contains('test'));
+                },
+                test: function(element) {
+                    return false;
+                },
+                code: 'AX_TROUT_01'
+            });
+            dummyConfig = new axs.AuditConfiguration();
+        }
+    });
 
-    var DIV_COUNT = 10;
-    function matcher(element) {
-        var tagName = element.tagName;
-        if (!tagName)
-            return false;
-        return (tagName.toLowerCase() === "div" && element.classList.contains("test"));
-    }
+    var dummyRule, dummyConfig, DIV_COUNT = 10;
 
     function buildTestDom() {
         var result = document.createDocumentFragment();
@@ -37,9 +52,9 @@
     test("Simple DOM", function () {
         var container = document.getElementById('qunit-fixture');
         container.appendChild(buildTestDom());
-        var matched = [];
-        axs.AuditRule.collectMatchingElements(container, matcher, matched);
-        equal(matched.length, DIV_COUNT);
+        dummyConfig.scope = container;
+        axs.Audit.collectMatchingElements(dummyConfig, [dummyRule]);
+        equal(dummyRule.relevantElements.length, DIV_COUNT);
     });
 
     test("Simple DOM with an ignored selector", function () {
@@ -51,10 +66,13 @@
         var fooTest = document.createElement('div');
         fooTest.className = 'test';
         fooElement.appendChild(fooTest);
-        var matched = [];
-        var ignoredSelectors = ['.foo'];
-        axs.AuditRule.collectMatchingElements(container, matcher, matched, ignoredSelectors);
-        equal(matched.length, DIV_COUNT);
+
+        dummyConfig.scope = container;
+        dummyConfig.getIgnoreSelectors = function() {
+            return ['.foo'];
+        };
+        axs.Audit.collectMatchingElements(dummyConfig, [dummyRule]);
+        equal(dummyRule.relevantElements.length, DIV_COUNT);
     });
 
     test("With shadow DOM with no content insertion point", function () {
@@ -62,10 +80,10 @@
         container.appendChild(buildTestDom());
         var wrapper = container.firstElementChild;
         if (wrapper.createShadowRoot) {
-            var matched = [];
-            var root = wrapper.createShadowRoot();
-            axs.AuditRule.collectMatchingElements(wrapper, matcher, matched);
-            equal(matched.length, 0);
+            wrapper.createShadowRoot();
+            dummyConfig.scope = container;
+            axs.Audit.collectMatchingElements(dummyConfig, [dummyRule]);
+            equal(dummyRule.relevantElements.length, 0);
         } else {
             console.warn("Test platform does not support shadow DOM");
             ok(true);
@@ -77,13 +95,13 @@
         container.appendChild(buildTestDom());
         var wrapper = container.firstElementChild;
         if (wrapper.createShadowRoot) {
-            var matched = [];
             var root = wrapper.createShadowRoot();
             var content = document.createElement('content');
             root.appendChild(content);
-            axs.AuditRule.collectMatchingElements(wrapper, matcher, matched);
+            dummyConfig.scope = container;
+            axs.Audit.collectMatchingElements(dummyConfig, [dummyRule]);
             // <content> picks up content
-            equal(matched.length, DIV_COUNT);
+            equal(dummyRule.relevantElements.length, DIV_COUNT);
         } else {
             console.warn("Test platform does not support shadow DOM");
             ok(true);
@@ -96,10 +114,10 @@
         if (wrapper.createShadowRoot) {
             var root = wrapper.createShadowRoot();
             root.appendChild(buildTestDom());
-            var matched = [];
-            axs.AuditRule.collectMatchingElements(container, matcher, matched);
+            dummyConfig.scope = container;
+            axs.Audit.collectMatchingElements(dummyConfig, [dummyRule]);
             // Nodes in shadows are found
-            equal(matched.length, DIV_COUNT);
+            equal(dummyRule.relevantElements.length, DIV_COUNT);
         } else {
             console.warn("Test platform does not support shadow DOM");
             ok(true);
@@ -115,10 +133,10 @@
             rootContent.className = 'test';
             root.appendChild(rootContent);
             wrapper.appendChild(buildTestDom());
-            var matched = [];
-            axs.AuditRule.collectMatchingElements(container, matcher, matched);
+            dummyConfig.scope = container;
+            axs.Audit.collectMatchingElements(dummyConfig, [dummyRule]);
             // Nodes in light dom are not distributed
-            equal(matched.length, 1);
+            equal(dummyRule.relevantElements.length, 1);
         } else {
             console.warn("Test platform does not support shadow DOM");
             ok(true);
@@ -136,10 +154,10 @@
             root.appendChild(rootContent);
             var content = document.createElement('content');
             root.appendChild(content);
-            var matched = [];
-            axs.AuditRule.collectMatchingElements(container, matcher, matched);
+            dummyConfig.scope = container;
+            axs.Audit.collectMatchingElements(dummyConfig, [dummyRule]);
             // Nodes in light dom are distributed into content element.
-            equal(matched.length, (DIV_COUNT + 1));
+            equal(dummyRule.relevantElements.length, (DIV_COUNT + 1));
         } else {
             console.warn("Test platform does not support shadow DOM");
             ok(true);

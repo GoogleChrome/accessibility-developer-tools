@@ -50,8 +50,8 @@ axs.AuditRules.addRule({
         return true;
 
     },
-    test: function(element) {
-        if (axs.utils.isElementOrAncestorHidden(element))
+    test: function(element, flags) {
+        if (flags.hidden)
             return false;
         element.focus();
         return !axs.utils.elementIsVisible(element);

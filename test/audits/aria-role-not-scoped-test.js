@@ -13,8 +13,7 @@
 // limitations under the License.
 module('AriaRoleNotScoped');
 
-test('Scope role present', function() {
-    var rule = axs.AuditRules.getRule('ariaRoleNotScoped');
+test('Scope role present', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('div'));
     container.setAttribute('role', 'list');
@@ -23,16 +22,18 @@ test('Scope role present', function() {
         item.setAttribute('role', 'listitem');
     }
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.PASS);
-    deepEqual(actual.elements, []);
+    var config = {
+        ruleName: 'ariaRoleNotScoped',
+        expected: axs.constants.AuditResult.PASS,
+        elements: []
+    };
+    assert.runRule(config);
 });
 
-test('Scope role implicitly present', function() {
+test('Scope role implicitly present', function(assert) {
     /*
      * The HTML + ARIA here is not necessarily good - it is built to facilitate testing, nothing else.
      */
-    var rule = axs.AuditRules.getRule('ariaRoleNotScoped');
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('ol'));
     for (var i = 0; i < 4; i++) {
@@ -40,13 +41,15 @@ test('Scope role implicitly present', function() {
         item.setAttribute('role', 'listitem');
     }
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.PASS);
-    deepEqual(actual.elements, []);
+    var config = {
+        ruleName: 'ariaRoleNotScoped',
+        expected: axs.constants.AuditResult.PASS,
+        elements: []
+    };
+    assert.runRule(config);
 });
 
-test('Scope role present via aria-owns', function() {
-    var rule = axs.AuditRules.getRule('ariaRoleNotScoped');
+test('Scope role present via aria-owns', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('div'));
     var siblingContainer = fixture.appendChild(document.createElement('div'));
@@ -59,14 +62,17 @@ test('Scope role present via aria-owns', function() {
         item.setAttribute('id', id);
     }
     container.setAttribute('aria-owns', ids.join(' '));
-    var actual = rule.run({ scope: fixture });
     equal(container.childNodes.length, 0, 'container should have no child nodes since we\'re checking use of aria-owns');  // paranoid check to ensure the test itself is correct
-    equal(actual.result, axs.constants.AuditResult.PASS);
-    deepEqual(actual.elements, []);
+
+    var config = {
+        ruleName: 'ariaRoleNotScoped',
+        expected: axs.constants.AuditResult.PASS,
+        elements: []
+    };
+    assert.runRule(config);
 });
 
-test('Scope role missing', function() {
-    var rule = axs.AuditRules.getRule('ariaRoleNotScoped');
+test('Scope role missing', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var expected = [];
     for (var i = 0; i < 4; i++) {
@@ -75,13 +81,15 @@ test('Scope role missing', function() {
         expected.push(item);
     }
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.FAIL);
-    deepEqual(actual.elements, expected);
+    var config = {
+        ruleName: 'ariaRoleNotScoped',
+        expected: axs.constants.AuditResult.FAIL,
+        elements: expected
+    };
+    assert.runRule(config);
 });
 
-test('Scope role present - tablist', function() {
-    var rule = axs.AuditRules.getRule('ariaRoleNotScoped');
+test('Scope role present - tablist', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('ul'));
     container.setAttribute('role', 'tablist');
@@ -90,13 +98,15 @@ test('Scope role present - tablist', function() {
         item.setAttribute('role', 'tab');
     }
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.PASS);
-    deepEqual(actual.elements, []);
+    var config = {
+        ruleName: 'ariaRoleNotScoped',
+        expected: axs.constants.AuditResult.PASS,
+        elements: []
+    };
+    assert.runRule(config);
 });
 
-test('Scope role missing - tab', function() {
-    var rule = axs.AuditRules.getRule('ariaRoleNotScoped');
+test('Scope role missing - tab', function(assert) {
     var fixture = document.getElementById('qunit-fixture');
     var container = fixture.appendChild(document.createElement('ul'));
     var expected = [];
@@ -106,7 +116,10 @@ test('Scope role missing - tab', function() {
         expected.push(item);
     }
 
-    var actual = rule.run({ scope: fixture });
-    equal(actual.result, axs.constants.AuditResult.FAIL);
-    deepEqual(actual.elements, expected);
+    var config = {
+        ruleName: 'ariaRoleNotScoped',
+        expected: axs.constants.AuditResult.FAIL,
+        elements: expected
+    };
+    assert.runRule(config);
 });

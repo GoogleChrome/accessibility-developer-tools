@@ -13,6 +13,7 @@ test("Basic AuditConfiguration with no customisation", function() {
   var fixtures = document.getElementById('qunit-fixture');
   var auditConfig = new axs.AuditConfiguration();
   auditConfig.scope = fixtures;  // limit scope to just fixture element
+  auditConfig.walkDom = false;  // for performance reasons ensure that the entire DOM is not traversed
   var results = axs.Audit.run(auditConfig);
   equal(this.auditRules_.length, results.length);
   var sortedAuditRules = this.auditRules_.sort();
@@ -34,6 +35,7 @@ test("Configure severity of an audit rule", function() {
 
   var auditConfig = new axs.AuditConfiguration();
   auditConfig.scope = fixtures;  // limit scope to just fixture element
+  auditConfig.walkDom = false;  // for performance reasons ensure that the entire DOM is not traversed
   auditConfig.setSeverity('badAriaRole', axs.constants.Severity.WARNING);
   var results = axs.Audit.run(auditConfig);
   for (var i = 0; i < results.length; i++) {
@@ -48,7 +50,7 @@ test("Configure severity of an audit rule", function() {
 
 test("Specify configuration as an object", function() {
   var fixtures = document.getElementById('qunit-fixture');
-  
+
   var configPayload = {
     auditRulesToRun: ['badAriaRole'],
     scope: fixtures,
@@ -73,6 +75,7 @@ test("Configure the number of results returned", function() {
   var auditConfig = new axs.AuditConfiguration();
   auditConfig.auditRulesToRun = ['badAriaRole'];
   auditConfig.scope = fixture;  // limit scope to just fixture element
+  auditConfig.walkDom = false;
 
   var results = axs.Audit.run(auditConfig);
   equal(results.length, 1);
@@ -92,6 +95,7 @@ test('Configure audit rules to ignore', function() {
 
   var auditConfig = new axs.AuditConfiguration();
   auditConfig.scope = fixture;  // limit scope to just fixture element
+  auditConfig.walkDom = false;
 
   var results = axs.Audit.run(auditConfig);
   equal(true, results.some(function(result) {
@@ -114,15 +118,15 @@ console.warn = function(msg) {
 
 test("Unsupported Rules Warning shown first and only first time audit ran", function() {
   var auditConfig = new axs.AuditConfiguration();
-
+  auditConfig.walkDom = false;  // for performance reasons ensure that the entire DOM is not traversed
   // This should not be touched by an end-user, but needs to be set here,
   // because the unit tests run multiple times Audit.run()
   axs.Audit.unsupportedRulesWarningShown = false;
   __warnings = [];
-  axs.Audit.run();
+  axs.Audit.run(auditConfig);
 
   equal(2, __warnings.length);
-  axs.Audit.run();
+  axs.Audit.run(auditConfig);
   equal(2, __warnings.length);
 });
 
@@ -133,6 +137,7 @@ test("Unsupported Rules Warning not shown if showUnsupportedRulesWarning set to 
   // This should not be touched by an end-user, but needs to be set here,
   // because the unit tests run multiple times Audit.run()
   axs.Audit.unsupportedRulesWarningShown = false;
+  auditConfig.walkDom = false;  // for performance reasons ensure that the entire DOM is not traversed
   __warnings = [];
   axs.Audit.run(auditConfig);
 
@@ -144,6 +149,7 @@ test("Unsupported Rules Warning not shown if showUnsupportedRulesWarning set to 
 
 test("Unsupported Rules Warning not shown if with console API on configuration set", function() {
   var auditConfig = new axs.AuditConfiguration();
+  auditConfig.walkDom = false;  // for performance reasons ensure that the entire DOM is not traversed
   auditConfig.withConsoleApi = true;
   // This should not be touched by an end-user, but needs to be set here,
   // because the unit tests run multiple times Audit.run()
@@ -172,6 +178,7 @@ test("Configure LinkWithUnclearPurpose: blacklist phrase", function() {
 
   var auditConfig = new axs.AuditConfiguration();
   auditConfig.scope = fixture;
+  auditConfig.walkDom = false;
 
   var results = axs.Audit.run(auditConfig);
   equal(results.some(function(result) {
@@ -236,6 +243,7 @@ test("Configure LinkWithUnclearPurpose: stopwords", function() {
 
   var auditConfig = new axs.AuditConfiguration();
   auditConfig.scope = fixture;
+  auditConfig.walkDom = false;
 
   var results = axs.Audit.run(auditConfig);
   equal(results.some(function(result) {

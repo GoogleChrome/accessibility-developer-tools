@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/GoogleChrome/accessibility-developer-tools.svg?branch=master)](https://travis-ci.org/GoogleChrome/accessibility-developer-tools)
+[![npm version](https://img.shields.io/npm/v/accessibility-developer-tools.svg)](https://www.npmjs.com/package/accessibility-developer-tools)
+[![npm downloads](https://img.shields.io/npm/dm/accessibility-developer-tools.svg)](https://www.npmjs.com/package/accessibility-developer-tools)
+
 # Accessibility Developer Tools
 
 This is a library of accessibility-related testing and utility code.
@@ -41,15 +45,22 @@ You will need `node` and `grunt-cli` to build.
 
         % npm install
 
-4. Build using `grunt` (run from project root)
+4. (Rebuild if you make changes) Build using `grunt` (run from project root)
 
         % grunt
+
+
+## Troubleshooting
+
+This project uses [Closure Compiler](https://github.com/google/closure-compiler) to build our releases. You may need to install a recent version of [JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) in order for builds to successfully complete.
 
 # Using the Audit API
 
 ## Including the library
 
-The simplest option is to include the generated `axs_testing.js` library on your page.
+The simplest option is to include the generated `axs_testing.js` library on your page. After you build, you will have two versions of `axs_testings.js`:
+* Distribution Build: project-root/dist/js/axs_testing.js
+* Local Build (use if you make changes): project-root/tmp/build/axs_testing.js
 
 Work is underway to include the library in WebDriver and other automated testing frameworks.
 
@@ -81,7 +92,7 @@ The runner will load the specified file or URL in a headless browser, inject axs
      val jse = driver.asInstanceOf[JavascriptExecutor]
      jse.executeScript(scala.io.Source.fromURL("https://raw.githubusercontent.com/GoogleChrome/" +
        "accessibility-developer-tools/stable/dist/js/axs_testing.js").mkString)
-     val report = js.executeScript("var results = axs.Audit.run();return axs.Audit.createReport(results);")
+     val report = jse.executeScript("var results = axs.Audit.run();return axs.Audit.createReport(results);")
      println(report)
 
 ### Run audit from Selenium WebDriver (Scala)(with caching):

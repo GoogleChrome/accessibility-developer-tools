@@ -28,15 +28,15 @@ axs.AuditRules.addRule({
      * @param {Element} element
      * @return {boolean}
      */
-    relevantElementMatcher: function(element) {
-        return axs.browserUtils.matchSelector(element, 'a[href]') && !axs.utils.isElementOrAncestorHidden(element);
+    relevantElementMatcher: function(element, flags) {
+        return axs.browserUtils.matchSelector(element, 'a[href]') && !flags.hidden;
     },
     /**
      * @param {Element} anchor
      * @param {Object=} opt_config
      * @return {boolean}
      */
-    test: function(anchor, opt_config) {
+    test: function(anchor, flags, opt_config) {
         var config = opt_config || {};
         var blacklistPhrases = config['blacklistPhrases'] || [];
         var whitespaceRE = /\s+/;

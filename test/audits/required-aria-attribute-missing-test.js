@@ -13,7 +13,7 @@
 // limitations under the License.
 (function() {
     module('RequiredAriaAttributeMissing');
-    var rule = axs.AuditRules.getRule('requiredAriaAttributeMissing');
+    var RULE_NAME = 'requiredAriaAttributeMissing';
     /**
      * Input types that take the role 'spinbutton'.
      *
@@ -22,60 +22,73 @@
     var SPINBUTTON_TYPES = ['date', 'datetime', 'datetime-local',
                             'month', 'number', 'time', 'week'];
 
-    test('Explicit states required all present', function() {
+    test('Explicit states required all present', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('div'));
-        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
         widget.setAttribute('role', 'slider');
         widget.setAttribute('aria-valuemax', '79');
         widget.setAttribute('aria-valuemin', '10');
         widget.setAttribute('aria-valuenow', '50');
-        deepEqual(rule.run({ scope: fixture }), expected);
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
     });
 
-    test('Explicit states required but none present', function() {
+    test('Explicit states required but none present', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('div'));
-        var expected = {
-                elements: [widget],
-                result: axs.constants.AuditResult.FAIL };
         widget.setAttribute('role', 'slider');
-        deepEqual(rule.run({ scope: fixture }), expected);
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [widget]
+        };
+        assert.runRule(config);
     });
 
-    test('Explicit states required only supported states present', function() {
+    test('Explicit states required only supported states present', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('div'));
-        var expected = {
-                elements: [widget],
-                result: axs.constants.AuditResult.FAIL };
         widget.setAttribute('role', 'slider');
         widget.setAttribute('aria-orientation', 'horizontal');  // supported
         widget.setAttribute('aria-haspopup', 'false');  // global
-        deepEqual(rule.run({ scope: fixture }), expected);
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [widget]
+        };
+        assert.runRule(config);
     });
 
-    test('Explicit states required, one not present', function() {
+    test('Explicit states required, one not present', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('div'));
-        var expected = {
-                elements: [widget],
-                result: axs.constants.AuditResult.FAIL };
         widget.setAttribute('role', 'slider');
         widget.setAttribute('aria-valuemin', '10');
         widget.setAttribute('aria-valuenow', '50');
-        deepEqual(rule.run({ scope: fixture }), expected);
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [widget]
+        };
+        assert.runRule(config);
     });
 
     /*
      * Elements with the role scrollbar have an implicit aria-orientation value
      * of vertical.
      */
-    test('Explicit states present, aria implicit state present', function() {
+    test('Explicit states present, aria implicit state present', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('div'));
         var widget2 = fixture.appendChild(document.createElement('div'));
-        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
         widget2.id = 'controlledElement';
         widget.setAttribute('role', 'scrollbar');
         widget.setAttribute('aria-valuemax', '79');
@@ -83,48 +96,67 @@
         widget.setAttribute('aria-valuenow', '50');
         widget.setAttribute('aria-orientation', 'horizontal');
         widget.setAttribute('aria-controls', widget2.id);
-        deepEqual(rule.run({ scope: fixture }), expected);
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
     });
 
     /*
      * Elements with the role scrollbar have an implicit aria-orientation value
      * of vertical.
      */
-    test('Explicit states present, aria implicit state absent', function() {
+    test('Explicit states present, aria implicit state absent', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('div'));
         var widget2 = fixture.appendChild(document.createElement('div'));
-        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
         widget2.id = 'controlledElement';
         widget.setAttribute('role', 'scrollbar');
         widget.setAttribute('aria-valuemax', '79');
         widget.setAttribute('aria-valuemin', '10');
         widget.setAttribute('aria-valuenow', '50');
         widget.setAttribute('aria-controls', widget2.id);
-        deepEqual(rule.run({ scope: fixture }), expected);
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
     });
 
-    test('Required states provided implcitly by html', function() {
+    test('Required states provided implcitly by html', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('input'));
-        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
         widget.setAttribute('type', 'range');
         // setting role is redundant but needs to be ignored by this audit
         widget.setAttribute('role', 'slider');
-        deepEqual(rule.run({ scope: fixture }), expected);
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config);
     });
 
     SPINBUTTON_TYPES.forEach(function(type) {
-        test('Required states provided implcitly by input type ' + type, function() {
+        test('Required states provided implcitly by input type ' + type, function(assert) {
             var fixture = document.getElementById('qunit-fixture');
             var widget = fixture.appendChild(document.createElement('input'));
-            var expected = {
-                    elements: [],
-                    result: axs.constants.AuditResult.PASS };
             widget.setAttribute('type', type);
             // setting role is redundant but needs to be ignored by this audit
             widget.setAttribute('role', 'spinbutton');
-            deepEqual(rule.run({ scope: fixture }), expected);
+
+            var config = {
+                ruleName: RULE_NAME,
+                expected: axs.constants.AuditResult.PASS,
+                elements: []
+            };
+            assert.runRule(config);
         });
     });
 

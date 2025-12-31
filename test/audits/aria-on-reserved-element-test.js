@@ -13,9 +13,9 @@
 // limitations under the License.
 (function() {
     module('AriaOnReservedElement');
-    var rule = axs.AuditRules.getRule('ariaOnReservedElement');
+    var RULE_NAME = 'ariaOnReservedElement';
 
-    test('Non-reserved element with role and aria- attributes', function() {
+    test('Non-reserved element with role and aria- attributes', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('div'));
         widget.setAttribute('role', 'spinbutton');
@@ -24,27 +24,39 @@
         widget.setAttribute('aria-valuemax', '79');  // required
         widget.setAttribute('aria-valuemin', '10');  // required
         widget.setAttribute('aria-valuenow', '50');  // required
-        var expected = { result: axs.constants.AuditResult.NA };
-        deepEqual(rule.run({ scope: fixture }), expected, 'Non-reserved elements are not applicable to this test');
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.NA
+        };
+        assert.runRule(config, 'Non-reserved elements are not applicable to this test');
     });
 
-    test('Non-reserved element with role only', function() {
+    test('Non-reserved element with role only', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('div'));
         widget.setAttribute('role', 'spinbutton');
-        var expected = { result: axs.constants.AuditResult.NA };
-        deepEqual(rule.run({ scope: fixture }), expected, 'Non-reserved elements are not applicable to this test');
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.NA
+        };
+        assert.runRule(config, 'Non-reserved elements are not applicable to this test');
     });
 
-    test('Non-reserved element with aria-attributes only', function() {
+    test('Non-reserved element with aria-attributes only', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('div'));
         widget.setAttribute('aria-hidden', 'false');  // global
-        var expected = { result: axs.constants.AuditResult.NA };
-        deepEqual(rule.run({ scope: fixture }), expected, 'Non-reserved elements are not applicable to this test');
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.NA
+        };
+        assert.runRule(config, 'Non-reserved elements are not applicable to this test');
     });
 
-    test('Reserved element with role and aria- attributes', function() {
+    test('Reserved element with role and aria- attributes', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('meta'));
         widget.setAttribute('role', 'spinbutton');
@@ -53,40 +65,64 @@
         widget.setAttribute('aria-valuemax', '79');  // required
         widget.setAttribute('aria-valuemin', '10');  // required
         widget.setAttribute('aria-valuenow', '50');  // required
-        var expected = { elements: [widget], result: axs.constants.AuditResult.FAIL };
-        deepEqual(rule.run({ scope: fixture }), expected, 'Reserved elements can\'t take any ARIA attributes.');
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [widget]
+        };
+        assert.runRule(config, 'Reserved elements can\'t take any ARIA attributes.');
     });
 
-    test('Reserved element with role only', function() {
+    test('Reserved element with role only', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('meta'));
         widget.setAttribute('role', 'spinbutton');
-        var expected = { elements: [widget], result: axs.constants.AuditResult.FAIL };
-        deepEqual(rule.run({ scope: fixture }), expected, 'Reserved elements can\'t take any ARIA attributes.');
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [widget]
+        };
+        assert.runRule(config, 'Reserved elements can\'t take any ARIA attributes.');
     });
 
-    test('Reserved element with aria-attributes only', function() {
+    test('Reserved element with aria-attributes only', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('meta'));
         widget.setAttribute('aria-hidden', 'false');  // global
-        var expected = { elements: [widget], result: axs.constants.AuditResult.FAIL };
-        deepEqual(rule.run({ scope: fixture }), expected, 'Reserved elements can\'t take any ARIA attributes.');
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.FAIL,
+            elements: [widget]
+        };
+        assert.runRule(config, 'Reserved elements can\'t take any ARIA attributes.');
     });
 
-    test('Using ignoreSelectors, reserved element with aria-attributes only', function() {
+    test('Using ignoreSelectors, reserved element with aria-attributes only', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         var widget = fixture.appendChild(document.createElement('meta'));
-        var ignoreSelectors = ['#' + (widget.id = 'ignoreMe')];
         widget.setAttribute('aria-hidden', 'false');  // global
-        var expected = { result: axs.constants.AuditResult.NA };
-        deepEqual(rule.run({ scope: fixture, ignoreSelectors: ignoreSelectors }), expected, 'ignoreSelectors should skip this failing element');
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.NA,
+            ignoreSelectors: ['#' + (widget.id = 'ignoreMe')]
+        };
+        assert.runRule(config, 'ignoreSelectors should skip this failing element');
     });
 
-    test('Reserved element with no ARIA attributes', function() {
+    test('Reserved element with no ARIA attributes', function(assert) {
         var fixture = document.getElementById('qunit-fixture');
         fixture.appendChild(document.createElement('meta'));
-        var expected = { elements: [], result: axs.constants.AuditResult.PASS };
-        deepEqual(rule.run({ scope: fixture }), expected, 'A reserved element with no ARIA attributes should pass');
+
+        var config = {
+            ruleName: RULE_NAME,
+            expected: axs.constants.AuditResult.PASS,
+            elements: []
+        };
+        assert.runRule(config, 'A reserved element with no ARIA attributes should pass');
     });
 
 })();

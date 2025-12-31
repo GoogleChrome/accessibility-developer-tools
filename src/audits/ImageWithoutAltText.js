@@ -23,9 +23,8 @@ axs.AuditRules.addRule({
     heading: 'Images should have a text alternative or presentational role',
     url: 'https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_02',
     severity: axs.constants.Severity.WARNING,
-    relevantElementMatcher: function(element) {
-        return axs.browserUtils.matchSelector(element, 'img') &&
-            !axs.utils.isElementOrAncestorHidden(element);
+    relevantElementMatcher: function(element, flags) {
+        return axs.browserUtils.matchSelector(element, 'img') && !flags.hidden;
     },
     test: function(image) {
         var imageIsPresentational = (image.hasAttribute('alt') && image.alt == '') || image.getAttribute('role') == 'presentation';
